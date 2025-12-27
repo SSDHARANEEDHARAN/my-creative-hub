@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navLinks = [
     { name: "Home", href: "#home" },
@@ -22,32 +31,37 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled ? "bg-background/90 backdrop-blur-xl border-b border-border shadow-sm" : "bg-transparent"
+    }`}>
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <a href="#home" className="font-display text-2xl font-bold text-gradient">
-            Portfolio
+            Alex.dev
           </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <button
                 key={link.name}
                 onClick={() => scrollToSection(link.href)}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-sm font-medium tracking-wide"
+                className="px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-xl transition-all duration-300 text-sm font-medium"
               >
                 {link.name}
               </button>
             ))}
-            <Button variant="hero" size="sm" onClick={() => scrollToSection("#contact")}>
-              Let's Talk
+          </div>
+
+          <div className="hidden md:block">
+            <Button variant="hero" size="default" onClick={() => scrollToSection("#contact")}>
+              Hire Me
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-foreground p-2"
+            className="md:hidden text-foreground p-2 hover:bg-secondary rounded-xl transition-colors"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -56,19 +70,19 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-background border-b border-border animate-fade-up">
-            <div className="flex flex-col py-6 px-6 gap-4">
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border animate-fade-up">
+            <div className="flex flex-col py-6 px-6 gap-2">
               {navLinks.map((link) => (
                 <button
                   key={link.name}
                   onClick={() => scrollToSection(link.href)}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-300 text-left py-2"
+                  className="text-muted-foreground hover:text-foreground hover:bg-secondary transition-all duration-300 text-left py-3 px-4 rounded-xl font-medium"
                 >
                   {link.name}
                 </button>
               ))}
-              <Button variant="hero" onClick={() => scrollToSection("#contact")}>
-                Let's Talk
+              <Button variant="hero" className="mt-4" onClick={() => scrollToSection("#contact")}>
+                Hire Me
               </Button>
             </div>
           </div>
