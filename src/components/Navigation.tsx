@@ -17,8 +17,10 @@ const Navigation = () => {
   const navLinks = [
     { name: "Home", href: "#home" },
     { name: "About", href: "#about" },
+    { name: "Services", href: "#services" },
     { name: "Projects", href: "#projects" },
     { name: "Blog", href: "#blog" },
+    { name: "Testimonials", href: "#testimonials" },
     { name: "Contact", href: "#contact" },
   ];
 
@@ -36,24 +38,24 @@ const Navigation = () => {
     }`}>
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
-          <a href="#home" className="font-display text-2xl font-bold text-gradient">
+          <button onClick={() => scrollToSection("#home")} className="font-display text-2xl font-bold text-gradient">
             Alex.dev
-          </a>
+          </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <button
                 key={link.name}
                 onClick={() => scrollToSection(link.href)}
-                className="px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-xl transition-all duration-300 text-sm font-medium"
+                className="px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-xl transition-all duration-300 text-sm font-medium"
               >
                 {link.name}
               </button>
             ))}
           </div>
 
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <Button variant="hero" size="default" onClick={() => scrollToSection("#contact")}>
               Hire Me
             </Button>
@@ -61,7 +63,7 @@ const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-foreground p-2 hover:bg-secondary rounded-xl transition-colors"
+            className="lg:hidden text-foreground p-2 hover:bg-secondary rounded-xl transition-colors"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -70,7 +72,7 @@ const Navigation = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border animate-fade-up">
+          <div className="lg:hidden absolute top-20 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border animate-fade-up">
             <div className="flex flex-col py-6 px-6 gap-2">
               {navLinks.map((link) => (
                 <button
