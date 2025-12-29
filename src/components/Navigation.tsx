@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
+import SocialLinks from "./SocialLinks";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,22 +19,14 @@ const Navigation = () => {
   }, []);
 
   const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Services", href: "#services" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "Projects", href: "#projects" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Skills", href: "/skills" },
+    { name: "Services", href: "/services" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "Projects", href: "/projects" },
+    { name: "Contact", href: "/contact" },
   ];
-
-  const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-    setIsOpen(false);
-  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -39,28 +34,35 @@ const Navigation = () => {
     }`}>
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
-          <button onClick={() => scrollToSection("#home")} className="font-display text-2xl font-bold text-gradient">
+          <Link to="/" className="font-display text-2xl font-bold text-gradient">
             Alex.dev
-          </button>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <button
+              <Link
                 key={link.name}
-                onClick={() => scrollToSection(link.href)}
-                className="px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-xl transition-all duration-300 text-sm font-medium"
+                to={link.href}
+                className={`px-3 py-2 rounded-xl transition-all duration-300 text-sm font-medium ${
+                  location.pathname === link.href 
+                    ? "text-primary bg-primary/10" 
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
               >
                 {link.name}
-              </button>
+              </Link>
             ))}
           </div>
 
           <div className="hidden lg:flex items-center gap-3">
+            <SocialLinks iconSize={18} />
             <ThemeToggle />
-            <Button variant="hero" size="default" onClick={() => scrollToSection("#contact")}>
-              Hire Me
-            </Button>
+            <Link to="/contact">
+              <Button variant="hero" size="default">
+                Hire Me
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -80,17 +82,27 @@ const Navigation = () => {
           <div className="lg:hidden absolute top-20 left-0 right-0 bg-background/95 backdrop-blur-xl border-b border-border animate-fade-up">
             <div className="flex flex-col py-6 px-6 gap-2">
               {navLinks.map((link) => (
-                <button
+                <Link
                   key={link.name}
-                  onClick={() => scrollToSection(link.href)}
-                  className="text-muted-foreground hover:text-foreground hover:bg-secondary transition-all duration-300 text-left py-3 px-4 rounded-xl font-medium"
+                  to={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`transition-all duration-300 text-left py-3 px-4 rounded-xl font-medium ${
+                    location.pathname === link.href 
+                      ? "text-primary bg-primary/10" 
+                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                  }`}
                 >
                   {link.name}
-                </button>
+                </Link>
               ))}
-              <Button variant="hero" className="mt-4" onClick={() => scrollToSection("#contact")}>
-                Hire Me
-              </Button>
+              <div className="pt-4 border-t border-border mt-2">
+                <SocialLinks className="mb-4" />
+              </div>
+              <Link to="/contact" onClick={() => setIsOpen(false)}>
+                <Button variant="hero" className="w-full">
+                  Hire Me
+                </Button>
+              </Link>
             </div>
           </div>
         )}

@@ -1,5 +1,8 @@
-import { ArrowDown, Github, Linkedin, Twitter, Sparkles, Plane, MapPin, Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowDown, Sparkles, Plane, MapPin, Calendar } from "lucide-react";
 import { Button } from "./ui/button";
+import SocialLinks from "./SocialLinks";
+import ResumeButton from "./ResumeButton";
 
 const Hero = () => {
   const highlights = [
@@ -9,7 +12,7 @@ const Hero = () => {
   ];
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-shape top-20 -left-20 w-96 h-96 bg-primary/20" style={{ animationDelay: "0s" }} />
@@ -50,30 +53,17 @@ const Hero = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 animate-fade-up opacity-0" style={{ animationDelay: "0.7s", animationFillMode: "forwards" }}>
-            <Button variant="hero" size="xl" onClick={() => document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" })}>
-              Learn More About Me
-            </Button>
-            <Button variant="heroOutline" size="xl" onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}>
-              Let's Connect
-            </Button>
+            <Link to="/about">
+              <Button variant="hero" size="xl">
+                Learn More About Me
+              </Button>
+            </Link>
+            <ResumeButton variant="heroOutline" size="xl" />
           </div>
 
           <div className="flex items-center justify-center gap-4 animate-fade-up opacity-0" style={{ animationDelay: "0.9s", animationFillMode: "forwards" }}>
             <span className="text-sm text-muted-foreground">Find me on</span>
-            <div className="flex gap-3">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" 
-                 className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300">
-                <Github size={20} />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
-                 className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300">
-                <Linkedin size={20} />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
-                 className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300">
-                <Twitter size={20} />
-              </a>
-            </div>
+            <SocialLinks />
           </div>
         </div>
 
