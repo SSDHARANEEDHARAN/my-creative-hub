@@ -1,21 +1,16 @@
-import { Github, Linkedin, Twitter, Heart, Dribbble, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Heart, Mail } from "lucide-react";
+import SocialLinks from "./SocialLinks";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Projects", href: "#projects" },
-    { name: "Blog", href: "#blog" },
-    { name: "Contact", href: "#contact" },
-  ];
-
-  const socialLinks = [
-    { icon: <Github size={20} />, href: "https://github.com", label: "GitHub" },
-    { icon: <Linkedin size={20} />, href: "https://linkedin.com", label: "LinkedIn" },
-    { icon: <Twitter size={20} />, href: "https://twitter.com", label: "Twitter" },
-    { icon: <Dribbble size={20} />, href: "https://dribbble.com", label: "Dribbble" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Blog", href: "/blog" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
@@ -24,9 +19,9 @@ const Footer = () => {
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <a href="#home" className="font-display text-2xl font-bold text-gradient inline-block mb-4">
+            <Link to="/" className="font-display text-2xl font-bold text-gradient inline-block mb-4">
               Alex.dev
-            </a>
+            </Link>
             <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-xs">
               Creating beautiful, high-performance web experiences that delight users and drive business results.
             </p>
@@ -44,13 +39,13 @@ const Footer = () => {
             <h4 className="font-display font-semibold mb-4">Quick Links</h4>
             <nav className="flex flex-col gap-3">
               {footerLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
                   className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
             </nav>
           </div>
@@ -61,20 +56,7 @@ const Footer = () => {
             <p className="text-muted-foreground text-sm mb-4">
               Follow me on social media for updates and insights.
             </p>
-            <div className="flex items-center gap-3">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300"
-                  aria-label={link.label}
-                >
-                  {link.icon}
-                </a>
-              ))}
-            </div>
+            <SocialLinks />
           </div>
         </div>
 
