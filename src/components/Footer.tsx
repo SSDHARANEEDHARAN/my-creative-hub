@@ -32,19 +32,19 @@ const Footer = () => {
                 <Sparkles className="text-primary-foreground" size={20} />
               </motion.div>
               <span className="font-display text-2xl font-bold text-gradient">
-                Alex.dev
+                TTS.dev
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-sm">
-              Creating beautiful, high-performance web experiences that delight users and drive business results.
+              Creating innovative solutions in both IT and Engineering domains - from web applications to CAD designs.
             </p>
             <motion.a 
-              href="mailto:hello@alexchen.dev"
+              href="mailto:tharaneetharan@email.com"
               whileHover={{ x: 5 }}
               className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium group"
             >
               <Mail size={18} />
-              hello@alexchen.dev
+              tharaneetharan@email.com
               <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.a>
           </div>
@@ -79,7 +79,7 @@ const Footer = () => {
 
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm flex items-center gap-2">
-            © {currentYear} Alex Chen. Crafted with 
+            © {currentYear} Tharanee Tharan S.S. Crafted with
             <motion.span
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 1, repeat: Infinity }}

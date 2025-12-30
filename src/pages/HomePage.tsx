@@ -7,8 +7,8 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>Alex Chen | Creative Developer & Designer</title>
-        <meta name="description" content="I build beautiful web experiences while exploring the world. Passionate about clean code, stunning design, and finding the best coffee shops in every city." />
+        <title>Tharanee Tharan S.S | Full Stack Developer & CAD Engineer</title>
+        <meta name="description" content="Full Stack Developer & CAD Engineer skilled in React, Python, Embedded Systems, SolidWorks, FlexSim, NX, Creo, and PTC Windchill." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">

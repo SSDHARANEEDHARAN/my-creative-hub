@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowDown, Sparkles, Plane, MapPin, Calendar, Zap } from "lucide-react";
+import { ArrowDown, Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
 
 const Hero = () => {
   const highlights = [
-    { icon: <Plane size={16} />, text: "15+ Countries Explored" },
-    { icon: <MapPin size={16} />, text: "Based in San Francisco" },
-    { icon: <Calendar size={16} />, text: "5+ Years in Tech" },
+    { icon: <Cpu size={16} />, text: "Full Stack Developer" },
+    { icon: <MapPin size={16} />, text: "CAD & PLM Expert" },
+    { icon: <Calendar size={16} />, text: "3+ Years Experience" },
   ];
 
   return (
@@ -69,7 +69,7 @@ const Hero = () => {
           >
             Hi, I'm{" "}
             <span className="text-gradient relative">
-              Alex Chen
+              Tharanee Tharan S.S
               <motion.span
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
@@ -88,7 +88,7 @@ const Hero = () => {
           >
             <Zap className="text-secondary" size={24} />
             <p className="text-2xl md:text-3xl font-display font-semibold text-foreground">
-              Creative Developer & Digital Nomad
+              Full Stack Developer & CAD Engineer
             </p>
           </motion.div>
           
@@ -98,8 +98,8 @@ const Hero = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
           >
-            I build beautiful web experiences while exploring the world. 
-            Passionate about clean code, stunning design, and finding the best coffee shops in every city I visit.
+            I build modern web applications and design engineering solutions. 
+            Passionate about React, Python, embedded systems, and CAD tools like SolidWorks and Creo.
           </motion.p>
 
           {/* Quick Highlights */}

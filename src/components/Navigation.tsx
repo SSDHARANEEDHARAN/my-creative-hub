@@ -52,7 +52,7 @@ const Navigation = () => {
               <Sparkles className="text-primary-foreground" size={20} />
             </motion.div>
             <span className="font-display text-xl font-bold text-gradient">
-              Alex.dev
+              TTS.dev
             </span>
           </Link>
 

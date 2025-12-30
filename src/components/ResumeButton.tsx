@@ -12,38 +12,34 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
   const handleDownload = () => {
     // Create a sample resume content
     const resumeContent = `
-ALEX CHEN
-Creative Developer & Digital Nomad
-San Francisco, CA | hello@alexchen.dev | +1 (555) 123-4567
+THARANEE THARAN S.S
+Full Stack Developer & CAD Engineer
+tharaneetharan@email.com
 
 SUMMARY
-Full-stack developer and UI/UX designer with 5+ years of experience building beautiful, 
-high-performance web applications. Passionate about clean code, stunning design, and 
-exploring the world.
+Full-stack developer and CAD engineer with expertise in React, Python, 
+Embedded Systems, and engineering tools like SolidWorks, FlexSim, NX, Creo, and PTC Windchill.
 
 SKILLS
-- Frontend: React, Next.js, TypeScript, Tailwind CSS
-- Backend: Node.js, PostgreSQL, MongoDB, GraphQL
-- Design: Figma, UI/UX, Prototyping, Design Systems
-- Other: Docker, AWS, Git, Agile
+IT & Software:
+- Frontend: React, JavaScript, TypeScript, Tailwind CSS
+- Backend: Python, Node.js, PostgreSQL, MongoDB
+- Embedded: Arduino, Raspberry Pi, IoT
+
+Engineering & CAD:
+- SolidWorks, Siemens NX, PTC Creo
+- FlexSim (Simulation)
+- PTC Windchill (PLM)
+- FEA Analysis, 3D Modeling
 
 EXPERIENCE
-Senior Developer | TechStart Inc | 2022 - Present
-- Led development of e-commerce platform serving 100k+ users
-- Implemented modern CI/CD pipelines reducing deployment time by 60%
-- Mentored junior developers and established coding standards
-
-Full-Stack Developer | InnovateCo | 2020 - 2022
-- Built real-time analytics dashboard with React and D3.js
-- Designed and implemented RESTful APIs using Node.js
-- Collaborated with design team to improve UX
+Full Stack Developer & CAD Engineer
+- Developed web applications using React and Python
+- Created CAD designs and simulations for manufacturing
+- Implemented IoT solutions with embedded systems
 
 EDUCATION
-B.S. Computer Science | UC Berkeley | 2019
-
-TRAVEL
-Visited 15+ countries while working remotely, including Japan, Italy, 
-Iceland, Thailand, Portugal, and Morocco.
+Bachelor's Degree in Engineering
     `.trim();
 
     // Create blob and download
@@ -51,7 +47,7 @@ Iceland, Thailand, Portugal, and Morocco.
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Alex_Chen_Resume.txt";
+    link.download = "Tharanee_Tharan_Resume.txt";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
