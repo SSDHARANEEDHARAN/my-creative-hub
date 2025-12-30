@@ -47,29 +47,34 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sky: {
-          DEFAULT: "hsl(var(--sky))",
-          light: "hsl(var(--sky-light))",
-          dark: "hsl(var(--sky-dark))",
+        violet: {
+          DEFAULT: "hsl(var(--violet))",
+          light: "hsl(var(--violet-light))",
+          dark: "hsl(var(--violet-dark))",
         },
-        mint: {
-          DEFAULT: "hsl(var(--mint))",
-          light: "hsl(var(--mint-light))",
-          dark: "hsl(var(--mint-dark))",
+        orange: {
+          DEFAULT: "hsl(var(--orange))",
+          light: "hsl(var(--orange-light))",
+          dark: "hsl(var(--orange-dark))",
         },
-        teal: "hsl(var(--teal))",
+        emerald: {
+          DEFAULT: "hsl(var(--emerald))",
+          light: "hsl(var(--emerald-light))",
+        },
+        cyan: "hsl(var(--cyan))",
       },
       fontFamily: {
-        sans: ["Outfit", "sans-serif"],
-        display: ["Space Grotesk", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
+        display: ["Syne", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        xl: "1rem",
+        xl: "1.25rem",
         "2xl": "1.5rem",
         "3xl": "2rem",
+        "4xl": "2.5rem",
       },
       keyframes: {
         "accordion-down": {
@@ -81,8 +86,8 @@ export default {
           to: { height: "0" },
         },
         shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
         pulse: {
           "0%, 100%": { opacity: "1" },
@@ -92,6 +97,14 @@ export default {
           "0%, 100%": { transform: "rotate(-3deg)" },
           "50%": { transform: "rotate(3deg)" },
         },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        bounce: {
+          "0%, 100%": { transform: "translateY(-5%)", animationTimingFunction: "cubic-bezier(0.8, 0, 1, 1)" },
+          "50%": { transform: "translateY(0)", animationTimingFunction: "cubic-bezier(0, 0, 0.2, 1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -99,6 +112,13 @@ export default {
         shimmer: "shimmer 2s linear infinite",
         pulse: "pulse 2s ease-in-out infinite",
         wiggle: "wiggle 0.5s ease-in-out infinite",
+        "spin-slow": "spin-slow 15s linear infinite",
+        bounce: "bounce 1s infinite",
+      },
+      boxShadow: {
+        glow: "0 0 60px hsl(var(--primary) / 0.3)",
+        "glow-lg": "0 0 100px hsl(var(--primary) / 0.4)",
+        card: "0 25px 60px -15px hsl(var(--foreground) / 0.08)",
       },
     },
   },
