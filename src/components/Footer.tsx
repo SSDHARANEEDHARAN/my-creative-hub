@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Heart, Mail } from "lucide-react";
+import { motion } from "framer-motion";
+import { Heart, Mail, ArrowUpRight, Sparkles } from "lucide-react";
 import SocialLinks from "./SocialLinks";
 
 const Footer = () => {
@@ -14,59 +15,88 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="py-16 border-t border-border bg-card/50">
-      <div className="container mx-auto px-6">
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
+    <footer className="relative py-20 border-t border-border bg-card/30 overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-mesh opacity-50" />
+      
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="grid md:grid-cols-3 gap-12 mb-16">
           {/* Brand */}
           <div>
-            <Link to="/" className="font-display text-2xl font-bold text-gradient inline-block mb-4">
-              Alex.dev
+            <Link to="/" className="group flex items-center gap-2 mb-6">
+              <motion.div
+                whileHover={{ rotate: 180 }}
+                transition={{ duration: 0.5 }}
+                className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center"
+              >
+                <Sparkles className="text-primary-foreground" size={20} />
+              </motion.div>
+              <span className="font-display text-2xl font-bold text-gradient">
+                Alex.dev
+              </span>
             </Link>
-            <p className="text-muted-foreground text-sm leading-relaxed mb-6 max-w-xs">
+            <p className="text-muted-foreground leading-relaxed mb-6 max-w-sm">
               Creating beautiful, high-performance web experiences that delight users and drive business results.
             </p>
-            <a 
-              href="mailto:hello@alexchen.dev" 
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+            <motion.a 
+              href="mailto:hello@alexchen.dev"
+              whileHover={{ x: 5 }}
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium group"
             >
-              <Mail size={16} />
+              <Mail size={18} />
               hello@alexchen.dev
-            </a>
+              <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+            </motion.a>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-display font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-display text-lg font-bold mb-6">Quick Links</h4>
             <nav className="flex flex-col gap-3">
               {footerLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-                >
-                  {link.name}
-                </Link>
+                <motion.div key={link.name} whileHover={{ x: 5 }}>
+                  <Link
+                    to={link.href}
+                    className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
+                    {link.name}
+                  </Link>
+                </motion.div>
               ))}
             </nav>
           </div>
 
-          {/* Social & Newsletter */}
+          {/* Social & Connect */}
           <div>
-            <h4 className="font-display font-semibold mb-4">Connect</h4>
-            <p className="text-muted-foreground text-sm mb-4">
-              Follow me on social media for updates and insights.
+            <h4 className="font-display text-lg font-bold mb-6">Connect</h4>
+            <p className="text-muted-foreground mb-6">
+              Follow me on social media for updates, insights, and behind-the-scenes content.
             </p>
             <SocialLinks />
           </div>
         </div>
 
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-muted-foreground text-sm flex items-center gap-1">
-            © {currentYear} Alex Chen. Crafted with <Heart size={14} className="text-red-500" fill="currentColor" /> and lots of ☕
+          <p className="text-muted-foreground text-sm flex items-center gap-2">
+            © {currentYear} Alex Chen. Crafted with 
+            <motion.span
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              <Heart size={14} className="text-destructive" fill="currentColor" />
+            </motion.span>
+            and lots of ☕
           </p>
-          <p className="text-muted-foreground text-xs">
-            Built with React, TypeScript & Tailwind CSS
-          </p>
+          <div className="flex items-center gap-4">
+            <span className="text-muted-foreground text-xs">
+              Built with React, TypeScript & Tailwind CSS
+            </span>
+            <div className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <span className="text-xs text-accent font-medium">Online</span>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

@@ -112,7 +112,7 @@ const Services = () => {
               </ul>
 
               <Button
-                variant={service.popular ? "mint" : "glass"}
+                variant={service.popular ? "accent" : "glass"}
                 className="w-full"
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               >
