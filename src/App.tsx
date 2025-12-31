@@ -7,7 +7,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { AnimatePresence } from "framer-motion";
 import { Suspense, lazy } from "react";
-import FloatingContactButton from "./components/FloatingContactButton";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 // Lazy load pages for better performance
@@ -56,7 +55,6 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <AnimatedRoutes />
-            <FloatingContactButton />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
