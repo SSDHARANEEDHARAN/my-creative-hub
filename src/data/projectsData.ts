@@ -1,0 +1,291 @@
+// Import project images
+import ecommerceImg from "@/assets/project-ecommerce.jpg";
+import iotImg from "@/assets/project-iot.jpg";
+import inventoryImg from "@/assets/project-inventory.jpg";
+import analyticsImg from "@/assets/project-analytics.jpg";
+import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
+import flexsimImg from "@/assets/project-flexsim.jpg";
+import creoImg from "@/assets/project-creo.jpg";
+import plmImg from "@/assets/project-plm.jpg";
+
+export interface Project {
+  id: number;
+  title: string;
+  description: string;
+  images: string[];
+  tags: string[];
+  articleUrl?: string;
+  githubUrl?: string;
+  featured: boolean;
+  category: "it" | "engineering";
+}
+
+// IT Projects (10+ projects)
+export const itProjects: Project[] = [
+  {
+    id: 1,
+    title: "E-Commerce Web Platform",
+    description: "Full-stack e-commerce website with React frontend, Node.js backend, payment integration, and admin dashboard. Features include product catalog, shopping cart, user authentication, and order management.",
+    images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
+    tags: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
+    githubUrl: "https://github.com",
+    featured: true,
+    category: "it",
+  },
+  {
+    id: 2,
+    title: "IoT Smart Home System",
+    description: "Embedded system project with Arduino and Raspberry Pi for home automation with mobile app control. Includes temperature monitoring, lighting control, and security features.",
+    images: [iotImg, ecommerceImg, analyticsImg, inventoryImg, plmImg],
+    tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
+    githubUrl: "https://github.com",
+    featured: true,
+    category: "it",
+  },
+  {
+    id: 3,
+    title: "Inventory Management App",
+    description: "Cross-platform mobile application for stock management with barcode scanning, real-time sync, and multi-warehouse support.",
+    images: [inventoryImg, ecommerceImg, iotImg, analyticsImg, plmImg],
+    tags: ["React Native", "Firebase", "Python", "REST API"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 4,
+    title: "Data Analytics Dashboard",
+    description: "Real-time analytics dashboard with Python backend, interactive data visualization, and automated reporting for business intelligence.",
+    images: [analyticsImg, inventoryImg, ecommerceImg, iotImg, plmImg],
+    tags: ["Python", "React", "PostgreSQL", "D3.js", "Pandas"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 5,
+    title: "Task Management System",
+    description: "Collaborative project management tool with real-time updates, Kanban boards, team collaboration features, and time tracking.",
+    images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
+    tags: ["React", "Node.js", "Socket.io", "MongoDB"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 6,
+    title: "Weather Monitoring Station",
+    description: "IoT-based weather station with sensors for temperature, humidity, pressure, and rainfall with web dashboard visualization.",
+    images: [iotImg, analyticsImg, inventoryImg, ecommerceImg, plmImg],
+    tags: ["Arduino", "Python", "Flask", "Chart.js", "IoT"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 7,
+    title: "Restaurant POS System",
+    description: "Point of sale system for restaurants with order management, table tracking, kitchen display system, and payment processing.",
+    images: [inventoryImg, ecommerceImg, analyticsImg, iotImg, plmImg],
+    tags: ["React", "Electron", "Node.js", "SQLite"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 8,
+    title: "Healthcare Appointment App",
+    description: "Mobile application for booking medical appointments with doctor profiles, real-time availability, and notification reminders.",
+    images: [ecommerceImg, iotImg, analyticsImg, inventoryImg, plmImg],
+    tags: ["React Native", "Firebase", "Push Notifications"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 9,
+    title: "Smart Agriculture System",
+    description: "IoT solution for precision farming with soil moisture sensors, automated irrigation, and crop health monitoring dashboard.",
+    images: [iotImg, analyticsImg, ecommerceImg, inventoryImg, plmImg],
+    tags: ["Python", "Raspberry Pi", "TensorFlow", "React"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 10,
+    title: "Learning Management System",
+    description: "Educational platform with course creation, video streaming, quiz system, progress tracking, and certificate generation.",
+    images: [analyticsImg, ecommerceImg, inventoryImg, iotImg, plmImg],
+    tags: ["React", "Node.js", "AWS", "MongoDB", "Redis"],
+    githubUrl: "https://github.com",
+    featured: false,
+    category: "it",
+  },
+];
+
+// Engineering Projects (15+ projects)
+export const engineeringProjects: Project[] = [
+  {
+    id: 101,
+    title: "Automotive Engine Block Design",
+    description: "Complete 3D CAD design of a 4-cylinder engine block using SolidWorks with FEA thermal analysis, stress simulation, and manufacturing-ready drawings.",
+    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
+    tags: ["SolidWorks", "FEA", "CAD", "Thermal Analysis"],
+    articleUrl: "#automotive-engine-article",
+    featured: true,
+    category: "engineering",
+  },
+  {
+    id: 102,
+    title: "Manufacturing Line Simulation",
+    description: "FlexSim simulation of automotive production line for cycle time optimization, bottleneck identification, and throughput improvement achieving 25% efficiency gain.",
+    images: [flexsimImg, cadAutomotiveImg, plmImg, creoImg, analyticsImg],
+    tags: ["FlexSim", "Simulation", "Lean Manufacturing", "Analysis"],
+    articleUrl: "#manufacturing-simulation-article",
+    featured: true,
+    category: "engineering",
+  },
+  {
+    id: 103,
+    title: "Gearbox Assembly Design",
+    description: "Complex 6-speed gearbox assembly design using PTC Creo with motion analysis, interference checks, and exploded view documentation.",
+    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
+    tags: ["PTC Creo", "Assembly", "Motion Analysis", "GD&T"],
+    articleUrl: "#gearbox-assembly-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 104,
+    title: "PLM Implementation Project",
+    description: "PTC Windchill implementation for enterprise product lifecycle management including document control, workflow automation, and BOM management.",
+    images: [plmImg, creoImg, cadAutomotiveImg, flexsimImg, analyticsImg],
+    tags: ["Windchill", "PLM", "Workflow", "BOM Management"],
+    articleUrl: "#plm-implementation-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 105,
+    title: "Industrial Robot Cell Design",
+    description: "Complete robotic welding cell design using Siemens NX with robot path simulation, cycle time analysis, and safety zone planning.",
+    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
+    tags: ["Siemens NX", "Robotics", "Simulation", "Automation"],
+    articleUrl: "#robot-cell-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 106,
+    title: "Injection Mold Tool Design",
+    description: "Plastic injection mold design for automotive components with cooling channel optimization, flow analysis, and mold filling simulation.",
+    images: [creoImg, cadAutomotiveImg, plmImg, flexsimImg, analyticsImg],
+    tags: ["SolidWorks", "Mold Design", "CFD", "Plastics"],
+    articleUrl: "#injection-mold-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 107,
+    title: "Warehouse Layout Optimization",
+    description: "FlexSim-based warehouse simulation for layout optimization, pick path analysis, and material handling equipment selection.",
+    images: [flexsimImg, plmImg, cadAutomotiveImg, creoImg, analyticsImg],
+    tags: ["FlexSim", "Warehouse", "Logistics", "Optimization"],
+    articleUrl: "#warehouse-optimization-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 108,
+    title: "Sheet Metal Enclosure Design",
+    description: "Industrial equipment enclosure design with sheet metal features, bend allowance calculations, and flat pattern development.",
+    images: [cadAutomotiveImg, creoImg, plmImg, flexsimImg, analyticsImg],
+    tags: ["SolidWorks", "Sheet Metal", "DFM", "Manufacturing"],
+    articleUrl: "#sheet-metal-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 109,
+    title: "Conveyor System Design",
+    description: "Modular conveyor system design for packaging line with motor sizing, structure analysis, and integration documentation.",
+    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
+    tags: ["Siemens NX", "Conveyors", "Mechanical Design"],
+    articleUrl: "#conveyor-system-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 110,
+    title: "Hydraulic Press Frame Design",
+    description: "Heavy-duty hydraulic press frame design with FEA stress analysis, weld calculations, and manufacturing specifications.",
+    images: [cadAutomotiveImg, creoImg, flexsimImg, plmImg, analyticsImg],
+    tags: ["SolidWorks", "FEA", "Structural Analysis", "Welding"],
+    articleUrl: "#hydraulic-press-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 111,
+    title: "Assembly Line Balancing",
+    description: "Production line balancing using FlexSim simulation with operator task allocation, workstation design, and efficiency metrics.",
+    images: [flexsimImg, plmImg, cadAutomotiveImg, creoImg, analyticsImg],
+    tags: ["FlexSim", "Line Balancing", "Industrial Engineering"],
+    articleUrl: "#line-balancing-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 112,
+    title: "Fixture Design for CNC Machining",
+    description: "Custom machining fixture design for automotive parts with clamping force analysis, locating accuracy, and quick-change features.",
+    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
+    tags: ["PTC Creo", "Fixtures", "CNC", "Workholding"],
+    articleUrl: "#fixture-design-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 113,
+    title: "Product Data Management System",
+    description: "Windchill PDM configuration for engineering document management with revision control, approval workflows, and CAD integration.",
+    images: [plmImg, creoImg, cadAutomotiveImg, flexsimImg, analyticsImg],
+    tags: ["Windchill", "PDM", "Document Control", "Integration"],
+    articleUrl: "#pdm-system-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 114,
+    title: "Automotive Suspension Design",
+    description: "Double wishbone suspension system design with kinematic analysis, component optimization, and durability simulation.",
+    images: [cadAutomotiveImg, creoImg, flexsimImg, plmImg, analyticsImg],
+    tags: ["Siemens NX", "Suspension", "Kinematics", "FEA"],
+    articleUrl: "#suspension-design-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 115,
+    title: "Packaging Line Simulation",
+    description: "End-of-line packaging simulation with case packer, palletizer, and stretch wrapper integration for throughput validation.",
+    images: [flexsimImg, plmImg, cadAutomotiveImg, creoImg, analyticsImg],
+    tags: ["FlexSim", "Packaging", "Automation", "Simulation"],
+    articleUrl: "#packaging-line-article",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 116,
+    title: "Electric Motor Housing Design",
+    description: "Thermal-optimized motor housing design with cooling fins, mounting features, and IP-rated sealing for industrial applications.",
+    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
+    tags: ["SolidWorks", "Thermal", "Casting", "Design"],
+    articleUrl: "#motor-housing-article",
+    featured: false,
+    category: "engineering",
+  },
+];
+
+export const getAllProjects = () => [...itProjects, ...engineeringProjects];
