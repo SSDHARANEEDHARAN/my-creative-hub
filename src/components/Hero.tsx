@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowDown, Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
+import { Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
@@ -151,22 +151,6 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="flex flex-col items-center gap-2 text-muted-foreground"
-          >
-            <span className="text-xs tracking-widest uppercase font-medium">Scroll Down</span>
-            <ArrowDown size={20} />
-          </motion.div>
-        </motion.div>
       </div>
     </section>
   );
