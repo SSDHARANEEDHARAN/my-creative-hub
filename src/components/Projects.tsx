@@ -1,109 +1,93 @@
-import { ExternalLink, Github, ArrowUpRight, Cpu, Cog } from "lucide-react";
+import { ExternalLink, Github, ArrowUpRight, Cpu, Cog, FileText } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "framer-motion";
 import { useState } from "react";
-
-// Import project images
-import ecommerceImg from "@/assets/project-ecommerce.jpg";
-import iotImg from "@/assets/project-iot.jpg";
-import inventoryImg from "@/assets/project-inventory.jpg";
-import analyticsImg from "@/assets/project-analytics.jpg";
-import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
-import flexsimImg from "@/assets/project-flexsim.jpg";
-import creoImg from "@/assets/project-creo.jpg";
-import plmImg from "@/assets/project-plm.jpg";
-
-const itProjects = [
-  {
-    id: 1,
-    title: "E-Commerce Web Platform",
-    description: "Full-stack e-commerce website with React frontend, Node.js backend, payment integration, and admin dashboard.",
-    image: ecommerceImg,
-    tags: ["React", "Node.js", "MongoDB", "Stripe"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "IoT Smart Home System",
-    description: "Embedded system project with Arduino and Raspberry Pi for home automation with mobile app control.",
-    image: iotImg,
-    tags: ["Python", "Arduino", "IoT", "React Native"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: true,
-  },
-  {
-    id: 3,
-    title: "Inventory Management App",
-    description: "Cross-platform mobile application for stock management with barcode scanning and real-time sync.",
-    image: inventoryImg,
-    tags: ["React Native", "Firebase", "Python"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "Data Analytics Dashboard",
-    description: "Real-time analytics dashboard with Python backend, data visualization, and automated reporting.",
-    image: analyticsImg,
-    tags: ["Python", "React", "PostgreSQL", "Charts"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: false,
-  },
-];
-
-const nonItProjects = [
-  {
-    id: 5,
-    title: "Automotive Component Design",
-    description: "3D CAD design of automotive parts using SolidWorks with FEA analysis and manufacturing drawings.",
-    image: cadAutomotiveImg,
-    tags: ["SolidWorks", "FEA", "CAD"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: true,
-  },
-  {
-    id: 6,
-    title: "Manufacturing Line Simulation",
-    description: "FlexSim simulation of production line for optimization, bottleneck analysis, and efficiency improvement.",
-    image: flexsimImg,
-    tags: ["FlexSim", "Simulation", "Analysis"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: true,
-  },
-  {
-    id: 7,
-    title: "Product Assembly Design",
-    description: "Complex product assembly design using PTC Creo with motion analysis and interference checks.",
-    image: creoImg,
-    tags: ["PTC Creo", "NX", "Assembly"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: false,
-  },
-  {
-    id: 8,
-    title: "PLM Implementation Project",
-    description: "PTC Windchill implementation for product lifecycle management and document control system.",
-    image: plmImg,
-    tags: ["Windchill", "PLM", "Workflow"],
-    liveUrl: "#",
-    githubUrl: "#",
-    featured: false,
-  },
-];
+import ProjectImageCarousel from "./ProjectImageCarousel";
+import { itProjects, engineeringProjects, Project } from "@/data/projectsData";
 
 const Projects = () => {
-  const [activeTab, setActiveTab] = useState<"it" | "nonit">("it");
-  const projects = activeTab === "it" ? itProjects : nonItProjects;
+  const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
+  const projects = activeTab === "it" ? itProjects : engineeringProjects;
   const featuredProjects = projects.filter(p => p.featured);
   const otherProjects = projects.filter(p => !p.featured);
+
+  const renderProjectLinks = (project: Project) => {
+    if (project.category === "it") {
+      return (
+        <a 
+          href={project.githubUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2.5 bg-card rounded-lg text-foreground hover:bg-muted transition-colors shadow-md border border-border"
+          title="View on GitHub"
+        >
+          <Github size={16} />
+        </a>
+      );
+    } else {
+      return (
+        <>
+          <a 
+            href={project.articleUrl} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 bg-primary rounded-lg text-primary-foreground hover:bg-primary/90 transition-colors shadow-md"
+            title="Read Article"
+          >
+            <FileText size={16} />
+          </a>
+          <a 
+            href={project.githubUrl || "https://github.com"} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2.5 bg-card rounded-lg text-foreground hover:bg-muted transition-colors shadow-md border border-border"
+            title="View Repository"
+          >
+            <Github size={16} />
+          </a>
+        </>
+      );
+    }
+  };
+
+  const renderSmallProjectLinks = (project: Project) => {
+    if (project.category === "it") {
+      return (
+        <a 
+          href={project.githubUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+          title="View on GitHub"
+        >
+          <Github size={14} />
+        </a>
+      );
+    } else {
+      return (
+        <>
+          <a 
+            href={project.articleUrl} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="Read Article"
+          >
+            <FileText size={14} />
+          </a>
+          <a 
+            href={project.githubUrl || "https://github.com"} 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            title="View Repository"
+          >
+            <Github size={14} />
+          </a>
+        </>
+      );
+    }
+  };
 
   return (
     <section id="projects" className="py-24 relative overflow-hidden bg-mesh">
@@ -135,18 +119,18 @@ const Projects = () => {
               }`}
             >
               <Cpu size={18} />
-              IT Projects
+              IT Projects ({itProjects.length})
             </button>
             <button
-              onClick={() => setActiveTab("nonit")}
+              onClick={() => setActiveTab("engineering")}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-300 ${
-                activeTab === "nonit" 
+                activeTab === "engineering" 
                   ? "bg-accent text-accent-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Cog size={18} />
-              Engineering Projects
+              Engineering ({engineeringProjects.length})
             </button>
           </div>
         </div>
@@ -168,13 +152,9 @@ const Projects = () => {
               className="group bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-300 hover-lift"
             >
               <div className="relative overflow-hidden aspect-[16/10]">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-                <div className="absolute top-4 left-4">
+                <ProjectImageCarousel images={project.images} title={project.title} />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent pointer-events-none" />
+                <div className="absolute top-4 left-4 z-20">
                   <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                     activeTab === "it" 
                       ? "bg-primary text-primary-foreground" 
@@ -183,13 +163,8 @@ const Projects = () => {
                     Featured
                   </span>
                 </div>
-                <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
-                  <a href={project.liveUrl} className="p-2.5 bg-primary rounded-lg text-primary-foreground hover:bg-primary/90 transition-colors shadow-md">
-                    <ExternalLink size={16} />
-                  </a>
-                  <a href={project.githubUrl} className="p-2.5 bg-card rounded-lg text-foreground hover:bg-muted transition-colors shadow-md border border-border">
-                    <Github size={16} />
-                  </a>
+                <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 z-20">
+                  {renderProjectLinks(project)}
                 </div>
               </div>
               
@@ -226,15 +201,11 @@ const Projects = () => {
               key={project.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + index * 0.1 }}
+              transition={{ delay: 0.3 + index * 0.05 }}
               className="group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-300 hover-lift p-4"
             >
               <div className="relative overflow-hidden aspect-video rounded-lg mb-4">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-105"
-                />
+                <ProjectImageCarousel images={project.images} title={project.title} />
               </div>
               <h3 className="font-display text-base font-semibold mb-2 group-hover:text-primary transition-colors">
                 {project.title}
@@ -243,12 +214,7 @@ const Projects = () => {
                 {project.description}
               </p>
               <div className="flex gap-2">
-                <a href={project.liveUrl} className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors">
-                  <ExternalLink size={14} />
-                </a>
-                <a href={project.githubUrl} className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors">
-                  <Github size={14} />
-                </a>
+                {renderSmallProjectLinks(project)}
               </div>
             </motion.div>
           ))}
