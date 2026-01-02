@@ -1,21 +1,21 @@
+import { forwardRef, memo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { Heart, Mail, ArrowUpRight, Sparkles } from "lucide-react";
 import SocialLinks from "./SocialLinks";
 
-const Footer = () => {
+const footerLinks = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Projects", href: "/projects" },
+  { name: "Blog", href: "/blog" },
+  { name: "Contact", href: "/contact" },
+];
+
+const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
 
-  const footerLinks = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Projects", href: "/projects" },
-    { name: "Blog", href: "/blog" },
-    { name: "Contact", href: "/contact" },
-  ];
-
   return (
-    <footer className="relative py-20 border-t border-border bg-card/30 overflow-hidden">
+    <footer ref={ref} className="relative py-20 border-t border-border bg-card/30 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-mesh opacity-50" />
       
@@ -24,13 +24,9 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" className="group flex items-center gap-2 mb-6">
-              <motion.div
-                whileHover={{ rotate: 180 }}
-                transition={{ duration: 0.5 }}
-                className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center"
-              >
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center hover:rotate-180 transition-transform duration-500">
                 <Sparkles className="text-primary-foreground" size={20} />
-              </motion.div>
+              </div>
               <span className="font-display text-2xl font-bold text-gradient">
                 TTS.dev
               </span>
@@ -38,15 +34,14 @@ const Footer = () => {
             <p className="text-muted-foreground leading-relaxed mb-6 max-w-sm">
               Creating innovative solutions in both IT and Engineering domains - from web applications to CAD designs.
             </p>
-            <motion.a 
+            <a 
               href="mailto:tharaneetharan@email.com"
-              whileHover={{ x: 5 }}
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium group"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium group hover:translate-x-1 transition-transform duration-200"
             >
               <Mail size={18} />
               tharaneetharan@email.com
               <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-            </motion.a>
+            </a>
           </div>
 
           {/* Quick Links */}
@@ -54,7 +49,7 @@ const Footer = () => {
             <h4 className="font-display text-lg font-bold mb-6">Quick Links</h4>
             <nav className="flex flex-col gap-3">
               {footerLinks.map((link) => (
-                <motion.div key={link.name} whileHover={{ x: 5 }}>
+                <div key={link.name} className="hover:translate-x-1 transition-transform duration-200">
                   <Link
                     to={link.href}
                     className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group"
@@ -62,7 +57,7 @@ const Footer = () => {
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
                     {link.name}
                   </Link>
-                </motion.div>
+                </div>
               ))}
             </nav>
           </div>
@@ -80,12 +75,9 @@ const Footer = () => {
         <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm flex items-center gap-2">
             © {currentYear} Tharanee Tharan S.S. Crafted with
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
+            <span className="animate-pulse">
               <Heart size={14} className="text-destructive" fill="currentColor" />
-            </motion.span>
+            </span>
             and lots of ☕
           </p>
           <div className="flex items-center gap-4">
@@ -101,6 +93,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
-export default Footer;
+Footer.displayName = "Footer";
+
+export default memo(Footer);
