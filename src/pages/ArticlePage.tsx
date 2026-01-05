@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
-import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench } from "lucide-react";
+import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
@@ -86,7 +86,7 @@ const ArticlePage = memo(() => {
                     {article.subtitle}
                   </p>
                   
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div className="flex items-center gap-2 text-sm">
                       <Clock size={16} className="text-primary" />
                       <div>
@@ -98,7 +98,7 @@ const ArticlePage = memo(() => {
                       <Briefcase size={16} className="text-primary" />
                       <div>
                         <p className="text-muted-foreground">Client</p>
-                        <p className="font-medium">{article.client}</p>
+                        <p className="font-medium text-xs">{article.client}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
@@ -108,6 +108,24 @@ const ArticlePage = memo(() => {
                         <p className="font-medium">{article.role}</p>
                       </div>
                     </div>
+                    {article.teamSize && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Users size={16} className="text-accent" />
+                        <div>
+                          <p className="text-muted-foreground">Team Size</p>
+                          <p className="font-medium">{article.teamSize}</p>
+                        </div>
+                      </div>
+                    )}
+                    {article.industry && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Building size={16} className="text-accent" />
+                        <div>
+                          <p className="text-muted-foreground">Industry</p>
+                          <p className="font-medium text-xs">{article.industry}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -120,6 +138,21 @@ const ArticlePage = memo(() => {
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-background/50 to-transparent" />
                 </div>
               </div>
+
+              {/* Key Metrics */}
+              {article.keyMetrics && article.keyMetrics.length > 0 && (
+                <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {article.keyMetrics.map((metric, index) => (
+                    <div 
+                      key={index}
+                      className="p-4 bg-card rounded-xl border border-border text-center hover:border-primary/50 transition-colors"
+                    >
+                      <div className="text-2xl md:text-3xl font-bold text-gradient mb-1">{metric.value}</div>
+                      <div className="text-xs md:text-sm text-muted-foreground">{metric.label}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
@@ -246,9 +279,9 @@ const ArticlePage = memo(() => {
                 </div>
               </div>
 
-              {/* Technologies */}
+              {/* Technologies & Tools */}
               <div 
-                className="mb-12"
+                className="mb-12 grid md:grid-cols-2 gap-6"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
@@ -256,17 +289,40 @@ const ArticlePage = memo(() => {
                   transitionDelay: '600ms'
                 }}
               >
-                <h2 className="font-display text-2xl font-bold mb-4">Technologies Used</h2>
-                <div className="flex flex-wrap gap-3">
-                  {article.technologies.map((tech) => (
-                    <span 
-                      key={tech}
-                      className="px-4 py-2 bg-card border-2 border-border rounded-xl font-medium text-sm hover:border-primary/50 transition-colors"
-                    >
-                      {tech}
-                    </span>
-                  ))}
+                <div>
+                  <h2 className="font-display text-2xl font-bold mb-4 flex items-center gap-2">
+                    <Target size={20} className="text-primary" />
+                    Technologies Used
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {article.technologies.map((tech) => (
+                      <span 
+                        key={tech}
+                        className="px-3 py-2 bg-card border-2 border-border rounded-xl font-medium text-sm hover:border-primary/50 transition-colors"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+                {article.toolsUsed && article.toolsUsed.length > 0 && (
+                  <div>
+                    <h2 className="font-display text-2xl font-bold mb-4 flex items-center gap-2">
+                      <Wrench size={20} className="text-accent" />
+                      Tools & Software
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {article.toolsUsed.map((tool) => (
+                        <span 
+                          key={tool}
+                          className="px-3 py-2 bg-accent/10 border border-accent/20 rounded-xl font-medium text-sm text-accent"
+                        >
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Lessons Learned */}
