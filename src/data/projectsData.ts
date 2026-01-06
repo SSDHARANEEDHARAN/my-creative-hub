@@ -20,7 +20,7 @@ export interface Project {
   category: "it" | "engineering";
 }
 
-// IT Projects (10+ projects)
+// IT Projects (10 projects)
 export const itProjects: Project[] = [
   {
     id: 1,
@@ -28,6 +28,7 @@ export const itProjects: Project[] = [
     description: "Full-stack e-commerce website with React frontend, Node.js backend, payment integration, and admin dashboard. Features include product catalog, shopping cart, user authentication, and order management.",
     images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
     tags: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
+    articleUrl: "/projects/article/ecommerce-platform",
     githubUrl: "https://github.com",
     featured: true,
     category: "it",
@@ -38,6 +39,7 @@ export const itProjects: Project[] = [
     description: "Embedded system project with Arduino and Raspberry Pi for home automation with mobile app control. Includes temperature monitoring, lighting control, and security features.",
     images: [iotImg, ecommerceImg, analyticsImg, inventoryImg, plmImg],
     tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
+    articleUrl: "/projects/article/iot-smart-home",
     githubUrl: "https://github.com",
     featured: true,
     category: "it",
@@ -48,6 +50,7 @@ export const itProjects: Project[] = [
     description: "Cross-platform mobile application for stock management with barcode scanning, real-time sync, and multi-warehouse support.",
     images: [inventoryImg, ecommerceImg, iotImg, analyticsImg, plmImg],
     tags: ["React Native", "Firebase", "Python", "REST API"],
+    articleUrl: "/projects/article/inventory-management",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -58,6 +61,7 @@ export const itProjects: Project[] = [
     description: "Real-time analytics dashboard with Python backend, interactive data visualization, and automated reporting for business intelligence.",
     images: [analyticsImg, inventoryImg, ecommerceImg, iotImg, plmImg],
     tags: ["Python", "React", "PostgreSQL", "D3.js", "Pandas"],
+    articleUrl: "/projects/article/analytics-dashboard",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -68,6 +72,7 @@ export const itProjects: Project[] = [
     description: "Collaborative project management tool with real-time updates, Kanban boards, team collaboration features, and time tracking.",
     images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
     tags: ["React", "Node.js", "Socket.io", "MongoDB"],
+    articleUrl: "/projects/article/task-management",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -78,6 +83,7 @@ export const itProjects: Project[] = [
     description: "IoT-based weather station with sensors for temperature, humidity, pressure, and rainfall with web dashboard visualization.",
     images: [iotImg, analyticsImg, inventoryImg, ecommerceImg, plmImg],
     tags: ["Arduino", "Python", "Flask", "Chart.js", "IoT"],
+    articleUrl: "/projects/article/weather-station",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -88,6 +94,7 @@ export const itProjects: Project[] = [
     description: "Point of sale system for restaurants with order management, table tracking, kitchen display system, and payment processing.",
     images: [inventoryImg, ecommerceImg, analyticsImg, iotImg, plmImg],
     tags: ["React", "Electron", "Node.js", "SQLite"],
+    articleUrl: "/projects/article/restaurant-pos",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -98,6 +105,7 @@ export const itProjects: Project[] = [
     description: "Mobile application for booking medical appointments with doctor profiles, real-time availability, and notification reminders.",
     images: [ecommerceImg, iotImg, analyticsImg, inventoryImg, plmImg],
     tags: ["React Native", "Firebase", "Push Notifications"],
+    articleUrl: "/projects/article/healthcare-app",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -108,6 +116,7 @@ export const itProjects: Project[] = [
     description: "IoT solution for precision farming with soil moisture sensors, automated irrigation, and crop health monitoring dashboard.",
     images: [iotImg, analyticsImg, ecommerceImg, inventoryImg, plmImg],
     tags: ["Python", "Raspberry Pi", "TensorFlow", "React"],
+    articleUrl: "/projects/article/smart-agriculture",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
@@ -118,13 +127,14 @@ export const itProjects: Project[] = [
     description: "Educational platform with course creation, video streaming, quiz system, progress tracking, and certificate generation.",
     images: [analyticsImg, ecommerceImg, inventoryImg, iotImg, plmImg],
     tags: ["React", "Node.js", "AWS", "MongoDB", "Redis"],
+    articleUrl: "/projects/article/learning-management",
     githubUrl: "https://github.com",
     featured: false,
     category: "it",
   },
 ];
 
-// Engineering Projects (15+ projects)
+// Engineering Projects (20 projects)
 export const engineeringProjects: Project[] = [
   {
     id: 101,
@@ -283,6 +293,46 @@ export const engineeringProjects: Project[] = [
     images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
     tags: ["SolidWorks", "Thermal", "Casting", "Design"],
     articleUrl: "/projects/article/motor-housing-design",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 117,
+    title: "Automotive Dashboard Assembly",
+    description: "Complete dashboard module design using PTC Creo with multi-material integration, airbag housing, and HVAC duct routing.",
+    images: [creoImg, plmImg, cadAutomotiveImg, flexsimImg, analyticsImg],
+    tags: ["PTC Creo", "Automotive Interior", "Assembly", "Multi-CAD"],
+    articleUrl: "/projects/article/dashboard-assembly",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 118,
+    title: "CNC Machine Tool Design",
+    description: "Vertical machining center structure design with static and dynamic stiffness analysis for precision machining applications.",
+    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
+    tags: ["SolidWorks", "Machine Design", "FEA", "Dynamics"],
+    articleUrl: "/projects/article/cnc-machine-design",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 119,
+    title: "Material Handling AGV System",
+    description: "Automated guided vehicle system design with FlexSim simulation for factory logistics optimization and fleet sizing.",
+    images: [flexsimImg, cadAutomotiveImg, plmImg, creoImg, analyticsImg],
+    tags: ["FlexSim", "AGV", "Automation", "Logistics"],
+    articleUrl: "/projects/article/agv-system-design",
+    featured: false,
+    category: "engineering",
+  },
+  {
+    id: 120,
+    title: "Heat Exchanger Design",
+    description: "Shell and tube heat exchanger design with thermal CFD analysis, pressure drop optimization, and ASME code compliance.",
+    images: [cadAutomotiveImg, creoImg, plmImg, flexsimImg, analyticsImg],
+    tags: ["SolidWorks", "CFD", "Thermal Design", "ASME"],
+    articleUrl: "/projects/article/heat-exchanger-design",
     featured: false,
     category: "engineering",
   },
