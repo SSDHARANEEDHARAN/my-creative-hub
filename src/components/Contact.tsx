@@ -45,9 +45,9 @@ const Contact = () => {
   };
 
   const contactInfo = [
-    { icon: <Mail size={20} />, label: "Email", value: "hello@alexchen.dev", link: "mailto:hello@alexchen.dev" },
-    { icon: <Phone size={20} />, label: "Phone", value: "+1 (555) 123-4567", link: "tel:+15551234567" },
-    { icon: <MapPin size={20} />, label: "Location", value: "San Francisco, CA", link: null },
+    { icon: <Mail size={20} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
+    { icon: <Phone size={20} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
+    { icon: <MapPin size={20} />, label: "Location", value: "Tamil Nadu, India", link: null },
   ];
 
   const benefits = [

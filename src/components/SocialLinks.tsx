@@ -6,8 +6,8 @@ interface SocialLinksProps {
 }
 
 export const socialLinks = [
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: Github, href: "https://github.com/SSDHARANEEDHARAN", label: "GitHub" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/dharaneedharan-ss-70941a211/", label: "LinkedIn" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
   { icon: Dribbble, href: "https://dribbble.com", label: "Dribbble" },
 ];
