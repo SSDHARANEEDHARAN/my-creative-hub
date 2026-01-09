@@ -1202,3 +1202,8 @@ export const articleContents: ArticleContent[] = [
     lessons: ["HTRI provides accurate thermal-hydraulic predictions reducing prototype iterations", "Vibration analysis is critical for high-flow applications", "Early third-party involvement ensures smooth certification process"]
   }
 ];
+
+// Helper function to get article by slug
+export const getArticleBySlug = (slug: string): ArticleContent | undefined => {
+  return articleContents.find(article => article.slug === slug);
+};

@@ -35,11 +35,11 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               Creating innovative solutions in both IT and Engineering domains - from web applications to CAD designs.
             </p>
             <a 
-              href="mailto:tharaneetharan@email.com"
+              href="mailto:tharaneetharanss@gmail.com"
               className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium group hover:translate-x-1 transition-transform duration-200"
             >
               <Mail size={18} />
-              tharaneetharan@email.com
+              tharaneetharanss@gmail.com
               <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
           </div>
