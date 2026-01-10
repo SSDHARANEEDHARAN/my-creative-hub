@@ -251,6 +251,59 @@
   .section-badge-dot {
     @apply w-2 h-2 bg-primary rounded-full;
   }
+
+  /* Sharp edge design system */
+  .sharp-card {
+    @apply rounded-none;
+    transition: var(--transition-smooth);
+  }
+
+  .sharp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .section-badge-sharp {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-secondary border-2 border-border;
+  }
+
+  .section-badge-dot-sharp {
+    @apply w-2 h-2 bg-primary;
+  }
+
+  .btn-sharp {
+    @apply rounded-none border-2 transition-all duration-300;
+  }
+
+  .btn-sharp:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px hsl(var(--primary) / 0.3);
+  }
+
+  .skill-bar-sharp {
+    @apply relative h-2.5 bg-secondary overflow-hidden border border-border;
+  }
+
+  .skill-bar-fill-sharp {
+    @apply absolute inset-y-0 left-0;
+    background: var(--gradient-primary);
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .input-sharp {
+    @apply rounded-none border-2 border-border focus:border-primary transition-colors;
+  }
+
+  .card-sharp {
+    @apply rounded-none border-2 border-border bg-card;
+    transition: var(--transition-smooth);
+  }
+
+  .card-sharp:hover {
+    @apply border-primary;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
 }
 
 @layer utilities {
