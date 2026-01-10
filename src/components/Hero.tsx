@@ -4,6 +4,7 @@ import { Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
+import heroBackground from "@/assets/hero-background.jpg";
 
 const Hero = () => {
   const highlights = [
@@ -13,7 +14,14 @@ const Hero = () => {
   ];
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 bg-mesh">
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroBackground})` }}
+      />
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-background/60 dark:bg-background/80" />
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient orbs */}
