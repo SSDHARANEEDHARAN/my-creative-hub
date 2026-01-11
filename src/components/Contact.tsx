@@ -58,13 +58,13 @@ const Contact = () => {
 
   return (
     <section id="contact" className="py-32 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-2/3 h-full bg-secondary/30 rounded-r-[200px] -z-10" />
+      {/* Background decoration - Sharp edge */}
+      <div className="absolute top-0 left-0 w-2/3 h-full bg-secondary/30 -z-10" style={{ clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0 100%)' }} />
       
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary rounded-full mb-6">
-            <Mail className="text-primary" size={16} />
+          <div className="section-badge-sharp mb-6 inline-flex">
+            <span className="section-badge-dot-sharp" />
             <span className="text-secondary-foreground font-medium text-sm">Get In Touch</span>
           </div>
           
@@ -83,7 +83,7 @@ const Contact = () => {
             <div className="space-y-6">
               {contactInfo.map((info) => (
                 <div key={info.label} className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 rounded-2xl bg-card border border-border flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 shrink-0 shadow-sm">
+                  <div className="w-12 h-12 bg-card border-2 border-border flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 shrink-0 shadow-sm">
                     {info.icon}
                   </div>
                   <div>
@@ -101,7 +101,7 @@ const Contact = () => {
             </div>
 
             {/* Benefits Card */}
-            <div className="p-6 bg-card rounded-2xl border border-border shadow-sm">
+            <div className="sharp-card p-6">
               <h4 className="font-display text-xl font-semibold mb-4">
                 Why Work With Me?
               </h4>
@@ -116,9 +116,9 @@ const Contact = () => {
             </div>
 
             {/* Availability Card */}
-            <div className="p-6 rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5">
+            <div className="p-6 border-2 border-dashed border-primary/30 bg-primary/5">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-3 h-3 bg-accent rounded-full animate-pulse" />
+                <div className="w-3 h-3 bg-accent animate-pulse" />
                 <h4 className="font-display text-lg font-semibold text-primary">
                   Currently Available
                 </h4>
@@ -132,7 +132,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-3">
-            <form onSubmit={handleSubmit} className="bg-card p-8 md:p-10 rounded-3xl border border-border shadow-lg space-y-6">
+            <form onSubmit={handleSubmit} className="sharp-card p-8 md:p-10 shadow-lg space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
@@ -143,7 +143,7 @@ const Contact = () => {
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="John Doe"
                     required
-                    className="bg-secondary/50 border-border focus:border-primary h-12 rounded-xl"
+                    className="input-sharp h-12"
                   />
                 </div>
                 <div>
@@ -156,7 +156,7 @@ const Contact = () => {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="john@example.com"
                     required
-                    className="bg-secondary/50 border-border focus:border-primary h-12 rounded-xl"
+                    className="input-sharp h-12"
                   />
                 </div>
               </div>
@@ -170,7 +170,7 @@ const Contact = () => {
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   placeholder="Project Inquiry / Collaboration / General Question"
                   required
-                  className="bg-secondary/50 border-border focus:border-primary h-12 rounded-xl"
+                  className="input-sharp h-12"
                 />
               </div>
 
@@ -184,7 +184,7 @@ const Contact = () => {
                   placeholder="Tell me about your project, goals, and how I can help..."
                   required
                   rows={6}
-                  className="bg-secondary/50 border-border focus:border-primary resize-none rounded-xl"
+                  className="input-sharp resize-none"
                 />
               </div>
 
@@ -192,12 +192,12 @@ const Contact = () => {
                 type="submit" 
                 variant="hero" 
                 size="xl" 
-                className="w-full"
+                className="w-full rounded-none"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
-                    <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />
                     Sending Message...
                   </span>
                 ) : (
