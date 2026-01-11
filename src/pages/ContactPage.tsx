@@ -50,9 +50,9 @@ const ContactPage = () => {
   };
 
   const contactInfo = [
-    { icon: <Mail size={20} />, label: "Email", value: "hello@alexchen.dev", link: "mailto:hello@alexchen.dev" },
-    { icon: <Phone size={20} />, label: "Phone", value: "+1 (555) 123-4567", link: "tel:+15551234567" },
-    { icon: <MapPin size={20} />, label: "Location", value: "San Francisco, CA", link: null },
+    { icon: <Mail size={20} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
+    { icon: <Phone size={20} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
+    { icon: <MapPin size={20} />, label: "Location", value: "Tamil Nadu, India", link: null },
   ];
 
   const benefits = [
@@ -64,21 +64,21 @@ const ContactPage = () => {
   return (
     <>
       <Helmet>
-        <title>Contact | Alex Chen - Get In Touch</title>
-        <meta name="description" content="Get in touch with Alex Chen for web development and design projects. Let's create something amazing together." />
+        <title>Contact | Tharanee Tharan S.S - Get In Touch</title>
+        <meta name="description" content="Get in touch with Tharanee Tharan S.S for IT development and Engineering design projects. Let's create something amazing together." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">
         <Navigation />
         <main className="pt-20">
           <section className="py-24 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-2/3 h-full bg-secondary/30 rounded-r-[200px] -z-10" />
+            <div className="absolute top-0 left-0 w-2/3 h-full bg-secondary/30 -z-10" style={{ clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0 100%)' }} />
             
             <div className="container mx-auto px-6">
               <ScrollReveal>
                 <div className="text-center mb-16">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary rounded-full mb-6">
-                    <Mail className="text-primary" size={16} />
+                  <div className="section-badge-sharp mb-6 inline-flex">
+                    <span className="section-badge-dot-sharp" />
                     <span className="text-secondary-foreground font-medium text-sm">Get In Touch</span>
                   </div>
                   
@@ -99,7 +99,7 @@ const ContactPage = () => {
                     <div className="space-y-6">
                       {contactInfo.map((info) => (
                         <div key={info.label} className="flex items-start gap-4 group">
-                          <div className="w-12 h-12 rounded-2xl bg-card border border-border flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 shrink-0 shadow-sm">
+                          <div className="w-12 h-12 bg-card border-2 border-border flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300 shrink-0 shadow-sm">
                             {info.icon}
                           </div>
                           <div>
@@ -118,7 +118,7 @@ const ContactPage = () => {
                   </ScrollReveal>
 
                   <ScrollReveal delay={200}>
-                    <div className="p-6 bg-card rounded-2xl border border-border shadow-sm">
+                    <div className="sharp-card p-6">
                       <h4 className="font-display text-xl font-semibold mb-4">
                         Why Work With Me?
                       </h4>
@@ -134,9 +134,9 @@ const ContactPage = () => {
                   </ScrollReveal>
 
                   <ScrollReveal delay={300}>
-                    <div className="p-6 rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5">
+                    <div className="p-6 border-2 border-dashed border-primary/30 bg-primary/5">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-3 h-3 bg-accent rounded-full animate-pulse" />
+                        <div className="w-3 h-3 bg-accent animate-pulse" />
                         <h4 className="font-display text-lg font-semibold text-primary">
                           Currently Available
                         </h4>
@@ -153,7 +153,7 @@ const ContactPage = () => {
 
                 {/* Contact Form */}
                 <ScrollReveal delay={400} className="lg:col-span-3">
-                  <form onSubmit={handleSubmit} className="bg-card p-8 md:p-10 rounded-3xl border border-border shadow-lg space-y-6">
+                  <form onSubmit={handleSubmit} className="sharp-card p-8 md:p-10 shadow-lg space-y-6">
                     <div className="grid sm:grid-cols-2 gap-6">
                       <div>
                         <label className="text-sm font-medium mb-2 block">
@@ -164,7 +164,7 @@ const ContactPage = () => {
                           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                           placeholder="John Doe"
                           required
-                          className="bg-secondary/50 border-border focus:border-primary h-12 rounded-xl"
+                          className="input-sharp h-12"
                         />
                       </div>
                       <div>
@@ -177,7 +177,7 @@ const ContactPage = () => {
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           placeholder="john@example.com"
                           required
-                          className="bg-secondary/50 border-border focus:border-primary h-12 rounded-xl"
+                          className="input-sharp h-12"
                         />
                       </div>
                     </div>
@@ -191,7 +191,7 @@ const ContactPage = () => {
                         onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                         placeholder="Project Inquiry / Collaboration / General Question"
                         required
-                        className="bg-secondary/50 border-border focus:border-primary h-12 rounded-xl"
+                        className="input-sharp h-12"
                       />
                     </div>
 
@@ -205,7 +205,7 @@ const ContactPage = () => {
                         placeholder="Tell me about your project, goals, and how I can help..."
                         required
                         rows={6}
-                        className="bg-secondary/50 border-border focus:border-primary resize-none rounded-xl"
+                        className="input-sharp resize-none"
                       />
                     </div>
 
@@ -213,12 +213,12 @@ const ContactPage = () => {
                       type="submit" 
                       variant="hero" 
                       size="xl" 
-                      className="w-full"
+                      className="w-full rounded-none"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
                         <span className="flex items-center gap-2">
-                          <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                          <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground animate-spin" />
                           Sending Message...
                         </span>
                       ) : (

@@ -12,7 +12,7 @@ const ProjectLinks = memo(({ project }: { project: Project }) => {
         href={project.githubUrl} 
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2.5 bg-card rounded-lg text-foreground hover:bg-muted transition-colors shadow-md border border-border"
+        className="p-2.5 bg-card text-foreground hover:bg-muted transition-colors shadow-md border-2 border-border"
         title="View on GitHub"
       >
         <Github size={16} />
@@ -24,7 +24,7 @@ const ProjectLinks = memo(({ project }: { project: Project }) => {
       href={project.articleUrl} 
       target="_blank"
       rel="noopener noreferrer"
-      className="p-2.5 bg-primary rounded-lg text-primary-foreground hover:bg-primary/90 transition-colors shadow-md"
+      className="p-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md"
       title="Read Article"
     >
       <FileText size={16} />
@@ -40,7 +40,7 @@ const SmallProjectLinks = memo(({ project }: { project: Project }) => {
         href={project.githubUrl} 
         target="_blank"
         rel="noopener noreferrer"
-        className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+        className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
         title="View on GitHub"
       >
         <Github size={14} />
@@ -52,7 +52,7 @@ const SmallProjectLinks = memo(({ project }: { project: Project }) => {
       href={project.articleUrl} 
       target="_blank"
       rel="noopener noreferrer"
-      className="p-2 bg-secondary rounded-lg text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+      className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
       title="Read Article"
     >
       <FileText size={14} />
@@ -74,12 +74,12 @@ const Projects = () => {
   return (
     <section id="projects" className="py-24 relative overflow-hidden bg-mesh">
       {/* Background decoration */}
-      <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1/3 h-2/3 bg-primary/5 rounded-l-[80px] -z-10" />
+      <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1/3 h-2/3 bg-primary/5 -z-10" />
       
       <div className="container mx-auto px-6">
         <div className="text-center mb-12">
-          <div className="section-badge mb-6">
-            <span className="section-badge-dot" />
+          <div className="section-badge-sharp mb-6 inline-flex">
+            <span className="section-badge-dot-sharp" />
             <span className="text-secondary-foreground font-medium text-sm">My Work</span>
           </div>
           
@@ -90,11 +90,11 @@ const Projects = () => {
             A curated selection of my best work across IT and Engineering domains.
           </p>
 
-          {/* Category Tabs */}
-          <div className="inline-flex items-center gap-2 p-1.5 bg-secondary rounded-xl">
+          {/* Category Tabs - Sharp Design */}
+          <div className="inline-flex items-center gap-2 p-1.5 bg-secondary">
             <button
               onClick={() => handleTabChange("it")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+              className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-200 ${
                 activeTab === "it" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
@@ -105,7 +105,7 @@ const Projects = () => {
             </button>
             <button
               onClick={() => handleTabChange("engineering")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+              className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-200 ${
                 activeTab === "engineering" 
                   ? "bg-accent text-accent-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
@@ -125,13 +125,13 @@ const Projects = () => {
           {featuredProjects.map((project) => (
             <div 
               key={project.id}
-              className="group bg-card rounded-2xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-200 hover-lift"
+              className="group sharp-card overflow-hidden hover:border-primary/30 transition-all duration-200 hover-lift"
             >
               <div className="relative overflow-hidden aspect-[16/10]">
                 <ProjectImageCarousel images={project.images} title={project.title} />
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent pointer-events-none" />
                 <div className="absolute top-4 left-4 z-20">
-                  <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                  <span className={`px-3 py-1 text-xs font-medium ${
                     activeTab === "it" 
                       ? "bg-primary text-primary-foreground" 
                       : "bg-accent text-accent-foreground"
@@ -154,7 +154,7 @@ const Projects = () => {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
-                    <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium rounded-md text-secondary-foreground">
+                    <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium text-secondary-foreground">
                       {tag}
                     </span>
                   ))}
@@ -172,9 +172,9 @@ const Projects = () => {
           {otherProjects.map((project) => (
             <div 
               key={project.id}
-              className="group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-200 hover-lift p-4"
+              className="group sharp-card overflow-hidden hover:border-primary/30 transition-all duration-200 hover-lift p-4"
             >
-              <div className="relative overflow-hidden aspect-video rounded-lg mb-4">
+              <div className="relative overflow-hidden aspect-video mb-4">
                 <ProjectImageCarousel images={project.images} title={project.title} />
               </div>
               <h3 className="font-display text-base font-semibold mb-2 group-hover:text-primary transition-colors">
@@ -191,7 +191,7 @@ const Projects = () => {
         </div>
 
         <div className="text-center">
-          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
+          <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-none border-2">
             View All Projects
           </Button>
         </div>

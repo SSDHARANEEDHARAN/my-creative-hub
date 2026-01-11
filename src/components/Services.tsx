@@ -56,9 +56,10 @@ const Services = () => {
     <section id="services" className="py-24 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
-          <span className="text-sky font-medium tracking-widest uppercase text-sm">
-            Services
-          </span>
+          <div className="section-badge-sharp mb-6 inline-flex">
+            <span className="section-badge-dot-sharp" />
+            <span className="text-secondary-foreground font-medium text-sm">Services</span>
+          </div>
           <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mt-4">
             What I Offer
           </h2>
@@ -71,23 +72,23 @@ const Services = () => {
           {services.map((service, index) => (
             <div
               key={service.id}
-              className={`relative group bg-card/50 backdrop-blur-sm border rounded-2xl p-8 transition-all duration-500 hover:shadow-glow ${
+              className={`relative group sharp-card p-8 transition-all duration-500 hover:shadow-lg ${
                 service.popular
-                  ? "border-sky/50 scale-105 shadow-elegant"
-                  : "border-border/50 hover:border-sky/30"
+                  ? "border-primary/50 scale-105 shadow-elegant"
+                  : "hover:border-primary/30"
               }`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {service.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-gradient-sky text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg">
+                  <span className="bg-primary text-primary-foreground text-xs font-semibold px-4 py-1.5 shadow-lg">
                     Most Popular
                   </span>
                 </div>
               )}
 
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-sky/20 to-mint/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <service.icon className="w-7 h-7 text-sky" />
+              <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <service.icon className="w-7 h-7 text-primary" />
               </div>
 
               <h3 className="text-2xl font-bold text-foreground mb-2">
@@ -105,7 +106,7 @@ const Services = () => {
               <ul className="space-y-3 mb-8">
                 {service.features.map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-muted-foreground">
-                    <Check className="w-5 h-5 text-mint flex-shrink-0" />
+                    <Check className="w-5 h-5 text-accent flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -113,7 +114,7 @@ const Services = () => {
 
               <Button
                 variant={service.popular ? "accent" : "glass"}
-                className="w-full"
+                className="w-full rounded-none"
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Get Started
@@ -127,7 +128,7 @@ const Services = () => {
             Need something custom?{" "}
             <button
               onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-sky hover:text-mint transition-colors underline underline-offset-4"
+              className="text-primary hover:text-primary/80 transition-colors underline underline-offset-4"
             >
               Let's discuss your project
             </button>

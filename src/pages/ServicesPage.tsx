@@ -167,9 +167,10 @@ const ServicesPage = () => {
             <div className="container mx-auto px-6">
               <ScrollReveal>
                 <div className="text-center mb-16">
-                  <span className="text-primary font-medium tracking-widest uppercase text-sm">
-                    Services
-                  </span>
+                  <div className="section-badge-sharp mb-6 inline-flex">
+                    <span className="section-badge-dot-sharp" />
+                    <span className="text-secondary-foreground font-medium text-sm">Services</span>
+                  </div>
                   <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mt-4">
                     What I Offer
                   </h1>
@@ -177,11 +178,11 @@ const ServicesPage = () => {
                     Professional services spanning IT development and Engineering design
                   </p>
 
-                  {/* Category Tabs */}
-                  <div className="inline-flex items-center gap-2 p-1.5 bg-secondary rounded-xl mt-8">
+                  {/* Category Tabs - Sharp Design */}
+                  <div className="inline-flex items-center gap-2 p-1.5 bg-secondary mt-8">
                     <button
                       onClick={() => setActiveTab("it")}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-300 ${
+                      className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-300 ${
                         activeTab === "it" 
                           ? "bg-primary text-primary-foreground shadow-md" 
                           : "text-muted-foreground hover:text-foreground"
@@ -192,7 +193,7 @@ const ServicesPage = () => {
                     </button>
                     <button
                       onClick={() => setActiveTab("engineering")}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-all duration-300 ${
+                      className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-300 ${
                         activeTab === "engineering" 
                           ? "bg-accent text-accent-foreground shadow-md" 
                           : "text-muted-foreground hover:text-foreground"
@@ -209,21 +210,21 @@ const ServicesPage = () => {
                 {services.map((service, index) => (
                   <ScrollReveal key={service.id} delay={index * 100}>
                     <div
-                      className={`relative group bg-card/50 backdrop-blur-sm border rounded-2xl p-6 transition-all duration-500 hover:shadow-lg h-full flex flex-col ${
+                      className={`relative group sharp-card p-6 transition-all duration-500 hover:shadow-lg h-full flex flex-col ${
                         service.popular
                           ? "border-primary/50 shadow-lg ring-2 ring-primary/20"
-                          : "border-border/50 hover:border-primary/30"
+                          : "hover:border-primary/30"
                       }`}
                     >
                       {service.popular && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
+                          <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 shadow-lg">
                             Most Popular
                           </span>
                         </div>
                       )}
 
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform ${
+                      <div className={`w-12 h-12 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform ${
                         activeTab === "it" 
                           ? "bg-gradient-to-br from-primary/20 to-accent/20" 
                           : "bg-gradient-to-br from-secondary/30 to-accent/20"
@@ -255,7 +256,7 @@ const ServicesPage = () => {
                       <Link to="/contact" className="mt-auto">
                         <Button
                           variant={service.popular ? "hero" : "outline"}
-                          className="w-full"
+                          className="w-full rounded-none"
                         >
                           Get Started
                         </Button>
@@ -267,13 +268,13 @@ const ServicesPage = () => {
 
               <ScrollReveal delay={400}>
                 <div className="mt-16 text-center">
-                  <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 max-w-2xl mx-auto">
+                  <div className="sharp-card p-8 max-w-2xl mx-auto">
                     <h3 className="text-2xl font-bold text-foreground mb-3">Need Something Custom?</h3>
                     <p className="text-muted-foreground mb-6">
                       Have a unique project in mind? Let's discuss your specific requirements and create a tailored solution.
                     </p>
                     <Link to="/contact">
-                      <Button variant="hero" size="lg">
+                      <Button variant="hero" size="lg" className="rounded-none">
                         Let's Discuss Your Project
                       </Button>
                     </Link>

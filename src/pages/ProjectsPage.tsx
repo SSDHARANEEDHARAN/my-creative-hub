@@ -366,6 +366,10 @@ const ProjectsPage = () => {
               transition={{ duration: 0.6 }}
               className="text-center max-w-3xl mx-auto"
             >
+              <div className="section-badge-sharp mb-6 inline-flex">
+                <span className="section-badge-dot-sharp" />
+                <span className="text-secondary-foreground font-medium text-sm">Portfolio</span>
+              </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6">
                 My <span className="text-primary">Projects</span>
               </h1>
@@ -375,7 +379,7 @@ const ProjectsPage = () => {
               </p>
             </motion.div>
 
-            {/* Category Tabs */}
+            {/* Category Tabs - Sharp Design */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -384,10 +388,10 @@ const ProjectsPage = () => {
             >
               <button
                 onClick={() => setActiveTab("it")}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                className={`flex items-center gap-2 px-6 py-3 rounded-none font-medium transition-all duration-300 border-2 ${
                   activeTab === "it"
-                    ? "bg-primary text-primary-foreground shadow-lg"
-                    : "bg-card text-muted-foreground hover:bg-muted border border-border"
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                    : "bg-card text-muted-foreground hover:bg-muted border-border hover:border-primary/50"
                 }`}
               >
                 <Code2 size={20} />
@@ -395,20 +399,20 @@ const ProjectsPage = () => {
               </button>
               <button
                 onClick={() => setActiveTab("engineering")}
-                className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                className={`flex items-center gap-2 px-6 py-3 rounded-none font-medium transition-all duration-300 border-2 ${
                   activeTab === "engineering"
-                    ? "bg-primary text-primary-foreground shadow-lg"
-                    : "bg-card text-muted-foreground hover:bg-muted border border-border"
+                    ? "bg-accent text-accent-foreground border-accent shadow-lg"
+                    : "bg-card text-muted-foreground hover:bg-muted border-border hover:border-accent/50"
                 }`}
               >
                 <Cog size={20} />
-                Engineering Projects ({engineeringProjects.length})
+                Engineering ({engineeringProjects.length})
               </button>
             </motion.div>
           </div>
         </section>
 
-        {/* Projects Grid */}
+        {/* Featured Projects */}
         <section className="py-12">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <AnimatePresence mode="wait">
@@ -419,39 +423,127 @@ const ProjectsPage = () => {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4 }}
               >
-                {/* Featured Projects */}
+                {/* Featured Section */}
                 {featuredProjects.length > 0 && (
                   <div className="mb-12">
-                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                      <span className="w-2 h-2 bg-primary rounded-full"></span>
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                      <span className="w-2 h-8 bg-primary" />
                       Featured Projects
                     </h2>
                     <div className="grid md:grid-cols-2 gap-8">
                       {featuredProjects.map((project, index) => (
-                        <ProjectCard
+                        <motion.div
                           key={project.id}
-                          project={project}
-                          index={index}
-                          isFeatured
-                        />
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                        >
+                          <div className="relative aspect-video overflow-hidden">
+                            <ProjectImageCarousel images={project.images} title={project.title} />
+                            <div className="absolute top-4 left-4 z-10">
+                              <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold">
+                                Featured
+                              </span>
+                            </div>
+                          </div>
+                          <div className="p-6">
+                            <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                              {project.title}
+                            </h3>
+                            <p className="text-muted-foreground mb-4 line-clamp-3">
+                              {project.description}
+                            </p>
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {project.tags.slice(0, 4).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-2 py-1 bg-secondary text-secondary-foreground text-xs font-medium"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                            {project.liveUrl && (
+                              <a
+                                href={project.liveUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-sharp inline-flex items-center gap-2 text-sm"
+                              >
+                                View Live <ExternalLink size={14} />
+                              </a>
+                            )}
+                            {project.articleUrl && (
+                              <Link
+                                to={project.articleUrl}
+                                className="btn-sharp inline-flex items-center gap-2 text-sm"
+                              >
+                                Read Case Study <FileText size={14} />
+                              </Link>
+                            )}
+                          </div>
+                        </motion.div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Other Projects */}
+                {/* Other Projects Grid */}
                 <div>
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
+                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                    <span className="w-2 h-8 bg-accent" />
                     All Projects
                   </h2>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {otherProjects.map((project, index) => (
-                      <ProjectCard
+                      <motion.div
                         key={project.id}
-                        project={project}
-                        index={index}
-                      />
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                      >
+                        <div className="relative aspect-video overflow-hidden">
+                          <ProjectImageCarousel images={project.images} title={project.title} />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                            {project.title}
+                          </h3>
+                          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                            {project.description}
+                          </p>
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {project.tags.slice(0, 3).map((tag) => (
+                              <span
+                                key={tag}
+                                className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          {project.liveUrl && (
+                            <a
+                              href={project.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
+                            >
+                              View Live <ExternalLink size={12} />
+                            </a>
+                          )}
+                          {project.articleUrl && (
+                            <Link
+                              to={project.articleUrl}
+                              className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
+                            >
+                              Read More <FileText size={12} />
+                            </Link>
+                          )}
+                        </div>
+                      </motion.div>
                     ))}
                   </div>
                 </div>
@@ -463,149 +555,6 @@ const ProjectsPage = () => {
 
       <Footer />
     </>
-  );
-};
-
-interface ProjectCardProps {
-  project: Project;
-  index: number;
-  isFeatured?: boolean;
-}
-
-const ProjectCard = ({ project, index, isFeatured = false }: ProjectCardProps) => {
-  const isIT = project.category === "it";
-  
-  // IT projects link to live website, Engineering projects link to article
-  const linkUrl = isIT ? project.liveUrl : project.articleUrl;
-  const isExternal = isIT;
-
-  const CardWrapper = ({ children }: { children: React.ReactNode }) => {
-    if (isExternal && linkUrl) {
-      return (
-        <a
-          href={linkUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block h-full"
-        >
-          {children}
-        </a>
-      );
-    }
-    if (!isExternal && linkUrl) {
-      return (
-        <Link to={linkUrl} className="block h-full">
-          {children}
-        </Link>
-      );
-    }
-    return <div className="h-full">{children}</div>;
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-    >
-      <CardWrapper>
-        <div
-          className={`group bg-card rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full flex flex-col cursor-pointer ${
-            isFeatured ? "md:flex-row" : ""
-          }`}
-        >
-          {/* Image Section */}
-          <div
-            className={`relative overflow-hidden ${
-              isFeatured ? "md:w-1/2 h-64 md:h-auto" : "h-48"
-            }`}
-          >
-            <ProjectImageCarousel images={project.images} title={project.title} />
-            
-            {/* Link Indicator */}
-            <div className="absolute top-3 left-3 z-10">
-              <div
-                className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 ${
-                  isIT
-                    ? "bg-blue-500/90 text-white"
-                    : "bg-primary/90 text-primary-foreground"
-                }`}
-              >
-                {isIT ? (
-                  <>
-                    <ExternalLink size={12} />
-                    Live Site
-                  </>
-                ) : (
-                  <>
-                    <FileText size={12} />
-                    Case Study
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Content Section */}
-          <div
-            className={`p-5 flex flex-col flex-grow ${
-              isFeatured ? "md:w-1/2" : ""
-            }`}
-          >
-            <h3
-              className={`font-bold mb-2 group-hover:text-primary transition-colors ${
-                isFeatured ? "text-xl" : "text-lg"
-              }`}
-            >
-              {project.title}
-            </h3>
-            <p
-              className={`text-muted-foreground mb-4 flex-grow ${
-                isFeatured ? "text-base" : "text-sm line-clamp-2"
-              }`}
-            >
-              {project.description}
-            </p>
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              {project.tags.slice(0, isFeatured ? 5 : 3).map((tag) => (
-                <span
-                  key={tag}
-                  className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md"
-                >
-                  {tag}
-                </span>
-              ))}
-              {project.tags.length > (isFeatured ? 5 : 3) && (
-                <span className="px-2 py-1 bg-muted text-muted-foreground text-xs rounded-md">
-                  +{project.tags.length - (isFeatured ? 5 : 3)}
-                </span>
-              )}
-            </div>
-
-            {/* Action Button */}
-            <div
-              className={`flex items-center gap-2 text-sm font-medium ${
-                isIT ? "text-blue-500" : "text-primary"
-              } group-hover:gap-3 transition-all`}
-            >
-              {isIT ? (
-                <>
-                  <ExternalLink size={16} />
-                  Visit Live Website
-                </>
-              ) : (
-                <>
-                  <FileText size={16} />
-                  Read Case Study
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </CardWrapper>
-    </motion.div>
   );
 };
 
