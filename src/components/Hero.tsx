@@ -51,21 +51,21 @@ const Hero = () => {
         <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--border)/0.3)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--border)/0.3)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-5xl mx-auto text-center">
           {/* Status badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-card/80 backdrop-blur-xl border-2 border-primary/20 rounded-full mb-10"
+            className="inline-flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-card/80 backdrop-blur-xl border-2 border-border mb-6 sm:mb-10"
           >
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-accent"></span>
+            <span className="relative flex h-2 w-2 sm:h-2.5 sm:w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full bg-foreground opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 sm:h-2.5 sm:w-2.5 bg-foreground"></span>
             </span>
-            <span className="text-foreground font-medium text-sm">Available for Freelance Work</span>
-            <Sparkles className="text-secondary" size={16} />
+            <span className="text-foreground font-medium text-xs sm:text-sm">Available for Freelance Work</span>
+            <Sparkles className="text-muted-foreground" size={14} />
           </motion.div>
           
           {/* Main heading */}
@@ -73,7 +73,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7 }}
-            className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-4 sm:mb-8 leading-[1.1] tracking-tight"
           >
             Hi, I'm{" "}
             <span className="text-gradient relative">
@@ -82,7 +82,7 @@ const Hero = () => {
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
                 transition={{ delay: 0.8, duration: 0.6 }}
-                className="absolute -bottom-2 left-0 right-0 h-2 bg-gradient-to-r from-primary to-secondary rounded-full origin-left"
+                className="absolute -bottom-1 sm:-bottom-2 left-0 right-0 h-1 sm:h-2 bg-foreground origin-left"
               />
             </span>
           </motion.h1>
@@ -92,10 +92,10 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex items-center justify-center gap-3 mb-6"
+            className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6"
           >
-            <Zap className="text-secondary" size={24} />
-            <p className="text-2xl md:text-3xl font-display font-semibold text-foreground">
+            <Zap className="text-muted-foreground" size={18} />
+            <p className="text-lg sm:text-2xl md:text-3xl font-display font-semibold text-foreground">
               Full Stack Developer & CAD Engineer
             </p>
           </motion.div>
@@ -104,7 +104,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-muted-foreground text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4 sm:px-0"
           >
             I build modern web applications and design engineering solutions. 
             Passionate about React, Python, embedded systems, and CAD tools like SolidWorks and Creo.
@@ -115,7 +115,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-4 mb-12"
+            className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-2"
           >
             {highlights.map((item, index) => (
               <motion.div
@@ -124,9 +124,9 @@ const Hero = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.7 + index * 0.1, duration: 0.4 }}
                 whileHover={{ scale: 1.05, y: -2 }}
-                className="flex items-center gap-2 px-5 py-3 bg-card/80 backdrop-blur-sm border-2 border-border hover:border-primary/50 rounded-2xl text-sm transition-colors"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-3 bg-card/80 backdrop-blur-sm border-2 border-border hover:border-foreground text-xs sm:text-sm transition-colors"
               >
-                <span className="text-primary">{item.icon}</span>
+                <span className="text-foreground">{item.icon}</span>
                 <span className="text-foreground font-medium">{item.text}</span>
               </motion.div>
             ))}
@@ -137,14 +137,16 @@ const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-14 px-4 sm:px-0"
           >
-            <Link to="/about">
-              <Button variant="hero" size="xl">
+            <Link to="/about" className="w-full sm:w-auto">
+              <Button variant="hero" size="xl" className="w-full sm:w-auto">
                 Learn More About Me
               </Button>
             </Link>
-            <ResumeButton variant="heroOutline" size="xl" />
+            <div className="w-full sm:w-auto">
+              <ResumeButton variant="heroOutline" size="xl" className="w-full sm:w-auto" />
+            </div>
           </motion.div>
 
           {/* Social links */}
