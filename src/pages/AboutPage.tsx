@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import ResumeButton from "@/components/ResumeButton";
 import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone, Linkedin, Github } from "lucide-react";
+import profilePhoto from "@/assets/profile-photo.jpg";
 
 const AboutPage = () => {
   const skills = [
@@ -97,9 +98,13 @@ const AboutPage = () => {
                 {/* Profile Card */}
                 <div className="max-w-4xl mx-auto bg-card border-2 border-border p-8 md:p-12 sharp-card mb-16">
                   <div className="flex flex-col md:flex-row gap-8 items-start">
-                    {/* Profile Image Placeholder */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 bg-gradient-to-br from-primary to-accent flex items-center justify-center text-4xl md:text-5xl font-bold text-white shrink-0">
-                      TT
+                    {/* Profile Image */}
+                    <div className="w-32 h-32 md:w-40 md:h-40 border-2 border-border overflow-hidden shrink-0 bg-secondary">
+                      <img 
+                        src={profilePhoto} 
+                        alt="Tharanee Tharan S.S" 
+                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                      />
                     </div>
                     
                     {/* Profile Info */}
