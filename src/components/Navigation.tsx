@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
@@ -36,22 +36,22 @@ const Navigation = () => {
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-background/80 backdrop-blur-2xl border-b border-border shadow-lg shadow-foreground/5" 
+          ? "bg-background/95 backdrop-blur-xl border-b-2 border-border shadow-lg" 
           : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-20">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <Link to="/" className="group flex items-center gap-2">
             <motion.div
               whileHover={{ rotate: 180 }}
               transition={{ duration: 0.5 }}
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center"
+              className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center"
             >
-              <Sparkles className="text-primary-foreground" size={20} />
+              <span className="text-background font-bold text-sm sm:text-lg">TT</span>
             </motion.div>
-            <span className="font-display text-xl font-bold text-gradient">
+            <span className="font-display text-lg sm:text-xl font-bold text-foreground">
               TTS.dev
             </span>
           </Link>
@@ -62,11 +62,11 @@ const Navigation = () => {
               <Link
                 key={link.name}
                 to={link.href}
-                className="relative px-4 py-2 group"
+                className="relative px-3 xl:px-4 py-2 group"
               >
                 <span className={`relative z-10 text-sm font-medium transition-colors duration-300 ${
                   location.pathname === link.href 
-                    ? "text-primary" 
+                    ? "text-foreground" 
                     : "text-muted-foreground group-hover:text-foreground"
                 }`}>
                   {link.name}
@@ -74,7 +74,7 @@ const Navigation = () => {
                 {location.pathname === link.href && (
                   <motion.div
                     layoutId="navIndicator"
-                    className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/20"
+                    className="absolute inset-0 bg-secondary border-2 border-foreground"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}
@@ -84,7 +84,7 @@ const Navigation = () => {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
-            <SocialLinks iconSize={18} />
+            <SocialLinks iconSize={16} />
             <div className="w-px h-6 bg-border" />
             <ThemeToggle />
             <Link to="/contact">
@@ -95,14 +95,14 @@ const Navigation = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden flex items-center gap-3">
+          <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="text-foreground p-2 hover:bg-muted rounded-xl transition-colors"
+              className="text-foreground p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors"
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
             </motion.button>
           </div>
         </div>
@@ -115,9 +115,9 @@ const Navigation = () => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="lg:hidden overflow-hidden"
+              className="lg:hidden overflow-hidden border-t-2 border-border"
             >
-              <div className="py-6 space-y-2">
+              <div className="py-4 space-y-1">
                 {navLinks.map((link, index) => (
                   <motion.div
                     key={link.name}
@@ -128,17 +128,17 @@ const Navigation = () => {
                     <Link
                       to={link.href}
                       onClick={() => setIsOpen(false)}
-                      className={`block py-3 px-4 rounded-xl font-medium transition-all duration-300 ${
+                      className={`block py-3 px-4 font-medium transition-all duration-300 ${
                         location.pathname === link.href 
-                          ? "text-primary bg-primary/10 border border-primary/20" 
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                          ? "text-foreground bg-secondary border-l-4 border-foreground" 
+                          : "text-muted-foreground hover:text-foreground hover:bg-secondary border-l-4 border-transparent"
                       }`}
                     >
                       {link.name}
                     </Link>
                   </motion.div>
                 ))}
-                <div className="pt-4 border-t border-border mt-4 space-y-4">
+                <div className="pt-4 border-t-2 border-border mt-4 space-y-4 px-4">
                   <SocialLinks className="justify-start" />
                   <Link to="/contact" onClick={() => setIsOpen(false)}>
                     <Button variant="hero" className="w-full">

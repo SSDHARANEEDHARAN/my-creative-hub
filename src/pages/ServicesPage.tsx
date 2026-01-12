@@ -163,91 +163,87 @@ const ServicesPage = () => {
       <div className="min-h-screen bg-background transition-colors duration-300">
         <Navigation />
         <main className="pt-20">
-          <section className="py-24">
-            <div className="container mx-auto px-6">
+          <section className="py-12 sm:py-16 md:py-24">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
-                <div className="text-center mb-16">
-                  <div className="section-badge-sharp mb-6 inline-flex">
+                <div className="text-center mb-10 sm:mb-16">
+                  <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
                     <span className="section-badge-dot-sharp" />
-                    <span className="text-secondary-foreground font-medium text-sm">Services</span>
+                    <span className="text-secondary-foreground font-medium text-xs sm:text-sm">Services</span>
                   </div>
-                  <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mt-4">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mt-4">
                     What I Offer
                   </h1>
-                  <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-lg">
+                  <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">
                     Professional services spanning IT development and Engineering design
                   </p>
 
                   {/* Category Tabs - Sharp Design */}
-                  <div className="inline-flex items-center gap-2 p-1.5 bg-secondary mt-8">
+                  <div className="inline-flex flex-col sm:flex-row items-center gap-2 p-1.5 bg-secondary mt-6 sm:mt-8">
                     <button
                       onClick={() => setActiveTab("it")}
-                      className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-300 ${
+                      className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-300 w-full sm:w-auto text-sm sm:text-base ${
                         activeTab === "it" 
-                          ? "bg-primary text-primary-foreground shadow-md" 
+                          ? "bg-foreground text-background shadow-md" 
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      <Code size={18} />
+                      <Code size={16} />
                       IT Services
                     </button>
                     <button
                       onClick={() => setActiveTab("engineering")}
-                      className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-300 ${
+                      className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-300 w-full sm:w-auto text-sm sm:text-base ${
                         activeTab === "engineering" 
-                          ? "bg-accent text-accent-foreground shadow-md" 
+                          ? "bg-foreground text-background shadow-md" 
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
-                      <Cog size={18} />
-                      Engineering Services
+                      <Cog size={16} />
+                      Engineering
                     </button>
                   </div>
                 </div>
               </ScrollReveal>
 
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
                 {services.map((service, index) => (
                   <ScrollReveal key={service.id} delay={index * 100}>
                     <div
-                      className={`relative group sharp-card p-6 transition-all duration-500 hover:shadow-lg h-full flex flex-col ${
+                      className={`relative group bg-card border-2 p-4 sm:p-6 transition-all duration-500 hover:shadow-lg h-full flex flex-col ${
                         service.popular
-                          ? "border-primary/50 shadow-lg ring-2 ring-primary/20"
-                          : "hover:border-primary/30"
+                          ? "border-foreground shadow-lg"
+                          : "border-border hover:border-foreground"
                       }`}
                     >
                       {service.popular && (
                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                          <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 shadow-lg">
+                          <span className="bg-foreground text-background text-xs font-semibold px-3 py-1 shadow-lg whitespace-nowrap">
                             Most Popular
                           </span>
                         </div>
                       )}
 
-                      <div className={`w-12 h-12 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform ${
-                        activeTab === "it" 
-                          ? "bg-gradient-to-br from-primary/20 to-accent/20" 
-                          : "bg-gradient-to-br from-secondary/30 to-accent/20"
-                      }`}>
-                        <service.icon className={`w-6 h-6 ${activeTab === "it" ? "text-primary" : "text-accent"}`} />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-secondary border-2 border-border flex items-center justify-center mb-4 sm:mb-5 group-hover:bg-foreground group-hover:border-foreground transition-all">
+                        <service.icon className="w-5 h-5 sm:w-6 sm:h-6 text-foreground group-hover:text-background transition-colors" />
                       </div>
 
-                      <h3 className="text-xl font-bold text-foreground mb-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
                         {service.title}
                       </h3>
-                      <p className="text-muted-foreground text-sm mb-5">
+                      <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-5">
                         {service.description}
                       </p>
 
-                      <div className="mb-5">
-                        <span className="text-3xl font-bold text-foreground">{service.price}</span>
-                        <span className="text-muted-foreground ml-2 text-sm">{service.period}</span>
+                      <div className="mb-4 sm:mb-5">
+                        <span className="text-2xl sm:text-3xl font-bold text-foreground">{service.price}</span>
+                        <span className="text-muted-foreground ml-2 text-xs sm:text-sm">{service.period}</span>
                       </div>
 
-                      <ul className="space-y-2.5 mb-6 flex-grow">
+                      <ul className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-6 flex-grow">
                         {service.features.map((feature, i) => (
-                          <li key={i} className="flex items-start gap-2 text-muted-foreground text-sm">
-                            <Check className={`w-4 h-4 flex-shrink-0 mt-0.5 ${activeTab === "it" ? "text-primary" : "text-accent"}`} />
+                          <li key={i} className="flex items-start gap-2 text-muted-foreground text-xs sm:text-sm">
+                            <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 mt-0.5 text-foreground" />
                             <span>{feature}</span>
                           </li>
                         ))}
@@ -256,7 +252,7 @@ const ServicesPage = () => {
                       <Link to="/contact" className="mt-auto">
                         <Button
                           variant={service.popular ? "hero" : "outline"}
-                          className="w-full rounded-none"
+                          className="w-full"
                         >
                           Get Started
                         </Button>
@@ -267,14 +263,14 @@ const ServicesPage = () => {
               </div>
 
               <ScrollReveal delay={400}>
-                <div className="mt-16 text-center">
-                  <div className="sharp-card p-8 max-w-2xl mx-auto">
-                    <h3 className="text-2xl font-bold text-foreground mb-3">Need Something Custom?</h3>
-                    <p className="text-muted-foreground mb-6">
+                <div className="mt-12 sm:mt-16 text-center">
+                  <div className="bg-card border-2 border-border p-6 sm:p-8 max-w-2xl mx-auto">
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3">Need Something Custom?</h3>
+                    <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                       Have a unique project in mind? Let's discuss your specific requirements and create a tailored solution.
                     </p>
                     <Link to="/contact">
-                      <Button variant="hero" size="lg" className="rounded-none">
+                      <Button variant="hero" size="lg">
                         Let's Discuss Your Project
                       </Button>
                     </Link>

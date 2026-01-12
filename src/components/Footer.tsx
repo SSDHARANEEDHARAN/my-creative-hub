@@ -1,6 +1,6 @@
 import { forwardRef, memo } from "react";
 import { Link } from "react-router-dom";
-import { Heart, Mail, ArrowUpRight, Sparkles } from "lucide-react";
+import { Heart, Mail, ArrowUpRight } from "lucide-react";
 import SocialLinks from "./SocialLinks";
 
 const footerLinks = [
@@ -15,46 +15,47 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer ref={ref} className="relative py-20 border-t border-border bg-card/30 overflow-hidden">
+    <footer ref={ref} className="relative py-12 sm:py-20 border-t-2 border-border bg-secondary/30 overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-mesh opacity-50" />
+      <div className="absolute inset-0 bg-mesh opacity-30" />
       
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="grid md:grid-cols-3 gap-12 mb-16">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12 mb-12 sm:mb-16">
           {/* Brand */}
           <div>
-            <Link to="/" className="group flex items-center gap-2 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center hover:rotate-180 transition-transform duration-500">
-                <Sparkles className="text-primary-foreground" size={20} />
+            <Link to="/" className="group flex items-center gap-2 mb-4 sm:mb-6">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center hover:scale-105 transition-transform duration-300">
+                <span className="text-background font-bold text-sm sm:text-lg">TT</span>
               </div>
-              <span className="font-display text-2xl font-bold text-gradient">
+              <span className="font-display text-xl sm:text-2xl font-bold text-foreground">
                 TTS.dev
               </span>
             </Link>
-            <p className="text-muted-foreground leading-relaxed mb-6 max-w-sm">
+            <p className="text-muted-foreground leading-relaxed mb-4 sm:mb-6 max-w-sm text-sm sm:text-base">
               Creating innovative solutions in both IT and Engineering domains - from web applications to CAD designs.
             </p>
             <a 
               href="mailto:tharaneetharanss@gmail.com"
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium group hover:translate-x-1 transition-transform duration-200"
+              className="inline-flex items-center gap-2 text-foreground hover:text-muted-foreground transition-colors font-medium group text-sm sm:text-base"
             >
-              <Mail size={18} />
-              tharaneetharanss@gmail.com
+              <Mail size={16} />
+              <span className="hidden sm:inline">tharaneetharanss@gmail.com</span>
+              <span className="sm:hidden">Email Me</span>
               <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-display text-lg font-bold mb-6">Quick Links</h4>
-            <nav className="flex flex-col gap-3">
+            <h4 className="font-display text-base sm:text-lg font-bold mb-4 sm:mb-6">Quick Links</h4>
+            <nav className="flex flex-col gap-2 sm:gap-3">
               {footerLinks.map((link) => (
                 <div key={link.name} className="hover:translate-x-1 transition-transform duration-200">
                   <Link
                     to={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group"
+                    className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 group text-sm sm:text-base"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
+                    <span className="w-1.5 h-1.5 bg-muted-foreground group-hover:bg-foreground transition-colors" />
                     {link.name}
                   </Link>
                 </div>
@@ -63,30 +64,30 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           </div>
 
           {/* Social & Connect */}
-          <div>
-            <h4 className="font-display text-lg font-bold mb-6">Connect</h4>
-            <p className="text-muted-foreground mb-6">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <h4 className="font-display text-base sm:text-lg font-bold mb-4 sm:mb-6">Connect</h4>
+            <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
               Follow me on social media for updates, insights, and behind-the-scenes content.
             </p>
             <SocialLinks />
           </div>
         </div>
 
-        <div className="pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-muted-foreground text-sm flex items-center gap-2">
+        <div className="pt-6 sm:pt-8 border-t-2 border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 text-center sm:text-left">
             © {currentYear} Tharanee Tharan S.S. Crafted with
             <span className="animate-pulse">
-              <Heart size={14} className="text-destructive" fill="currentColor" />
+              <Heart size={12} className="text-foreground" fill="currentColor" />
             </span>
             and lots of ☕
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
             <span className="text-muted-foreground text-xs">
               Built with React, TypeScript & Tailwind CSS
             </span>
             <div className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="text-xs text-accent font-medium">Online</span>
+              <span className="w-2 h-2 bg-foreground animate-pulse" />
+              <span className="text-xs text-foreground font-medium">Online</span>
             </div>
           </div>
         </div>
