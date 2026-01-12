@@ -358,7 +358,7 @@ const ProjectsPage = () => {
 
       <main className="min-h-screen bg-background pt-20">
         {/* Header Section */}
-        <section className="py-16 bg-gradient-to-b from-muted/50 to-background">
+        <section className="py-10 sm:py-16 bg-gradient-to-b from-muted/50 to-background">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -366,16 +366,15 @@ const ProjectsPage = () => {
               transition={{ duration: 0.6 }}
               className="text-center max-w-3xl mx-auto"
             >
-              <div className="section-badge-sharp mb-6 inline-flex">
+              <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
                 <span className="section-badge-dot-sharp" />
-                <span className="text-secondary-foreground font-medium text-sm">Portfolio</span>
+                <span className="text-secondary-foreground font-medium text-xs sm:text-sm">Portfolio</span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">
-                My <span className="text-primary">Projects</span>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6">
+                My <span className="text-foreground">Projects</span>
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-sm sm:text-base md:text-lg text-muted-foreground px-4">
                 A collection of my work spanning IT development and Engineering design.
-                Click on IT projects to visit live websites, or Engineering projects to read detailed case studies.
               </p>
             </motion.div>
 
@@ -384,28 +383,28 @@ const ProjectsPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex justify-center mt-10 gap-4"
+              className="flex flex-col sm:flex-row justify-center mt-6 sm:mt-10 gap-2 sm:gap-4 px-4"
             >
               <button
                 onClick={() => setActiveTab("it")}
-                className={`flex items-center gap-2 px-6 py-3 rounded-none font-medium transition-all duration-300 border-2 ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base ${
                   activeTab === "it"
-                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                    : "bg-card text-muted-foreground hover:bg-muted border-border hover:border-primary/50"
+                    ? "bg-foreground text-background border-foreground shadow-lg"
+                    : "bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"
                 }`}
               >
-                <Code2 size={20} />
+                <Code2 size={18} />
                 IT Projects ({itProjects.length})
               </button>
               <button
                 onClick={() => setActiveTab("engineering")}
-                className={`flex items-center gap-2 px-6 py-3 rounded-none font-medium transition-all duration-300 border-2 ${
+                className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base ${
                   activeTab === "engineering"
-                    ? "bg-accent text-accent-foreground border-accent shadow-lg"
-                    : "bg-card text-muted-foreground hover:bg-muted border-border hover:border-accent/50"
+                    ? "bg-foreground text-background border-foreground shadow-lg"
+                    : "bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"
                 }`}
               >
-                <Cog size={20} />
+                <Cog size={18} />
                 Engineering ({engineeringProjects.length})
               </button>
             </motion.div>
