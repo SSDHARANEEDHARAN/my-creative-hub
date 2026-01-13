@@ -1,13 +1,24 @@
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Button } from "@/components/ui/button";
+import ServiceRequestModal from "@/components/ServiceRequestModal";
 import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu } from "lucide-react";
 import { useState } from "react";
 
-const itServices = [
+interface Service {
+  id: number;
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  price: string;
+  period: string;
+  features: string[];
+  popular: boolean;
+}
+
+const itServices: Service[] = [
   {
     id: 1,
     icon: Code,
@@ -78,7 +89,7 @@ const itServices = [
   },
 ];
 
-const engineeringServices = [
+const engineeringServices: Service[] = [
   {
     id: 5,
     icon: Cog,
@@ -151,7 +162,20 @@ const engineeringServices = [
 
 const ServicesPage = () => {
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const services = activeTab === "it" ? itServices : engineeringServices;
+
+  const handleServiceClick = (service: Service) => {
+    setSelectedService(service);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedService(null);
+  };
 
   return (
     <>
@@ -249,14 +273,13 @@ const ServicesPage = () => {
                         ))}
                       </ul>
 
-                      <Link to="/contact" className="mt-auto">
-                        <Button
-                          variant={service.popular ? "hero" : "outline"}
-                          className="w-full"
-                        >
-                          Get Started
-                        </Button>
-                      </Link>
+                      <Button
+                        variant={service.popular ? "hero" : "outline"}
+                        className="w-full mt-auto"
+                        onClick={() => handleServiceClick(service)}
+                      >
+                        Get Started
+                      </Button>
                     </div>
                   </ScrollReveal>
                 ))}
@@ -269,11 +292,22 @@ const ServicesPage = () => {
                     <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                       Have a unique project in mind? Let's discuss your specific requirements and create a tailored solution.
                     </p>
-                    <Link to="/contact">
-                      <Button variant="hero" size="lg">
-                        Let's Discuss Your Project
-                      </Button>
-                    </Link>
+                    <Button 
+                      variant="hero" 
+                      size="lg"
+                      onClick={() => handleServiceClick({
+                        id: 0,
+                        icon: MessageSquare,
+                        title: "Custom Project",
+                        description: "Tailored solution for your unique requirements",
+                        price: "Custom",
+                        period: "quote",
+                        features: [],
+                        popular: false,
+                      })}
+                    >
+                      Let's Discuss Your Project
+                    </Button>
                   </div>
                 </div>
               </ScrollReveal>
@@ -282,6 +316,16 @@ const ServicesPage = () => {
         </main>
         <Footer />
       </div>
+
+      {/* Service Request Modal */}
+      {selectedService && (
+        <ServiceRequestModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          service={selectedService}
+          category={activeTab === "it" ? "IT Services" : "Engineering Services"}
+        />
+      )}
     </>
   );
 };
