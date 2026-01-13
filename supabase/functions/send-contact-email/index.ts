@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const OWNER_EMAIL = "tharaneetharanss@gmail.com";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,12 +10,18 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-// Input validation schema
+// Input validation schema for contact form
 const ContactEmailSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name too long").trim(),
   email: z.string().email("Invalid email address").max(255, "Email too long"),
   subject: z.string().min(1, "Subject is required").max(200, "Subject too long").trim(),
   message: z.string().min(1, "Message is required").max(5000, "Message too long").trim(),
+  // Optional service request fields
+  serviceType: z.string().optional(),
+  serviceCategory: z.string().optional(),
+  budget: z.string().optional(),
+  timeline: z.string().optional(),
+  requirements: z.string().optional(),
 });
 
 type ContactEmailRequest = z.infer<typeof ContactEmailSchema>;
@@ -109,17 +116,119 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const { name, email, subject, message }: ContactEmailRequest = parseResult.data;
+    const { name, email, subject, message, serviceType, serviceCategory, budget, timeline, requirements }: ContactEmailRequest = parseResult.data;
 
     // Escape all user input for HTML safety
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
     const safeSubject = escapeHtml(subject);
     const safeMessage = escapeHtml(message);
+    const safeServiceType = serviceType ? escapeHtml(serviceType) : null;
+    const safeServiceCategory = serviceCategory ? escapeHtml(serviceCategory) : null;
+    const safeBudget = budget ? escapeHtml(budget) : null;
+    const safeTimeline = timeline ? escapeHtml(timeline) : null;
+    const safeRequirements = requirements ? escapeHtml(requirements) : null;
 
     console.log(`Processing contact form from: ${safeName} (${safeEmail})`);
 
-    // Send notification email
+    // Build email content based on whether it's a service request or general contact
+    const isServiceRequest = safeServiceType && safeServiceCategory;
+    
+    let emailSubject = isServiceRequest 
+      ? `Service Request: ${safeServiceType} - ${safeServiceCategory}`
+      : `Portfolio Contact: ${safeSubject}`;
+    
+    let emailHtml = `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+        <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
+            ${isServiceRequest ? '🚀 New Service Request' : '📬 New Contact Message'}
+          </h1>
+        </div>
+        
+        <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+          <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            Contact Information
+          </h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
+              <td style="padding: 10px 0; color: #333;">${safeName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
+              <td style="padding: 10px 0; color: #333;">
+                <a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a>
+              </td>
+            </tr>
+          </table>
+    `;
+
+    if (isServiceRequest) {
+      emailHtml += `
+          <h2 style="color: #333; margin-top: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            Service Details
+          </h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Category:</td>
+              <td style="padding: 10px 0; color: #333;">${safeServiceCategory}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold;">Service:</td>
+              <td style="padding: 10px 0; color: #333;">${safeServiceType}</td>
+            </tr>
+            ${safeBudget ? `
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold;">Budget:</td>
+              <td style="padding: 10px 0; color: #333;">${safeBudget}</td>
+            </tr>
+            ` : ''}
+            ${safeTimeline ? `
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold;">Timeline:</td>
+              <td style="padding: 10px 0; color: #333;">${safeTimeline}</td>
+            </tr>
+            ` : ''}
+          </table>
+          
+          ${safeRequirements ? `
+          <h2 style="color: #333; margin-top: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            Project Requirements
+          </h2>
+          <div style="background: #ffffff; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeRequirements}</p>
+          </div>
+          ` : ''}
+      `;
+    } else {
+      emailHtml += `
+          <h2 style="color: #333; margin-top: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
+            Message Details
+          </h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Subject:</td>
+              <td style="padding: 10px 0; color: #333;">${safeSubject}</td>
+            </tr>
+          </table>
+          <div style="background: #ffffff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-top: 15px;">
+            <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeMessage}</p>
+          </div>
+      `;
+    }
+
+    emailHtml += `
+        </div>
+        
+        <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+          <p style="margin: 0;">This email was sent from your portfolio website contact form.</p>
+          <p style="margin: 5px 0 0 0;">Reply directly to this email to respond to ${safeName}.</p>
+        </div>
+      </div>
+    `;
+
+    // Send notification email to owner
     const notificationResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -128,22 +237,10 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Portfolio Contact <onboarding@resend.dev>",
-        to: [email], // Use original email for delivery (validated)
-        subject: `New Contact: ${safeSubject}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #0ea5e9;">New Contact Form Submission</h2>
-            <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p><strong>From:</strong> ${safeName}</p>
-              <p><strong>Email:</strong> ${safeEmail}</p>
-              <p><strong>Subject:</strong> ${safeSubject}</p>
-            </div>
-            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
-              <h3 style="color: #334155; margin-top: 0;">Message:</h3>
-              <p style="color: #475569; line-height: 1.6; white-space: pre-wrap;">${safeMessage}</p>
-            </div>
-          </div>
-        `,
+        to: [OWNER_EMAIL],
+        reply_to: email,
+        subject: emailSubject,
+        html: emailHtml,
       }),
     });
 
@@ -154,10 +251,10 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const result = await notificationResponse.json();
-    console.log("Email sent successfully:", result);
+    console.log("Email sent successfully to owner:", result);
 
     return new Response(
-      JSON.stringify({ success: true, message: "Email sent successfully" }),
+      JSON.stringify({ success: true, message: "Your message has been sent successfully!" }),
       {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
