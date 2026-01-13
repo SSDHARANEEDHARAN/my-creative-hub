@@ -7,7 +7,7 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>Tharanee Tharan S.S | Full Stack Developer & CAD Engineer</title>
+        <title>Tharaneetharan SS | Full Stack Developer & CAD Engineer</title>
         <meta name="description" content="Full Stack Developer & CAD Engineer skilled in React, Python, Embedded Systems, SolidWorks, FlexSim, NX, Creo, and PTC Windchill." />
       </Helmet>
       

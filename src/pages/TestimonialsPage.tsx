@@ -43,8 +43,8 @@ const TestimonialsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Testimonials | Alex Chen - Client Reviews</title>
-        <meta name="description" content="Read what clients say about working with Alex Chen. Exceptional web development and design services." />
+        <title>Testimonials | Tharaneetharan SS - Client Reviews</title>
+        <meta name="description" content="Read what clients say about working with Tharaneetharan SS. Exceptional web development and engineering services." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">

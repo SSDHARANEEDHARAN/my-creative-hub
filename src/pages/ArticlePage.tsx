@@ -40,7 +40,7 @@ const ArticlePage = memo(() => {
   return (
     <>
       <Helmet>
-        <title>{article.title} | Case Study - Tharanee Tharan S.S</title>
+        <title>{article.title} | Case Study - Tharaneetharan SS</title>
         <meta name="description" content={article.overview.slice(0, 160)} />
       </Helmet>
 

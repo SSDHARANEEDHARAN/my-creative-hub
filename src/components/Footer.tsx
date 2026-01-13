@@ -75,7 +75,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 
         <div className="pt-6 sm:pt-8 border-t-2 border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 text-center sm:text-left">
-            © {currentYear} Tharanee Tharan S.S. Crafted with
+            © {currentYear} Tharaneetharan SS. Crafted with
             <span className="animate-pulse">
               <Heart size={12} className="text-foreground" fill="currentColor" />
             </span>

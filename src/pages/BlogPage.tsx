@@ -36,7 +36,7 @@ const initialPosts: BlogPost[] = [
     likes: 142,
     comments: 28,
     category: "Technology",
-    author: { name: "Tharanee Tharan", avatar: "" },
+    author: { name: "Tharaneetharan SS", avatar: "" },
   },
   {
     id: 2,
@@ -49,7 +49,7 @@ const initialPosts: BlogPost[] = [
     likes: 98,
     comments: 15,
     category: "Design",
-    author: { name: "Tharanee Tharan", avatar: "" },
+    author: { name: "Tharaneetharan SS", avatar: "" },
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ const initialPosts: BlogPost[] = [
     likes: 256,
     comments: 42,
     category: "Development",
-    author: { name: "Tharanee Tharan", avatar: "" },
+    author: { name: "Tharaneetharan SS", avatar: "" },
   },
   {
     id: 4,
@@ -75,7 +75,7 @@ const initialPosts: BlogPost[] = [
     likes: 189,
     comments: 31,
     category: "Development",
-    author: { name: "Tharanee Tharan", avatar: "" },
+    author: { name: "Tharaneetharan SS", avatar: "" },
   },
 ];
 
@@ -114,7 +114,7 @@ const BlogPage = () => {
   return (
     <>
       <Helmet>
-        <title>Blog | Tharanee Tharan S.S - Insights & Tutorials</title>
+        <title>Blog | Tharaneetharan SS - Insights & Tutorials</title>
         <meta name="description" content="Read articles about web development, design patterns, and lessons learned from building products." />
       </Helmet>
       
