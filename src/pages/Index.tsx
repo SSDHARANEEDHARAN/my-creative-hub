@@ -14,9 +14,9 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Alex Chen | Creative Developer & Designer</title>
-        <meta name="description" content="I build beautiful web experiences while exploring the world. Passionate about clean code, stunning design, and finding the best coffee shops in every city." />
-        <meta name="keywords" content="web developer, designer, portfolio, react, typescript, frontend developer, freelance" />
+        <title>Tharaneetharan SS | Full Stack Developer & CAD Engineer</title>
+        <meta name="description" content="Full Stack Developer & CAD Engineer skilled in React, Python, Embedded Systems, SolidWorks, FlexSim, NX, Creo, and PTC Windchill." />
+        <meta name="keywords" content="web developer, CAD engineer, portfolio, react, python, SolidWorks, FlexSim, full stack developer" />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">

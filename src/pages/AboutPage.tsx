@@ -81,8 +81,8 @@ const AboutPage = () => {
   return (
     <>
       <Helmet>
-        <title>About | Tharanee Tharan S.S - Full Stack Developer & CAD Engineer</title>
-        <meta name="description" content="Learn more about Tharanee Tharan S.S, a versatile professional with expertise in IT development and CAD engineering." />
+        <title>About | Tharaneetharan SS - Full Stack Developer & CAD Engineer</title>
+        <meta name="description" content="Learn more about Tharaneetharan SS, a versatile professional with expertise in IT development and CAD engineering." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">
@@ -102,7 +102,7 @@ const AboutPage = () => {
                     <div className="w-32 h-32 md:w-40 md:h-40 border-2 border-border overflow-hidden shrink-0 bg-secondary">
                       <img 
                         src={profilePhoto} 
-                        alt="Tharanee Tharan S.S" 
+                        alt="Tharaneetharan SS"
                         className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
                       />
                     </div>
@@ -110,7 +110,7 @@ const AboutPage = () => {
                     {/* Profile Info */}
                     <div className="flex-1">
                       <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-                        Tharanee Tharan S.S
+                        Tharaneetharan SS
                       </h1>
                       <p className="text-xl text-primary font-semibold mb-4">
                         Full Stack Developer & CAD Engineer

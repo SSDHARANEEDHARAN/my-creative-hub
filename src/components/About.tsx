@@ -45,9 +45,9 @@ const About = () => {
             </h2>
             
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-              Hello! I'm Alex, a passionate full-stack developer and UI/UX designer based in San Francisco. 
-              With over <span className="text-foreground font-medium">5 years of experience</span> in web development, 
-              I've had the privilege of working with innovative startups and Fortune 500 companies.
+              Hello! I'm Tharaneetharan SS, a passionate Full Stack Developer and CAD Engineer based in Tamil Nadu, India. 
+              With over <span className="text-foreground font-medium">3+ years of experience</span> in web development and engineering design, 
+              I've had the privilege of working with innovative companies across IT and manufacturing domains.
             </p>
             
             <p className="text-muted-foreground text-lg leading-relaxed mb-8">
