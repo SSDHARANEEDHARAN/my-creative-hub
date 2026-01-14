@@ -72,10 +72,16 @@ const AboutPage = () => {
   ];
 
   const certifications = [
-    "Certified SolidWorks Associate (CSWA)",
-    "Python for Data Science - IBM",
-    "React Developer Certification",
-    "FlexSim Simulation Basics",
+    { name: "Certified SolidWorks Associate (CSWA)", issuer: "Dassault Systèmes", year: "2023" },
+    { name: "Python for Data Science", issuer: "IBM", year: "2023" },
+    { name: "React Developer Certification", issuer: "Meta", year: "2024" },
+    { name: "FlexSim Simulation Basics", issuer: "FlexSim Software", year: "2022" },
+    { name: "Siemens NX CAD Fundamentals", issuer: "Siemens", year: "2023" },
+    { name: "PTC Creo Essentials", issuer: "PTC University", year: "2023" },
+    { name: "Arduino IoT Cloud Certification", issuer: "Arduino", year: "2024" },
+    { name: "Full Stack Web Development", issuer: "Coursera", year: "2024" },
+    { name: "GD&T Fundamentals", issuer: "ASME", year: "2022" },
+    { name: "Lean Six Sigma Yellow Belt", issuer: "ASQ", year: "2023" },
   ];
 
   return (
@@ -282,15 +288,18 @@ const AboutPage = () => {
                   <div className="bg-card border-2 border-border p-6 sharp-card h-full">
                     <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
                       <Award size={18} className="text-primary" />
-                      Certifications
+                      Certifications ({certifications.length})
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                       {certifications.map((cert, index) => (
-                        <div key={cert} className="flex items-center gap-3 p-3 bg-secondary/50 border border-border hover:border-primary/50 transition-colors">
-                          <span className="w-6 h-6 bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                        <div key={cert.name} className="flex items-start gap-3 p-3 bg-secondary/50 border border-border hover:border-primary/50 transition-colors">
+                          <span className="w-6 h-6 bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
                             {index + 1}
                           </span>
-                          <span className="text-sm font-medium">{cert}</span>
+                          <div className="min-w-0">
+                            <span className="text-sm font-medium block">{cert.name}</span>
+                            <span className="text-xs text-muted-foreground">{cert.issuer} • {cert.year}</span>
+                          </div>
                         </div>
                       ))}
                     </div>
