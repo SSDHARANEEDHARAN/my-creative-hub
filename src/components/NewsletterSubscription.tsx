@@ -34,6 +34,16 @@ const NewsletterSubscription = () => {
     setIsLoading(true);
 
     try {
+      // Save to database
+      const { error: dbError } = await supabase
+        .from("newsletter_subscribers")
+        .insert({ email, source: "footer" });
+
+      if (dbError && dbError.code !== "23505") {
+        throw dbError;
+      }
+
+      // Send welcome email
       const { error } = await supabase.functions.invoke("send-contact-email", {
         body: {
           name,
@@ -45,6 +55,8 @@ const NewsletterSubscription = () => {
       });
 
       if (error) throw error;
+
+      localStorage.setItem("newsletter_subscribed", "true");
 
       setIsSubscribed(true);
       setName("");
