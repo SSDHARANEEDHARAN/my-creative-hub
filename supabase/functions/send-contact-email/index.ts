@@ -23,7 +23,7 @@ const ContactEmailSchema = z.object({
   timeline: z.string().optional(),
   requirements: z.string().optional(),
   // Blog notification fields
-  type: z.enum(["contact", "service", "blog_like", "blog_comment"]).optional(),
+  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
@@ -131,6 +131,104 @@ const handler = async (req: Request): Promise<Response> => {
     const safeComment = comment ? escapeHtml(comment) : null;
 
     console.log(`Processing ${type || 'contact'} form from: ${safeName} (${safeEmail})`);
+
+    // Handle newsletter subscription
+    if (type === "newsletter") {
+      const newsletterHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #ff9800, #ff5722); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">📰 New Newsletter Subscriber!</h1>
+          </div>
+          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+            <h2 style="color: #333; margin-top: 0;">New Subscription</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
+                <td style="padding: 10px 0; color: #333;">${safeName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
+                <td style="padding: 10px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: bold;">Subscribed:</td>
+                <td style="padding: 10px 0; color: #333;">${new Date().toLocaleString()}</td>
+              </tr>
+            </table>
+          </div>
+          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+            <p style="margin: 0;">This subscriber signed up through your portfolio website.</p>
+          </div>
+        </div>
+      `;
+
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: "Portfolio Newsletter <onboarding@resend.dev>",
+          to: [OWNER_EMAIL],
+          reply_to: email,
+          subject: `📰 New Newsletter Subscriber: ${safeName}`,
+          html: newsletterHtml,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error("Resend API error:", error);
+        throw new Error("Failed to send notification");
+      }
+
+      // Send welcome email to subscriber
+      const welcomeHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🎉 Welcome to TTS.dev Newsletter!</h1>
+          </div>
+          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              Thank you for subscribing to my newsletter! You'll now receive updates about:
+            </p>
+            <ul style="color: #555; line-height: 1.8;">
+              <li>🚀 New projects and case studies</li>
+              <li>📝 Latest blog posts and tutorials</li>
+              <li>💡 Industry insights and tips</li>
+              <li>🎯 Exclusive content and early access</li>
+            </ul>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              Stay tuned for exciting updates!
+            </p>
+          </div>
+          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+            <p style="margin: 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+          </div>
+        </div>
+      `;
+
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: "TTS.dev Newsletter <onboarding@resend.dev>",
+          to: [email],
+          subject: `🎉 Welcome to TTS.dev Newsletter!`,
+          html: welcomeHtml,
+        }),
+      });
+
+      return new Response(
+        JSON.stringify({ success: true, message: "Successfully subscribed to newsletter!" }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     // Handle blog like notification
     if (type === "blog_like") {

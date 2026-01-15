@@ -2,6 +2,7 @@ import { forwardRef, memo } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Mail, ArrowUpRight } from "lucide-react";
 import SocialLinks from "./SocialLinks";
+import NewsletterSubscription from "./NewsletterSubscription";
 
 const footerLinks = [
   { name: "Home", href: "/" },
@@ -63,13 +64,17 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             </nav>
           </div>
 
-          {/* Social & Connect */}
+          {/* Newsletter */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <h4 className="font-display text-base sm:text-lg font-bold mb-4 sm:mb-6">Connect</h4>
-            <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
-              Follow me on social media for updates, insights, and behind-the-scenes content.
+            <h4 className="font-display text-base sm:text-lg font-bold mb-4 sm:mb-6">Newsletter</h4>
+            <p className="text-muted-foreground mb-4 text-sm sm:text-base">
+              Subscribe to get updates on new projects, blog posts, and exclusive content.
             </p>
-            <SocialLinks />
+            <NewsletterSubscription />
+            <div className="mt-6">
+              <h5 className="font-medium text-sm mb-3">Connect</h5>
+              <SocialLinks />
+            </div>
           </div>
         </div>
 
