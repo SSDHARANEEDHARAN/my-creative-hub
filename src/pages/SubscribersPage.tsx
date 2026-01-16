@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Download, Users, Mail, Calendar, Search, RefreshCw } from "lucide-react";
+import { Download, Users, Mail, Calendar, Search, RefreshCw, LogOut, Bell, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -11,9 +13,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
@@ -31,7 +49,14 @@ const SubscribersPage = () => {
   const [filteredSubscribers, setFilteredSubscribers] = useState<Subscriber[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [notifyOpen, setNotifyOpen] = useState(false);
+  const [notifyTitle, setNotifyTitle] = useState("");
+  const [notifyDescription, setNotifyDescription] = useState("");
+  const [notifyType, setNotifyType] = useState<"post" | "project">("post");
+  const [notifyUrl, setNotifyUrl] = useState("");
+  const [isSending, setIsSending] = useState(false);
   const { toast } = useToast();
+  const { signOut, user } = useAuth();
 
   const fetchSubscribers = async () => {
     setIsLoading(true);
@@ -104,6 +129,59 @@ const SubscribersPage = () => {
     });
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
+  const sendNotification = async () => {
+    if (!notifyTitle.trim() || !notifyDescription.trim()) {
+      toast({
+        title: "Missing information",
+        description: "Please enter a title and description.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSending(true);
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      const { data, error } = await supabase.functions.invoke("notify-subscribers", {
+        body: {
+          title: notifyTitle,
+          description: notifyDescription,
+          type: notifyType,
+          url: notifyUrl || undefined,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Notifications Sent!",
+        description: `Successfully notified ${data.sent} of ${data.total} subscribers.`,
+      });
+
+      setNotifyOpen(false);
+      setNotifyTitle("");
+      setNotifyDescription("");
+      setNotifyUrl("");
+    } catch (error) {
+      console.error("Notification error:", error);
+      toast({
+        title: "Failed to send notifications",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const activeSubscribers = subscribers.filter((s) => s.is_active);
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">
@@ -115,14 +193,25 @@ const SubscribersPage = () => {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-8"
+              className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
             >
-              <h1 className="text-4xl font-bold text-foreground mb-2">
-                Newsletter Subscribers
-              </h1>
-              <p className="text-muted-foreground">
-                Manage and export your newsletter subscriber list.
-              </p>
+              <div>
+                <h1 className="text-4xl font-bold text-foreground mb-2">
+                  Newsletter Subscribers
+                </h1>
+                <p className="text-muted-foreground">
+                  Manage and export your newsletter subscriber list.
+                </p>
+                {user && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Logged in as: {user.email}
+                  </p>
+                )}
+              </div>
+              <Button variant="outline" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
             </motion.div>
 
             {/* Stats Cards */}
@@ -130,7 +219,7 @@ const SubscribersPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+              className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
             >
               <div className="bg-card border border-border rounded-xl p-6">
                 <div className="flex items-center gap-4">
@@ -154,7 +243,21 @@ const SubscribersPage = () => {
                   <div>
                     <p className="text-sm text-muted-foreground">Active</p>
                     <p className="text-2xl font-bold text-foreground">
-                      {subscribers.filter((s) => s.is_active).length}
+                      {activeSubscribers.length}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-card border border-border rounded-xl p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Unsubscribed</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {subscribers.filter((s) => !s.is_active).length}
                     </p>
                   </div>
                 </div>
@@ -200,7 +303,7 @@ const SubscribersPage = () => {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 <Button
                   variant="outline"
                   onClick={fetchSubscribers}
@@ -213,6 +316,82 @@ const SubscribersPage = () => {
                   <Download className="w-4 h-4 mr-2" />
                   Export CSV
                 </Button>
+                <Dialog open={notifyOpen} onOpenChange={setNotifyOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="default" disabled={activeSubscribers.length === 0}>
+                      <Bell className="w-4 h-4 mr-2" />
+                      Notify All
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Send Notification</DialogTitle>
+                      <DialogDescription>
+                        Send an email notification to all {activeSubscribers.length} active subscribers.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="notifyType">Type</Label>
+                        <Select value={notifyType} onValueChange={(v) => setNotifyType(v as "post" | "project")}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="post">New Blog Post</SelectItem>
+                            <SelectItem value="project">New Project</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="notifyTitle">Title</Label>
+                        <Input
+                          id="notifyTitle"
+                          placeholder="Enter title..."
+                          value={notifyTitle}
+                          onChange={(e) => setNotifyTitle(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="notifyDescription">Description</Label>
+                        <Textarea
+                          id="notifyDescription"
+                          placeholder="Enter a short description..."
+                          value={notifyDescription}
+                          onChange={(e) => setNotifyDescription(e.target.value)}
+                          rows={3}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="notifyUrl">Link URL (optional)</Label>
+                        <Input
+                          id="notifyUrl"
+                          type="url"
+                          placeholder="https://..."
+                          value={notifyUrl}
+                          onChange={(e) => setNotifyUrl(e.target.value)}
+                        />
+                      </div>
+                      <Button
+                        className="w-full"
+                        onClick={sendNotification}
+                        disabled={isSending || !notifyTitle.trim() || !notifyDescription.trim()}
+                      >
+                        {isSending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 mr-2" />
+                            Send to {activeSubscribers.length} Subscribers
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </motion.div>
 
@@ -270,10 +449,10 @@ const SubscribersPage = () => {
                             className={
                               subscriber.is_active
                                 ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
-                                : ""
+                                : "bg-red-500/10 text-red-500"
                             }
                           >
-                            {subscriber.is_active ? "Active" : "Inactive"}
+                            {subscriber.is_active ? "Active" : "Unsubscribed"}
                           </Badge>
                         </TableCell>
                       </TableRow>
