@@ -1,7 +1,26 @@
 import { useState } from "react";
-import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp } from "lucide-react";
+import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Send, X, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+
+interface Comment {
+  id: number;
+  name: string;
+  email: string;
+  content: string;
+  date: string;
+  reply?: string;
+  replyDate?: string;
+}
 
 interface BlogPost {
   id: number;
@@ -12,7 +31,7 @@ interface BlogPost {
   date: string;
   readTime: string;
   likes: number;
-  comments: number;
+  comments: Comment[];
   category: string;
   author: {
     name: string;
@@ -30,9 +49,9 @@ const initialPosts: BlogPost[] = [
     date: "Dec 20, 2024",
     readTime: "5 min read",
     likes: 142,
-    comments: 28,
+    comments: [],
     category: "Technology",
-    author: { name: "Alex Chen", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
   {
     id: 2,
@@ -43,9 +62,9 @@ const initialPosts: BlogPost[] = [
     date: "Dec 15, 2024",
     readTime: "8 min read",
     likes: 98,
-    comments: 15,
+    comments: [],
     category: "Design",
-    author: { name: "Alex Chen", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
   {
     id: 3,
@@ -56,9 +75,9 @@ const initialPosts: BlogPost[] = [
     date: "Dec 10, 2024",
     readTime: "10 min read",
     likes: 256,
-    comments: 42,
+    comments: [],
     category: "Development",
-    author: { name: "Alex Chen", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
   {
     id: 4,
@@ -69,9 +88,9 @@ const initialPosts: BlogPost[] = [
     date: "Dec 5, 2024",
     readTime: "12 min read",
     likes: 189,
-    comments: 31,
+    comments: [],
     category: "Development",
-    author: { name: "Alex Chen", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
 ];
 
@@ -79,9 +98,18 @@ const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [showLikeModal, setShowLikeModal] = useState(false);
+  const [showCommentModal, setShowCommentModal] = useState(false);
+  const [pendingLikePostId, setPendingLikePostId] = useState<number | null>(null);
+  const [likeForm, setLikeForm] = useState({ name: "", email: "" });
+  const [commentForm, setCommentForm] = useState({ name: "", email: "", comment: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLike = (postId: number) => {
+  const handleLikeClick = (postId: number, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    
     if (likedPosts.has(postId)) {
+      // Unlike - no email needed
       setLikedPosts((prev) => {
         const newSet = new Set(prev);
         newSet.delete(postId);
@@ -94,13 +122,108 @@ const Blog = () => {
       );
       toast({ description: "Removed from liked posts" });
     } else {
-      setLikedPosts((prev) => new Set([...prev, postId]));
+      // Like - show modal for email
+      setPendingLikePostId(postId);
+      setShowLikeModal(true);
+    }
+  };
+
+  const handleLikeSubmit = async () => {
+    if (!pendingLikePostId || !likeForm.name || !likeForm.email) {
+      toast({ description: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    const post = posts.find(p => p.id === pendingLikePostId);
+    
+    try {
+      // Send notification to backend
+      await supabase.functions.invoke("send-contact-email", {
+        body: {
+          name: likeForm.name,
+          email: likeForm.email,
+          subject: `Blog Like: ${post?.title}`,
+          message: `Liked article: ${post?.title}`,
+          type: "blog_like",
+          blogTitle: post?.title,
+          blogUrl: `${window.location.origin}/#blog`,
+        },
+      });
+
+      // Update UI
+      setLikedPosts((prev) => new Set([...prev, pendingLikePostId]));
       setPosts((prev) =>
-        prev.map((post) =>
-          post.id === postId ? { ...post, likes: post.likes + 1 } : post
+        prev.map((p) =>
+          p.id === pendingLikePostId ? { ...p, likes: p.likes + 1 } : p
         )
       );
-      toast({ description: "Added to liked posts! ❤️" });
+      
+      toast({ description: "Thanks for liking! ❤️" });
+      setShowLikeModal(false);
+      setLikeForm({ name: "", email: "" });
+      setPendingLikePostId(null);
+    } catch (error) {
+      console.error("Like error:", error);
+      toast({ description: "Failed to submit like", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    if (!selectedPost || !commentForm.name || !commentForm.email || !commentForm.comment) {
+      toast({ description: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      // Send notification to backend
+      await supabase.functions.invoke("send-contact-email", {
+        body: {
+          name: commentForm.name,
+          email: commentForm.email,
+          subject: `Blog Comment: ${selectedPost.title}`,
+          message: commentForm.comment,
+          type: "blog_comment",
+          blogTitle: selectedPost.title,
+          blogUrl: `${window.location.origin}/#blog`,
+          comment: commentForm.comment,
+        },
+      });
+
+      // Add comment to local state
+      const newComment: Comment = {
+        id: Date.now(),
+        name: commentForm.name,
+        email: commentForm.email,
+        content: commentForm.comment,
+        date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      };
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p.id === selectedPost.id 
+            ? { ...p, comments: [...p.comments, newComment] } 
+            : p
+        )
+      );
+      
+      // Update selectedPost to show the new comment
+      setSelectedPost((prev) => 
+        prev ? { ...prev, comments: [...prev.comments, newComment] } : null
+      );
+      
+      toast({ description: "Comment submitted! 💬" });
+      setShowCommentModal(false);
+      setCommentForm({ name: "", email: "", comment: "" });
+    } catch (error) {
+      console.error("Comment error:", error);
+      toast({ description: "Failed to submit comment", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -166,14 +289,14 @@ const Blog = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <button
-                    onClick={(e) => { e.stopPropagation(); handleLike(featuredPost.id); }}
+                    onClick={(e) => handleLikeClick(featuredPost.id, e)}
                     className={`flex items-center gap-1.5 text-sm transition-colors ${likedPosts.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-red-500"}`}
                   >
                     <Heart size={18} fill={likedPosts.has(featuredPost.id) ? "currentColor" : "none"} />
                     {featuredPost.likes}
                   </button>
                   <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <MessageCircle size={18} /> {featuredPost.comments}
+                    <MessageCircle size={18} /> {featuredPost.comments.length}
                   </span>
                   <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     <Clock size={18} /> {featuredPost.readTime}
@@ -228,14 +351,14 @@ const Blog = () => {
                 <div className="flex items-center justify-between pt-4 border-t border-border">
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={(e) => { e.stopPropagation(); handleLike(post.id); }}
+                      onClick={(e) => handleLikeClick(post.id, e)}
                       className={`flex items-center gap-1 text-sm transition-colors ${likedPosts.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-red-500"}`}
                     >
                       <Heart size={16} fill={likedPosts.has(post.id) ? "currentColor" : "none"} />
                       {post.likes}
                     </button>
                     <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <MessageCircle size={16} /> {post.comments}
+                      <MessageCircle size={16} /> {post.comments.length}
                     </span>
                   </div>
                   <ArrowRight size={16} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -311,20 +434,148 @@ const Blog = () => {
               </div>
               <div className="flex items-center gap-4 mt-8 pt-6 border-t border-border">
                 <button
-                  onClick={() => handleLike(selectedPost.id)}
+                  onClick={() => handleLikeClick(selectedPost.id)}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors font-medium ${likedPosts.has(selectedPost.id) ? "bg-red-500/10 text-red-500" : "bg-secondary text-muted-foreground hover:text-red-500"}`}
                 >
                   <Heart size={18} fill={likedPosts.has(selectedPost.id) ? "currentColor" : "none"} />
                   {posts.find((p) => p.id === selectedPost.id)?.likes} Likes
                 </button>
-                <span className="flex items-center gap-2 px-5 py-2.5 bg-secondary rounded-xl text-muted-foreground font-medium">
-                  <MessageCircle size={18} /> {selectedPost.comments} Comments
-                </span>
+                <button
+                  onClick={() => setShowCommentModal(true)}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-secondary rounded-xl text-muted-foreground font-medium hover:text-primary transition-colors"
+                >
+                  <MessageCircle size={18} /> Add Comment
+                </button>
               </div>
+
+              {/* Comments Section */}
+              {selectedPost.comments.length > 0 && (
+                <div className="mt-8 pt-6 border-t border-border">
+                  <h3 className="font-semibold text-lg mb-4">Comments ({selectedPost.comments.length})</h3>
+                  <div className="space-y-4">
+                    {selectedPost.comments.map((comment) => (
+                      <div key={comment.id} className="bg-secondary/50 rounded-xl p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center text-primary font-semibold text-sm">
+                            {comment.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-medium text-sm">{comment.name}</p>
+                            <p className="text-xs text-muted-foreground">{comment.date}</p>
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground text-sm pl-10">{comment.content}</p>
+                        
+                        {/* Reply from owner */}
+                        {comment.reply && (
+                          <div className="ml-10 mt-3 pl-4 border-l-2 border-primary">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-medium text-primary">Tharaneetharan SS</span>
+                              <span className="text-xs text-muted-foreground">{comment.replyDate}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{comment.reply}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       )}
+
+      {/* Like Modal */}
+      <Dialog open={showLikeModal} onOpenChange={setShowLikeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Heart className="text-red-500" size={20} />
+              Like this article
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground">
+              Enter your details to like this article. You'll receive updates!
+            </p>
+            <Input
+              placeholder="Your name"
+              value={likeForm.name}
+              onChange={(e) => setLikeForm({ ...likeForm, name: e.target.value })}
+              disabled={isSubmitting}
+            />
+            <Input
+              type="email"
+              placeholder="your@email.com"
+              value={likeForm.email}
+              onChange={(e) => setLikeForm({ ...likeForm, email: e.target.value })}
+              disabled={isSubmitting}
+            />
+            <Button 
+              onClick={handleLikeSubmit} 
+              className="w-full" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Heart className="w-4 h-4 mr-2" />
+              )}
+              Like Article
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Comment Modal */}
+      <Dialog open={showCommentModal} onOpenChange={setShowCommentModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageCircle className="text-primary" size={20} />
+              Add a comment
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground">
+              Share your thoughts on this article.
+            </p>
+            <Input
+              placeholder="Your name"
+              value={commentForm.name}
+              onChange={(e) => setCommentForm({ ...commentForm, name: e.target.value })}
+              disabled={isSubmitting}
+            />
+            <Input
+              type="email"
+              placeholder="your@email.com"
+              value={commentForm.email}
+              onChange={(e) => setCommentForm({ ...commentForm, email: e.target.value })}
+              disabled={isSubmitting}
+            />
+            <Textarea
+              placeholder="Write your comment..."
+              value={commentForm.comment}
+              onChange={(e) => setCommentForm({ ...commentForm, comment: e.target.value })}
+              disabled={isSubmitting}
+              rows={4}
+            />
+            <Button 
+              onClick={handleCommentSubmit} 
+              className="w-full" 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin mr-2" />
+              ) : (
+                <Send className="w-4 h-4 mr-2" />
+              )}
+              Submit Comment
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
