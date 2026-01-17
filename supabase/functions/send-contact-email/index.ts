@@ -183,6 +183,34 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error("Failed to send notification");
       }
 
+      // Generate unsubscribe token and update subscriber
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
+      
+      // Fetch the unsubscribe token for this subscriber
+      let unsubscribeToken = "";
+      try {
+        const tokenResponse = await fetch(
+          `${SUPABASE_URL}/rest/v1/newsletter_subscribers?email=eq.${encodeURIComponent(email)}&select=unsubscribe_token`,
+          {
+            headers: {
+              "apikey": SUPABASE_SERVICE_ROLE_KEY!,
+              "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            },
+          }
+        );
+        const tokenData = await tokenResponse.json();
+        if (tokenData && tokenData[0]) {
+          unsubscribeToken = tokenData[0].unsubscribe_token;
+        }
+      } catch (e) {
+        console.error("Failed to fetch unsubscribe token:", e);
+      }
+
+      const unsubscribeUrl = `${SITE_URL}/unsubscribe?token=${unsubscribeToken}`;
+      const blogUrl = `${SITE_URL}/#blog`;
+
       // Send welcome email to subscriber
       const welcomeHtml = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
@@ -203,9 +231,27 @@ const handler = async (req: Request): Promise<Response> => {
             <p style="color: #555; line-height: 1.8; font-size: 16px;">
               Stay tuned for exciting updates!
             </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
+              <h3 style="color: #333; margin-bottom: 15px;">Quick Links</h3>
+              <table style="width: 100%;">
+                <tr>
+                  <td style="padding: 10px 0;">
+                    <a href="${blogUrl}" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">📖 Read Our Blog</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 0;">
+                    <a href="${SITE_URL}" style="display: inline-block; background: #0066cc; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">🏠 Visit Website</a>
+                  </td>
+                </tr>
+              </table>
+            </div>
           </div>
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 0 0 10px 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 0;">
+              <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from this newsletter</a>
+            </p>
           </div>
         </div>
       `;
