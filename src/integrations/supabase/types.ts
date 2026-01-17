@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_comments: {
+        Row: {
+          content: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          post_id: string
+          reply: string | null
+          reply_date: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          post_id: string
+          reply?: string | null
+          reply_date?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          post_id?: string
+          reply?: string | null
+          reply_date?: string | null
+        }
+        Relationships: []
+      }
+      blog_likes: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          post_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          post_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          post_id?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           email: string

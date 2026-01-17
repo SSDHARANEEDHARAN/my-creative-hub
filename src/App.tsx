@@ -23,6 +23,7 @@ const ContactPage = lazy(() => import("./pages/ContactPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const ArticlePage = lazy(() => import("./pages/ArticlePage"));
 const SubscribersPage = lazy(() => import("./pages/SubscribersPage"));
+const BlogCommentsPage = lazy(() => import("./pages/BlogCommentsPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const UnsubscribePage = lazy(() => import("./pages/UnsubscribePage"));
@@ -55,6 +56,14 @@ const AnimatedRoutes = () => {
             element={
               <ProtectedRoute requireAdmin>
                 <SubscribersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/blog-comments"
+            element={
+              <ProtectedRoute requireAdmin>
+                <BlogCommentsPage />
               </ProtectedRoute>
             }
           />
