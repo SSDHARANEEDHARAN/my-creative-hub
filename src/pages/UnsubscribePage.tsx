@@ -59,15 +59,20 @@ const UnsubscribePage = () => {
     setIsProcessing(true);
 
     try {
-      const { error } = await supabase
-        .from("newsletter_subscribers")
-        .update({ is_active: false })
-        .eq("unsubscribe_token", token);
+      const { data, error } = await supabase.functions.invoke('unsubscribe', {
+        body: { token }
+      });
 
       if (error) throw error;
+      
+      // Check if the function returned an error in the response
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
       setStatus("success");
     } catch (error) {
+      console.error("Unsubscribe error:", error);
       setStatus("error");
     } finally {
       setIsProcessing(false);
