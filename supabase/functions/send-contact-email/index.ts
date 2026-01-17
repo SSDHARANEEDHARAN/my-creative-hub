@@ -162,25 +162,31 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `;
 
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "Portfolio Newsletter <onboarding@resend.dev>",
-          to: [OWNER_EMAIL],
-          reply_to: email,
-          subject: `📰 New Newsletter Subscriber: ${safeName}`,
-          html: newsletterHtml,
-        }),
-      });
+      // Try to send notification email to owner (non-blocking)
+      try {
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "Portfolio Newsletter <onboarding@resend.dev>",
+            to: [OWNER_EMAIL],
+            reply_to: email,
+            subject: `📰 New Newsletter Subscriber: ${safeName}`,
+            html: newsletterHtml,
+          }),
+        });
 
-      if (!response.ok) {
-        const error = await response.text();
-        console.error("Resend API error:", error);
-        throw new Error("Failed to send notification");
+        if (!response.ok) {
+          const error = await response.text();
+          console.warn("Resend API warning (notification):", error);
+          // Don't throw - continue with subscription flow
+        }
+      } catch (emailError) {
+        console.warn("Email notification failed (non-critical):", emailError);
+        // Don't throw - continue with subscription flow
       }
 
       // Generate unsubscribe token and update subscriber
@@ -256,19 +262,31 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `;
 
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "TTS.dev Newsletter <onboarding@resend.dev>",
-          to: [email],
-          subject: `🎉 Welcome to TTS.dev Newsletter!`,
-          html: welcomeHtml,
-        }),
-      });
+      // Try to send welcome email to subscriber (non-blocking)
+      try {
+        const welcomeResponse = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "TTS.dev Newsletter <onboarding@resend.dev>",
+            to: [email],
+            subject: `🎉 Welcome to TTS.dev Newsletter!`,
+            html: welcomeHtml,
+          }),
+        });
+
+        if (!welcomeResponse.ok) {
+          const error = await welcomeResponse.text();
+          console.warn("Resend API warning (welcome email):", error);
+          // Don't throw - subscription was still successful
+        }
+      } catch (emailError) {
+        console.warn("Welcome email failed (non-critical):", emailError);
+        // Don't throw - subscription was still successful
+      }
 
       return new Response(
         JSON.stringify({ success: true, message: "Successfully subscribed to newsletter!" }),
@@ -310,29 +328,33 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `;
 
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "Portfolio Blog <onboarding@resend.dev>",
-          to: [OWNER_EMAIL],
-          reply_to: email,
-          subject: `❤️ New Like: ${safeBlogTitle}`,
-          html: likeHtml,
-        }),
-      });
+      // Try to send like notification (non-blocking)
+      try {
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "Portfolio Blog <onboarding@resend.dev>",
+            to: [OWNER_EMAIL],
+            reply_to: email,
+            subject: `❤️ New Like: ${safeBlogTitle}`,
+            html: likeHtml,
+          }),
+        });
 
-      if (!response.ok) {
-        const error = await response.text();
-        console.error("Resend API error:", error);
-        throw new Error("Failed to send notification");
+        if (!response.ok) {
+          const error = await response.text();
+          console.warn("Resend API warning (like notification):", error);
+        }
+      } catch (emailError) {
+        console.warn("Like notification failed (non-critical):", emailError);
       }
 
       return new Response(
-        JSON.stringify({ success: true, message: "Like notification sent!" }),
+        JSON.stringify({ success: true, message: "Like recorded successfully!" }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
@@ -375,29 +397,33 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `;
 
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "Portfolio Blog <onboarding@resend.dev>",
-          to: [OWNER_EMAIL],
-          reply_to: email,
-          subject: `💬 New Comment: ${safeBlogTitle}`,
-          html: commentHtml,
-        }),
-      });
+      // Try to send comment notification (non-blocking)
+      try {
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "Portfolio Blog <onboarding@resend.dev>",
+            to: [OWNER_EMAIL],
+            reply_to: email,
+            subject: `💬 New Comment: ${safeBlogTitle}`,
+            html: commentHtml,
+          }),
+        });
 
-      if (!response.ok) {
-        const error = await response.text();
-        console.error("Resend API error:", error);
-        throw new Error("Failed to send notification");
+        if (!response.ok) {
+          const error = await response.text();
+          console.warn("Resend API warning (comment notification):", error);
+        }
+      } catch (emailError) {
+        console.warn("Comment notification failed (non-critical):", emailError);
       }
 
       return new Response(
-        JSON.stringify({ success: true, message: "Comment notification sent!" }),
+        JSON.stringify({ success: true, message: "Comment submitted successfully!" }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
@@ -499,30 +525,35 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    // Send notification email to owner
-    const notificationResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: "Portfolio Contact <onboarding@resend.dev>",
-        to: [OWNER_EMAIL],
-        reply_to: email,
-        subject: emailSubject,
-        html: emailHtml,
-      }),
-    });
+    // Send notification email to owner (non-blocking for trial accounts)
+    let emailSent = false;
+    try {
+      const notificationResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: "Portfolio Contact <onboarding@resend.dev>",
+          to: [OWNER_EMAIL],
+          reply_to: email,
+          subject: emailSubject,
+          html: emailHtml,
+        }),
+      });
 
-    if (!notificationResponse.ok) {
-      const error = await notificationResponse.text();
-      console.error("Resend API error:", error);
-      throw new Error("Failed to send email. Please try again later.");
+      if (!notificationResponse.ok) {
+        const error = await notificationResponse.text();
+        console.warn("Resend API warning (contact notification):", error);
+      } else {
+        const result = await notificationResponse.json();
+        console.log("Email sent successfully to owner:", result);
+        emailSent = true;
+      }
+    } catch (emailError) {
+      console.warn("Contact notification failed (non-critical):", emailError);
     }
-
-    const result = await notificationResponse.json();
-    console.log("Email sent successfully to owner:", result);
 
     // Send thank-you confirmation email to the user
     const thankYouHtml = `
@@ -572,25 +603,30 @@ const handler = async (req: Request): Promise<Response> => {
       </div>
     `;
 
-    // Send confirmation email to user
-    const confirmationResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
-      body: JSON.stringify({
-        from: "Tharaneetharan SS <onboarding@resend.dev>",
-        to: [email],
-        subject: `Thank you for contacting me, ${safeName}! ✅`,
-        html: thankYouHtml,
-      }),
-    });
+    // Send confirmation email to user (non-blocking)
+    try {
+      const confirmationResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: "Tharaneetharan SS <onboarding@resend.dev>",
+          to: [email],
+          subject: `Thank you for contacting me, ${safeName}! ✅`,
+          html: thankYouHtml,
+        }),
+      });
 
-    if (confirmationResponse.ok) {
-      console.log("Confirmation email sent to user:", email);
-    } else {
-      console.error("Failed to send confirmation email to user");
+      if (confirmationResponse.ok) {
+        console.log("Confirmation email sent to user:", email);
+      } else {
+        const error = await confirmationResponse.text();
+        console.warn("Resend API warning (confirmation email):", error);
+      }
+    } catch (emailError) {
+      console.warn("Confirmation email failed (non-critical):", emailError);
     }
 
     return new Response(
