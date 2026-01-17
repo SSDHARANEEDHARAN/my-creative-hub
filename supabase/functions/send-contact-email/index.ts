@@ -23,10 +23,13 @@ const ContactEmailSchema = z.object({
   timeline: z.string().optional(),
   requirements: z.string().optional(),
   // Blog notification fields
-  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter"]).optional(),
+  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
+  // Comment reply fields
+  originalComment: z.string().optional(),
+  replyContent: z.string().optional(),
 });
 
 type ContactEmailRequest = z.infer<typeof ContactEmailSchema>;
@@ -115,7 +118,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const data: ContactEmailRequest = parseResult.data;
-    const { name, email, subject, message, serviceType, serviceCategory, budget, timeline, requirements, type, blogTitle, blogUrl, comment } = data;
+    const { name, email, subject, message, serviceType, serviceCategory, budget, timeline, requirements, type, blogTitle, blogUrl, comment, originalComment, replyContent } = data;
 
     const safeName = escapeHtml(name);
     const safeEmail = escapeHtml(email);
@@ -129,6 +132,8 @@ const handler = async (req: Request): Promise<Response> => {
     const safeBlogTitle = blogTitle ? escapeHtml(blogTitle) : null;
     const safeBlogUrl = blogUrl ? escapeHtml(blogUrl) : null;
     const safeComment = comment ? escapeHtml(comment) : null;
+    const safeOriginalComment = originalComment ? escapeHtml(originalComment) : null;
+    const safeReplyContent = replyContent ? escapeHtml(replyContent) : null;
 
     console.log(`Processing ${type || 'contact'} form from: ${safeName} (${safeEmail})`);
 
@@ -424,6 +429,74 @@ const handler = async (req: Request): Promise<Response> => {
 
       return new Response(
         JSON.stringify({ success: true, message: "Comment submitted successfully!" }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Handle comment reply notification (sent to the commenter)
+    if (type === "comment_reply") {
+      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
+      
+      const replyHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #4CAF50, #45a049); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">💬 You Got a Reply!</h1>
+          </div>
+          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              Tharaneetharan SS has replied to your comment on the blog post: <strong>${safeBlogTitle}</strong>
+            </p>
+            
+            <div style="background: #ffffff; padding: 15px; border-left: 4px solid #ccc; margin: 20px 0;">
+              <p style="color: #666; margin: 0 0 5px 0; font-size: 12px;">Your comment:</p>
+              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeOriginalComment}</p>
+            </div>
+            
+            <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4CAF50; margin: 20px 0;">
+              <p style="color: #2e7d32; margin: 0 0 5px 0; font-size: 12px; font-weight: bold;">Reply from Tharaneetharan SS:</p>
+              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeReplyContent}</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${SITE_URL}/#blog" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">📖 View Blog</a>
+            </div>
+          </div>
+          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+            <p style="margin: 0;">Thank you for engaging with our blog!</p>
+            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+          </div>
+        </div>
+      `;
+
+      // Send reply notification to commenter
+      try {
+        const response = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "TTS.dev Blog <onboarding@resend.dev>",
+            to: [email],
+            subject: `💬 Reply to your comment on: ${safeBlogTitle}`,
+            html: replyHtml,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.text();
+          console.warn("Resend API warning (reply notification):", error);
+        } else {
+          console.log("Reply notification sent to:", email);
+        }
+      } catch (emailError) {
+        console.warn("Reply notification failed (non-critical):", emailError);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: "Reply notification sent!" }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }

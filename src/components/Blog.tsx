@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Send, X, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Send, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -12,8 +12,27 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 
+interface DbComment {
+  id: string;
+  post_id: string;
+  name: string;
+  email: string;
+  content: string;
+  reply: string | null;
+  reply_date: string | null;
+  created_at: string;
+}
+
+interface DbLike {
+  id: string;
+  post_id: string;
+  name: string;
+  email: string;
+  created_at: string;
+}
+
 interface Comment {
-  id: number;
+  id: string;
   name: string;
   email: string;
   content: string;
@@ -39,7 +58,7 @@ interface BlogPost {
   };
 }
 
-const initialPosts: BlogPost[] = [
+const initialPosts: Omit<BlogPost, 'likes' | 'comments'>[] = [
   {
     id: 1,
     title: "The Future of Web Development in 2024",
@@ -48,8 +67,6 @@ const initialPosts: BlogPost[] = [
     image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=500&fit=crop",
     date: "Dec 20, 2024",
     readTime: "5 min read",
-    likes: 142,
-    comments: [],
     category: "Technology",
     author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
@@ -61,8 +78,6 @@ const initialPosts: BlogPost[] = [
     image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&h=500&fit=crop",
     date: "Dec 15, 2024",
     readTime: "8 min read",
-    likes: 98,
-    comments: [],
     category: "Design",
     author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
@@ -74,8 +89,6 @@ const initialPosts: BlogPost[] = [
     image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=500&fit=crop",
     date: "Dec 10, 2024",
     readTime: "10 min read",
-    likes: 256,
-    comments: [],
     category: "Development",
     author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
@@ -87,15 +100,13 @@ const initialPosts: BlogPost[] = [
     image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop",
     date: "Dec 5, 2024",
     readTime: "12 min read",
-    likes: 189,
-    comments: [],
     category: "Development",
     author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
 ];
 
 const Blog = () => {
-  const [posts, setPosts] = useState<BlogPost[]>(initialPosts);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [showLikeModal, setShowLikeModal] = useState(false);
@@ -104,6 +115,60 @@ const Blog = () => {
   const [likeForm, setLikeForm] = useState({ name: "", email: "" });
   const [commentForm, setCommentForm] = useState({ name: "", email: "", comment: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load comments and likes from database
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [commentsRes, likesRes] = await Promise.all([
+          supabase.from("blog_comments").select("*").order("created_at", { ascending: true }),
+          supabase.from("blog_likes").select("*"),
+        ]);
+
+        const dbComments: DbComment[] = commentsRes.data || [];
+        const dbLikes: DbLike[] = likesRes.data || [];
+
+        // Group comments by post_id
+        const commentsByPost: Record<string, Comment[]> = {};
+        dbComments.forEach((c) => {
+          if (!commentsByPost[c.post_id]) commentsByPost[c.post_id] = [];
+          commentsByPost[c.post_id].push({
+            id: c.id,
+            name: c.name,
+            email: c.email,
+            content: c.content,
+            date: new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+            reply: c.reply || undefined,
+            replyDate: c.reply_date ? new Date(c.reply_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : undefined,
+          });
+        });
+
+        // Count likes by post_id
+        const likesByPost: Record<string, number> = {};
+        dbLikes.forEach((l) => {
+          likesByPost[l.post_id] = (likesByPost[l.post_id] || 0) + 1;
+        });
+
+        // Build posts with database data
+        const enrichedPosts: BlogPost[] = initialPosts.map((p) => ({
+          ...p,
+          likes: likesByPost[String(p.id)] || 0,
+          comments: commentsByPost[String(p.id)] || [],
+        }));
+
+        setPosts(enrichedPosts);
+      } catch (error) {
+        console.error("Error loading blog data:", error);
+        // Fallback to initial posts without DB data
+        setPosts(initialPosts.map(p => ({ ...p, likes: 0, comments: [] })));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const handleLikeClick = (postId: number, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -138,8 +203,17 @@ const Blog = () => {
     const post = posts.find(p => p.id === pendingLikePostId);
     
     try {
-      // Send notification to backend
-      await supabase.functions.invoke("send-contact-email", {
+      // Save like to database
+      const { error: dbError } = await supabase.from("blog_likes").insert({
+        post_id: String(pendingLikePostId),
+        name: likeForm.name,
+        email: likeForm.email,
+      });
+
+      if (dbError) throw dbError;
+
+      // Send notification to backend (non-blocking)
+      supabase.functions.invoke("send-contact-email", {
         body: {
           name: likeForm.name,
           email: likeForm.email,
@@ -180,8 +254,22 @@ const Blog = () => {
     setIsSubmitting(true);
     
     try {
-      // Send notification to backend
-      await supabase.functions.invoke("send-contact-email", {
+      // Save comment to database
+      const { data: insertedComment, error: dbError } = await supabase
+        .from("blog_comments")
+        .insert({
+          post_id: String(selectedPost.id),
+          name: commentForm.name,
+          email: commentForm.email,
+          content: commentForm.comment,
+        })
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
+      // Send notification to backend (non-blocking)
+      supabase.functions.invoke("send-contact-email", {
         body: {
           name: commentForm.name,
           email: commentForm.email,
@@ -196,7 +284,7 @@ const Blog = () => {
 
       // Add comment to local state
       const newComment: Comment = {
-        id: Date.now(),
+        id: insertedComment.id,
         name: commentForm.name,
         email: commentForm.email,
         content: commentForm.comment,
