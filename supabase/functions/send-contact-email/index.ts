@@ -402,7 +402,9 @@ const handler = async (req: Request): Promise<Response> => {
         </div>
       `;
 
-      // Try to send comment notification (non-blocking)
+      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
+
+      // Try to send comment notification to admin (non-blocking)
       try {
         const response = await fetch("https://api.resend.com/emails", {
           method: "POST",
@@ -422,9 +424,72 @@ const handler = async (req: Request): Promise<Response> => {
         if (!response.ok) {
           const error = await response.text();
           console.warn("Resend API warning (comment notification):", error);
+        } else {
+          console.log("Comment notification sent to admin:", OWNER_EMAIL);
         }
       } catch (emailError) {
         console.warn("Comment notification failed (non-critical):", emailError);
+      }
+
+      // Send thank-you/confirmation email to the commenter
+      const commenterConfirmHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">💬 Thanks for Your Comment!</h1>
+          </div>
+          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              Thank you for commenting on the blog post: <strong>${safeBlogTitle}</strong>
+            </p>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              Your comment has been received and is now visible on the blog. We appreciate you taking the time to share your thoughts!
+            </p>
+            
+            <div style="background: #ffffff; padding: 15px; border-left: 4px solid #2196f3; margin: 20px 0;">
+              <p style="color: #666; margin: 0 0 5px 0; font-size: 12px;">Your comment:</p>
+              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeComment}</p>
+            </div>
+            
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              If the author replies to your comment, you'll receive an email notification.
+            </p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${SITE_URL}/#blog" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">📖 View Blog</a>
+            </div>
+          </div>
+          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+            <p style="margin: 0;">Thank you for engaging with our blog!</p>
+            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+          </div>
+        </div>
+      `;
+
+      // Try to send confirmation email to commenter (non-blocking)
+      try {
+        const confirmResponse = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "TTS.dev Blog <onboarding@resend.dev>",
+            to: [email],
+            subject: `💬 Thanks for commenting on: ${safeBlogTitle}`,
+            html: commenterConfirmHtml,
+          }),
+        });
+
+        if (!confirmResponse.ok) {
+          const error = await confirmResponse.text();
+          console.warn("Resend API warning (comment confirmation):", error);
+        } else {
+          console.log("Comment confirmation sent to:", email);
+        }
+      } catch (emailError) {
+        console.warn("Comment confirmation email failed (non-critical):", emailError);
       }
 
       return new Response(
