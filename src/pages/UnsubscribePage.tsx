@@ -26,18 +26,23 @@ const UnsubscribePage = () => {
       }
 
       try {
-        const { data, error } = await supabase
-          .from("newsletter_subscribers")
-          .select("email, is_active")
-          .eq("unsubscribe_token", token)
-          .maybeSingle();
+        // Use edge function to verify token securely (avoids exposing subscriber data via RLS)
+        const { data, error } = await supabase.functions.invoke('verify-token', {
+          body: { token }
+        });
 
-        if (error || !data) {
+        if (error) {
+          console.error("Verification error:", error);
+          setStatus("error");
+          return;
+        }
+
+        if (!data?.valid) {
           setStatus("invalid");
           return;
         }
 
-        if (!data.is_active) {
+        if (!data.isActive) {
           setStatus("success");
           setEmail(data.email);
           return;
@@ -46,6 +51,7 @@ const UnsubscribePage = () => {
         setEmail(data.email);
         setStatus("confirm");
       } catch (error) {
+        console.error("Verification error:", error);
         setStatus("error");
       }
     };
