@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const NewsletterPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -30,6 +31,15 @@ const NewsletterPopup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!name.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter your name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       toast({
         title: "Invalid email",
@@ -42,18 +52,24 @@ const NewsletterPopup = () => {
     setIsLoading(true);
 
     try {
-      // Save to database
+      // Save to database with name
       const { error: dbError } = await supabase
         .from("newsletter_subscribers")
-        .insert({ email, source: "popup" });
+        .insert({ email, name, source: "popup" });
 
       if (dbError && dbError.code !== "23505") {
         throw dbError;
       }
 
-      // Send welcome email
+      // Send welcome email and notification to backend
       const { error: emailError } = await supabase.functions.invoke("send-contact-email", {
-        body: { type: "newsletter", email },
+        body: { 
+          type: "newsletter", 
+          name,
+          email,
+          subject: "Newsletter Subscription",
+          message: "New newsletter subscription",
+        },
       });
 
       if (emailError) throw emailError;
@@ -135,6 +151,14 @@ const NewsletterPopup = () => {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
+                <Input
+                  type="text"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="h-12 bg-background/50 border-primary/20 focus:border-primary"
+                  disabled={isLoading}
+                />
                 <Input
                   type="email"
                   placeholder="Enter your email address"

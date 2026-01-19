@@ -34,10 +34,10 @@ const NewsletterSubscription = () => {
     setIsLoading(true);
 
     try {
-      // Save to database
+      // Save to database with name
       const { error: dbError } = await supabase
         .from("newsletter_subscribers")
-        .insert({ email, source: "footer" });
+        .insert({ email, name, source: "footer" });
 
       if (dbError && dbError.code !== "23505") {
         throw dbError;
