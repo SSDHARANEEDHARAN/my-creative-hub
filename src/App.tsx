@@ -9,6 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import { Suspense, lazy } from "react";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { AuthProvider } from "./contexts/AuthContext";
+import { GuestProvider } from "./contexts/GuestContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Lazy load pages for better performance
@@ -24,6 +25,7 @@ const BlogPage = lazy(() => import("./pages/BlogPage"));
 const ArticlePage = lazy(() => import("./pages/ArticlePage"));
 const SubscribersPage = lazy(() => import("./pages/SubscribersPage"));
 const BlogCommentsPage = lazy(() => import("./pages/BlogCommentsPage"));
+const AdminModerationPage = lazy(() => import("./pages/AdminModerationPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const UnsubscribePage = lazy(() => import("./pages/UnsubscribePage"));
@@ -41,7 +43,6 @@ const AnimatedRoutes = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/skills" element={<SkillsPage />} />
-          <Route path="/services" element={<ServicesPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/article/:slug" element={<ArticlePage />} />
@@ -51,6 +52,14 @@ const AnimatedRoutes = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/unsubscribe" element={<UnsubscribePage />} />
+          <Route
+            path="/services"
+            element={
+              <ProtectedRoute>
+                <ServicesPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/subscribers"
             element={
@@ -67,6 +76,14 @@ const AnimatedRoutes = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/moderation"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminModerationPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
@@ -79,13 +96,15 @@ const App = () => (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AnimatedRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
+          <GuestProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </GuestProvider>
         </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>

@@ -23,7 +23,7 @@ const ContactEmailSchema = z.object({
   timeline: z.string().optional(),
   requirements: z.string().optional(),
   // Blog notification fields
-  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply"]).optional(),
+  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
@@ -562,6 +562,117 @@ const handler = async (req: Request): Promise<Response> => {
 
       return new Response(
         JSON.stringify({ success: true, message: "Reply notification sent!" }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    // Handle guest visitor welcome
+    if (type === "guest_welcome") {
+      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
+      
+      // Send notification to admin about new guest visitor
+      const guestNotifyHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #9c27b0, #673ab7); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">👤 New Guest Visitor!</h1>
+          </div>
+          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+            <h2 style="color: #333; margin-top: 0;">New Guest Registration</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
+                <td style="padding: 10px 0; color: #333;">${safeName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
+                <td style="padding: 10px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a></td>
+              </tr>
+              <tr>
+                <td style="padding: 10px 0; color: #666; font-weight: bold;">Visited:</td>
+                <td style="padding: 10px 0; color: #333;">${new Date().toLocaleString()}</td>
+              </tr>
+            </table>
+            <p style="color: #666; margin-top: 15px; font-style: italic;">
+              Note: Guest visitors can view all content except the Services page.
+            </p>
+          </div>
+          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+            <p style="margin: 0;">This visitor registered as a guest on your portfolio website.</p>
+          </div>
+        </div>
+      `;
+
+      // Try to send notification to admin (non-blocking)
+      try {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "Portfolio Guest <onboarding@resend.dev>",
+            to: [OWNER_EMAIL],
+            reply_to: email,
+            subject: `👤 New Guest Visitor: ${safeName}`,
+            html: guestNotifyHtml,
+          }),
+        });
+      } catch (emailError) {
+        console.warn("Guest notification failed (non-critical):", emailError);
+      }
+
+      // Send welcome email to guest
+      const guestWelcomeHtml = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
+          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">👋 Welcome to My Portfolio!</h1>
+          </div>
+          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
+            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}!</h2>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              Thank you for visiting my portfolio! As a guest, you can explore:
+            </p>
+            <ul style="color: #555; line-height: 1.8;">
+              <li>📖 Blog posts and articles</li>
+              <li>💼 Projects and case studies</li>
+              <li>🎨 Gallery and testimonials</li>
+              <li>📧 Contact information</li>
+            </ul>
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">
+              <strong>Want full access?</strong> Create an account to unlock the Services page and more features!
+            </p>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${SITE_URL}" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">🏠 Visit Portfolio</a>
+            </div>
+          </div>
+          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
+            <p style="margin: 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+          </div>
+        </div>
+      `;
+
+      // Try to send welcome email to guest (non-blocking)
+      try {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: "TTS.dev Portfolio <onboarding@resend.dev>",
+            to: [email],
+            subject: `👋 Welcome to Tharaneetharan's Portfolio!`,
+            html: guestWelcomeHtml,
+          }),
+        });
+      } catch (emailError) {
+        console.warn("Guest welcome email failed (non-critical):", emailError);
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, message: "Guest registration successful!" }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
