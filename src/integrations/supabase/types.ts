@@ -20,6 +20,8 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_approved: boolean
+          is_spam: boolean
           name: string
           post_id: string
           reply: string | null
@@ -30,6 +32,8 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          is_approved?: boolean
+          is_spam?: boolean
           name: string
           post_id: string
           reply?: string | null
@@ -40,6 +44,8 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          is_approved?: boolean
+          is_spam?: boolean
           name?: string
           post_id?: string
           reply?: string | null
@@ -68,6 +74,33 @@ export type Database = {
           id?: string
           name?: string
           post_id?: string
+        }
+        Relationships: []
+      }
+      guest_visitors: {
+        Row: {
+          email: string
+          id: string
+          ip_address: string | null
+          name: string
+          user_agent: string | null
+          visited_at: string
+        }
+        Insert: {
+          email: string
+          id?: string
+          ip_address?: string | null
+          name: string
+          user_agent?: string | null
+          visited_at?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          ip_address?: string | null
+          name?: string
+          user_agent?: string | null
+          visited_at?: string
         }
         Relationships: []
       }
