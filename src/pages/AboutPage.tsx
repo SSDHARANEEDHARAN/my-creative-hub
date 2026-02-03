@@ -1,12 +1,24 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import ResumeButton from "@/components/ResumeButton";
+import CertificateModal from "@/components/CertificateModal";
 import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone, Linkedin, Github } from "lucide-react";
 import profilePhoto from "@/assets/profile-photo.jpg";
 
+interface Certificate {
+  name: string;
+  issuer: string;
+  year: string;
+  credentialId?: string;
+}
+
 const AboutPage = () => {
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const skills = [
     { icon: <Code size={24} />, title: "Web Development", desc: "React, Python, Full-Stack Apps", color: "text-primary" },
     { icon: <Cpu size={24} />, title: "Embedded Systems", desc: "Arduino, IoT, Hardware Integration", color: "text-accent" },
@@ -56,33 +68,23 @@ const AboutPage = () => {
     },
   ];
 
-  const itStack = [
-    { name: "React & Web Development", level: 90 },
-    { name: "Python Programming", level: 85 },
-    { name: "Embedded Systems", level: 80 },
-    { name: "Mobile App Development", level: 75 },
+  const certifications: Certificate[] = [
+    { name: "Certified SolidWorks Associate (CSWA)", issuer: "Dassault Systèmes", year: "2023", credentialId: "CSWA-2023-TTS" },
+    { name: "Python for Data Science", issuer: "IBM", year: "2023", credentialId: "IBM-PY-DS-2023" },
+    { name: "React Developer Certification", issuer: "Meta", year: "2024", credentialId: "META-REACT-2024" },
+    { name: "FlexSim Simulation Basics", issuer: "FlexSim Software", year: "2022", credentialId: "FLEX-SIM-2022" },
+    { name: "Siemens NX CAD Fundamentals", issuer: "Siemens", year: "2023", credentialId: "SNX-CAD-2023" },
+    { name: "PTC Creo Essentials", issuer: "PTC University", year: "2023", credentialId: "PTC-CREO-2023" },
+    { name: "Arduino IoT Cloud Certification", issuer: "Arduino", year: "2024", credentialId: "ARD-IOT-2024" },
+    { name: "Full Stack Web Development", issuer: "Coursera", year: "2024", credentialId: "COUR-FSWD-2024" },
+    { name: "GD&T Fundamentals", issuer: "ASME", year: "2022", credentialId: "ASME-GDT-2022" },
+    { name: "Lean Six Sigma Yellow Belt", issuer: "ASQ", year: "2023", credentialId: "ASQ-LSSYB-2023" },
   ];
 
-  const cadStack = [
-    { name: "SolidWorks", level: 92 },
-    { name: "Siemens NX", level: 85 },
-    { name: "PTC Creo", level: 88 },
-    { name: "FlexSim Simulation", level: 80 },
-    { name: "PTC Windchill", level: 78 },
-  ];
-
-  const certifications = [
-    { name: "Certified SolidWorks Associate (CSWA)", issuer: "Dassault Systèmes", year: "2023" },
-    { name: "Python for Data Science", issuer: "IBM", year: "2023" },
-    { name: "React Developer Certification", issuer: "Meta", year: "2024" },
-    { name: "FlexSim Simulation Basics", issuer: "FlexSim Software", year: "2022" },
-    { name: "Siemens NX CAD Fundamentals", issuer: "Siemens", year: "2023" },
-    { name: "PTC Creo Essentials", issuer: "PTC University", year: "2023" },
-    { name: "Arduino IoT Cloud Certification", issuer: "Arduino", year: "2024" },
-    { name: "Full Stack Web Development", issuer: "Coursera", year: "2024" },
-    { name: "GD&T Fundamentals", issuer: "ASME", year: "2022" },
-    { name: "Lean Six Sigma Yellow Belt", issuer: "ASQ", year: "2023" },
-  ];
+  const handleCertificateClick = (cert: Certificate) => {
+    setSelectedCertificate(cert);
+    setIsModalOpen(true);
+  };
 
   return (
     <>
@@ -282,90 +284,69 @@ const AboutPage = () => {
                     ))}
                   </div>
                 </ScrollReveal>
-
-                {/* Certifications */}
-                <ScrollReveal delay={200}>
-                  <div className="bg-card border-2 border-border p-6 sharp-card h-full">
-                    <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
-                      <Award size={18} className="text-primary" />
-                      Certifications ({certifications.length})
-                    </h3>
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                      {certifications.map((cert, index) => (
-                        <div key={cert.name} className="flex items-start gap-3 p-3 bg-secondary/50 border border-border hover:border-primary/50 transition-colors">
-                          <span className="w-6 h-6 bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
-                            {index + 1}
-                          </span>
-                          <div className="min-w-0">
-                            <span className="text-sm font-medium block">{cert.name}</span>
-                            <span className="text-xs text-muted-foreground">{cert.issuer} • {cert.year}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </ScrollReveal>
               </div>
+            </div>
+          </section>
 
-              {/* Proficiency Bars */}
-              <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto mt-8">
-                <ScrollReveal delay={300}>
-                  <div className="bg-card border-2 border-border p-6 sharp-card">
-                    <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
-                      <Code size={18} className="text-primary" />
-                      IT Proficiency
-                    </h3>
-                    <div className="space-y-4">
-                      {itStack.map((tech) => (
-                        <div key={tech.name}>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="font-medium">{tech.name}</span>
-                            <span className="text-muted-foreground">{tech.level}%</span>
-                          </div>
-                          <div className="skill-bar-sharp">
-                            <div 
-                              className="skill-bar-fill-sharp"
-                              style={{ width: `${tech.level}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+          {/* Certificates Section */}
+          <section className="py-20 bg-secondary/30">
+            <div className="container mx-auto px-6">
+              <ScrollReveal>
+                <div className="text-center mb-12">
+                  <div className="section-badge-sharp mx-auto mb-6">
+                    <Award size={16} className="text-primary" />
+                    <span className="text-secondary-foreground font-medium text-sm uppercase tracking-wider">Achievements</span>
                   </div>
-                </ScrollReveal>
+                  <h2 className="font-display text-3xl md:text-4xl font-bold">
+                    My <span className="text-gradient">Certifications</span>
+                  </h2>
+                  <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+                    Click on any certificate to view details
+                  </p>
+                </div>
+              </ScrollReveal>
 
-                <ScrollReveal delay={400}>
-                  <div className="bg-card border-2 border-border p-6 sharp-card">
-                    <h3 className="font-display text-lg font-semibold mb-5 flex items-center gap-2">
-                      <Settings size={18} className="text-accent" />
-                      CAD & Engineering Proficiency
-                    </h3>
-                    <div className="space-y-4">
-                      {cadStack.map((tech) => (
-                        <div key={tech.name}>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span className="font-medium">{tech.name}</span>
-                            <span className="text-muted-foreground">{tech.level}%</span>
-                          </div>
-                          <div className="skill-bar-sharp">
-                            <div 
-                              className="skill-bar-fill-sharp"
-                              style={{ 
-                                width: `${tech.level}%`,
-                                background: "linear-gradient(135deg, hsl(172 66% 50%), hsl(199 89% 48%))"
-                              }}
-                            />
-                          </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                {certifications.map((cert, index) => (
+                  <ScrollReveal key={cert.name} delay={index * 50}>
+                    <button
+                      onClick={() => handleCertificateClick(cert)}
+                      className="w-full text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                          <Award size={18} className="text-primary" />
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                </ScrollReveal>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                            {cert.name}
+                          </h4>
+                          <p className="text-xs text-muted-foreground">
+                            {cert.issuer}
+                          </p>
+                          <p className="text-xs text-primary/70 mt-1">
+                            {cert.year}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  </ScrollReveal>
+                ))}
               </div>
             </div>
           </section>
         </main>
         <Footer />
+
+        {/* Certificate Modal */}
+        <CertificateModal
+          certificate={selectedCertificate}
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedCertificate(null);
+          }}
+        />
       </div>
     </>
   );
