@@ -138,55 +138,79 @@ const CertificateModal = ({ certificate, isOpen, onClose }: CertificateModalProp
             />
 
             {/* Certificate Content */}
-            <div 
-              className="w-full max-w-2xl bg-gradient-to-br from-secondary via-card to-secondary border-4 border-primary/20 p-8 relative"
-              style={{ 
-                userSelect: "none",
-                WebkitTouchCallout: "none",
-              }}
-            >
-              {/* Decorative corners */}
-              <div className="absolute top-2 left-2 w-8 h-8 border-l-2 border-t-2 border-primary/50" />
-              <div className="absolute top-2 right-2 w-8 h-8 border-r-2 border-t-2 border-primary/50" />
-              <div className="absolute bottom-2 left-2 w-8 h-8 border-l-2 border-b-2 border-primary/50" />
-              <div className="absolute bottom-2 right-2 w-8 h-8 border-r-2 border-b-2 border-primary/50" />
+            {certificate.image ? (
+              /* Display actual certificate image */
+              <div 
+                className="w-full max-w-2xl relative"
+                style={{ 
+                  userSelect: "none",
+                  WebkitTouchCallout: "none",
+                }}
+              >
+                <img 
+                  src={certificate.image}
+                  alt={certificate.name}
+                  className="w-full h-auto border-4 border-primary/20"
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  style={{ 
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                />
+              </div>
+            ) : (
+              /* Placeholder template when no image provided */
+              <div 
+                className="w-full max-w-2xl bg-gradient-to-br from-secondary via-card to-secondary border-4 border-primary/20 p-8 relative"
+                style={{ 
+                  userSelect: "none",
+                  WebkitTouchCallout: "none",
+                }}
+              >
+                {/* Decorative corners */}
+                <div className="absolute top-2 left-2 w-8 h-8 border-l-2 border-t-2 border-primary/50" />
+                <div className="absolute top-2 right-2 w-8 h-8 border-r-2 border-t-2 border-primary/50" />
+                <div className="absolute bottom-2 left-2 w-8 h-8 border-l-2 border-b-2 border-primary/50" />
+                <div className="absolute bottom-2 right-2 w-8 h-8 border-r-2 border-b-2 border-primary/50" />
 
-              {/* Certificate Header */}
-              <div className="text-center mb-6">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <ShieldCheck className="w-6 h-6 text-primary" />
-                  <span className="text-xs uppercase tracking-widest text-primary font-semibold">Certificate of Achievement</span>
-                  <ShieldCheck className="w-6 h-6 text-primary" />
+                {/* Certificate Header */}
+                <div className="text-center mb-6">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <ShieldCheck className="w-6 h-6 text-primary" />
+                    <span className="text-xs uppercase tracking-widest text-primary font-semibold">Certificate of Achievement</span>
+                    <ShieldCheck className="w-6 h-6 text-primary" />
+                  </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="text-center space-y-4">
+                  <p className="text-muted-foreground">This is to certify that</p>
+                  <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
+                    Tharaneetharan SS
+                  </h2>
+                  <p className="text-muted-foreground">has successfully completed</p>
+                  <h3 className="font-display text-xl md:text-2xl font-semibold text-primary">
+                    {certificate.name}
+                  </h3>
+                  <div className="pt-4 border-t border-border mt-6">
+                    <p className="text-sm text-muted-foreground">Issued by</p>
+                    <p className="font-semibold text-foreground">{certificate.issuer}</p>
+                    <p className="text-sm text-muted-foreground mt-2">Year: {certificate.year}</p>
+                    {certificate.credentialId && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Credential ID: {certificate.credentialId}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Seal */}
+                <div className="absolute bottom-4 right-4 w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center">
+                  <Award className="w-8 h-8 text-primary" />
                 </div>
               </div>
-
-              {/* Main Content */}
-              <div className="text-center space-y-4">
-                <p className="text-muted-foreground">This is to certify that</p>
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                  Tharaneetharan SS
-                </h2>
-                <p className="text-muted-foreground">has successfully completed</p>
-                <h3 className="font-display text-xl md:text-2xl font-semibold text-primary">
-                  {certificate.name}
-                </h3>
-                <div className="pt-4 border-t border-border mt-6">
-                  <p className="text-sm text-muted-foreground">Issued by</p>
-                  <p className="font-semibold text-foreground">{certificate.issuer}</p>
-                  <p className="text-sm text-muted-foreground mt-2">Year: {certificate.year}</p>
-                  {certificate.credentialId && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Credential ID: {certificate.credentialId}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Seal */}
-              <div className="absolute bottom-4 right-4 w-16 h-16 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center">
-                <Award className="w-8 h-8 text-primary" />
-              </div>
-            </div>
+            )}
 
             {/* Protection Notice */}
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-muted-foreground bg-background/80 px-3 py-1 rounded-full border border-border">
