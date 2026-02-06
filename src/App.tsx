@@ -11,7 +11,7 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import { AuthProvider } from "./contexts/AuthContext";
 import { GuestProvider } from "./contexts/GuestContext";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import ErrorBoundary from "./components/ErrorBoundary";
 // Lazy load pages for better performance
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -94,23 +94,25 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <HelmetProvider>
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <GuestProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AnimatedRoutes />
-              </BrowserRouter>
-            </TooltipProvider>
-          </GuestProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
-  </HelmetProvider>
+  <ErrorBoundary>
+    <HelmetProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <GuestProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AnimatedRoutes />
+                </BrowserRouter>
+              </TooltipProvider>
+            </GuestProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </HelmetProvider>
+  </ErrorBoundary>
 );
 
 export default App;
