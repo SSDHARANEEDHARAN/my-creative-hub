@@ -26,8 +26,6 @@ const ArticlePage = lazy(() => import("./pages/ArticlePage"));
 const SubscribersPage = lazy(() => import("./pages/SubscribersPage"));
 const BlogCommentsPage = lazy(() => import("./pages/BlogCommentsPage"));
 const AdminModerationPage = lazy(() => import("./pages/AdminModerationPage"));
-const AdminProjectsPage = lazy(() => import("./pages/AdminProjectsPage"));
-const AdminBlogPage = lazy(() => import("./pages/AdminBlogPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
@@ -85,22 +83,6 @@ const AnimatedRoutes = () => {
             element={
               <ProtectedRoute requireAdmin>
                 <AdminModerationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/projects"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AdminProjectsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/blog"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AdminBlogPage />
               </ProtectedRoute>
             }
           />

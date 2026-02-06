@@ -3,18 +3,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const SITE_URL = "https://story-and-more.lovable.app";
+const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 const NotifySchema = z.object({
   title: z.string().min(1).max(200),
-  description: z.string().optional(),
-  excerpt: z.string().optional(),
-  type: z.enum(["post", "project", "new_project", "new_blog"]),
+  description: z.string().min(1).max(1000),
+  type: z.enum(["post", "project"]),
   url: z.string().url().optional(),
 });
 
@@ -92,24 +91,9 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const { title, description, excerpt, type, url } = parseResult.data;
+    const { title, description, type, url } = parseResult.data;
     const safeTitle = escapeHtml(title);
-    const safeDescription = escapeHtml(description || excerpt || "");
-
-    // Determine type label and emoji based on type
-    let typeLabel: string;
-    let emoji: string;
-    let contentUrl: string;
-
-    if (type === "new_project" || type === "project") {
-      typeLabel = "Project";
-      emoji = "🚀";
-      contentUrl = url || `${SITE_URL}/projects`;
-    } else {
-      typeLabel = "Blog Post";
-      emoji = "📝";
-      contentUrl = url || `${SITE_URL}/blog`;
-    }
+    const safeDescription = escapeHtml(description);
 
     // Fetch all active subscribers
     const { data: subscribers, error: subError } = await adminSupabase
@@ -124,6 +108,8 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    const typeLabel = type === "post" ? "Blog Post" : "Project";
+    const emoji = type === "post" ? "📝" : "🚀";
     let successCount = 0;
     const errors: string[] = [];
 
@@ -139,13 +125,15 @@ const handler = async (req: Request): Promise<Response> => {
           
           <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
             <h2 style="color: #333; margin-top: 0; font-size: 22px;">${safeTitle}</h2>
-            ${safeDescription ? `<p style="color: #555; line-height: 1.8; font-size: 16px;">${safeDescription}</p>` : ''}
+            <p style="color: #555; line-height: 1.8; font-size: 16px;">${safeDescription}</p>
             
+            ${url ? `
             <div style="text-align: center; margin-top: 30px;">
-              <a href="${contentUrl}" style="display: inline-block; background: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+              <a href="${url}" style="display: inline-block; background: #000; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold;">
                 View ${typeLabel}
               </a>
             </div>
+            ` : ''}
           </div>
           
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">

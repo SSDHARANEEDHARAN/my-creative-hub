@@ -77,54 +77,6 @@ export type Database = {
         }
         Relationships: []
       }
-      blog_posts: {
-        Row: {
-          category: string
-          content: string
-          cover_image: string | null
-          created_at: string
-          created_by: string | null
-          excerpt: string
-          id: string
-          is_published: boolean
-          published_at: string | null
-          read_time: string | null
-          slug: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          category?: string
-          content: string
-          cover_image?: string | null
-          created_at?: string
-          created_by?: string | null
-          excerpt: string
-          id?: string
-          is_published?: boolean
-          published_at?: string | null
-          read_time?: string | null
-          slug: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          category?: string
-          content?: string
-          cover_image?: string | null
-          created_at?: string
-          created_by?: string | null
-          excerpt?: string
-          id?: string
-          is_published?: boolean
-          published_at?: string | null
-          read_time?: string | null
-          slug?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       guest_visitors: {
         Row: {
           email: string
@@ -206,54 +158,6 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      projects: {
-        Row: {
-          article_slug: string | null
-          category: string
-          created_at: string
-          created_by: string | null
-          description: string
-          github_url: string | null
-          id: string
-          images: string[] | null
-          is_published: boolean
-          live_url: string | null
-          tech_stack: string[] | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          article_slug?: string | null
-          category?: string
-          created_at?: string
-          created_by?: string | null
-          description: string
-          github_url?: string | null
-          id?: string
-          images?: string[] | null
-          is_published?: boolean
-          live_url?: string | null
-          tech_stack?: string[] | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          article_slug?: string | null
-          category?: string
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          github_url?: string | null
-          id?: string
-          images?: string[] | null
-          is_published?: boolean
-          live_url?: string | null
-          tech_stack?: string[] | null
-          title?: string
-          updated_at?: string
         }
         Relationships: []
       }

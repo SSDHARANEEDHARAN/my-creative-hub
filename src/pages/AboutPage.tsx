@@ -311,24 +311,22 @@ const AboutPage = () => {
                   <ScrollReveal key={cert.name} delay={index * 50}>
                     <button
                       onClick={() => handleCertificateClick(cert)}
-                      className="w-full h-[120px] text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+                      className="w-full text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
                     >
-                      <div className="flex items-start gap-3 h-full">
+                      <div className="flex items-start gap-3">
                         <div className="w-10 h-10 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
                           <Award size={18} className="text-primary" />
                         </div>
-                        <div className="min-w-0 flex-1 flex flex-col justify-between h-full">
-                          <h4 className="font-semibold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
                             {cert.name}
                           </h4>
-                          <div>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {cert.issuer}
-                            </p>
-                            <p className="text-xs text-primary/70">
-                              {cert.year}
-                            </p>
-                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {cert.issuer}
+                          </p>
+                          <p className="text-xs text-primary/70 mt-1">
+                            {cert.year}
+                          </p>
                         </div>
                       </div>
                     </button>
