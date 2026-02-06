@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Code bracket / slash -->
+  <path d="M18 12L38 52" stroke="currentColor" fill="black" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- Gear/Cog -->
+  <g transform="translate(36, 24)">
+    <!-- Outer gear teeth -->
+    <path d="M12 0L14 4L18 4L18 8L14 8L12 12L8 12L6 8L2 8L2 4L6 4L8 0Z" fill="black"/>
+    <path d="M10 -2L10 2" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M10 22L10 18" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-2 10L2 10" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M22 10L18 10" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M2.93 2.93L5.76 5.76" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M14.24 14.24L17.07 17.07" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M2.93 17.07L5.76 14.24" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <path d="M14.24 5.76L17.07 2.93" stroke="black" stroke-width="3" stroke-linecap="round"/>
+    <!-- Gear body -->
+    <circle cx="10" cy="10" r="8" fill="black"/>
+    <!-- Center hole -->
+    <circle cx="10" cy="10" r="3" fill="white"/>
+  </g>
+</svg>
