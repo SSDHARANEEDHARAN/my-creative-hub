@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
-import NewsletterPopup from "@/components/NewsletterPopup";
+
 
 const HomePage = () => {
   return (
@@ -18,7 +18,7 @@ const HomePage = () => {
           <Hero />
         </main>
         <Footer />
-        <NewsletterPopup />
+        
       </div>
     </>
   );
