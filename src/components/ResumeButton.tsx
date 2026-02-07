@@ -33,161 +33,234 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
     try {
       const doc = new jsPDF("p", "mm", "a4");
       const pageWidth = 210;
-      const margin = 15;
+      const margin = 18;
       const contentWidth = pageWidth - margin * 2;
       let y = margin;
 
-      // Colors
-      const darkColor = [30, 30, 30] as const;
-      const accentColor = [50, 50, 50] as const;
-      const mutedColor = [120, 120, 120] as const;
+      // ATS-safe colors (black/dark gray only)
+      const black: [number, number, number] = [0, 0, 0];
+      const darkGray: [number, number, number] = [60, 60, 60];
+      const medGray: [number, number, number] = [100, 100, 100];
 
-      // --- Header with Photo ---
+      // --- Profile Photo (small, top-right corner) ---
       try {
         const photoData = await loadImageAsBase64(profilePhoto);
-        doc.addImage(photoData, "JPEG", margin, y, 30, 30);
+        doc.addImage(photoData, "JPEG", pageWidth - margin - 25, y, 25, 25);
       } catch {
-        // If photo fails, continue without it
+        // Continue without photo
       }
 
+      // --- Header (ATS: plain text, no tables) ---
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(22);
-      doc.setTextColor(...darkColor);
-      doc.text("THARANEE THARAN S.S", margin + 36, y + 10);
+      doc.setFontSize(20);
+      doc.setTextColor(...black);
+      doc.text("THARANEE THARAN S.S", margin, y + 7);
 
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(12);
-      doc.setTextColor(...accentColor);
-      doc.text("Full Stack Developer & CAD Engineer", margin + 36, y + 18);
+      doc.setFontSize(11);
+      doc.setTextColor(...darkGray);
+      doc.text("Full Stack Developer & CAD Engineer", margin, y + 14);
 
       doc.setFontSize(9);
-      doc.setTextColor(...mutedColor);
-      doc.text("tharaneetharan@email.com  |  Tamil Nadu, India  |  3+ Years Experience", margin + 36, y + 25);
+      doc.setTextColor(...medGray);
+      doc.text("Email: tharaneetharanss@gmail.com | Phone: +91 8870086023", margin, y + 20);
+      doc.text("Location: Tamil Nadu, India | LinkedIn: linkedin.com/in/dharaneedharan-ss-70941a211", margin, y + 25);
+      doc.text("GitHub: github.com/SSDHARANEEDHARAN", margin, y + 30);
 
-      y += 38;
+      y += 36;
 
-      // Divider
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.5);
-      doc.line(margin, y, pageWidth - margin, y);
-      y += 8;
+      // --- ATS Divider (simple line) ---
+      const addDivider = () => {
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.4);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 5;
+      };
 
-      // --- Summary ---
-      const addSection = (title: string) => {
+      // --- Section Header ---
+      const addSectionHeader = (title: string) => {
+        addDivider();
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(13);
-        doc.setTextColor(...darkColor);
-        doc.text(title, margin, y);
-        y += 2;
-        doc.setDrawColor(50, 50, 50);
-        doc.setLineWidth(0.8);
-        doc.line(margin, y, margin + doc.getTextWidth(title), y);
+        doc.setFontSize(12);
+        doc.setTextColor(...black);
+        doc.text(title.toUpperCase(), margin, y);
         y += 6;
       };
 
-      addSection("PROFESSIONAL SUMMARY");
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9.5);
-      doc.setTextColor(...accentColor);
-      const summary = "Full-stack developer and CAD engineer with 3+ years of expertise in React, Python, Embedded Systems, and engineering tools like SolidWorks, FlexSim, NX, Creo, and PTC Windchill. Passionate about building modern web applications and designing engineering solutions.";
-      const summaryLines = doc.splitTextToSize(summary, contentWidth);
-      doc.text(summaryLines, margin, y);
-      y += summaryLines.length * 4.5 + 6;
-
-      // --- IT Skills ---
-      addSection("IT & SOFTWARE SKILLS");
-      const itSkills = [
-        { name: "React / TypeScript", level: "90%" },
-        { name: "Python / Node.js", level: "85%" },
-        { name: "Embedded Systems (Arduino, IoT)", level: "80%" },
-        { name: "Web Development (HTML, CSS, JS)", level: "88%" },
-        { name: "App Development", level: "82%" },
-      ];
-
-      itSkills.forEach((skill) => {
+      // --- Wrapped text helper ---
+      const addWrappedText = (text: string, fontSize = 9.5, color: [number, number, number] = darkGray) => {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        doc.setTextColor(...accentColor);
-        doc.text(`• ${skill.name}`, margin + 2, y);
-        doc.setTextColor(...mutedColor);
-        doc.text(skill.level, margin + contentWidth - 10, y);
-        y += 5;
-      });
-      y += 4;
+        doc.setFontSize(fontSize);
+        doc.setTextColor(...color);
+        const lines = doc.splitTextToSize(text, contentWidth);
+        doc.text(lines, margin, y);
+        y += lines.length * 4.2 + 2;
+      };
 
-      // --- Engineering Skills ---
-      addSection("ENGINEERING & CAD SKILLS");
-      const engSkills = [
-        { name: "SolidWorks", level: "92%" },
-        { name: "FlexSim (Simulation)", level: "88%" },
-        { name: "Siemens NX", level: "85%" },
-        { name: "PTC Creo", level: "87%" },
-        { name: "PTC Windchill (PLM)", level: "83%" },
-      ];
-
-      engSkills.forEach((skill) => {
+      // --- Bullet point ---
+      const addBullet = (text: string) => {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        doc.setTextColor(...accentColor);
-        doc.text(`• ${skill.name}`, margin + 2, y);
-        doc.setTextColor(...mutedColor);
-        doc.text(skill.level, margin + contentWidth - 10, y);
-        y += 5;
-      });
-      y += 4;
-
-      // --- Technologies ---
-      addSection("TECHNOLOGIES");
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(...accentColor);
-      const techs = "JavaScript, TypeScript, Node.js, MongoDB, PostgreSQL, Docker, Git, REST API, Arduino, Raspberry Pi, IoT, CAD Design, 3D Modeling, Simulation, PLM, FEA Analysis, GD&T, Technical Drawing";
-      const techLines = doc.splitTextToSize(techs, contentWidth);
-      doc.text(techLines, margin, y);
-      y += techLines.length * 4.5 + 6;
-
-      // --- Work Experience ---
-      addSection("WORK EXPERIENCE");
-      const experiences = [
-        { title: "Senior Full Stack Developer", company: "Infosys Limited", duration: "2023 - Present", location: "Chennai" },
-        { title: "Full Stack Developer", company: "TCS", duration: "2022 - 2023", location: "Bangalore" },
-        { title: "Senior CAD Design Engineer", company: "Mahindra & Mahindra", duration: "2023 - Present", location: "Chennai" },
-        { title: "CAD Design Engineer", company: "Sundram Fasteners", duration: "2022 - 2023", location: "Chennai" },
-        { title: "Simulation Engineer", company: "Ashok Leyland", duration: "2021 - 2022", location: "Chennai" },
-      ];
-
-      experiences.forEach((exp) => {
-        doc.setFont("helvetica", "bold");
         doc.setFontSize(9.5);
-        doc.setTextColor(...darkColor);
-        doc.text(exp.title, margin + 2, y);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.5);
-        doc.setTextColor(...mutedColor);
-        doc.text(`${exp.company}  |  ${exp.location}  |  ${exp.duration}`, margin + 2, y + 4.5);
-        y += 11;
-      });
-      y += 4;
+        doc.setTextColor(...darkGray);
+        const lines = doc.splitTextToSize(text, contentWidth - 6);
+        doc.text("•", margin + 1, y);
+        doc.text(lines, margin + 6, y);
+        y += lines.length * 4.2 + 1;
+      };
 
-      // --- Education ---
-      addSection("EDUCATION");
+      // === PROFESSIONAL SUMMARY ===
+      addSectionHeader("Professional Summary");
+      addWrappedText(
+        "Results-driven Full Stack Developer and CAD Engineer with 3+ years of hands-on experience in web development, embedded systems, and engineering design. Proficient in React, Python, Node.js, and CAD tools including SolidWorks, PTC Creo, Siemens NX, and FlexSim. Skilled in building scalable web applications, IoT solutions, and performing simulation & FEA analysis for manufacturing optimization."
+      );
+
+      // === TECHNICAL SKILLS ===
+      addSectionHeader("Technical Skills");
+      
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9.5);
-      doc.setTextColor(...darkColor);
-      doc.text("Bachelor's Degree in Engineering", margin + 2, y);
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(8.5);
-      doc.setTextColor(...mutedColor);
-      doc.text("Mechanical / Computer Science", margin + 2, y + 4.5);
+      doc.setTextColor(...black);
+      doc.text("IT & Software:", margin, y);
+      y += 5;
+      addBullet("Frontend: React, JavaScript, TypeScript, HTML5, CSS3, Tailwind CSS");
+      addBullet("Backend: Python, Node.js, Express.js, PostgreSQL, MongoDB, REST API");
+      addBullet("Embedded Systems: Arduino, Raspberry Pi, IoT, MQTT");
+      addBullet("Tools: Git, Docker, Firebase, AWS");
+      y += 2;
 
-      // Save
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(...black);
+      doc.text("Engineering & CAD:", margin, y);
+      y += 5;
+      addBullet("CAD Software: SolidWorks, Siemens NX, PTC Creo, AutoCAD, CATIA V5");
+      addBullet("Simulation: FlexSim, FEA Analysis, CFD");
+      addBullet("PLM: PTC Windchill, Product Data Management");
+      addBullet("Manufacturing: GD&T, Technical Drawing, 3D Modeling, CAM");
+
+      // === WORK EXPERIENCE ===
+      addSectionHeader("Work Experience");
+
+      const experiences = [
+        {
+          title: "Senior Full Stack Developer",
+          company: "Infosys Limited, Chennai",
+          duration: "2023 - Present",
+          points: [
+            "Leading development of enterprise web applications using React, TypeScript, and Node.js",
+            "Architecting microservices and implementing CI/CD pipelines with Docker and AWS",
+            "Managing a team of 4 junior developers and conducting code reviews",
+          ],
+        },
+        {
+          title: "Senior CAD Design Engineer",
+          company: "Mahindra & Mahindra, Chennai",
+          duration: "2023 - Present",
+          points: [
+            "Leading powertrain component design using SolidWorks and PTC Creo",
+            "Performing advanced FEA simulations and managing engineering changes through Windchill PLM",
+          ],
+        },
+        {
+          title: "Full Stack Developer",
+          company: "TCS (Tata Consultancy Services), Bangalore",
+          duration: "2022 - 2023",
+          points: [
+            "Developed IoT dashboards and real-time monitoring systems using React and Python",
+            "Built RESTful APIs and integrated with industrial sensors and PLCs",
+          ],
+        },
+        {
+          title: "CAD Design Engineer",
+          company: "Sundram Fasteners, Chennai",
+          duration: "2022 - 2023",
+          points: [
+            "Designed automotive components for Tier-1 manufacturing with GD&T specifications",
+            "Created manufacturing drawings and managed product data in enterprise PLM systems",
+          ],
+        },
+        {
+          title: "Simulation Engineer",
+          company: "Ashok Leyland, Chennai",
+          duration: "2021 - 2022",
+          points: [
+            "Developed FlexSim simulations for assembly line optimization",
+            "Achieved 25% throughput improvement through bottleneck analysis and layout optimization",
+          ],
+        },
+        {
+          title: "Software Developer",
+          company: "Zoho Corporation, Chennai",
+          duration: "2021 - 2022",
+          points: [
+            "Worked on Zoho CRM customizations and integrations",
+            "Developed mobile applications using React Native for enterprise clients",
+          ],
+        },
+      ];
+
+      for (const exp of experiences) {
+        // Check for page break
+        if (y > 260) {
+          doc.addPage();
+          y = margin;
+        }
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(...black);
+        doc.text(exp.title, margin, y);
+        y += 4.5;
+
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.setTextColor(...medGray);
+        doc.text(`${exp.company} | ${exp.duration}`, margin, y);
+        y += 5;
+
+        for (const point of exp.points) {
+          addBullet(point);
+        }
+        y += 2;
+      }
+
+      // === EDUCATION ===
+      if (y > 255) {
+        doc.addPage();
+        y = margin;
+      }
+      addSectionHeader("Education");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(...black);
+      doc.text("Bachelor of Engineering", margin, y);
+      y += 4.5;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(...medGray);
+      doc.text("Mechanical / Computer Science Engineering", margin, y);
+      y += 8;
+
+      // === KEY ACHIEVEMENTS ===
+      if (y > 255) {
+        doc.addPage();
+        y = margin;
+      }
+      addSectionHeader("Key Achievements");
+      addBullet("25+ projects completed across IT and Engineering domains");
+      addBullet("Achieved 25% throughput improvement through FlexSim simulation optimization");
+      addBullet("Led a team of 4 developers in enterprise application development");
+      addBullet("Proficient in 10+ technologies and 5+ CAD tools");
+
+      // Save PDF
       doc.save("Tharanee_Tharan_Resume.pdf");
 
       toast({
-        title: "Resume Downloaded!",
-        description: "Your professional PDF resume has been downloaded.",
+        title: "Resume Downloaded! 📄",
+        description: "ATS-friendly PDF resume has been downloaded successfully.",
       });
     } catch (error) {
+      console.error("Resume download error:", error);
       toast({
         title: "Download Failed",
         description: "Something went wrong. Please try again.",
