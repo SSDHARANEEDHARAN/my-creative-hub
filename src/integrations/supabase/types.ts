@@ -280,7 +280,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      blog_comments_public: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          is_approved: boolean | null
+          name: string | null
+          post_id: string | null
+          reply: string | null
+          reply_date: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          name?: string | null
+          post_id?: string | null
+          reply?: string | null
+          reply_date?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          name?: string | null
+          post_id?: string | null
+          reply?: string | null
+          reply_date?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
