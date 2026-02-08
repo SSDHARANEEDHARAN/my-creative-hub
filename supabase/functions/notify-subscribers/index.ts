@@ -5,10 +5,26 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+const getAllowedOrigin = (req: Request): string => {
+  const origin = req.headers.get("origin") || "";
+  const allowedPatterns = [
+    SITE_URL,
+    "https://story-and-more.lovable.app",
+    "http://localhost:5173",
+    "http://localhost:8080",
+  ].filter(Boolean);
+  
+  if (allowedPatterns.includes(origin) || origin.endsWith(".lovable.app")) {
+    return origin;
+  }
+  return SITE_URL;
 };
+
+const getCorsHeaders = (req: Request) => ({
+  "Access-Control-Allow-Origin": getAllowedOrigin(req),
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Credentials": "true",
+});
 
 const NotifySchema = z.object({
   title: z.string().min(1).max(200),
@@ -29,6 +45,8 @@ const escapeHtml = (str: string): string => {
 };
 
 const handler = async (req: Request): Promise<Response> => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
