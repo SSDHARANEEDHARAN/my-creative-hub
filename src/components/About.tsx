@@ -1,4 +1,4 @@
-import { Code, Palette, Zap, Coffee, Lightbulb, Users, Award, Target } from "lucide-react";
+import { Code, Palette, Zap, Coffee, Lightbulb, Users, Award, Target, Cpu, Bot } from "lucide-react";
 import { Button } from "./ui/button";
 
 const About = () => {
@@ -7,6 +7,8 @@ const About = () => {
     { icon: <Palette size={24} />, title: "Design", desc: "UI/UX, Figma, Branding, Prototyping", color: "text-accent" },
     { icon: <Zap size={24} />, title: "Performance", desc: "Optimization, SEO, Core Web Vitals", color: "text-primary" },
     { icon: <Coffee size={24} />, title: "Passion", desc: "Continuous Learning & Innovation", color: "text-accent" },
+    { icon: <Cpu size={24} />, title: "Raspberry Pi", desc: "IoT, Embedded Linux, GPIO, Sensors", color: "text-primary" },
+    { icon: <Bot size={24} />, title: "ROS 2", desc: "Robotics, Navigation, Simulation", color: "text-accent" },
   ];
 
   const highlights = [
@@ -16,14 +18,6 @@ const About = () => {
     { icon: <Lightbulb size={20} />, text: "Creative problem solver" },
   ];
 
-  const techStack = [
-    { name: "React", level: 95 },
-    { name: "TypeScript", level: 90 },
-    { name: "Next.js", level: 85 },
-    { name: "Tailwind CSS", level: 95 },
-    { name: "Node.js", level: 80 },
-    { name: "Figma", level: 88 },
-  ];
 
   return (
     <section id="about" className="py-32 relative overflow-hidden">
@@ -72,45 +66,21 @@ const About = () => {
           </div>
 
           {/* Right Content */}
-          <div className="space-y-8">
+          <div>
             {/* Skills Grid */}
-            <div className="grid grid-cols-2 gap-4">
-              {skills.map((skill, index) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {skills.map((skill) => (
                 <div 
                   key={skill.title}
-                  className="p-6 bg-card rounded-2xl border-glow hover-lift group"
+                  className="p-6 bg-card border-glow hover-lift group text-center"
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-4 ${skill.color} group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 bg-secondary flex items-center justify-center mb-4 mx-auto ${skill.color} group-hover:scale-110 transition-transform duration-300`}>
                     {skill.icon}
                   </div>
                   <h3 className="font-display text-lg font-semibold mb-2">{skill.title}</h3>
                   <p className="text-muted-foreground text-sm">{skill.desc}</p>
                 </div>
               ))}
-            </div>
-
-            {/* Tech Stack Progress */}
-            <div className="bg-card p-6 rounded-2xl border border-border">
-              <h3 className="font-display text-xl font-semibold mb-6">Tech Proficiency</h3>
-              <div className="space-y-4">
-                {techStack.map((tech) => (
-                  <div key={tech.name}>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="font-medium">{tech.name}</span>
-                      <span className="text-muted-foreground">{tech.level}%</span>
-                    </div>
-                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                      <div 
-                        className="h-full rounded-full transition-all duration-1000 ease-out"
-                        style={{ 
-                          width: `${tech.level}%`,
-                          background: "var(--gradient-sky)"
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
