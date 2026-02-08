@@ -31,7 +31,6 @@ interface BlogPost {
 interface DBComment {
   id: string;
   name: string;
-  email: string;
   content: string;
   created_at: string;
   reply: string | null;
@@ -130,43 +129,27 @@ const BlogPage = () => {
     try {
       const postIds = posts.map((p) => p.id);
 
-      // Get like counts
-      const { data: likesData } = await supabase
-        .from("blog_likes")
-        .select("post_id")
-        .in("post_id", postIds);
-
-      const newLikeCounts: Record<string, number> = {};
-      if (likesData) {
-        likesData.forEach((like) => {
-          newLikeCounts[like.post_id] = (newLikeCounts[like.post_id] || 0) + 1;
-        });
-      }
-      setLikeCounts(newLikeCounts);
-
-      // Check user's likes
-      if (currentUserEmail) {
-        const { data: userLikesData } = await supabase
-          .from("blog_likes")
+      // Get like counts and user likes via edge function (no email exposure)
+      const [likesRes, commentsRes] = await Promise.all([
+        supabase.functions.invoke('manage-blog-likes', {
+          body: { action: "check", post_ids: postIds, email: currentUserEmail || undefined }
+        }),
+        supabase
+          .from("blog_comments_public")
           .select("post_id")
-          .eq("email", currentUserEmail);
+          .in("post_id", postIds),
+      ]);
 
-        if (userLikesData) {
-          setUserLikes(new Set(userLikesData.map((l) => l.post_id)));
+      if (likesRes.data) {
+        setLikeCounts(likesRes.data.counts || {});
+        if (likesRes.data.userLikedPosts) {
+          setUserLikes(new Set(likesRes.data.userLikedPosts));
         }
       }
 
-      // Get comment counts (approved only)
-      const { data: commentsData } = await supabase
-        .from("blog_comments")
-        .select("post_id")
-        .in("post_id", postIds)
-        .eq("is_approved", true)
-        .eq("is_spam", false);
-
       const newCommentCounts: Record<string, number> = {};
-      if (commentsData) {
-        commentsData.forEach((comment) => {
+      if (commentsRes.data) {
+        commentsRes.data.forEach((comment: { post_id: string }) => {
           newCommentCounts[comment.post_id] = (newCommentCounts[comment.post_id] || 0) + 1;
         });
       }
@@ -184,11 +167,9 @@ const BlogPage = () => {
   const loadComments = useCallback(async (postId: string) => {
     try {
       const { data } = await supabase
-        .from("blog_comments")
+        .from("blog_comments_public")
         .select("*")
         .eq("post_id", postId)
-        .eq("is_approved", true)
-        .eq("is_spam", false)
         .order("created_at", { ascending: true });
 
       if (data) {
@@ -217,12 +198,10 @@ const BlogPage = () => {
     const hasLiked = userLikes.has(postId);
 
     if (hasLiked) {
-      // Remove like
-      const { error } = await supabase
-        .from("blog_likes")
-        .delete()
-        .eq("post_id", postId)
-        .eq("email", currentUserEmail);
+      // Remove like via edge function
+      const { error } = await supabase.functions.invoke('manage-blog-likes', {
+        body: { action: "remove", post_id: postId, email: currentUserEmail }
+      });
 
       if (!error) {
         setUserLikes((prev) => {
@@ -237,14 +216,12 @@ const BlogPage = () => {
         toast({ description: "Removed from liked posts" });
       }
     } else {
-      // Add like
-      const { error } = await supabase.from("blog_likes").insert({
-        post_id: postId,
-        name: currentUserName,
-        email: currentUserEmail,
+      // Add like via edge function
+      const { data, error } = await supabase.functions.invoke('manage-blog-likes', {
+        body: { action: "add", post_id: postId, name: currentUserName, email: currentUserEmail }
       });
 
-      if (!error) {
+      if (!error && !data?.error) {
         setUserLikes((prev) => new Set([...prev, postId]));
         setLikeCounts((prev) => ({
           ...prev,

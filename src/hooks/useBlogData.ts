@@ -5,12 +5,11 @@ import { toast } from "@/hooks/use-toast";
 interface BlogComment {
   id: string;
   name: string;
-  email: string;
   content: string;
   created_at: string;
   reply: string | null;
   reply_date: string | null;
-  is_approved: boolean;
+  is_approved: boolean | null;
 }
 
 interface BlogLike {
@@ -36,28 +35,26 @@ export const useBlogData = (postId: string) => {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
+      // Get guest email for like check
+      const guestInfo = sessionStorage.getItem("guestInfo");
+      const guestEmail = guestInfo ? JSON.parse(guestInfo).email : undefined;
+
       const [likesRes, commentsRes] = await Promise.all([
+        supabase.functions.invoke('manage-blog-likes', {
+          body: { action: "check", post_ids: [postId], email: guestEmail }
+        }),
         supabase
-          .from("blog_likes")
-          .select("*")
-          .eq("post_id", postId),
-        supabase
-          .from("blog_comments")
+          .from("blog_comments_public")
           .select("*")
           .eq("post_id", postId)
-          .eq("is_approved", true)
-          .eq("is_spam", false)
           .order("created_at", { ascending: true }),
       ]);
 
       if (likesRes.data) {
-        setLikes(likesRes.data);
-        // Check if current guest has liked from sessionStorage
-        const guestInfo = sessionStorage.getItem("guestInfo");
-        if (guestInfo) {
-          const { email } = JSON.parse(guestInfo);
-          setHasLiked(checkUserLike(likesRes.data, email));
-        }
+        const count = likesRes.data.counts?.[postId] || 0;
+        // Build minimal likes array for count
+        setLikes(Array.from({ length: count }, (_, i) => ({ id: String(i), name: "", email: "", created_at: "" })));
+        setHasLiked(likesRes.data.userLikedPosts?.includes(postId) || false);
       }
 
       if (commentsRes.data) {
@@ -68,66 +65,55 @@ export const useBlogData = (postId: string) => {
     } finally {
       setIsLoading(false);
     }
-  }, [postId, checkUserLike]);
+  }, [postId]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
   const addLike = async (name: string, email: string) => {
-    // Check if already liked
-    const existingLike = likes.find(l => l.email === email);
-    if (existingLike) {
-      // Remove like
-      const { error } = await supabase
-        .from("blog_likes")
-        .delete()
-        .eq("id", existingLike.id);
+    if (hasLiked) {
+      // Remove like via edge function
+      const { error } = await supabase.functions.invoke('manage-blog-likes', {
+        body: { action: "remove", post_id: postId, email }
+      });
 
       if (!error) {
-        setLikes(prev => prev.filter(l => l.id !== existingLike.id));
+        setLikes(prev => prev.slice(0, -1));
         setHasLiked(false);
         toast({ description: "Removed from liked posts" });
       }
       return;
     }
 
-    // Add new like
-    const { data, error } = await supabase
-      .from("blog_likes")
-      .insert({
-        post_id: postId,
-        name,
-        email,
-      })
-      .select()
-      .single();
+    // Add new like via edge function
+    const { data, error } = await supabase.functions.invoke('manage-blog-likes', {
+      body: { action: "add", post_id: postId, name, email }
+    });
 
-    if (error) {
+    if (error || data?.error) {
       toast({
         title: "Error",
-        description: "Failed to like post",
+        description: data?.error || "Failed to like post",
         variant: "destructive",
       });
       return;
     }
 
-    if (data) {
-      setLikes(prev => [...prev, data]);
-      setHasLiked(true);
-      toast({ description: "Added to liked posts!" });
+    setLikes(prev => [...prev, { id: "new", name, email: "", created_at: "" }]);
+    setHasLiked(true);
+    toast({ description: "Added to liked posts!" });
 
-      // Send notification to admin
-      await supabase.functions.invoke("send-contact-email", {
-        body: {
-          type: "blog_like",
-          name,
-          email,
-          subject: "New Blog Like",
-          message: `Post ID: ${postId}`,
-        },
-      });
-    }
+    // Send notification to admin
+    await supabase.functions.invoke("send-contact-email", {
+      body: {
+        type: "blog_like",
+        name,
+        email,
+        subject: "New Blog Like",
+        message: `Post ID: ${postId}`,
+      },
+    });
   };
 
   const addComment = async (name: string, email: string, content: string, honeypot?: string) => {
