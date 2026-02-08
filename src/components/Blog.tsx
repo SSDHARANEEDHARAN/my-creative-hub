@@ -16,7 +16,6 @@ interface DbComment {
   id: string;
   post_id: string;
   name: string;
-  email: string;
   content: string;
   reply: string | null;
   reply_date: string | null;
@@ -34,7 +33,6 @@ interface DbLike {
 interface Comment {
   id: string;
   name: string;
-  email: string;
   content: string;
   date: string;
   reply?: string;
@@ -121,13 +119,16 @@ const Blog = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
+      const postIds = initialPosts.map((p) => String(p.id));
         const [commentsRes, likesRes] = await Promise.all([
-          supabase.from("blog_comments").select("*").order("created_at", { ascending: true }),
-          supabase.from("blog_likes").select("*"),
+          supabase.from("blog_comments_public").select("*").order("created_at", { ascending: true }),
+          supabase.functions.invoke('manage-blog-likes', {
+            body: { action: "count", post_ids: postIds }
+          }),
         ]);
 
         const dbComments: DbComment[] = commentsRes.data || [];
-        const dbLikes: DbLike[] = likesRes.data || [];
+        const likesByPost: Record<string, number> = likesRes.data?.counts || {};
 
         // Group comments by post_id
         const commentsByPost: Record<string, Comment[]> = {};
@@ -136,18 +137,12 @@ const Blog = () => {
           commentsByPost[c.post_id].push({
             id: c.id,
             name: c.name,
-            email: c.email,
+            
             content: c.content,
             date: new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
             reply: c.reply || undefined,
             replyDate: c.reply_date ? new Date(c.reply_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : undefined,
           });
-        });
-
-        // Count likes by post_id
-        const likesByPost: Record<string, number> = {};
-        dbLikes.forEach((l) => {
-          likesByPost[l.post_id] = (likesByPost[l.post_id] || 0) + 1;
         });
 
         // Build posts with database data
@@ -203,14 +198,12 @@ const Blog = () => {
     const post = posts.find(p => p.id === pendingLikePostId);
     
     try {
-      // Save like to database
-      const { error: dbError } = await supabase.from("blog_likes").insert({
-        post_id: String(pendingLikePostId),
-        name: likeForm.name,
-        email: likeForm.email,
+      // Save like via edge function (secure, no direct table access)
+      const { data: likeResult, error: dbError } = await supabase.functions.invoke('manage-blog-likes', {
+        body: { action: "add", post_id: String(pendingLikePostId), name: likeForm.name, email: likeForm.email }
       });
 
-      if (dbError) throw dbError;
+      if (dbError || likeResult?.error) throw new Error(likeResult?.error || "Failed to like");
 
       // Send notification to backend (non-blocking)
       supabase.functions.invoke("send-contact-email", {
@@ -286,7 +279,7 @@ const Blog = () => {
       const newComment: Comment = {
         id: insertedComment.id,
         name: commentForm.name,
-        email: commentForm.email,
+            
         content: commentForm.comment,
         date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
       };
