@@ -7,6 +7,25 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Simple in-memory rate limiter (per instance)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_WRITE = 10; // max write ops per window
+const RATE_LIMIT_MAX_READ = 30; // max read ops per window
+
+function isRateLimited(ip: string, isWrite: boolean): boolean {
+  const now = Date.now();
+  const key = `${ip}:${isWrite ? "w" : "r"}`;
+  const entry = rateLimitMap.get(key);
+  const max = isWrite ? RATE_LIMIT_MAX_WRITE : RATE_LIMIT_MAX_READ;
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > max;
+}
+
 const AddLikeSchema = z.object({
   action: z.literal("add"),
   post_id: z.string().min(1).max(100),
@@ -37,8 +56,17 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Rate limiting by IP
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const body = await req.json();
     const action = body?.action;
+    const isWrite = action === "add" || action === "remove";
+
+    if (isRateLimited(clientIp, isWrite)) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
