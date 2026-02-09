@@ -13,7 +13,6 @@ type UnsubscribeStatus = "loading" | "confirm" | "success" | "error" | "invalid"
 const UnsubscribePage = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<UnsubscribeStatus>("loading");
-  const [email, setEmail] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const token = searchParams.get("token");
@@ -44,11 +43,9 @@ const UnsubscribePage = () => {
 
         if (!data.isActive) {
           setStatus("success");
-          setEmail(data.email);
           return;
         }
 
-        setEmail(data.email);
         setStatus("confirm");
       } catch (error) {
         console.error("Verification error:", error);
@@ -105,7 +102,7 @@ const UnsubscribePage = () => {
               Unsubscribe from Newsletter
             </h1>
             <p className="text-muted-foreground mb-6">
-              Are you sure you want to unsubscribe <strong>{email}</strong> from our newsletter?
+              Are you sure you want to unsubscribe from our newsletter?
             </p>
             <p className="text-sm text-muted-foreground mb-8">
               You will no longer receive updates about new projects, blog posts, and exclusive content.
@@ -138,7 +135,7 @@ const UnsubscribePage = () => {
               Successfully Unsubscribed
             </h1>
             <p className="text-muted-foreground mb-6">
-              <strong>{email}</strong> has been removed from our newsletter.
+              You have been successfully removed from our newsletter.
             </p>
             <p className="text-sm text-muted-foreground">
               We're sorry to see you go! If you change your mind, you can always subscribe again from our website.
