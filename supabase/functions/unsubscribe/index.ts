@@ -1,10 +1,15 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const TokenSchema = z.object({
+  token: z.string().uuid("Invalid token format"),
+});
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
@@ -12,14 +17,17 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { token } = await req.json();
+    const rawBody = await req.json();
+    const parseResult = TokenSchema.safeParse(rawBody);
 
-    if (!token) {
+    if (!parseResult.success) {
       return new Response(
-        JSON.stringify({ error: "Missing unsubscribe token" }),
+        JSON.stringify({ error: "Invalid request" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
+
+    const { token } = parseResult.data;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
