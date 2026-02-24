@@ -1,10 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { FileQuestion, Home, ArrowLeft } from "lucide-react";
+import { Home, ArrowLeft, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import legoImage from "@/assets/lego-error.png";
 
 const NotFound = () => {
   const location = useLocation();
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const [errorId] = useState(() => {
     const timestamp = Date.now();
     const randomPart = Math.random().toString(36).substring(2, 8);
@@ -23,90 +25,94 @@ const NotFound = () => {
     }
   };
 
+  const copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-lg">
-        {/* Error Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center">
-            <FileQuestion className="w-8 h-8 text-warning" />
-          </div>
+      <div className="w-full max-w-2xl text-center">
+        {/* Lego Illustration */}
+        <div className="mb-6">
+          <img
+            src={legoImage}
+            alt="Page not found - Lego characters with disconnected plug"
+            className="mx-auto max-w-full h-auto max-h-72 object-contain rounded-xl"
+          />
         </div>
 
-        {/* Error Card */}
-        <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden">
-          {/* Header */}
-          <div className="bg-muted/50 px-6 py-4 border-b border-border">
-            <h1 className="text-xl font-semibold text-foreground">
-              <span className="text-warning">404</span>: NOT_FOUND
-            </h1>
-          </div>
+        {/* Friendly heading */}
+        <h1 className="text-4xl font-bold text-foreground mb-2">
+          <span className="text-warning">Oops!</span> Page Not Found
+        </h1>
+        <p className="text-muted-foreground mb-6 text-lg">
+          Looks like this page got disconnected. Let's get you back on track!
+        </p>
 
-          {/* Body */}
-          <div className="p-6 space-y-4">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Code:
-              </label>
-              <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
-                <code>NOT_FOUND</code>
-              </p>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                Path:
-              </label>
-              <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
-                <code>{location.pathname}</code>
-              </p>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                ID:
-              </label>
-              <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
-                <code>{errorId}</code>
-              </p>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="px-6 py-4 bg-muted/30 border-t border-border flex flex-col sm:flex-row gap-3">
-            <Button
-              onClick={handleGoBack}
-              variant="outline"
-              className="flex-1"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Go Back
-            </Button>
-            <Button
-              onClick={() => window.location.href = "/"}
-              variant="default"
-              className="flex-1"
-            >
-              <Home className="w-4 h-4 mr-2" />
-              Go to Home
-            </Button>
-          </div>
+        {/* Quick actions */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+          <Button onClick={handleGoBack} variant="outline" size="lg">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Go Back
+          </Button>
+          <Button onClick={() => (window.location.href = "/")} variant="default" size="lg">
+            <Home className="w-4 h-4 mr-2" />
+            Go to Home
+          </Button>
         </div>
 
-        {/* Help Text */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          The page you're looking for doesn't exist.{" "}
-          <a
-            href="/contact"
-            className="text-primary hover:underline"
-          >
+        {/* Collapsible error details */}
+        <details className="text-left bg-card border border-border rounded-lg overflow-hidden">
+          <summary className="px-5 py-3 cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground transition-colors bg-muted/50">
+            Error Details
+          </summary>
+          <div className="p-5 space-y-3">
+            <ErrorDetailRow label="Code" value="NOT_FOUND" field="code" copiedField={copiedField} onCopy={copyToClipboard} />
+            <ErrorDetailRow label="Path" value={location.pathname} field="path" copiedField={copiedField} onCopy={copyToClipboard} />
+            <ErrorDetailRow label="ID" value={errorId} field="id" copiedField={copiedField} onCopy={copyToClipboard} />
+          </div>
+        </details>
+
+        <p className="text-sm text-muted-foreground mt-6">
+          Think this is an error?{" "}
+          <a href="/contact" className="text-primary hover:underline">
             Contact support
-          </a>{" "}
-          if you believe this is an error.
+          </a>
         </p>
       </div>
     </div>
   );
 };
+
+const ErrorDetailRow = ({
+  label,
+  value,
+  field,
+  copiedField,
+  onCopy,
+}: {
+  label: string;
+  value: string;
+  field: string;
+  copiedField: string | null;
+  onCopy: (text: string, field: string) => void;
+}) => (
+  <div className="flex items-center justify-between gap-2 bg-muted rounded px-3 py-2">
+    <div className="min-w-0">
+      <span className="text-xs font-medium text-muted-foreground">{label}: </span>
+      <code className="text-sm text-foreground break-all">{value}</code>
+    </div>
+    <button
+      onClick={() => onCopy(value, field)}
+      className="shrink-0 p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+      title={`Copy ${label}`}
+    >
+      {copiedField === field ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+    </button>
+  </div>
+);
 
 export default NotFound;

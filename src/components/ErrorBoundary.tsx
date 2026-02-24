@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { RefreshCw, Home, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import legoImage from "@/assets/lego-error.png";
 
 interface Props {
   children: ReactNode;
@@ -11,6 +12,7 @@ interface State {
   error: Error | null;
   errorInfo: ErrorInfo | null;
   errorId: string;
+  copiedField: string | null;
 }
 
 class ErrorBoundary extends Component<Props, State> {
@@ -19,6 +21,7 @@ class ErrorBoundary extends Component<Props, State> {
     error: null,
     errorInfo: null,
     errorId: "",
+    copiedField: null,
   };
 
   private generateErrorId(): string {
@@ -49,102 +52,86 @@ class ErrorBoundary extends Component<Props, State> {
     window.location.href = "/";
   };
 
+  private copyToClipboard = (text: string, field: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      this.setState({ copiedField: field });
+      setTimeout(() => this.setState({ copiedField: null }), 2000);
+    });
+  };
+
   public render() {
     if (this.state.hasError) {
       const errorCode = this.state.error?.name || "UNKNOWN_ERROR";
       const errorMessage = this.state.error?.message || "An unexpected error occurred";
+      const { copiedField } = this.state;
 
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <div className="w-full max-w-lg">
-            {/* Error Icon */}
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-destructive" />
-              </div>
+          <div className="w-full max-w-2xl text-center">
+            {/* Lego Illustration */}
+            <div className="mb-6">
+              <img
+                src={legoImage}
+                alt="Something went wrong - Lego characters with disconnected plug"
+                className="mx-auto max-w-full h-auto max-h-64 object-contain rounded-xl"
+              />
             </div>
 
-            {/* Error Card */}
-            <div className="bg-card border border-border rounded-lg shadow-lg overflow-hidden">
-              {/* Header */}
-              <div className="bg-muted/50 px-6 py-4 border-b border-border">
-                <h1 className="text-xl font-semibold text-foreground">
-                  <span className="text-destructive">Error</span>: {errorCode}
-                </h1>
-              </div>
+            <h1 className="text-4xl font-bold text-foreground mb-2">
+              <span className="text-destructive">Oops!</span> Something Broke
+            </h1>
+            <p className="text-muted-foreground mb-6 text-lg">
+              Don't worry, our Lego crew is on it. Try refreshing or head home.
+            </p>
 
-              {/* Body */}
-              <div className="p-6 space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Message:
-                  </label>
-                  <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
-                    {errorMessage}
-                  </p>
-                </div>
+            {/* Quick actions */}
+            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+              <Button onClick={this.handleReload} variant="default" size="lg">
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Try Again
+              </Button>
+              <Button onClick={this.handleGoHome} variant="outline" size="lg">
+                <Home className="w-4 h-4 mr-2" />
+                Go to Home
+              </Button>
+            </div>
 
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Code:
-                  </label>
-                  <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
-                    <code>{errorCode}</code>
-                  </p>
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    ID:
-                  </label>
-                  <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
-                    <code>{this.state.errorId}</code>
-                  </p>
-                </div>
+            {/* Collapsible error details */}
+            <details className="text-left bg-card border border-border rounded-lg overflow-hidden">
+              <summary className="px-5 py-3 cursor-pointer text-sm font-medium text-muted-foreground hover:text-foreground transition-colors bg-muted/50">
+                Error Details
+              </summary>
+              <div className="p-5 space-y-3">
+                <CopyRow label="Code" value={errorCode} field="code" copiedField={copiedField} onCopy={this.copyToClipboard} />
+                <CopyRow label="Message" value={errorMessage} field="message" copiedField={copiedField} onCopy={this.copyToClipboard} />
+                <CopyRow label="ID" value={this.state.errorId} field="id" copiedField={copiedField} onCopy={this.copyToClipboard} />
 
                 {this.state.errorInfo?.componentStack && (
-                  <details className="mt-4">
-                    <summary className="text-sm font-medium text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
-                      Component Stack Trace
-                    </summary>
-                    <pre className="mt-2 text-xs text-muted-foreground bg-muted rounded p-3 overflow-x-auto max-h-32 overflow-y-auto">
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-muted-foreground">Stack Trace</span>
+                      <button
+                        onClick={() => this.copyToClipboard(this.state.errorInfo!.componentStack!, "stack")}
+                        className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+                        title="Copy stack trace"
+                      >
+                        {copiedField === "stack" ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                    <pre className="text-xs text-muted-foreground bg-muted rounded p-3 overflow-x-auto max-h-32 overflow-y-auto">
                       {this.state.errorInfo.componentStack}
                     </pre>
-                  </details>
+                  </div>
                 )}
               </div>
+            </details>
 
-              {/* Footer */}
-              <div className="px-6 py-4 bg-muted/30 border-t border-border flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={this.handleReload}
-                  variant="default"
-                  className="flex-1"
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
-                </Button>
-                <Button
-                  onClick={this.handleGoHome}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Go to Home
-                </Button>
-              </div>
-            </div>
-
-            {/* Help Text */}
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              If this error persists, please{" "}
-              <a
-                href="/contact"
-                className="text-primary hover:underline"
-              >
+            <p className="text-sm text-muted-foreground mt-6">
+              If this persists, please{" "}
+              <a href="/contact" className="text-primary hover:underline">
                 contact support
               </a>{" "}
-              with the error ID above.
+              with the error ID.
             </p>
           </div>
         </div>
@@ -154,5 +141,33 @@ class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
+
+const CopyRow = ({
+  label,
+  value,
+  field,
+  copiedField,
+  onCopy,
+}: {
+  label: string;
+  value: string;
+  field: string;
+  copiedField: string | null;
+  onCopy: (text: string, field: string) => void;
+}) => (
+  <div className="flex items-center justify-between gap-2 bg-muted rounded px-3 py-2">
+    <div className="min-w-0">
+      <span className="text-xs font-medium text-muted-foreground">{label}: </span>
+      <code className="text-sm text-foreground break-all">{value}</code>
+    </div>
+    <button
+      onClick={() => onCopy(value, field)}
+      className="shrink-0 p-1 rounded hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
+      title={`Copy ${label}`}
+    >
+      {copiedField === field ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+    </button>
+  </div>
+);
 
 export default ErrorBoundary;
