@@ -6,7 +6,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import ResumeButton from "@/components/ResumeButton";
 import CertificateModal from "@/components/CertificateModal";
 import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone, Linkedin, Github } from "lucide-react";
-import profilePhoto from "@/assets/profile-photo.jpg";
+import profilePhoto from "@/assets/profile-photo.png";
 
 interface Certificate {
   name: string;
