@@ -110,7 +110,11 @@ const AboutPage = () => {
                     <div className="w-32 h-32 md:w-40 md:h-40 border-2 border-border overflow-hidden shrink-0 bg-secondary">
                       <img 
                         src={profilePhoto} 
-                        alt="Tharaneetharan SS"
+                        alt="Tharaneetharan SS - Full Stack Developer and CAD Engineer"
+                        loading="lazy"
+                        decoding="async"
+                        width={160}
+                        height={160}
                         className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
                       />
                     </div>
