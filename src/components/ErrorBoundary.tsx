@@ -1,5 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { AlertTriangle, RefreshCw, Home } from "lucide-react";
+import { RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Props {
@@ -56,12 +56,14 @@ class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <div className="w-full max-w-lg">
-            {/* Error Icon */}
-            <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-destructive" />
-              </div>
+          <div className="w-full max-w-2xl">
+            {/* Lego Image */}
+            <div className="flex justify-center mb-8">
+              <img
+                src="/error-lego.png"
+                alt="Something went wrong - Lego characters with unplugged cable"
+                className="w-full max-w-md h-auto rounded-lg"
+              />
             </div>
 
             {/* Error Card */}
@@ -69,34 +71,28 @@ class ErrorBoundary extends Component<Props, State> {
               {/* Header */}
               <div className="bg-muted/50 px-6 py-4 border-b border-border">
                 <h1 className="text-xl font-semibold text-foreground">
-                  <span className="text-destructive">Error</span>: {errorCode}
+                  <span className="text-destructive">⚠ Error</span>: {errorCode}
                 </h1>
               </div>
 
               {/* Body */}
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Message:
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">Message:</label>
                   <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
                     {errorMessage}
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Code:
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">Code:</label>
                   <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
                     <code>{errorCode}</code>
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    ID:
-                  </label>
+                  <label className="text-sm font-medium text-muted-foreground">ID:</label>
                   <p className="mt-1 text-foreground font-mono text-sm bg-muted rounded px-3 py-2">
                     <code>{this.state.errorId}</code>
                   </p>
@@ -116,34 +112,20 @@ class ErrorBoundary extends Component<Props, State> {
 
               {/* Footer */}
               <div className="px-6 py-4 bg-muted/30 border-t border-border flex flex-col sm:flex-row gap-3">
-                <Button
-                  onClick={this.handleReload}
-                  variant="default"
-                  className="flex-1"
-                >
+                <Button onClick={this.handleReload} variant="default" className="flex-1">
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Try Again
                 </Button>
-                <Button
-                  onClick={this.handleGoHome}
-                  variant="outline"
-                  className="flex-1"
-                >
+                <Button onClick={this.handleGoHome} variant="outline" className="flex-1">
                   <Home className="w-4 h-4 mr-2" />
                   Go to Home
                 </Button>
               </div>
             </div>
 
-            {/* Help Text */}
             <p className="text-center text-sm text-muted-foreground mt-6">
               If this error persists, please{" "}
-              <a
-                href="/contact"
-                className="text-primary hover:underline"
-              >
-                contact support
-              </a>{" "}
+              <a href="/contact" className="text-primary hover:underline">contact support</a>{" "}
               with the error ID above.
             </p>
           </div>
