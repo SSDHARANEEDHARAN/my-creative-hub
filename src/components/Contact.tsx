@@ -47,7 +47,7 @@ const Contact = () => {
   const contactInfo = [
     { icon: <Mail size={20} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
     { icon: <Phone size={20} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
-    { icon: <MapPin size={20} />, label: "Location", value: "Tamil Nadu, India", link: null },
+    { icon: <MapPin size={20} />, label: "Location", value: "Namakkal, India", link: null },
   ];
 
   const benefits = [

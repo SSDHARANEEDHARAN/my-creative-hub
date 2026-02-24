@@ -74,7 +74,7 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
       doc.setFontSize(9);
       doc.setTextColor(...medGray);
       doc.text("Email: tharaneetharanss@gmail.com | Phone: +91 8870086023", margin, y + 20);
-      doc.text("Location: Tamil Nadu, India | LinkedIn: linkedin.com/in/dharaneedharan-ss-70941a211", margin, y + 25);
+      doc.text("Location: Namakkal, India | LinkedIn: linkedin.com/in/dharaneedharan-ss-70941a211", margin, y + 25);
       doc.text("GitHub: github.com/SSDHARANEEDHARAN", margin, y + 30);
       y += 36;
 

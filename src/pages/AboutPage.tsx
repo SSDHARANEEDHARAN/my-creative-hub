@@ -133,7 +133,7 @@ const AboutPage = () => {
                       <div className="flex flex-wrap gap-4 text-muted-foreground text-sm mb-6">
                         <span className="flex items-center gap-1">
                           <MapPin size={14} className="text-primary" />
-                          Chennai, India
+                          Namakkal, India
                         </span>
                         <span className="flex items-center gap-1">
                           <Mail size={14} className="text-primary" />
