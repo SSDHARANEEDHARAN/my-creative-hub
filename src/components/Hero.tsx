@@ -14,11 +14,11 @@ const Hero = () => {
   ];
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-16">
       {/* Particle Background */}
       <ParticleField />
-      {/* Overlay for depth */}
-      <div className="absolute inset-0 bg-background/40 dark:bg-background/60" />
+      {/* Overlay for depth - lighter to let particles show */}
+      <div className="absolute inset-0 bg-background/20 dark:bg-background/30" />
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient orbs */}
