@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ImageLightbox from "@/components/ImageLightbox";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ReactMarkdown from "react-markdown";
@@ -95,6 +96,7 @@ const BlogPostPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   const { user } = useAuth();
   const { guest } = useGuest();
@@ -172,8 +174,8 @@ const BlogPostPage = () => {
         <main className="pt-20">
           {/* Hero */}
           <section className="relative">
-            <div className="aspect-[21/9] max-h-[420px] overflow-hidden relative">
-              <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+            <div className="aspect-[21/9] max-h-[420px] overflow-hidden relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
+              <img src={post.image} alt={post.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
             </div>
             <div className="container mx-auto px-4 sm:px-6 relative -mt-32 z-10">
@@ -342,6 +344,11 @@ const BlogPostPage = () => {
         </main>
         <Footer />
         <GuestAccessModal isOpen={showAccessModal} onClose={() => setShowAccessModal(false)} />
+        <ImageLightbox
+          images={[{ src: post.image, alt: post.title }]}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
       </div>
     </>
   );

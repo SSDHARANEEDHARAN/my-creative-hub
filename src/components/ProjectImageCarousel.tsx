@@ -4,9 +4,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface ProjectImageCarouselProps {
   images: string[];
   title: string;
+  onImageClick?: (index: number) => void;
 }
 
-const ProjectImageCarousel = memo(({ images, title }: ProjectImageCarouselProps) => {
+const ProjectImageCarousel = memo(({ images, title, onImageClick }: ProjectImageCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -34,9 +35,10 @@ const ProjectImageCarousel = memo(({ images, title }: ProjectImageCarouselProps)
       <img
         src={images[currentIndex]}
         alt={`${title} - Image ${currentIndex + 1}`}
-        className={`w-full h-full object-cover transition-opacity duration-200 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`w-full h-full object-cover transition-opacity duration-200 ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${onImageClick ? 'cursor-pointer' : ''}`}
         loading="lazy"
         onLoad={() => setImageLoaded(true)}
+        onClick={(e) => { if (onImageClick) { e.stopPropagation(); onImageClick(currentIndex); } }}
       />
       
       {/* Loading placeholder */}

@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, FileText, Code2, Cog } from "lucide-react";
+import { ExternalLink, FileText, Code2, Cog, Eye, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import ImageLightbox from "@/components/ImageLightbox";
+import { useProjectListCounts } from "@/hooks/useProjectData";
+import { useAuth } from "@/contexts/AuthContext";
+import { useGuest } from "@/contexts/GuestContext";
+import GuestAccessModal from "@/components/GuestAccessModal";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
@@ -339,10 +346,46 @@ const engineeringProjects: Project[] = [
 
 const ProjectsPage = () => {
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [showAccessModal, setShowAccessModal] = useState(false);
+
+  const { user } = useAuth();
+  const { guest } = useGuest();
+  const currentUserEmail = user?.email || guest?.email || null;
+  const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
 
   const projects = activeTab === "it" ? itProjects : engineeringProjects;
   const featuredProjects = projects.filter((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);
+
+  const allProjects = [...itProjects, ...engineeringProjects];
+  const projectIds = useMemo(() => allProjects.map((p) => String(p.id)), []);
+  const { viewCounts, likeCounts } = useProjectListCounts(projectIds);
+
+  const openLightbox = (images: string[], title: string, index: number) => {
+    setLightboxImages(images.map((src, i) => ({ src, alt: `${title} - Image ${i + 1}` })));
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const handleLikeProject = async (projectId: number) => {
+    if (!currentUserEmail || !currentUserName) {
+      setShowAccessModal(true);
+      return;
+    }
+    const { error } = await supabase.from("project_likes").insert({
+      project_id: String(projectId),
+      name: currentUserName,
+      email: currentUserEmail,
+    });
+    if (!error) {
+      toast({ description: "Project liked!" });
+    } else if (error.code === "23505") {
+      toast({ description: "You already liked this project." });
+    }
+  };
 
   return (
     <>
@@ -439,7 +482,7 @@ const ProjectsPage = () => {
                           className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
                         >
                           <div className="relative aspect-video overflow-hidden">
-                            <ProjectImageCarousel images={project.images} title={project.title} />
+                            <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
                             <div className="absolute top-4 left-4 z-10">
                               <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold">
                                 Featured
@@ -462,6 +505,12 @@ const ProjectsPage = () => {
                                   {tag}
                                 </span>
                               ))}
+                            </div>
+                            <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1"><Eye size={13} /> {viewCounts[String(project.id)] || 0} views</span>
+                              <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
+                                <Heart size={13} /> {likeCounts[String(project.id)] || 0} likes
+                              </button>
                             </div>
                             {project.liveUrl && (
                               <a
@@ -504,7 +553,7 @@ const ProjectsPage = () => {
                         className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
                       >
                         <div className="relative aspect-video overflow-hidden">
-                          <ProjectImageCarousel images={project.images} title={project.title} />
+                          <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
                         </div>
                         <div className="p-4">
                           <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
@@ -522,6 +571,12 @@ const ProjectsPage = () => {
                                 {tag}
                               </span>
                             ))}
+                          </div>
+                          <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
+                            <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Heart size={12} /> {likeCounts[String(project.id)] || 0}
+                            </button>
                           </div>
                           {project.liveUrl && (
                             <a
@@ -553,6 +608,13 @@ const ProjectsPage = () => {
       </main>
 
       <Footer />
+      <ImageLightbox
+        images={lightboxImages}
+        initialIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
+      <GuestAccessModal isOpen={showAccessModal} onClose={() => setShowAccessModal(false)} />
     </>
   );
 };
