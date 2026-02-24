@@ -125,6 +125,33 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_views: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string | null
+          post_id: string
+          viewer_email: string | null
+          viewer_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          post_id: string
+          viewer_email?: string | null
+          viewer_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string | null
+          post_id?: string
+          viewer_email?: string | null
+          viewer_name?: string | null
+        }
+        Relationships: []
+      }
       guest_visitors: {
         Row: {
           email: string
@@ -331,6 +358,14 @@ export type Database = {
           id?: string | null
           name?: string | null
           post_id?: string | null
+        }
+        Relationships: []
+      }
+      blog_view_counts: {
+        Row: {
+          post_id: string | null
+          unique_viewers: number | null
+          view_count: number | null
         }
         Relationships: []
       }
