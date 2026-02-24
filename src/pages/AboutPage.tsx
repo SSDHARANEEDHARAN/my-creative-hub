@@ -121,7 +121,7 @@ const AboutPage = () => {
                           className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
                         />
                       </div>
-                      <p className="mt-3 text-xs italic text-muted-foreground leading-relaxed max-w-[10rem]">
+                      <p className="mt-3 text-[10px] italic text-muted-foreground leading-relaxed max-w-[10rem] text-center mx-auto">
                         "Code the Brain, Move the Machine — Designing the Future || Coding Minds, Moving Machines — Powering Robotics Behind the Scenes"
                       </p>
                     </div>
