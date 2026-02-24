@@ -23,6 +23,7 @@ const TestimonialsPage = lazy(() => import("./pages/TestimonialsPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const ArticlePage = lazy(() => import("./pages/ArticlePage"));
+const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const SubscribersPage = lazy(() => import("./pages/SubscribersPage"));
 const BlogCommentsPage = lazy(() => import("./pages/BlogCommentsPage"));
 const AdminModerationPage = lazy(() => import("./pages/AdminModerationPage"));
@@ -50,6 +51,7 @@ const AnimatedRoutes = () => {
           <Route path="/testimonials" element={<TestimonialsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogPostPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
