@@ -7,48 +7,48 @@ import { MapPin } from "lucide-react";
 const GalleryPage = () => {
   const travelPhotos = [
     {
-      country: "Japan",
-      city: "Tokyo",
-      image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop",
-      description: "Neon-lit streets of Shibuya"
+      country: "India",
+      city: "Namakkal",
+      image: "https://images.unsplash.com/photo-1621996659490-3275b4d0d951?w=600&h=400&fit=crop",
+      description: "Historic Namakkal Fort & Rock"
     },
     {
-      country: "Italy",
-      city: "Rome",
-      image: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&h=400&fit=crop",
-      description: "Ancient Colosseum at sunset"
+      country: "India",
+      city: "Ooty",
+      image: "https://images.unsplash.com/photo-1585136917228-cf6e11b1be09?w=600&h=400&fit=crop",
+      description: "Misty Nilgiri Hills retreat"
     },
     {
-      country: "Iceland",
-      city: "Reykjavik",
-      image: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&h=400&fit=crop",
-      description: "Northern Lights magic"
+      country: "India",
+      city: "Pondicherry",
+      image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&h=400&fit=crop",
+      description: "French Quarter coastal charm"
     },
     {
-      country: "Thailand",
-      city: "Bangkok",
-      image: "https://images.unsplash.com/photo-1508009603885-50cf7c579f7c?w=600&h=400&fit=crop",
-      description: "Golden temples at dawn"
+      country: "India",
+      city: "Rameswaram",
+      image: "https://images.unsplash.com/photo-1621788128507-a2d187ba9740?w=600&h=400&fit=crop",
+      description: "Sacred island temple town"
     },
     {
-      country: "Portugal",
-      city: "Lisbon",
-      image: "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=400&fit=crop",
-      description: "Colorful tram streets"
+      country: "India",
+      city: "Kodaikanal",
+      image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=600&h=400&fit=crop",
+      description: "Princess of Hill stations"
     },
     {
-      country: "Morocco",
-      city: "Marrakech",
-      image: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=600&h=400&fit=crop",
-      description: "Vibrant medina markets"
+      country: "India",
+      city: "Mahabalipuram",
+      image: "https://images.unsplash.com/photo-1600100397608-e94e3e060aac?w=600&h=400&fit=crop",
+      description: "UNESCO heritage shore temples"
     }
   ];
 
   return (
     <>
       <Helmet>
-        <title>Gallery | Dharaneedharan SS - Travel Adventures</title>
-        <meta name="description" content="Explore travel photos from around the world - Japan, Italy, Iceland, Thailand, Portugal, Morocco and more." />
+        <title>Gallery | Dharaneedharan SS - Travel Adventures in India</title>
+        <meta name="description" content="Explore travel photos from beautiful places across India - Namakkal, Ooty, Pondicherry, Rameswaram, Kodaikanal and more." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">
