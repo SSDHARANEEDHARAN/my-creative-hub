@@ -347,7 +347,7 @@ const ProjectsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Projects | Tharaneetharan SS - IT & Engineering Portfolio</title>
+        <title>Projects | Dharaneedharan SS - IT & Engineering Portfolio</title>
         <meta
           name="description"
           content="Explore my portfolio of IT and Engineering projects including web applications, IoT systems, CAD designs, and manufacturing simulations."

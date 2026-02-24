@@ -63,7 +63,7 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
       doc.setFont("helvetica", "bold");
       doc.setFontSize(20);
       doc.setTextColor(...black);
-      doc.text("THARANEE THARAN S.S", margin, y + 7);
+      doc.text("DHARANEEDHARAN S.S", margin, y + 7);
 
       const subtitle = type === "it" ? "Full Stack Developer" : type === "core" ? "CAD Engineer" : "Full Stack Developer & CAD Engineer";
       doc.setFont("helvetica", "normal");
@@ -210,9 +210,9 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
       addBullet("Proficient in 10+ technologies and 5+ CAD tools");
 
       const fileNames: Record<ResumeType, string> = {
-        it: "Tharanee_Tharan_IT_Resume.pdf",
-        core: "Tharanee_Tharan_Core_Resume.pdf",
-        both: "Tharanee_Tharan_Full_Resume.pdf",
+        it: "Dharaneedharan_IT_Resume.pdf",
+        core: "Dharaneedharan_Core_Resume.pdf",
+        both: "Dharaneedharan_Full_Resume.pdf",
       };
       doc.save(fileNames[type]);
 

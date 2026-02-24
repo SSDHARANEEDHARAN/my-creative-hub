@@ -71,7 +71,7 @@ const AboutPage = () => {
   ];
 
   const certifications: Certificate[] = [
-    { name: "Certified SolidWorks Associate (CSWA)", issuer: "Dassault Systèmes", year: "2023", credentialId: "CSWA-2023-TTS" },
+    { name: "Certified SolidWorks Associate (CSWA)", issuer: "Dassault Systèmes", year: "2023", credentialId: "CSWA-2023-DSS" },
     { name: "Python for Data Science", issuer: "IBM", year: "2023", credentialId: "IBM-PY-DS-2023" },
     { name: "React Developer Certification", issuer: "Meta", year: "2024", credentialId: "META-REACT-2024" },
     { name: "FlexSim Simulation Basics", issuer: "FlexSim Software", year: "2022", credentialId: "FLEX-SIM-2022" },
@@ -91,8 +91,8 @@ const AboutPage = () => {
   return (
     <>
       <Helmet>
-        <title>About | Tharaneetharan SS - Full Stack Developer & CAD Engineer</title>
-        <meta name="description" content="Learn more about Tharaneetharan SS, a versatile professional with expertise in IT development and CAD engineering." />
+        <title>About | Dharaneedharan SS - Full Stack Developer & CAD Engineer</title>
+        <meta name="description" content="Learn more about Dharaneedharan SS, a versatile professional with expertise in IT development and CAD engineering." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">
@@ -112,7 +112,7 @@ const AboutPage = () => {
                     <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden shrink-0 bg-secondary rounded-lg">
                       <img 
                         src={aboutProfilePhoto} 
-                        alt="Tharaneetharan SS - Full Stack Developer and CAD Engineer"
+                        alt="Dharaneedharan SS - Full Stack Developer and CAD Engineer"
                         loading="lazy"
                         decoding="async"
                         width={160}
@@ -124,7 +124,7 @@ const AboutPage = () => {
                     {/* Profile Info */}
                     <div className="flex-1">
                       <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">
-                        Tharaneetharan SS
+                        Dharaneedharan SS
                       </h1>
                       <p className="text-xl text-primary font-semibold mb-4">
                         Full Stack Developer & CAD Engineer

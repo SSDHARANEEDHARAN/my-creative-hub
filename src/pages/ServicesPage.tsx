@@ -180,7 +180,7 @@ const ServicesPage = () => {
   return (
     <>
       <Helmet>
-        <title>Services | Tharaneetharan SS - Full Stack Developer & CAD Engineer</title>
+        <title>Services | Dharaneedharan SS - Full Stack Developer & CAD Engineer</title>
         <meta name="description" content="Professional IT and Engineering services including web development, software development, AI solutions, CAD design, and manufacturing simulation." />
       </Helmet>
       

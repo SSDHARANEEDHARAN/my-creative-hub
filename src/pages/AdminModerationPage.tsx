@@ -116,7 +116,7 @@ const AdminModerationPage = () => {
   return (
     <PageTransition>
       <Helmet>
-        <title>Admin Moderation | Tharaneetharan SS</title>
+        <title>Admin Moderation | Dharaneedharan SS</title>
       </Helmet>
 
       <div className="min-h-screen bg-background">

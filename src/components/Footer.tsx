@@ -26,10 +26,10 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
           <div>
             <Link to="/" className="group flex items-center gap-2 mb-4 sm:mb-6">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center hover:scale-105 transition-transform duration-300">
-                <span className="text-background font-bold text-sm sm:text-lg">TT</span>
+                <span className="text-background font-bold text-sm sm:text-lg">AE</span>
               </div>
               <span className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                TTS.dev
+                ArtTech Engine
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed mb-4 sm:mb-6 max-w-sm text-sm sm:text-base">
@@ -80,7 +80,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 
         <div className="pt-6 sm:pt-8 border-t-2 border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 text-center sm:text-left">
-            © {currentYear} Tharaneetharan SS. Crafted with
+            © {currentYear} Dharaneedharan SS. Crafted with
             <span className="animate-pulse">
               <Heart size={12} className="text-foreground" fill="currentColor" />
             </span>

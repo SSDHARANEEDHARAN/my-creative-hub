@@ -49,10 +49,10 @@ const Navigation = () => {
               transition={{ duration: 0.5 }}
               className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center"
             >
-              <span className="text-background font-bold text-sm sm:text-lg">TT</span>
+              <span className="text-background font-bold text-sm sm:text-lg">AE</span>
             </motion.div>
             <span className="font-display text-lg sm:text-xl font-bold text-foreground">
-              TTS.dev
+              ArtTech Engine
             </span>
           </Link>
 
