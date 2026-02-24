@@ -8,7 +8,7 @@ import CertificateModal from "@/components/CertificateModal";
 import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone } from "lucide-react";
 import { socialLinks } from "@/components/SocialLinks";
 import { toast } from "@/hooks/use-toast";
-import profilePhoto from "@/assets/profile-photo.png";
+import aboutProfilePhoto from "@/assets/about-profile.jpg";
 
 interface Certificate {
   name: string;
@@ -111,7 +111,7 @@ const AboutPage = () => {
                     {/* Profile Image */}
                     <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden shrink-0 bg-secondary rounded-lg">
                       <img 
-                        src={profilePhoto} 
+                        src={aboutProfilePhoto} 
                         alt="Tharaneetharan SS - Full Stack Developer and CAD Engineer"
                         loading="lazy"
                         decoding="async"
