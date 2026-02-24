@@ -242,15 +242,15 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
           </DialogHeader>
           <div className="grid gap-3 py-4">
             <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => generateResume("it")}>
-              <span className="font-semibold text-sm">💻 IT Resume</span>
+              <span className="font-semibold text-sm">IT Resume</span>
               <span className="text-xs text-muted-foreground">Full Stack Development, React, Python, IoT</span>
             </Button>
             <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => generateResume("core")}>
-              <span className="font-semibold text-sm">⚙️ Core Engineering Resume</span>
+              <span className="font-semibold text-sm">Core Engineering Resume</span>
               <span className="text-xs text-muted-foreground">CAD, SolidWorks, NX, Creo, FlexSim, PLM</span>
             </Button>
             <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => generateResume("both")}>
-              <span className="font-semibold text-sm">📋 Both (Full Resume)</span>
+              <span className="font-semibold text-sm">Both (Full Resume)</span>
               <span className="text-xs text-muted-foreground">Combined IT + Core Engineering resume</span>
             </Button>
           </div>
