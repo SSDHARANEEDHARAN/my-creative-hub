@@ -4,7 +4,7 @@ import { z } from "https://esm.sh/zod@3.25.76";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const verifySchema = z.object({
@@ -16,7 +16,7 @@ const verifySchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
@@ -98,7 +98,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error("verify-otp-reset error:", error);
     return new Response(
-      JSON.stringify({ error: "Failed to process request" }),
+      JSON.stringify({ error: error instanceof Error ? error.message : "Failed to process request" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
