@@ -109,16 +109,21 @@ const AboutPage = () => {
                 <div className="max-w-4xl mx-auto bg-card border-2 border-border p-8 md:p-12 sharp-card mb-16">
                   <div className="flex flex-col md:flex-row gap-8 items-start">
                     {/* Profile Image */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden shrink-0 bg-secondary rounded-lg">
-                      <img 
-                        src={aboutProfilePhoto} 
-                        alt="Dharaneedharan SS - Full Stack Developer and CAD Engineer"
-                        loading="lazy"
-                        decoding="async"
-                        width={160}
-                        height={160}
-                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                      />
+                    <div className="shrink-0">
+                      <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-secondary rounded-lg">
+                        <img 
+                          src={aboutProfilePhoto} 
+                          alt="Dharaneedharan SS - Full Stack Developer and CAD Engineer"
+                          loading="lazy"
+                          decoding="async"
+                          width={160}
+                          height={160}
+                          className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                        />
+                      </div>
+                      <p className="mt-3 text-xs italic text-muted-foreground leading-relaxed max-w-[10rem]">
+                        "Code the Brain, Move the Machine — Designing the Future || Coding Minds, Moving Machines — Powering Robotics Behind the Scenes"
+                      </p>
                     </div>
                     
                     {/* Profile Info */}
