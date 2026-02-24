@@ -236,57 +236,6 @@ export type Database = {
         }
         Relationships: []
       }
-      project_likes: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          name: string
-          project_id: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          name: string
-          project_id: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          name?: string
-          project_id?: string
-        }
-        Relationships: []
-      }
-      project_views: {
-        Row: {
-          created_at: string
-          id: string
-          ip_hash: string | null
-          project_id: string
-          viewer_email: string | null
-          viewer_name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          ip_hash?: string | null
-          project_id: string
-          viewer_email?: string | null
-          viewer_name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          ip_hash?: string | null
-          project_id?: string
-          viewer_email?: string | null
-          viewer_name?: string | null
-        }
-        Relationships: []
-      }
       projects: {
         Row: {
           article_slug: string | null
@@ -415,35 +364,6 @@ export type Database = {
       blog_view_counts: {
         Row: {
           post_id: string | null
-          unique_viewers: number | null
-          view_count: number | null
-        }
-        Relationships: []
-      }
-      project_likes_public: {
-        Row: {
-          created_at: string | null
-          id: string | null
-          name: string | null
-          project_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string | null
-          name?: string | null
-          project_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string | null
-          name?: string | null
-          project_id?: string | null
-        }
-        Relationships: []
-      }
-      project_view_counts: {
-        Row: {
-          project_id: string | null
           unique_viewers: number | null
           view_count: number | null
         }
