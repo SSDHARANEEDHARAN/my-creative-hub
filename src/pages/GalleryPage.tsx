@@ -9,37 +9,37 @@ const GalleryPage = () => {
     {
       country: "India",
       city: "Namakkal",
-      image: "https://images.unsplash.com/photo-1621996659490-3275b4d0d951?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=600&h=400&fit=crop",
       description: "Historic Namakkal Fort & Rock"
     },
     {
       country: "India",
       city: "Ooty",
-      image: "https://images.unsplash.com/photo-1585136917228-cf6e11b1be09?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop",
       description: "Misty Nilgiri Hills retreat"
     },
     {
       country: "India",
       city: "Pondicherry",
-      image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop",
       description: "French Quarter coastal charm"
     },
     {
       country: "India",
       city: "Rameswaram",
-      image: "https://images.unsplash.com/photo-1621788128507-a2d187ba9740?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=600&h=400&fit=crop",
       description: "Sacred island temple town"
     },
     {
       country: "India",
       city: "Kodaikanal",
-      image: "https://images.unsplash.com/photo-1589308078059-be1415eab4c3?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&h=400&fit=crop",
       description: "Princess of Hill stations"
     },
     {
       country: "India",
       city: "Mahabalipuram",
-      image: "https://images.unsplash.com/photo-1600100397608-e94e3e060aac?w=600&h=400&fit=crop",
+      image: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&h=400&fit=crop",
       description: "UNESCO heritage shore temples"
     }
   ];
