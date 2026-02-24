@@ -1,5 +1,6 @@
 import { useState } from "react";
 import ImageLightbox from "@/components/ImageLightbox";
+import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ReactMarkdown from "react-markdown";
@@ -170,6 +171,7 @@ const BlogPostPage = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background transition-colors duration-300">
+        <ReadingProgressBar />
         <Navigation />
         <main className="pt-20">
           {/* Hero */}
