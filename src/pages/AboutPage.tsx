@@ -5,7 +5,9 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import ResumeButton from "@/components/ResumeButton";
 import CertificateModal from "@/components/CertificateModal";
-import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone, Linkedin, Github } from "lucide-react";
+import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone } from "lucide-react";
+import { socialLinks } from "@/components/SocialLinks";
+import { toast } from "@/hooks/use-toast";
 import profilePhoto from "@/assets/profile-photo.png";
 
 interface Certificate {
@@ -107,7 +109,7 @@ const AboutPage = () => {
                 <div className="max-w-4xl mx-auto bg-card border-2 border-border p-8 md:p-12 sharp-card mb-16">
                   <div className="flex flex-col md:flex-row gap-8 items-start">
                     {/* Profile Image */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 border-2 border-border overflow-hidden shrink-0 bg-secondary">
+                    <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden shrink-0 bg-secondary rounded-lg">
                       <img 
                         src={profilePhoto} 
                         alt="Tharaneetharan SS - Full Stack Developer and CAD Engineer"
@@ -144,14 +146,18 @@ const AboutPage = () => {
                       </div>
                       
                       <div className="flex gap-3 mb-6">
-                        <a href="https://www.linkedin.com/in/dharaneedharan-ss-70941a211/" target="_blank" rel="noopener noreferrer" 
-                           className="w-10 h-10 bg-secondary border-2 border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:bg-primary/10 transition-all duration-300">
-                          <Linkedin size={18} />
-                        </a>
-                        <a href="https://github.com/SSDHARANEEDHARAN" target="_blank" rel="noopener noreferrer"
-                           className="w-10 h-10 bg-secondary border-2 border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:bg-primary/10 transition-all duration-300">
-                          <Github size={18} />
-                        </a>
+                        {socialLinks.map((link) => (
+                          <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer"
+                             onClick={(e) => {
+                               if (link.comingSoon) {
+                                 e.preventDefault();
+                                 toast({ title: "Coming Soon! 🚀", description: `${link.label} page is coming soon. Stay tuned!` });
+                               }
+                             }}
+                             className="w-10 h-10 bg-secondary border-2 border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary hover:bg-primary/10 transition-all duration-300">
+                            <link.icon size={18} />
+                          </a>
+                        ))}
                       </div>
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
