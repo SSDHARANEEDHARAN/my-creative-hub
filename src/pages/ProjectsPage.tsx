@@ -468,7 +468,7 @@ const ProjectsPage = () => {
                                 href={project.liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="btn-sharp inline-flex items-center gap-2 text-sm"
+                                className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                               >
                                 View Live <ExternalLink size={14} />
                               </a>
