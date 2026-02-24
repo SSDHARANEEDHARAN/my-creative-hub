@@ -226,7 +226,7 @@ const handler = async (req: Request): Promise<Response> => {
       const welcomeHtml = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
           <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🎉 Welcome to TTS.dev Newsletter!</h1>
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🎉 Welcome to ArtTech Engine Newsletter!</h1>
           </div>
           <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
             <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
@@ -259,7 +259,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
           </div>
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0 0 10px 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 0 0 10px 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
             <p style="margin: 0;">
               <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from this newsletter</a>
             </p>
@@ -276,9 +276,9 @@ const handler = async (req: Request): Promise<Response> => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "TTS.dev Newsletter <onboarding@resend.dev>",
+            from: "ArtTech Engine Newsletter <onboarding@resend.dev>",
             to: [email],
-            subject: `🎉 Welcome to TTS.dev Newsletter!`,
+            subject: `🎉 Welcome to ArtTech Engine Newsletter!`,
             html: welcomeHtml,
           }),
         });
@@ -461,7 +461,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
             <p style="margin: 0;">Thank you for engaging with our blog!</p>
-            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
           </div>
         </div>
       `;
@@ -475,7 +475,7 @@ const handler = async (req: Request): Promise<Response> => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "TTS.dev Blog <onboarding@resend.dev>",
+            from: "ArtTech Engine Blog <onboarding@resend.dev>",
             to: [email],
             subject: `💬 Thanks for commenting on: ${safeBlogTitle}`,
             html: commenterConfirmHtml,
@@ -510,7 +510,7 @@ const handler = async (req: Request): Promise<Response> => {
           <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
             <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
             <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Tharaneetharan SS has replied to your comment on the blog post: <strong>${safeBlogTitle}</strong>
+              Dharaneedharan SS has replied to your comment on the blog post: <strong>${safeBlogTitle}</strong>
             </p>
             
             <div style="background: #ffffff; padding: 15px; border-left: 4px solid #ccc; margin: 20px 0;">
@@ -519,7 +519,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             
             <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4CAF50; margin: 20px 0;">
-              <p style="color: #2e7d32; margin: 0 0 5px 0; font-size: 12px; font-weight: bold;">Reply from Tharaneetharan SS:</p>
+              <p style="color: #2e7d32; margin: 0 0 5px 0; font-size: 12px; font-weight: bold;">Reply from Dharaneedharan SS:</p>
               <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeReplyContent}</p>
             </div>
             
@@ -529,7 +529,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
             <p style="margin: 0;">Thank you for engaging with our blog!</p>
-            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
           </div>
         </div>
       `;
@@ -543,7 +543,7 @@ const handler = async (req: Request): Promise<Response> => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "TTS.dev Blog <onboarding@resend.dev>",
+            from: "ArtTech Engine Blog <onboarding@resend.dev>",
             to: [email],
             subject: `💬 Reply to your comment on: ${safeBlogTitle}`,
             html: replyHtml,
@@ -647,7 +647,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
           </div>
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
           </div>
         </div>
       `;
@@ -661,9 +661,9 @@ const handler = async (req: Request): Promise<Response> => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "TTS.dev Portfolio <onboarding@resend.dev>",
+            from: "ArtTech Engine Portfolio <onboarding@resend.dev>",
             to: [email],
-            subject: `👋 Welcome to Tharaneetharan's Portfolio!`,
+            subject: `👋 Welcome to Dharaneedharan's Portfolio!`,
             html: guestWelcomeHtml,
           }),
         });
@@ -719,7 +719,7 @@ const handler = async (req: Request): Promise<Response> => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "TTS.dev Onboarding <onboarding@resend.dev>",
+            from: "ArtTech Engine Onboarding <onboarding@resend.dev>",
             to: [OWNER_EMAIL],
             reply_to: email,
             subject: `🆕 New User Login: ${safeName}`,
@@ -762,7 +762,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
           </div>
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
           </div>
         </div>
       `;
@@ -776,7 +776,7 @@ const handler = async (req: Request): Promise<Response> => {
             Authorization: `Bearer ${RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "TTS.dev <onboarding@resend.dev>",
+            from: "ArtTech Engine <onboarding@resend.dev>",
             to: [email],
             subject: "🎉 Welcome!",
             html: userWelcomeHtml,

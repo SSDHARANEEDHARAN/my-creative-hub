@@ -52,7 +52,7 @@ const ContactPage = () => {
   const contactInfo = [
     { icon: <Mail size={18} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
     { icon: <Phone size={18} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
-    { icon: <MapPin size={18} />, label: "Location", value: "Tamil Nadu, India", link: null },
+    { icon: <MapPin size={18} />, label: "Location", value: "Namakkal, India", link: null },
   ];
 
   const benefits = [
@@ -64,8 +64,8 @@ const ContactPage = () => {
   return (
     <>
       <Helmet>
-        <title>Contact | Tharaneetharan SS - Get In Touch</title>
-        <meta name="description" content="Get in touch with Tharaneetharan SS for IT development and Engineering design projects. Let's create something amazing together." />
+        <title>Contact | Dharaneedharan SS - Get In Touch</title>
+        <meta name="description" content="Get in touch with Dharaneedharan SS for IT development and Engineering design projects. Let's create something amazing together." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">

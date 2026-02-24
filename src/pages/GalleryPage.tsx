@@ -47,7 +47,7 @@ const GalleryPage = () => {
   return (
     <>
       <Helmet>
-        <title>Gallery | Tharaneetharan SS - Travel Adventures</title>
+        <title>Gallery | Dharaneedharan SS - Travel Adventures</title>
         <meta name="description" content="Explore travel photos from around the world - Japan, Italy, Iceland, Thailand, Portugal, Morocco and more." />
       </Helmet>
       

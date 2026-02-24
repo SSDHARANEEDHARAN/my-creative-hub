@@ -155,7 +155,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           
           <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0 0 10px 0;">© ${new Date().getFullYear()} Tharaneetharan SS - TTS.dev</p>
+            <p style="margin: 0 0 10px 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
             <p style="margin: 0;">
               <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
             </p>

@@ -47,7 +47,7 @@ const staticPosts: BlogPost[] = [
     date: "Dec 20, 2024",
     readTime: "5 min read",
     category: "Technology",
-    author: { name: "Tharaneetharan SS", avatar: "" },
+    author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "2",
@@ -58,7 +58,7 @@ const staticPosts: BlogPost[] = [
     date: "Dec 15, 2024",
     readTime: "8 min read",
     category: "Design",
-    author: { name: "Tharaneetharan SS", avatar: "" },
+    author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "3",
@@ -69,7 +69,7 @@ const staticPosts: BlogPost[] = [
     date: "Dec 10, 2024",
     readTime: "10 min read",
     category: "Development",
-    author: { name: "Tharaneetharan SS", avatar: "" },
+    author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "4",
@@ -80,7 +80,7 @@ const staticPosts: BlogPost[] = [
     date: "Dec 5, 2024",
     readTime: "12 min read",
     category: "Development",
-    author: { name: "Tharaneetharan SS", avatar: "" },
+    author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "5",
@@ -91,7 +91,7 @@ const staticPosts: BlogPost[] = [
     date: "Dec 1, 2024",
     readTime: "7 min read",
     category: "Engineering",
-    author: { name: "Tharaneetharan SS", avatar: "" },
+    author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "6",
@@ -102,7 +102,7 @@ const staticPosts: BlogPost[] = [
     date: "Nov 28, 2024",
     readTime: "15 min read",
     category: "IoT",
-    author: { name: "Tharaneetharan SS", avatar: "" },
+    author: { name: "Dharaneedharan SS", avatar: "" },
   },
 ];
 
@@ -322,7 +322,7 @@ const BlogPage = () => {
   return (
     <>
       <Helmet>
-        <title>Blog | Tharaneetharan SS - Insights & Tutorials</title>
+        <title>Blog | Dharaneedharan SS - Insights & Tutorials</title>
         <meta
           name="description"
           content="Read articles about web development, design patterns, and lessons learned from building products."

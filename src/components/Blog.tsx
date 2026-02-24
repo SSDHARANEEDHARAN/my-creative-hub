@@ -66,7 +66,7 @@ const initialPosts: Omit<BlogPost, 'likes' | 'comments'>[] = [
     date: "Dec 20, 2024",
     readTime: "5 min read",
     category: "Technology",
-    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Dharaneedharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
   {
     id: 2,
@@ -77,7 +77,7 @@ const initialPosts: Omit<BlogPost, 'likes' | 'comments'>[] = [
     date: "Dec 15, 2024",
     readTime: "8 min read",
     category: "Design",
-    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Dharaneedharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
   {
     id: 3,
@@ -88,7 +88,7 @@ const initialPosts: Omit<BlogPost, 'likes' | 'comments'>[] = [
     date: "Dec 10, 2024",
     readTime: "10 min read",
     category: "Development",
-    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Dharaneedharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
   {
     id: 4,
@@ -99,7 +99,7 @@ const initialPosts: Omit<BlogPost, 'likes' | 'comments'>[] = [
     date: "Dec 5, 2024",
     readTime: "12 min read",
     category: "Development",
-    author: { name: "Tharaneetharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
+    author: { name: "Dharaneedharan SS", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop" },
   },
 ];
 
@@ -551,7 +551,7 @@ const Blog = () => {
                         {comment.reply && (
                           <div className="ml-10 mt-3 pl-4 border-l-2 border-primary">
                             <div className="flex items-center gap-2 mb-1">
-                              <span className="text-xs font-medium text-primary">Tharaneetharan SS</span>
+                              <span className="text-xs font-medium text-primary">Dharaneedharan SS</span>
                               <span className="text-xs text-muted-foreground">{comment.replyDate}</span>
                             </div>
                             <p className="text-sm text-muted-foreground">{comment.reply}</p>
