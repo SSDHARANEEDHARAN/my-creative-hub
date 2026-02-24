@@ -23,22 +23,23 @@ const ParticleField = () => {
     }> = [];
 
     const resize = () => {
-      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     const initParticles = () => {
-      const count = Math.min(80, Math.floor((canvas.offsetWidth * canvas.offsetHeight) / 12000));
+      const count = Math.min(120, Math.floor((canvas.offsetWidth * canvas.offsetHeight) / 6000));
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.offsetWidth,
         y: Math.random() * canvas.offsetHeight,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.5 + 0.1,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        size: Math.random() * 3 + 1,
+        opacity: Math.random() * 0.7 + 0.3,
         pulse: Math.random() * Math.PI * 2,
-        pulseSpeed: Math.random() * 0.02 + 0.005,
+        pulseSpeed: Math.random() * 0.03 + 0.01,
       }));
     };
 
@@ -50,8 +51,9 @@ const ParticleField = () => {
       ctx.clearRect(0, 0, w, h);
 
       const dark = isDark();
-      const dotColor = dark ? "255,255,255" : "0,0,0";
-      const lineColor = dark ? "255,255,255" : "0,0,0";
+      const accentR = dark ? 130 : 80;
+      const accentG = dark ? 160 : 100;
+      const accentB = dark ? 255 : 200;
 
       for (const p of particles) {
         p.x += p.vx;
@@ -63,28 +65,38 @@ const ParticleField = () => {
         if (p.y < 0) p.y = h;
         if (p.y > h) p.y = 0;
 
-        const currentOpacity = p.opacity * (0.6 + 0.4 * Math.sin(p.pulse));
+        const currentOpacity = p.opacity * (0.5 + 0.5 * Math.sin(p.pulse));
 
+        // Glow effect
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
+        gradient.addColorStop(0, `rgba(${accentR},${accentG},${accentB},${currentOpacity})`);
+        gradient.addColorStop(1, `rgba(${accentR},${accentG},${accentB},0)`);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Core dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${dotColor},${currentOpacity})`;
+        ctx.fillStyle = `rgba(${accentR},${accentG},${accentB},${currentOpacity * 1.2})`;
         ctx.fill();
       }
 
       // Draw connections
-      const maxDist = 120;
+      const maxDist = 150;
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < maxDist) {
-            const alpha = (1 - dist / maxDist) * 0.15;
+            const alpha = (1 - dist / maxDist) * 0.25;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(${lineColor},${alpha})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `rgba(${accentR},${accentG},${accentB},${alpha})`;
+            ctx.lineWidth = 0.8;
             ctx.stroke();
           }
         }
@@ -97,14 +109,15 @@ const ParticleField = () => {
     initParticles();
     draw();
 
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       resize();
       initParticles();
-    });
+    };
+    window.addEventListener("resize", handleResize);
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
