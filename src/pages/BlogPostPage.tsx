@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import ReactMarkdown from "react-markdown";
@@ -14,6 +14,7 @@ import { Heart, MessageCircle, Clock, ArrowLeft, Send, User, Calendar, Tag, Eye,
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
+import { useBlogData } from "@/hooks/useBlogData";
 
 interface BlogPost {
   id: string;
@@ -27,14 +28,6 @@ interface BlogPost {
   author: { name: string; avatar: string };
 }
 
-interface DBComment {
-  id: string;
-  name: string;
-  content: string;
-  created_at: string;
-  reply: string | null;
-  reply_date: string | null;
-}
 
 const blogPosts: BlogPost[] = [
   {
@@ -97,11 +90,6 @@ const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
   const post = blogPosts.find((p) => p.id === id);
 
-  const [likeCount, setLikeCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
-  const [viewCount, setViewCount] = useState(0);
-  const [userHasLiked, setUserHasLiked] = useState(false);
-  const [postComments, setPostComments] = useState<DBComment[]>([]);
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [commentData, setCommentData] = useState({ name: "", email: "", text: "", honeypot: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -109,74 +97,26 @@ const BlogPostPage = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
 
   const { user } = useAuth();
-  const { guest, isGuest } = useGuest();
+  const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
 
-  // Track view on mount
-  useEffect(() => {
-    if (!id) return;
-    const trackView = async () => {
-      try {
-        await supabase.from("blog_views").insert({
-          post_id: id,
-          viewer_email: currentUserEmail || null,
-          viewer_name: currentUserName || null,
-        });
-      } catch (e) {
-        console.error("Failed to track view:", e);
-      }
-    };
-    // Only track once per session per post
-    const viewKey = `blog_viewed_${id}`;
-    if (!sessionStorage.getItem(viewKey)) {
-      trackView();
-      sessionStorage.setItem(viewKey, "1");
-    }
-  }, [id, currentUserEmail, currentUserName]);
-
-  const loadData = useCallback(async () => {
-    if (!id) return;
-    try {
-      const [likesRes, commentsRes, viewsRes] = await Promise.all([
-        supabase.functions.invoke("manage-blog-likes", {
-          body: { action: "check", post_ids: [id], email: currentUserEmail || undefined },
-        }),
-        supabase.from("blog_comments_public").select("*").eq("post_id", id).order("created_at", { ascending: true }),
-        supabase.from("blog_view_counts").select("*").eq("post_id", id).maybeSingle(),
-      ]);
-
-      if (likesRes.data) {
-        setLikeCount(likesRes.data.counts?.[id] || 0);
-        setUserHasLiked(likesRes.data.userLikedPosts?.includes(id) || false);
-      }
-      if (commentsRes.data) {
-        setPostComments(commentsRes.data);
-        setCommentCount(commentsRes.data.length);
-      }
-      if (viewsRes.data) {
-        setViewCount(viewsRes.data.view_count || 0);
-      }
-    } catch (error) {
-      console.error("Failed to load blog data:", error);
-    }
-  }, [id, currentUserEmail]);
-
-  useEffect(() => { loadData(); }, [loadData]);
+  const {
+    likeCount,
+    comments: postComments,
+    commentCount,
+    viewCount,
+    hasLiked: userHasLiked,
+    addLike,
+    addComment,
+    refresh: refreshData,
+  } = useBlogData(id || "", currentUserEmail, currentUserName);
 
   const handleLike = async () => {
     if (!currentUserEmail || !currentUserName) { setShowAccessModal(true); return; }
-    if (!id) return;
-
-    if (userHasLiked) {
-      const { error } = await supabase.functions.invoke("manage-blog-likes", { body: { action: "remove", post_id: id, email: currentUserEmail } });
-      if (!error) { setUserHasLiked(false); setLikeCount((c) => Math.max(0, c - 1)); toast({ description: "Removed from liked posts" }); }
-    } else {
-      const { data, error } = await supabase.functions.invoke("manage-blog-likes", { body: { action: "add", post_id: id, name: currentUserName, email: currentUserEmail } });
-      if (!error && !data?.error) {
-        setUserHasLiked(true); setLikeCount((c) => c + 1); toast({ description: "Added to liked posts!" });
-        await supabase.functions.invoke("send-contact-email", { body: { type: "blog_like", name: currentUserName, email: currentUserEmail, subject: "New Blog Like", message: `Liked: ${post?.title}`, blogTitle: post?.title, blogUrl: window.location.href } });
-      }
+    await addLike(currentUserName, currentUserEmail);
+    if (!userHasLiked) {
+      await supabase.functions.invoke("send-contact-email", { body: { type: "blog_like", name: currentUserName, email: currentUserEmail, subject: "New Blog Like", message: `Liked: ${post?.title}`, blogTitle: post?.title, blogUrl: window.location.href } });
     }
   };
 
@@ -188,13 +128,12 @@ const BlogPostPage = () => {
     if (!name || !email || !commentData.text) { toast({ title: "Missing fields", description: "Please fill in all required fields", variant: "destructive" }); return; }
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("blog_comments").insert({ post_id: id, name, email, content: commentData.text, is_spam: false, is_approved: false });
-      if (error) throw error;
-      toast({ title: "Comment submitted!", description: "Your comment is pending approval." });
-      await supabase.functions.invoke("send-contact-email", { body: { type: "blog_comment", name, email, subject: `New Comment on: ${post?.title}`, message: commentData.text, blogTitle: post?.title, blogUrl: window.location.href, comment: commentData.text } });
-      setCommentData({ name: "", email: "", text: "", honeypot: "" });
-      setShowCommentForm(false);
-      loadData();
+      const success = await addComment(name, email, commentData.text, commentData.honeypot);
+      if (success) {
+        await supabase.functions.invoke("send-contact-email", { body: { type: "blog_comment", name, email, subject: `New Comment on: ${post?.title}`, message: commentData.text, blogTitle: post?.title, blogUrl: window.location.href, comment: commentData.text } });
+        setCommentData({ name: "", email: "", text: "", honeypot: "" });
+        setShowCommentForm(false);
+      }
     } catch { toast({ title: "Error", description: "Failed to submit comment.", variant: "destructive" }); }
     finally { setIsSubmitting(false); }
   };

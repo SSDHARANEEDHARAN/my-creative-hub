@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -12,83 +12,120 @@ interface BlogComment {
   is_approved: boolean | null;
 }
 
-interface BlogLike {
-  id: string;
-  name: string;
-  email: string;
-  created_at: string;
-}
-
-export const useBlogData = (postId: string) => {
-  const [likes, setLikes] = useState<BlogLike[]>([]);
+export const useBlogData = (postId: string, userEmail: string | null, userName: string | null) => {
+  const [likeCount, setLikeCount] = useState(0);
   const [comments, setComments] = useState<BlogComment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [viewCount, setViewCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const viewTracked = useRef(false);
 
-  // Check if current user/guest has liked
-  const checkUserLike = useCallback((likesData: BlogLike[], userEmail: string | null) => {
-    if (!userEmail) return false;
-    return likesData.some(like => like.email === userEmail);
-  }, []);
-
-  // Load likes and comments from database
-  const loadData = useCallback(async () => {
-    setIsLoading(true);
+  // Load public counts (no auth needed)
+  const loadPublicCounts = useCallback(async () => {
+    if (!postId) return;
     try {
-      // Get guest email for like check
-      const guestInfo = sessionStorage.getItem("guestInfo");
-      const guestEmail = guestInfo ? JSON.parse(guestInfo).email : undefined;
-
-      const [likesRes, commentsRes] = await Promise.all([
-        supabase.functions.invoke('manage-blog-likes', {
-          body: { action: "check", post_ids: [postId], email: guestEmail }
+      const [likesRes, commentsRes, viewsRes] = await Promise.all([
+        supabase.functions.invoke("manage-blog-likes", {
+          body: { action: "count", post_ids: [postId] },
         }),
         supabase
           .from("blog_comments_public")
           .select("*")
           .eq("post_id", postId)
           .order("created_at", { ascending: true }),
+        supabase
+          .from("blog_view_counts")
+          .select("*")
+          .eq("post_id", postId)
+          .maybeSingle(),
       ]);
 
-      if (likesRes.data) {
-        const count = likesRes.data.counts?.[postId] || 0;
-        // Build minimal likes array for count
-        setLikes(Array.from({ length: count }, (_, i) => ({ id: String(i), name: "", email: "", created_at: "" })));
-        setHasLiked(likesRes.data.userLikedPosts?.includes(postId) || false);
+      if (likesRes.data?.counts) {
+        setLikeCount(likesRes.data.counts[postId] || 0);
       }
-
       if (commentsRes.data) {
-        setComments(commentsRes.data);
+        setComments(commentsRes.data as BlogComment[]);
+      }
+      if (viewsRes.data) {
+        setViewCount(viewsRes.data.view_count || 0);
       }
     } catch (error) {
-      console.error("Failed to load blog data:", error);
+      console.error("Failed to load public counts:", error);
     } finally {
       setIsLoading(false);
     }
   }, [postId]);
 
+  // Check user-specific like state (needs email)
+  const checkUserLikeState = useCallback(async () => {
+    if (!postId || !userEmail) {
+      setHasLiked(false);
+      return;
+    }
+    try {
+      const { data } = await supabase.functions.invoke("manage-blog-likes", {
+        body: { action: "check", post_ids: [postId], email: userEmail },
+      });
+      if (data?.userLikedPosts) {
+        setHasLiked(data.userLikedPosts.includes(postId));
+      }
+    } catch (error) {
+      console.error("Failed to check user like state:", error);
+    }
+  }, [postId, userEmail]);
+
+  // Track view once per session per post
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    if (!postId || viewTracked.current) return;
+    const viewKey = `blog_viewed_${postId}`;
+    if (sessionStorage.getItem(viewKey)) {
+      viewTracked.current = true;
+      return;
+    }
+    const trackView = async () => {
+      try {
+        await supabase.from("blog_views").insert({
+          post_id: postId,
+          viewer_email: userEmail || null,
+          viewer_name: userName || null,
+        });
+        sessionStorage.setItem(viewKey, "1");
+        viewTracked.current = true;
+        setViewCount((c) => c + 1);
+      } catch (e) {
+        console.error("Failed to track view:", e);
+      }
+    };
+    trackView();
+  }, [postId, userEmail, userName]);
+
+  // Load public counts on mount
+  useEffect(() => {
+    loadPublicCounts();
+  }, [loadPublicCounts]);
+
+  // Re-check user like state when email becomes available
+  useEffect(() => {
+    checkUserLikeState();
+  }, [checkUserLikeState]);
 
   const addLike = async (name: string, email: string) => {
-    if (hasLiked) {
-      // Remove like via edge function
-      const { error } = await supabase.functions.invoke('manage-blog-likes', {
-        body: { action: "remove", post_id: postId, email }
-      });
+    if (!postId) return;
 
+    if (hasLiked) {
+      const { error } = await supabase.functions.invoke("manage-blog-likes", {
+        body: { action: "remove", post_id: postId, email },
+      });
       if (!error) {
-        setLikes(prev => prev.slice(0, -1));
         setHasLiked(false);
+        setLikeCount((c) => Math.max(0, c - 1));
         toast({ description: "Removed from liked posts" });
       }
       return;
     }
 
-    // Add new like via edge function
-    const { data, error } = await supabase.functions.invoke('manage-blog-likes', {
-      body: { action: "add", post_id: postId, name, email }
+    const { data, error } = await supabase.functions.invoke("manage-blog-likes", {
+      body: { action: "add", post_id: postId, name, email },
     });
 
     if (error || data?.error) {
@@ -100,27 +137,16 @@ export const useBlogData = (postId: string) => {
       return;
     }
 
-    setLikes(prev => [...prev, { id: "new", name, email: "", created_at: "" }]);
     setHasLiked(true);
+    setLikeCount((c) => c + 1);
     toast({ description: "Added to liked posts!" });
-
-    // Send notification to admin
-    await supabase.functions.invoke("send-contact-email", {
-      body: {
-        type: "blog_like",
-        name,
-        email,
-        subject: "New Blog Like",
-        message: `Post ID: ${postId}`,
-      },
-    });
   };
 
   const addComment = async (name: string, email: string, content: string, honeypot?: string) => {
-    // If honeypot has value, mark as spam
+    if (!postId) return false;
     const isSpam = !!honeypot;
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("blog_comments")
       .insert({
         post_id: postId,
@@ -128,10 +154,8 @@ export const useBlogData = (postId: string) => {
         email,
         content,
         is_spam: isSpam,
-        is_approved: false, // Requires admin approval
-      })
-      .select()
-      .single();
+        is_approved: false,
+      });
 
     if (error) {
       toast({
@@ -147,32 +171,86 @@ export const useBlogData = (postId: string) => {
       description: "Your comment is pending approval.",
     });
 
-    // Send notification to admin
-    if (!isSpam) {
-      await supabase.functions.invoke("send-contact-email", {
-        body: {
-          type: "blog_comment",
-          name,
-          email,
-          subject: `New Comment on Post ${postId}`,
-          message: content,
-          comment: content,
-        },
-      });
-    }
-
+    // Refresh comments
+    loadPublicCounts();
     return true;
   };
 
   return {
-    likes,
+    likeCount,
     comments,
-    likeCount: likes.length,
     commentCount: comments.length,
+    viewCount,
     hasLiked,
     isLoading,
     addLike,
     addComment,
-    refresh: loadData,
+    refresh: loadPublicCounts,
   };
+};
+
+// Hook for batch loading counts across multiple posts (for list pages)
+export const useBlogListCounts = (postIds: string[], userEmail: string | null) => {
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+  const [userLikes, setUserLikes] = useState<Set<string>>(new Set());
+
+  const loadCounts = useCallback(async () => {
+    if (!postIds.length) return;
+    try {
+      const [likesRes, commentsRes, viewsRes] = await Promise.all([
+        supabase.functions.invoke("manage-blog-likes", {
+          body: { action: "count", post_ids: postIds },
+        }),
+        supabase.from("blog_comments_public").select("post_id").in("post_id", postIds),
+        supabase.from("blog_view_counts").select("*").in("post_id", postIds),
+      ]);
+
+      if (likesRes.data?.counts) {
+        setLikeCounts(likesRes.data.counts);
+      }
+
+      if (commentsRes.data) {
+        const cc: Record<string, number> = {};
+        commentsRes.data.forEach((c: { post_id: string }) => {
+          cc[c.post_id] = (cc[c.post_id] || 0) + 1;
+        });
+        setCommentCounts(cc);
+      }
+
+      if (viewsRes.data) {
+        const vc: Record<string, number> = {};
+        viewsRes.data.forEach((v: { post_id: string; view_count: number }) => {
+          vc[v.post_id] = v.view_count;
+        });
+        setViewCounts(vc);
+      }
+    } catch (error) {
+      console.error("Failed to load counts:", error);
+    }
+  }, [postIds.join(",")]);
+
+  // Check user-specific likes separately
+  const checkUserLikes = useCallback(async () => {
+    if (!postIds.length || !userEmail) {
+      setUserLikes(new Set());
+      return;
+    }
+    try {
+      const { data } = await supabase.functions.invoke("manage-blog-likes", {
+        body: { action: "check", post_ids: postIds, email: userEmail },
+      });
+      if (data?.userLikedPosts) {
+        setUserLikes(new Set(data.userLikedPosts));
+      }
+    } catch (error) {
+      console.error("Failed to check user likes:", error);
+    }
+  }, [postIds.join(","), userEmail]);
+
+  useEffect(() => { loadCounts(); }, [loadCounts]);
+  useEffect(() => { checkUserLikes(); }, [checkUserLikes]);
+
+  return { likeCounts, commentCounts, viewCounts, userLikes, setUserLikes, setLikeCounts, refresh: loadCounts };
 };
