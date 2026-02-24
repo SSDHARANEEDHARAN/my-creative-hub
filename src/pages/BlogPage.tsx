@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -10,6 +10,7 @@ import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye } fr
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
+import { useBlogListCounts } from "@/hooks/useBlogData";
 
 interface BlogPost {
   id: string;
@@ -98,66 +99,22 @@ const staticPosts: BlogPost[] = [
 const BlogPage = () => {
   const navigate = useNavigate();
   const [posts] = useState<BlogPost[]>(staticPosts);
-  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
-  const [commentCounts, setCommentCounts] = useState<Record<string, number>>({});
-  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
-  const [userLikes, setUserLikes] = useState<Set<string>>(new Set());
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const { user } = useAuth();
-  const { guest, isGuest } = useGuest();
+  const { guest } = useGuest();
 
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
+
+  const postIds = posts.map((p) => p.id);
+  const { likeCounts, commentCounts, viewCounts, userLikes, setUserLikes, setLikeCounts } = useBlogListCounts(postIds, currentUserEmail);
 
   const categories = ["All", ...Array.from(new Set(posts.map((p) => p.category)))];
 
   const filteredPosts = activeCategory === "All" ? posts : posts.filter((p) => p.category === activeCategory);
   const featuredPost = filteredPosts[0];
   const otherPosts = filteredPosts.slice(1);
-
-  const loadCounts = useCallback(async () => {
-    try {
-      const postIds = posts.map((p) => p.id);
-
-      const [likesRes, commentsRes, viewsRes] = await Promise.all([
-        supabase.functions.invoke('manage-blog-likes', {
-          body: { action: "check", post_ids: postIds, email: currentUserEmail || undefined }
-        }),
-        supabase.from("blog_comments_public").select("post_id").in("post_id", postIds),
-        supabase.from("blog_view_counts").select("*").in("post_id", postIds),
-      ]);
-
-      if (likesRes.data) {
-        setLikeCounts(likesRes.data.counts || {});
-        if (likesRes.data.userLikedPosts) {
-          setUserLikes(new Set(likesRes.data.userLikedPosts));
-        }
-      }
-
-      const newCommentCounts: Record<string, number> = {};
-      if (commentsRes.data) {
-        commentsRes.data.forEach((comment: { post_id: string }) => {
-          newCommentCounts[comment.post_id] = (newCommentCounts[comment.post_id] || 0) + 1;
-        });
-      }
-      setCommentCounts(newCommentCounts);
-
-      if (viewsRes.data) {
-        const vc: Record<string, number> = {};
-        viewsRes.data.forEach((v: { post_id: string; view_count: number }) => {
-          vc[v.post_id] = v.view_count;
-        });
-        setViewCounts(vc);
-      }
-    } catch (error) {
-      console.error("Failed to load counts:", error);
-    }
-  }, [posts, currentUserEmail]);
-
-  useEffect(() => {
-    loadCounts();
-  }, [loadCounts]);
 
   const handleLike = async (postId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
