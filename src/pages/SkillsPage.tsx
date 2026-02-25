@@ -10,6 +10,7 @@ const itSkills = [
   { name: "Embedded Systems", level: 80 },
   { name: "Web Development", level: 88 },
   { name: "App Development", level: 82 },
+  { name: "ROS 2", level: 75 },
 ];
 
 const nonItSkills = [
@@ -152,7 +153,7 @@ const SkillsPage = () => {
                   <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">IT & Software Development</h2>
                 </div>
                 
-                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
+                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start justify-items-center">
                   <div className="space-y-4 sm:space-y-6">
                     {itSkills.map((skill, index) => (
                       <SkillBar key={skill.name} skill={skill} index={index} isVisible={isVisible} delayOffset={100} />
@@ -185,7 +186,7 @@ const SkillsPage = () => {
                   <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">Engineering & CAD Tools</h2>
                 </div>
                 
-                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
+                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start justify-items-center">
                   <div className="space-y-4 sm:space-y-6">
                     {nonItSkills.map((skill, index) => (
                       <SkillBar key={skill.name} skill={skill} index={index} isVisible={isVisible} delayOffset={500} />
