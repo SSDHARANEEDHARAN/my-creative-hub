@@ -476,6 +476,45 @@ export type Database = {
         }
         Relationships: []
       }
+      work_experiences: {
+        Row: {
+          category: string
+          company: string
+          created_at: string
+          description: string
+          duration: string
+          id: string
+          location: string
+          skills: string[] | null
+          sort_order: number | null
+          title: string
+        }
+        Insert: {
+          category?: string
+          company: string
+          created_at?: string
+          description?: string
+          duration?: string
+          id?: string
+          location?: string
+          skills?: string[] | null
+          sort_order?: number | null
+          title: string
+        }
+        Update: {
+          category?: string
+          company?: string
+          created_at?: string
+          description?: string
+          duration?: string
+          id?: string
+          location?: string
+          skills?: string[] | null
+          sort_order?: number | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       blog_comments_public: {

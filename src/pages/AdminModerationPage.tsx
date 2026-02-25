@@ -19,7 +19,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
-  Award, BarChart3, GraduationCap, Info,
+  Award, BarChart3, GraduationCap, Info, Briefcase,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────
@@ -50,6 +50,11 @@ interface Certificate {
 interface AboutContent {
   id: string; section_key: string; content: Record<string, any>;
 }
+interface WorkExperience {
+  id: string; title: string; company: string; location: string;
+  duration: string; description: string; skills: string[];
+  category: string; sort_order: number;
+}
 
 const emptyBlog: Partial<BlogPost> = {
   title: "", slug: "", excerpt: "", content: "", cover_image: "", category: "tech", read_time: "5 min read", is_published: false,
@@ -63,6 +68,9 @@ const emptySkill: Partial<Skill> = {
 const emptyCert: Partial<Certificate> = {
   title: "", issuer: "", date: "", image_url: "", category: "it", sort_order: 0,
 };
+const emptyExp: Partial<WorkExperience> = {
+  title: "", company: "", location: "", duration: "", description: "", skills: [], category: "it", sort_order: 0,
+};
 
 // ─── Main Component ──────────────────────────────────────────────
 const AdminModerationPage = () => {
@@ -73,6 +81,7 @@ const AdminModerationPage = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [aboutContent, setAboutContent] = useState<AboutContent[]>([]);
+  const [workExps, setWorkExps] = useState<WorkExperience[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Blog/Project form state
@@ -100,9 +109,15 @@ const AdminModerationPage = () => {
   const [aboutIntro, setAboutIntro] = useState({ title: "", paragraph1: "", paragraph2: "" });
   const [showAboutDialog, setShowAboutDialog] = useState(false);
 
+  // Work experience form state
+  const [expForm, setExpForm] = useState<Partial<WorkExperience>>(emptyExp);
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [showExpDialog, setShowExpDialog] = useState(false);
+  const [expSkillInput, setExpSkillInput] = useState("");
+
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -110,6 +125,7 @@ const AdminModerationPage = () => {
       supabase.from("skills").select("*").order("sort_order", { ascending: true }),
       supabase.from("certificates").select("*").order("sort_order", { ascending: true }),
       supabase.from("about_content").select("*"),
+      supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
     ]);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
@@ -117,6 +133,7 @@ const AdminModerationPage = () => {
     if (projectsRes.data) setProjects(projectsRes.data as Project[]);
     if (skillsRes.data) setSkills(skillsRes.data as Skill[]);
     if (certsRes.data) setCertificates(certsRes.data as Certificate[]);
+    if (expsRes.data) setWorkExps(expsRes.data as WorkExperience[]);
     if (aboutRes.data) {
       setAboutContent(aboutRes.data as AboutContent[]);
       const intro = (aboutRes.data as AboutContent[]).find(a => a.section_key === "intro");
@@ -348,6 +365,48 @@ const AdminModerationPage = () => {
     loadData();
   };
 
+  // ── Work Experience CRUD ──
+  const openExpForm = (exp?: WorkExperience) => {
+    if (exp) { setExpForm(exp); setEditingExpId(exp.id); }
+    else { setExpForm({ ...emptyExp }); setEditingExpId(null); }
+    setExpSkillInput("");
+    setShowExpDialog(true);
+  };
+
+  const saveExp = async () => {
+    if (!expForm.title || !expForm.company) {
+      toast({ title: "Missing fields", description: "Title and company are required", variant: "destructive" });
+      return;
+    }
+    const payload = {
+      title: expForm.title!, company: expForm.company!,
+      location: expForm.location || "", duration: expForm.duration || "",
+      description: expForm.description || "", skills: expForm.skills || [],
+      category: expForm.category || "it", sort_order: expForm.sort_order || 0,
+    };
+    let error;
+    if (editingExpId) { ({ error } = await supabase.from("work_experiences").update(payload).eq("id", editingExpId)); }
+    else { ({ error } = await supabase.from("work_experiences").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: editingExpId ? "Experience updated" : "Experience added" });
+    setShowExpDialog(false);
+    loadData();
+  };
+
+  const deleteExp = async (id: string) => {
+    const { error } = await supabase.from("work_experiences").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setWorkExps(prev => prev.filter(e => e.id !== id));
+    toast({ title: "Experience deleted" });
+  };
+
+  const addExpSkill = () => {
+    if (expSkillInput.trim()) {
+      setExpForm(prev => ({ ...prev, skills: [...(prev.skills || []), expSkillInput.trim()] }));
+      setExpSkillInput("");
+    }
+  };
+
   const pendingComments = comments.filter(c => !c.is_approved && !c.is_spam);
   const approvedComments = comments.filter(c => c.is_approved);
 
@@ -372,12 +431,13 @@ const AdminModerationPage = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
               {[
                 { val: blogs.length, label: "Blog Posts" },
                 { val: projects.length, label: "Projects" },
                 { val: skills.length, label: "Skills" },
                 { val: certificates.length, label: "Certificates" },
+                { val: workExps.length, label: "Experiences" },
                 { val: pendingComments.length, label: "Pending Comments" },
                 { val: guests.length, label: "Guest Visitors" },
               ].map((s, i) => (
@@ -389,11 +449,12 @@ const AdminModerationPage = () => {
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-9">
                 <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
                 <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
+                <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
                 <TabsTrigger value="about"><Info className="w-4 h-4 mr-1" />About</TabsTrigger>
                 <TabsTrigger value="pending" className="relative">
                   Comments
@@ -552,6 +613,38 @@ const AdminModerationPage = () => {
                     </div>
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              {/* ── Experience Tab ── */}
+              <TabsContent value="experience" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openExpForm()}><Plus className="w-4 h-4 mr-2" /> Add Experience</Button>
+                </div>
+                {workExps.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No work experiences yet</CardContent></Card>
+                ) : (
+                  <div className="space-y-3">
+                    {workExps.map(exp => (
+                      <Card key={exp.id}>
+                        <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium">{exp.title}</p>
+                            <p className="text-sm text-primary">{exp.company}</p>
+                            <p className="text-xs text-muted-foreground">{exp.duration} · {exp.location}</p>
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {(exp.skills || []).map((s, i) => <Badge key={i} variant="secondary" className="text-xs">{s}</Badge>)}
+                            </div>
+                          </div>
+                          <Badge variant="outline">{exp.category}</Badge>
+                          <div className="flex gap-1.5">
+                            <Button size="sm" variant="outline" onClick={() => openExpForm(exp)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteExp(exp.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </TabsContent>
 
               {/* ── Comments Tabs ── */}
@@ -804,6 +897,46 @@ const AdminModerationPage = () => {
             <div className="flex gap-3 justify-end pt-2">
               <Button variant="outline" onClick={() => setShowAboutDialog(false)}>Cancel</Button>
               <Button onClick={saveAbout}>Save About Content</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Work Experience Dialog ── */}
+      <Dialog open={showExpDialog} onOpenChange={setShowExpDialog}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editingExpId ? "Edit Experience" : "Add Experience"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Job Title" value={expForm.title || ""} onChange={e => setExpForm(p => ({ ...p, title: e.target.value }))} />
+            <Input placeholder="Company" value={expForm.company || ""} onChange={e => setExpForm(p => ({ ...p, company: e.target.value }))} />
+            <div className="grid grid-cols-2 gap-4">
+              <Input placeholder="Duration (e.g. 2023 - Present)" value={expForm.duration || ""} onChange={e => setExpForm(p => ({ ...p, duration: e.target.value }))} />
+              <Input placeholder="Location" value={expForm.location || ""} onChange={e => setExpForm(p => ({ ...p, location: e.target.value }))} />
+            </div>
+            <Textarea placeholder="Description" value={expForm.description || ""} onChange={e => setExpForm(p => ({ ...p, description: e.target.value }))} rows={3} />
+            <Select value={expForm.category || "it"} onValueChange={v => setExpForm(p => ({ ...p, category: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="it">IT</SelectItem>
+                <SelectItem value="engineering">Engineering</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Skills</label>
+              <div className="flex gap-2">
+                <Input placeholder="Add skill" value={expSkillInput} onChange={e => setExpSkillInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addExpSkill())} />
+                <Button variant="outline" onClick={addExpSkill} type="button">Add</Button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(expForm.skills || []).map((s, i) => (
+                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => setExpForm(p => ({ ...p, skills: (p.skills || []).filter((_, idx) => idx !== i) }))}>{s} <X className="w-3 h-3 ml-1" /></Badge>
+                ))}
+              </div>
+            </div>
+            <Input placeholder="Sort Order" type="number" value={expForm.sort_order || 0} onChange={e => setExpForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowExpDialog(false)}>Cancel</Button>
+              <Button onClick={saveExp}>{editingExpId ? "Update" : "Add"} Experience</Button>
             </div>
           </div>
         </DialogContent>
