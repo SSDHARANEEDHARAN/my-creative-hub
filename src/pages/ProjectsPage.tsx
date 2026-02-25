@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, FileText, Code2, Cog, Eye, Heart } from "lucide-react";
+import { ExternalLink, FileText, Code2, Cog, Eye, Heart, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 import ImageLightbox from "@/components/ImageLightbox";
@@ -13,6 +13,7 @@ import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import ProjectComments from "@/components/ProjectComments";
 
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
@@ -512,6 +513,7 @@ const ProjectsPage = () => {
                                 <Heart size={13} /> {likeCounts[String(project.id)] || 0} likes
                               </button>
                             </div>
+                            <ProjectComments projectId={String(project.id)} />
                             {project.liveUrl && (
                               <a
                                 href={project.liveUrl}
@@ -572,11 +574,12 @@ const ProjectsPage = () => {
                               </span>
                             ))}
                           </div>
-                          <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground relative">
                             <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
                             <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
                               <Heart size={12} /> {likeCounts[String(project.id)] || 0}
                             </button>
+                            <ProjectComments projectId={String(project.id)} compact />
                           </div>
                           {project.liveUrl && (
                             <a

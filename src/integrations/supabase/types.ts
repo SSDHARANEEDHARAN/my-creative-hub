@@ -317,6 +317,39 @@ export type Database = {
         }
         Relationships: []
       }
+      project_comments: {
+        Row: {
+          content: string
+          created_at: string
+          email: string
+          id: string
+          is_approved: boolean
+          is_spam: boolean
+          name: string
+          project_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          email: string
+          id?: string
+          is_approved?: boolean
+          is_spam?: boolean
+          name: string
+          project_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_approved?: boolean
+          is_spam?: boolean
+          name?: string
+          project_id?: string
+        }
+        Relationships: []
+      }
       project_likes: {
         Row: {
           created_at: string
@@ -576,6 +609,33 @@ export type Database = {
           post_id: string | null
           unique_viewers: number | null
           view_count: number | null
+        }
+        Relationships: []
+      }
+      project_comments_public: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string | null
+          is_approved: boolean | null
+          name: string | null
+          project_id: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          name?: string | null
+          project_id?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          name?: string | null
+          project_id?: string | null
         }
         Relationships: []
       }
