@@ -12,12 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import ReactMarkdown from "react-markdown";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
+  Award, BarChart3, GraduationCap, Info,
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────
@@ -37,12 +39,29 @@ interface Project {
   live_url: string | null; article_slug: string | null; featured: boolean | null;
   is_published: boolean; created_at: string;
 }
+interface Skill {
+  id: string; name: string; level: number; category: string;
+  skill_type: string; color_token: string; sort_order: number;
+}
+interface Certificate {
+  id: string; title: string; issuer: string; date: string;
+  image_url: string | null; category: string; sort_order: number;
+}
+interface AboutContent {
+  id: string; section_key: string; content: Record<string, any>;
+}
 
 const emptyBlog: Partial<BlogPost> = {
   title: "", slug: "", excerpt: "", content: "", cover_image: "", category: "tech", read_time: "5 min read", is_published: false,
 };
 const emptyProject: Partial<Project> = {
   title: "", description: "", category: "it", tech_stack: [], images: [], github_url: "", live_url: "", article_slug: "", featured: false, is_published: false,
+};
+const emptySkill: Partial<Skill> = {
+  name: "", level: 50, category: "it", skill_type: "primary", color_token: "primary", sort_order: 0,
+};
+const emptyCert: Partial<Certificate> = {
+  title: "", issuer: "", date: "", image_url: "", category: "it", sort_order: 0,
 };
 
 // ─── Main Component ──────────────────────────────────────────────
@@ -51,6 +70,9 @@ const AdminModerationPage = () => {
   const [guests, setGuests] = useState<GuestVisitor[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [aboutContent, setAboutContent] = useState<AboutContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Blog/Project form state
@@ -64,18 +86,42 @@ const AdminModerationPage = () => {
   const [uploading, setUploading] = useState(false);
   const [techInput, setTechInput] = useState("");
 
+  // Skill form state
+  const [skillForm, setSkillForm] = useState<Partial<Skill>>(emptySkill);
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
+  const [showSkillDialog, setShowSkillDialog] = useState(false);
+
+  // Certificate form state
+  const [certForm, setCertForm] = useState<Partial<Certificate>>(emptyCert);
+  const [editingCertId, setEditingCertId] = useState<string | null>(null);
+  const [showCertDialog, setShowCertDialog] = useState(false);
+
+  // About form state
+  const [aboutIntro, setAboutIntro] = useState({ title: "", paragraph1: "", paragraph2: "" });
+  const [showAboutDialog, setShowAboutDialog] = useState(false);
+
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
       supabase.from("projects").select("*").order("created_at", { ascending: false }),
+      supabase.from("skills").select("*").order("sort_order", { ascending: true }),
+      supabase.from("certificates").select("*").order("sort_order", { ascending: true }),
+      supabase.from("about_content").select("*"),
     ]);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
     if (projectsRes.data) setProjects(projectsRes.data as Project[]);
+    if (skillsRes.data) setSkills(skillsRes.data as Skill[]);
+    if (certsRes.data) setCertificates(certsRes.data as Certificate[]);
+    if (aboutRes.data) {
+      setAboutContent(aboutRes.data as AboutContent[]);
+      const intro = (aboutRes.data as AboutContent[]).find(a => a.section_key === "intro");
+      if (intro) setAboutIntro(intro.content as any);
+    }
     setIsLoading(false);
   };
 
@@ -115,13 +161,8 @@ const AdminModerationPage = () => {
 
   // ── Blog CRUD ──
   const openBlogForm = (blog?: BlogPost) => {
-    if (blog) {
-      setBlogForm(blog);
-      setEditingBlogId(blog.id);
-    } else {
-      setBlogForm({ ...emptyBlog });
-      setEditingBlogId(null);
-    }
+    if (blog) { setBlogForm(blog); setEditingBlogId(blog.id); }
+    else { setBlogForm({ ...emptyBlog }); setEditingBlogId(null); }
     setShowPreview(false);
     setShowBlogDialog(true);
   };
@@ -132,31 +173,18 @@ const AdminModerationPage = () => {
       return;
     }
     const payload = {
-      title: blogForm.title!,
-      slug: blogForm.slug!,
-      excerpt: blogForm.excerpt || "",
-      content: blogForm.content!,
-      cover_image: blogForm.cover_image || null,
-      category: blogForm.category || "tech",
-      read_time: blogForm.read_time || "5 min read",
-      is_published: publish,
-      ...(publish ? { published_at: new Date().toISOString() } : {}),
+      title: blogForm.title!, slug: blogForm.slug!, excerpt: blogForm.excerpt || "",
+      content: blogForm.content!, cover_image: blogForm.cover_image || null,
+      category: blogForm.category || "tech", read_time: blogForm.read_time || "5 min read",
+      is_published: publish, ...(publish ? { published_at: new Date().toISOString() } : {}),
     };
-
     let error;
-    if (editingBlogId) {
-      ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlogId));
-    } else {
-      ({ error } = await supabase.from("blog_posts").insert(payload));
-    }
+    if (editingBlogId) { ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlogId)); }
+    else { ({ error } = await supabase.from("blog_posts").insert(payload)); }
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-
     if (publish && !editingBlogId) {
-      await supabase.functions.invoke("notify-subscribers", {
-        body: { type: "blog", title: blogForm.title, slug: blogForm.slug },
-      });
+      await supabase.functions.invoke("notify-subscribers", { body: { type: "blog", title: blogForm.title, slug: blogForm.slug } });
     }
-
     toast({ title: editingBlogId ? "Blog updated" : "Blog created" });
     setShowBlogDialog(false);
     loadData();
@@ -171,13 +199,8 @@ const AdminModerationPage = () => {
 
   // ── Project CRUD ──
   const openProjectForm = (project?: Project) => {
-    if (project) {
-      setProjectForm(project);
-      setEditingProjectId(project.id);
-    } else {
-      setProjectForm({ ...emptyProject });
-      setEditingProjectId(null);
-    }
+    if (project) { setProjectForm(project); setEditingProjectId(project.id); }
+    else { setProjectForm({ ...emptyProject }); setEditingProjectId(null); }
     setTechInput("");
     setShowProjectDialog(true);
   };
@@ -188,32 +211,19 @@ const AdminModerationPage = () => {
       return;
     }
     const payload = {
-      title: projectForm.title!,
-      description: projectForm.description!,
-      category: projectForm.category || "it",
-      tech_stack: projectForm.tech_stack || [],
-      images: projectForm.images || [],
-      github_url: projectForm.github_url || null,
-      live_url: projectForm.live_url || null,
-      article_slug: projectForm.article_slug || null,
-      featured: projectForm.featured || false,
-      is_published: publish,
+      title: projectForm.title!, description: projectForm.description!,
+      category: projectForm.category || "it", tech_stack: projectForm.tech_stack || [],
+      images: projectForm.images || [], github_url: projectForm.github_url || null,
+      live_url: projectForm.live_url || null, article_slug: projectForm.article_slug || null,
+      featured: projectForm.featured || false, is_published: publish,
     };
-
     let error;
-    if (editingProjectId) {
-      ({ error } = await supabase.from("projects").update(payload).eq("id", editingProjectId));
-    } else {
-      ({ error } = await supabase.from("projects").insert(payload));
-    }
+    if (editingProjectId) { ({ error } = await supabase.from("projects").update(payload).eq("id", editingProjectId)); }
+    else { ({ error } = await supabase.from("projects").insert(payload)); }
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-
     if (publish && !editingProjectId) {
-      await supabase.functions.invoke("notify-subscribers", {
-        body: { type: "project", title: projectForm.title },
-      });
+      await supabase.functions.invoke("notify-subscribers", { body: { type: "project", title: projectForm.title } });
     }
-
     toast({ title: editingProjectId ? "Project updated" : "Project created" });
     setShowProjectDialog(false);
     loadData();
@@ -232,21 +242,15 @@ const AdminModerationPage = () => {
       setTechInput("");
     }
   };
-
   const removeTechTag = (idx: number) => {
-    setProjectForm(prev => ({
-      ...prev,
-      tech_stack: (prev.tech_stack || []).filter((_, i) => i !== idx),
-    }));
+    setProjectForm(prev => ({ ...prev, tech_stack: (prev.tech_stack || []).filter((_, i) => i !== idx) }));
   };
 
   const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = await uploadImage(file, "project-images");
-    if (url) {
-      setProjectForm(prev => ({ ...prev, images: [...(prev.images || []), url] }));
-    }
+    if (url) setProjectForm(prev => ({ ...prev, images: [...(prev.images || []), url] }));
   };
 
   const handleBlogImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -256,9 +260,99 @@ const AdminModerationPage = () => {
     if (url) setBlogForm(prev => ({ ...prev, cover_image: url }));
   };
 
+  // ── Skills CRUD ──
+  const openSkillForm = (skill?: Skill) => {
+    if (skill) { setSkillForm(skill); setEditingSkillId(skill.id); }
+    else { setSkillForm({ ...emptySkill }); setEditingSkillId(null); }
+    setShowSkillDialog(true);
+  };
+
+  const saveSkill = async () => {
+    if (!skillForm.name) {
+      toast({ title: "Missing fields", description: "Skill name is required", variant: "destructive" });
+      return;
+    }
+    const payload = {
+      name: skillForm.name!, level: skillForm.level || 50,
+      category: skillForm.category || "it", skill_type: skillForm.skill_type || "primary",
+      color_token: skillForm.color_token || "primary", sort_order: skillForm.sort_order || 0,
+    };
+    let error;
+    if (editingSkillId) { ({ error } = await supabase.from("skills").update(payload).eq("id", editingSkillId)); }
+    else { ({ error } = await supabase.from("skills").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: editingSkillId ? "Skill updated" : "Skill added" });
+    setShowSkillDialog(false);
+    loadData();
+  };
+
+  const deleteSkill = async (id: string) => {
+    const { error } = await supabase.from("skills").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setSkills(prev => prev.filter(s => s.id !== id));
+    toast({ title: "Skill deleted" });
+  };
+
+  // ── Certificate CRUD ──
+  const openCertForm = (cert?: Certificate) => {
+    if (cert) { setCertForm(cert); setEditingCertId(cert.id); }
+    else { setCertForm({ ...emptyCert }); setEditingCertId(null); }
+    setShowCertDialog(true);
+  };
+
+  const saveCert = async () => {
+    if (!certForm.title) {
+      toast({ title: "Missing fields", description: "Certificate title is required", variant: "destructive" });
+      return;
+    }
+    const payload = {
+      title: certForm.title!, issuer: certForm.issuer || "",
+      date: certForm.date || "", image_url: certForm.image_url || null,
+      category: certForm.category || "it", sort_order: certForm.sort_order || 0,
+    };
+    let error;
+    if (editingCertId) { ({ error } = await supabase.from("certificates").update(payload).eq("id", editingCertId)); }
+    else { ({ error } = await supabase.from("certificates").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: editingCertId ? "Certificate updated" : "Certificate added" });
+    setShowCertDialog(false);
+    loadData();
+  };
+
+  const deleteCert = async (id: string) => {
+    const { error } = await supabase.from("certificates").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setCertificates(prev => prev.filter(c => c.id !== id));
+    toast({ title: "Certificate deleted" });
+  };
+
+  const handleCertImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file, "certificates");
+    if (url) setCertForm(prev => ({ ...prev, image_url: url }));
+  };
+
+  // ── About Content ──
+  const saveAbout = async () => {
+    const existing = aboutContent.find(a => a.section_key === "intro");
+    let error;
+    if (existing) {
+      ({ error } = await supabase.from("about_content").update({ content: aboutIntro as any }).eq("section_key", "intro"));
+    } else {
+      ({ error } = await supabase.from("about_content").insert({ section_key: "intro", content: aboutIntro as any }));
+    }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "About content updated" });
+    setShowAboutDialog(false);
+    loadData();
+  };
+
   const pendingComments = comments.filter(c => !c.is_approved && !c.is_spam);
   const approvedComments = comments.filter(c => c.is_approved);
-  const spamComments = comments.filter(c => c.is_spam);
+
+  const itSkills = skills.filter(s => s.category === "it");
+  const engSkills = skills.filter(s => s.category === "engineering");
 
   return (
     <PageTransition>
@@ -278,47 +372,45 @@ const AdminModerationPage = () => {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <Card><CardContent className="pt-6 text-center">
-                <p className="text-3xl font-bold text-foreground">{blogs.length}</p>
-                <p className="text-sm text-muted-foreground">Blog Posts</p>
-              </CardContent></Card>
-              <Card><CardContent className="pt-6 text-center">
-                <p className="text-3xl font-bold text-foreground">{projects.length}</p>
-                <p className="text-sm text-muted-foreground">Projects</p>
-              </CardContent></Card>
-              <Card><CardContent className="pt-6 text-center">
-                <p className="text-3xl font-bold text-foreground">{pendingComments.length}</p>
-                <p className="text-sm text-muted-foreground">Pending Comments</p>
-              </CardContent></Card>
-              <Card><CardContent className="pt-6 text-center">
-                <p className="text-3xl font-bold text-foreground">{guests.length}</p>
-                <p className="text-sm text-muted-foreground">Guest Visitors</p>
-              </CardContent></Card>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-8">
+              {[
+                { val: blogs.length, label: "Blog Posts" },
+                { val: projects.length, label: "Projects" },
+                { val: skills.length, label: "Skills" },
+                { val: certificates.length, label: "Certificates" },
+                { val: pendingComments.length, label: "Pending Comments" },
+                { val: guests.length, label: "Guest Visitors" },
+              ].map((s, i) => (
+                <Card key={i}><CardContent className="pt-6 text-center">
+                  <p className="text-3xl font-bold text-foreground">{s.val}</p>
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                </CardContent></Card>
+              ))}
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1.5" />Blogs</TabsTrigger>
-                <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1.5" />Projects</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-4 md:grid-cols-8">
+                <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
+                <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
+                <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
+                <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
+                <TabsTrigger value="about"><Info className="w-4 h-4 mr-1" />About</TabsTrigger>
                 <TabsTrigger value="pending" className="relative">
                   Comments
                   {pendingComments.length > 0 && (
-                    <Badge variant="destructive" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-[10px]">
+                    <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]">
                       {pendingComments.length}
                     </Badge>
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="approved">Approved</TabsTrigger>
-                <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1.5" />Guests</TabsTrigger>
+                <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
               </TabsList>
 
               {/* ── Blogs Tab ── */}
               <TabsContent value="blogs" className="space-y-4">
                 <div className="flex justify-end">
-                  <Button onClick={() => openBlogForm()}>
-                    <Plus className="w-4 h-4 mr-2" /> New Blog Post
-                  </Button>
+                  <Button onClick={() => openBlogForm()}><Plus className="w-4 h-4 mr-2" /> New Blog Post</Button>
                 </div>
                 {blogs.length === 0 ? (
                   <Card><CardContent className="py-8 text-center text-muted-foreground">No blog posts yet</CardContent></Card>
@@ -327,23 +419,15 @@ const AdminModerationPage = () => {
                     {blogs.map(blog => (
                       <Card key={blog.id}>
                         <CardContent className="pt-4 pb-4 flex items-center gap-4">
-                          {blog.cover_image && (
-                            <img src={blog.cover_image} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />
-                          )}
+                          {blog.cover_image && <img src={blog.cover_image} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />}
                           <div className="flex-1 min-w-0">
                             <p className="font-medium truncate">{blog.title}</p>
                             <p className="text-xs text-muted-foreground">{blog.category} · {blog.read_time}</p>
                           </div>
-                          <Badge variant={blog.is_published ? "default" : "secondary"}>
-                            {blog.is_published ? "Published" : "Draft"}
-                          </Badge>
+                          <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
                           <div className="flex gap-1.5">
-                            <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}>
-                              <Edit className="w-3.5 h-3.5" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => deleteBlog(blog.id)}>
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteBlog(blog.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -355,9 +439,7 @@ const AdminModerationPage = () => {
               {/* ── Projects Tab ── */}
               <TabsContent value="projects" className="space-y-4">
                 <div className="flex justify-end">
-                  <Button onClick={() => openProjectForm()}>
-                    <Plus className="w-4 h-4 mr-2" /> New Project
-                  </Button>
+                  <Button onClick={() => openProjectForm()}><Plus className="w-4 h-4 mr-2" /> New Project</Button>
                 </div>
                 {projects.length === 0 ? (
                   <Card><CardContent className="py-8 text-center text-muted-foreground">No projects yet</CardContent></Card>
@@ -366,30 +448,110 @@ const AdminModerationPage = () => {
                     {projects.map(project => (
                       <Card key={project.id}>
                         <CardContent className="pt-4 pb-4 flex items-center gap-4">
-                          {project.images?.[0] && (
-                            <img src={project.images[0]} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />
-                          )}
+                          {project.images?.[0] && <img src={project.images[0]} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />}
                           <div className="flex-1 min-w-0">
                             <p className="font-medium truncate">{project.title}</p>
                             <p className="text-xs text-muted-foreground">{project.category} · {(project.tech_stack || []).join(", ")}</p>
                           </div>
                           <div className="flex gap-1.5 items-center">
                             {project.featured && <Badge variant="outline">Featured</Badge>}
-                            <Badge variant={project.is_published ? "default" : "secondary"}>
-                              {project.is_published ? "Published" : "Draft"}
-                            </Badge>
-                            <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}>
-                              <Edit className="w-3.5 h-3.5" />
-                            </Button>
-                            <Button size="sm" variant="destructive" onClick={() => deleteProject(project.id)}>
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </Button>
+                            <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
+                            <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteProject(project.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
                     ))}
                   </div>
                 )}
+              </TabsContent>
+
+              {/* ── Skills Tab ── */}
+              <TabsContent value="skills" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openSkillForm()}><Plus className="w-4 h-4 mr-2" /> Add Skill</Button>
+                </div>
+                {["it", "engineering"].map(cat => (
+                  <div key={cat}>
+                    <h3 className="font-semibold text-lg mb-3 capitalize">{cat === "it" ? "IT & Software" : "Engineering & CAD"}</h3>
+                    <div className="space-y-2">
+                      {skills.filter(s => s.category === cat).map(skill => (
+                        <Card key={skill.id}>
+                          <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <p className="font-medium">{skill.name}</p>
+                                <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                              </div>
+                              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-primary" style={{ width: `${skill.level}%` }} />
+                              </div>
+                            </div>
+                            <div className="flex gap-1.5">
+                              <Button size="sm" variant="outline" onClick={() => openSkillForm(skill)}><Edit className="w-3.5 h-3.5" /></Button>
+                              <Button size="sm" variant="destructive" onClick={() => deleteSkill(skill.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                      {skills.filter(s => s.category === cat).length === 0 && (
+                        <p className="text-sm text-muted-foreground py-4 text-center">No {cat} skills yet</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+
+              {/* ── Certificates Tab ── */}
+              <TabsContent value="certificates" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openCertForm()}><Plus className="w-4 h-4 mr-2" /> Add Certificate</Button>
+                </div>
+                {certificates.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No certificates yet</CardContent></Card>
+                ) : (
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {certificates.map(cert => (
+                      <Card key={cert.id}>
+                        <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                          {cert.image_url && <img src={cert.image_url} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{cert.title}</p>
+                            <p className="text-xs text-muted-foreground">{cert.issuer} {cert.date && `· ${cert.date}`}</p>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <Button size="sm" variant="outline" onClick={() => openCertForm(cert)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteCert(cert.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ── About Tab ── */}
+              <TabsContent value="about" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => setShowAboutDialog(true)}><Edit className="w-4 h-4 mr-2" /> Edit About Content</Button>
+                </div>
+                <Card>
+                  <CardHeader><CardTitle>Current About Content</CardTitle></CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">Title</p>
+                      <p className="text-foreground">{aboutIntro.title || "Not set"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">Paragraph 1</p>
+                      <p className="text-foreground text-sm">{aboutIntro.paragraph1 || "Not set"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-1">Paragraph 2</p>
+                      <p className="text-foreground text-sm">{aboutIntro.paragraph2 || "Not set"}</p>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               {/* ── Comments Tabs ── */}
@@ -438,9 +600,7 @@ const AdminModerationPage = () => {
       {/* ── Blog Dialog ── */}
       <Dialog open={showBlogDialog} onOpenChange={setShowBlogDialog}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingBlogId ? "Edit Blog Post" : "New Blog Post"}</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>{editingBlogId ? "Edit Blog Post" : "New Blog Post"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <Input placeholder="Title" value={blogForm.title || ""} onChange={e => setBlogForm(p => ({ ...p, title: e.target.value }))} />
             <Input placeholder="Slug (url-friendly)" value={blogForm.slug || ""} onChange={e => setBlogForm(p => ({ ...p, slug: e.target.value }))} />
@@ -458,25 +618,17 @@ const AdminModerationPage = () => {
               </Select>
               <Input placeholder="Read time (e.g. 5 min read)" value={blogForm.read_time || ""} onChange={e => setBlogForm(p => ({ ...p, read_time: e.target.value }))} />
             </div>
-
-            {/* Cover image */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Cover Image</label>
               <div className="flex gap-2">
                 <Input placeholder="Image URL" value={blogForm.cover_image || ""} onChange={e => setBlogForm(p => ({ ...p, cover_image: e.target.value }))} className="flex-1" />
                 <label className="cursor-pointer">
-                  <Button variant="outline" asChild disabled={uploading}>
-                    <span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span>
-                  </Button>
+                  <Button variant="outline" asChild disabled={uploading}><span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span></Button>
                   <input type="file" accept="image/*" className="hidden" onChange={handleBlogImageUpload} />
                 </label>
               </div>
-              {blogForm.cover_image && (
-                <img src={blogForm.cover_image} alt="Cover preview" className="w-full h-40 object-cover rounded" />
-              )}
+              {blogForm.cover_image && <img src={blogForm.cover_image} alt="Cover preview" className="w-full h-40 object-cover rounded" />}
             </div>
-
-            {/* Content with preview toggle */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Content (Markdown)</label>
@@ -492,12 +644,9 @@ const AdminModerationPage = () => {
                 <Textarea placeholder="Write your blog post in Markdown..." value={blogForm.content || ""} onChange={e => setBlogForm(p => ({ ...p, content: e.target.value }))} rows={12} className="font-mono text-sm" />
               )}
             </div>
-
             <div className="flex gap-3 justify-end pt-2">
               <Button variant="outline" onClick={() => saveBlog(false)}>Save as Draft</Button>
-              <Button onClick={() => saveBlog(true)}>
-                <Send className="w-4 h-4 mr-2" /> {editingBlogId ? "Update & Publish" : "Publish & Notify"}
-              </Button>
+              <Button onClick={() => saveBlog(true)}><Send className="w-4 h-4 mr-2" /> {editingBlogId ? "Update & Publish" : "Publish & Notify"}</Button>
             </div>
           </div>
         </DialogContent>
@@ -506,9 +655,7 @@ const AdminModerationPage = () => {
       {/* ── Project Dialog ── */}
       <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingProjectId ? "Edit Project" : "New Project"}</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>{editingProjectId ? "Edit Project" : "New Project"}</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <Input placeholder="Project Title" value={projectForm.title || ""} onChange={e => setProjectForm(p => ({ ...p, title: e.target.value }))} />
             <Textarea placeholder="Description" value={projectForm.description || ""} onChange={e => setProjectForm(p => ({ ...p, description: e.target.value }))} rows={4} />
@@ -525,14 +672,11 @@ const AdminModerationPage = () => {
                 <label htmlFor="featured" className="text-sm">Featured Project</label>
               </div>
             </div>
-
             <div className="grid grid-cols-2 gap-4">
               <Input placeholder="GitHub URL" value={projectForm.github_url || ""} onChange={e => setProjectForm(p => ({ ...p, github_url: e.target.value }))} />
               <Input placeholder="Live URL" value={projectForm.live_url || ""} onChange={e => setProjectForm(p => ({ ...p, live_url: e.target.value }))} />
             </div>
             <Input placeholder="Article Slug" value={projectForm.article_slug || ""} onChange={e => setProjectForm(p => ({ ...p, article_slug: e.target.value }))} />
-
-            {/* Tech stack tags */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Tech Stack</label>
               <div className="flex gap-2">
@@ -541,14 +685,10 @@ const AdminModerationPage = () => {
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {(projectForm.tech_stack || []).map((tag, i) => (
-                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => removeTechTag(i)}>
-                    {tag} <X className="w-3 h-3 ml-1" />
-                  </Badge>
+                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => removeTechTag(i)}>{tag} <X className="w-3 h-3 ml-1" /></Badge>
                 ))}
               </div>
             </div>
-
-            {/* Project images */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Images</label>
               <div className="flex gap-2">
@@ -556,16 +696,11 @@ const AdminModerationPage = () => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     const val = (e.target as HTMLInputElement).value.trim();
-                    if (val) {
-                      setProjectForm(p => ({ ...p, images: [...(p.images || []), val] }));
-                      (e.target as HTMLInputElement).value = "";
-                    }
+                    if (val) { setProjectForm(p => ({ ...p, images: [...(p.images || []), val] })); (e.target as HTMLInputElement).value = ""; }
                   }
                 }} />
                 <label className="cursor-pointer">
-                  <Button variant="outline" asChild disabled={uploading}>
-                    <span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span>
-                  </Button>
+                  <Button variant="outline" asChild disabled={uploading}><span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span></Button>
                   <input type="file" accept="image/*" className="hidden" onChange={handleProjectImageUpload} />
                 </label>
               </div>
@@ -573,20 +708,102 @@ const AdminModerationPage = () => {
                 {(projectForm.images || []).map((img, i) => (
                   <div key={i} className="relative group w-20 h-20">
                     <img src={img} alt="" className="w-full h-full object-cover rounded" />
-                    <button
-                      onClick={() => setProjectForm(p => ({ ...p, images: (p.images || []).filter((_, idx) => idx !== i) }))}
-                      className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                    >×</button>
+                    <button onClick={() => setProjectForm(p => ({ ...p, images: (p.images || []).filter((_, idx) => idx !== i) }))} className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">×</button>
                   </div>
                 ))}
               </div>
             </div>
-
             <div className="flex gap-3 justify-end pt-2">
               <Button variant="outline" onClick={() => saveProject(false)}>Save as Draft</Button>
-              <Button onClick={() => saveProject(true)}>
-                <Send className="w-4 h-4 mr-2" /> {editingProjectId ? "Update & Publish" : "Publish & Notify"}
-              </Button>
+              <Button onClick={() => saveProject(true)}><Send className="w-4 h-4 mr-2" /> {editingProjectId ? "Update & Publish" : "Publish & Notify"}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Skill Dialog ── */}
+      <Dialog open={showSkillDialog} onOpenChange={setShowSkillDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{editingSkillId ? "Edit Skill" : "Add Skill"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Skill Name (e.g. React)" value={skillForm.name || ""} onChange={e => setSkillForm(p => ({ ...p, name: e.target.value }))} />
+            <div>
+              <label className="text-sm font-medium mb-2 block">Proficiency: {skillForm.level || 50}%</label>
+              <Slider value={[skillForm.level || 50]} onValueChange={([v]) => setSkillForm(p => ({ ...p, level: v }))} min={0} max={100} step={1} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Select value={skillForm.category || "it"} onValueChange={v => setSkillForm(p => ({ ...p, category: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="it">IT & Software</SelectItem>
+                  <SelectItem value="engineering">Engineering & CAD</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={skillForm.color_token || "primary"} onValueChange={v => setSkillForm(p => ({ ...p, color_token: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="primary">Primary</SelectItem>
+                  <SelectItem value="accent">Accent</SelectItem>
+                  <SelectItem value="secondary">Secondary</SelectItem>
+                  <SelectItem value="orange">Orange</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Input placeholder="Sort Order (0, 1, 2...)" type="number" value={skillForm.sort_order || 0} onChange={e => setSkillForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowSkillDialog(false)}>Cancel</Button>
+              <Button onClick={saveSkill}>{editingSkillId ? "Update" : "Add"} Skill</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Certificate Dialog ── */}
+      <Dialog open={showCertDialog} onOpenChange={setShowCertDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{editingCertId ? "Edit Certificate" : "Add Certificate"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Certificate Title" value={certForm.title || ""} onChange={e => setCertForm(p => ({ ...p, title: e.target.value }))} />
+            <Input placeholder="Issuer (e.g. Coursera, Google)" value={certForm.issuer || ""} onChange={e => setCertForm(p => ({ ...p, issuer: e.target.value }))} />
+            <Input placeholder="Date (e.g. Jan 2025)" value={certForm.date || ""} onChange={e => setCertForm(p => ({ ...p, date: e.target.value }))} />
+            <Select value={certForm.category || "it"} onValueChange={v => setCertForm(p => ({ ...p, category: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="it">IT</SelectItem>
+                <SelectItem value="engineering">Engineering</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Certificate Image</label>
+              <div className="flex gap-2">
+                <Input placeholder="Image URL" value={certForm.image_url || ""} onChange={e => setCertForm(p => ({ ...p, image_url: e.target.value }))} className="flex-1" />
+                <label className="cursor-pointer">
+                  <Button variant="outline" asChild disabled={uploading}><span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span></Button>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleCertImageUpload} />
+                </label>
+              </div>
+              {certForm.image_url && <img src={certForm.image_url} alt="Preview" className="w-full h-32 object-cover rounded" />}
+            </div>
+            <Input placeholder="Sort Order" type="number" value={certForm.sort_order || 0} onChange={e => setCertForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowCertDialog(false)}>Cancel</Button>
+              <Button onClick={saveCert}>{editingCertId ? "Update" : "Add"} Certificate</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── About Dialog ── */}
+      <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Edit About Content</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Section Title" value={aboutIntro.title} onChange={e => setAboutIntro(p => ({ ...p, title: e.target.value }))} />
+            <Textarea placeholder="First Paragraph" value={aboutIntro.paragraph1} onChange={e => setAboutIntro(p => ({ ...p, paragraph1: e.target.value }))} rows={4} />
+            <Textarea placeholder="Second Paragraph" value={aboutIntro.paragraph2} onChange={e => setAboutIntro(p => ({ ...p, paragraph2: e.target.value }))} rows={4} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowAboutDialog(false)}>Cancel</Button>
+              <Button onClick={saveAbout}>Save About Content</Button>
             </div>
           </div>
         </DialogContent>
