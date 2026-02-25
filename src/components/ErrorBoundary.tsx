@@ -1,7 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { RefreshCw, Home, Copy, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import legoImage from "@/assets/lego-error.png";
 
 interface Props {
   children: ReactNode;
@@ -108,12 +107,17 @@ class ErrorBoundary extends Component<Props, State> {
           </header>
 
           <main className="max-w-2xl mx-auto px-4 py-10 text-center space-y-8">
-            {/* Lego illustration */}
-            <img
-              src={legoImage}
-              alt="Something went wrong - Lego characters"
-              className="mx-auto max-w-full h-auto max-h-56 object-contain"
-            />
+            {/* Error video */}
+            <div className="mx-auto max-w-md rounded-lg overflow-hidden border-2 border-border shadow-lg">
+              <video
+                src="/videos/error-video.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto max-h-56 object-cover"
+              />
+            </div>
 
             <div className="space-y-2">
               <h1 className="text-3xl sm:text-4xl font-bold text-foreground">
