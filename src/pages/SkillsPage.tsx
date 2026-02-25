@@ -45,20 +45,20 @@ const SkillBar = memo(({ skill, index, isVisible, delayOffset = 0 }: {
   delayOffset?: number;
 }) => (
   <div 
-    className="space-y-2 w-full transition-all duration-500"
+    className="w-full transition-all duration-500"
     style={{
       opacity: isVisible ? 1 : 0,
       transform: isVisible ? 'translateX(0)' : 'translateX(-20px)',
       transitionDelay: `${delayOffset + index * 100}ms`
     }}
   >
-    <div className="flex items-baseline justify-between gap-4">
-      <span className="font-medium text-foreground text-sm sm:text-base truncate min-w-0">{skill.name}</span>
-      <span className="text-xs sm:text-sm text-primary font-mono font-semibold shrink-0 tabular-nums">{skill.level}%</span>
+    <div className="flex items-center justify-between mb-2">
+      <span className="font-semibold text-foreground text-sm sm:text-base">{skill.name}</span>
+      <span className="text-sm sm:text-base text-foreground font-semibold tabular-nums ml-4">{skill.level}%</span>
     </div>
-    <div className="relative h-2.5 sm:h-3 bg-muted overflow-hidden border border-border rounded-sm">
+    <div className="relative w-full h-3 sm:h-3.5 bg-muted/50 overflow-hidden">
       <div
-        className="absolute inset-y-0 left-0 bg-foreground transition-all duration-1000 ease-out rounded-sm"
+        className="absolute inset-y-0 left-0 bg-foreground transition-all duration-1000 ease-out"
         style={{
           width: isVisible ? `${skill.level}%` : '0%',
           transitionDelay: `${delayOffset + index * 150}ms`
