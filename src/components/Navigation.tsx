@@ -1,15 +1,26 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,11 +99,18 @@ const Navigation = () => {
             <SocialLinks iconSize={16} />
             <div className="w-px h-6 bg-border" />
             <ThemeToggle />
-            <Link to="/contact">
-              <Button variant="hero" size="default">
-                Hire Me
+            {user ? (
+              <Button variant="outline" size="default" onClick={handleLogout}>
+                <LogOut className="w-4 h-4 mr-1.5" />
+                Logout
               </Button>
-            </Link>
+            ) : (
+              <Link to="/contact">
+                <Button variant="hero" size="default">
+                  Hire Me
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -141,11 +159,18 @@ const Navigation = () => {
                 ))}
                 <div className="pt-4 border-t-2 border-border mt-4 space-y-4 px-4">
                   <SocialLinks className="justify-start" />
-                  <Link to="/contact" onClick={() => setIsOpen(false)}>
-                    <Button variant="hero" className="w-full">
-                      Hire Me
+                  {user ? (
+                    <Button variant="outline" className="w-full" onClick={() => { handleLogout(); setIsOpen(false); }}>
+                      <LogOut className="w-4 h-4 mr-1.5" />
+                      Logout
                     </Button>
-                  </Link>
+                  ) : (
+                    <Link to="/contact" onClick={() => setIsOpen(false)}>
+                      <Button variant="hero" className="w-full">
+                        Hire Me
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>
