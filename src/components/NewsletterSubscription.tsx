@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const subscriptionSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
-  email: z.string().email("Please enter a valid email"),
+  email: z.string().email("Enter a valid email"),
 });
 
 const NewsletterSubscription = () => {
@@ -20,8 +20,11 @@ const NewsletterSubscription = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const validation = subscriptionSchema.safeParse({ name, email });
+
+    const normalizedName = name.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const validation = subscriptionSchema.safeParse({ name: normalizedName, email: normalizedEmail });
     if (!validation.success) {
       toast({
         title: "Invalid Input",
@@ -34,43 +37,54 @@ const NewsletterSubscription = () => {
     setIsLoading(true);
 
     try {
-      // Save to database with name
       const { error: dbError } = await supabase
         .from("newsletter_subscribers")
-        .insert({ email, name, source: "footer" });
+        .insert({ email: normalizedEmail, name: normalizedName, source: "footer" });
 
-      if (dbError && dbError.code !== "23505") {
-        throw dbError;
+      if (dbError?.code === "23505") {
+        localStorage.setItem("newsletter_subscribed", "true");
+        setIsSubscribed(true);
+        setName("");
+        setEmail("");
+
+        toast({
+          title: "Already Subscribed",
+          description: "You are already subscribed",
+        });
+        return;
       }
 
-      // Send welcome email
-      const { error } = await supabase.functions.invoke("send-contact-email", {
+      if (dbError) throw dbError;
+
+      const { error: emailError } = await supabase.functions.invoke("send-contact-email", {
         body: {
-          name,
-          email,
+          name: normalizedName,
+          email: normalizedEmail,
           subject: "Newsletter Subscription",
           message: "New newsletter subscription",
           type: "newsletter",
         },
       });
 
-      if (error) throw error;
+      if (emailError) {
+        console.warn("Newsletter email warning:", emailError);
+      }
 
       localStorage.setItem("newsletter_subscribed", "true");
 
       setIsSubscribed(true);
       setName("");
       setEmail("");
-      
+
       toast({
         title: "Successfully Subscribed! 🎉",
-        description: "Check your email for a welcome message.",
+        description: "You are subscribed successfully.",
       });
     } catch (error) {
       console.error("Subscription error:", error);
       toast({
         title: "Subscription Failed",
-        description: "Please try again later.",
+        description: "Something went wrong, try again",
         variant: "destructive",
       });
     } finally {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Eye, EyeOff, Lock, Mail, Loader2, ArrowLeft, KeyRound, ShieldCheck } from "lucide-react";
@@ -29,11 +29,32 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const returnPath = (location.state as { returnPath?: string })?.returnPath || "/subscribers";
+
+  const stateReturnPath = (location.state as { returnPath?: string } | null)?.returnPath;
+  const queryReturnPath = new URLSearchParams(location.search).get("returnTo");
+  const oauthError = new URLSearchParams(location.search).get("error");
+  const returnPath = stateReturnPath || queryReturnPath || "/services";
+  const oauthRedirectUri = `${window.location.origin}/login?returnTo=${encodeURIComponent(returnPath)}`;
+
+  useEffect(() => {
+    if (!isAuthLoading && user) {
+      navigate(returnPath, { replace: true });
+    }
+  }, [isAuthLoading, user, navigate, returnPath]);
+
+  useEffect(() => {
+    if (oauthError) {
+      toast({
+        title: "OAuth Login Failed",
+        description: "Authentication could not be completed. Please try again.",
+        variant: "destructive",
+      });
+    }
+  }, [oauthError, toast]);
 
   // Forgot passkey state
   const [view, setView] = useState<View>("login");
@@ -73,7 +94,7 @@ const LoginPage = () => {
     setIsGoogleLoading(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: oauthRedirectUri,
       });
       if (error) {
         toast({ title: "Login Failed", description: error.message, variant: "destructive" });
@@ -89,7 +110,7 @@ const LoginPage = () => {
     setIsAppleLoading(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: window.location.origin,
+        redirect_uri: oauthRedirectUri,
       });
       if (error) {
         toast({ title: "Login Failed", description: error.message, variant: "destructive" });

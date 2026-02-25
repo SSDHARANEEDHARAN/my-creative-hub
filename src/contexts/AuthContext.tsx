@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,6 +13,7 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const OWNER_ADMIN_EMAIL = "tharaneetharanss@gmail.com";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -48,42 +49,54 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const syncUserRole = useCallback(async (currentUser: User) => {
+    try {
+      await supabase.functions.invoke("sync-user-role", {
+        body: {
+          email: currentUser.email?.toLowerCase() ?? "",
+          adminEmail: OWNER_ADMIN_EMAIL,
+        },
+      });
+    } catch (error) {
+      console.error("Error syncing user role:", error);
+    }
+  }, []);
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Use setTimeout to avoid potential race conditions
-          setTimeout(async () => {
-            const adminStatus = await checkAdminRole(session.user.id);
-            setIsAdmin(adminStatus);
-          }, 0);
+      async (_event, nextSession) => {
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+
+        if (nextSession?.user) {
+          await syncUserRole(nextSession.user);
+          const adminStatus = await checkAdminRole(nextSession.user.id);
+          setIsAdmin(adminStatus);
         } else {
           setIsAdmin(false);
         }
-        
+
         setIsLoading(false);
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        const adminStatus = await checkAdminRole(session.user.id);
+    supabase.auth.getSession().then(async ({ data: { session: existingSession } }) => {
+      setSession(existingSession);
+      setUser(existingSession?.user ?? null);
+
+      if (existingSession?.user) {
+        await syncUserRole(existingSession.user);
+        const adminStatus = await checkAdminRole(existingSession.user.id);
         setIsAdmin(adminStatus);
       }
-      
+
       setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [syncUserRole]);
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });

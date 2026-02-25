@@ -25,11 +25,14 @@ const GuestAccessModal = ({ isOpen, onClose, returnPath = "/" }: GuestAccessModa
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const targetReturnPath = returnPath?.startsWith("/") ? returnPath : "/";
+  const oauthRedirectUri = `${window.location.origin}/login?returnTo=${encodeURIComponent(targetReturnPath)}`;
+
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin + (returnPath || "/"),
+        redirect_uri: oauthRedirectUri,
       });
       if (error) {
         toast({
@@ -53,7 +56,7 @@ const GuestAccessModal = ({ isOpen, onClose, returnPath = "/" }: GuestAccessModa
     setIsAppleLoading(true);
     try {
       const { error } = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: window.location.origin + (returnPath || "/"),
+        redirect_uri: oauthRedirectUri,
       });
       if (error) {
         toast({ title: "Login Failed", description: error.message, variant: "destructive" });
