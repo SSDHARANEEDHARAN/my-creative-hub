@@ -37,23 +37,44 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
     setHasLiked(!!data);
   }, [userEmail, projectId]);
 
-  // Track view once per session per project
+  // Track view once per user (by email) or once per session (anonymous)
   useEffect(() => {
     if (!projectId || viewTracked.current) return;
-    const key = `project_viewed_${projectId}`;
-    if (sessionStorage.getItem(key)) {
+    
+    const trackView = async () => {
+      // For logged-in users, check if they already have a view record
+      if (userEmail) {
+        const { data: existingView } = await supabase
+          .from("project_views")
+          .select("id")
+          .eq("project_id", projectId)
+          .eq("viewer_email", userEmail)
+          .maybeSingle();
+        
+        if (existingView) {
+          viewTracked.current = true;
+          return; // Already viewed by this user
+        }
+      } else {
+        // For anonymous users, use sessionStorage
+        const key = `project_viewed_${projectId}`;
+        if (sessionStorage.getItem(key)) {
+          viewTracked.current = true;
+          return;
+        }
+        sessionStorage.setItem(key, "1");
+      }
+      
       viewTracked.current = true;
-      return;
-    }
-    viewTracked.current = true;
-    sessionStorage.setItem(key, "1");
-    supabase.from("project_views").insert({
-      project_id: projectId,
-      viewer_email: userEmail,
-      viewer_name: userName,
-    }).then(() => {
+      await supabase.from("project_views").insert({
+        project_id: projectId,
+        viewer_email: userEmail,
+        viewer_name: userName,
+      });
       loadCounts();
-    });
+    };
+    
+    trackView();
   }, [projectId, userEmail, userName, loadCounts]);
 
   useEffect(() => { loadCounts(); }, [loadCounts]);
