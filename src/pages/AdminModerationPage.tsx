@@ -199,10 +199,16 @@ const AdminModerationPage = () => {
     if (editingBlogId) { ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlogId)); }
     else { ({ error } = await supabase.from("blog_posts").insert(payload)); }
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    if (publish && !editingBlogId) {
-      await supabase.functions.invoke("notify-subscribers", { body: { type: "blog", title: blogForm.title, slug: blogForm.slug } });
+    if (publish) {
+      try {
+        await supabase.functions.invoke("notify-subscribers", {
+          body: { type: "post", title: blogForm.title, description: blogForm.excerpt || "", slug: blogForm.slug },
+        });
+        toast({ title: editingBlogId ? "Blog updated & subscribers notified" : "Blog published & subscribers notified" });
+      } catch { toast({ title: editingBlogId ? "Blog updated" : "Blog created" }); }
+    } else {
+      toast({ title: editingBlogId ? "Blog saved as draft" : "Blog draft created" });
     }
-    toast({ title: editingBlogId ? "Blog updated" : "Blog created" });
     setShowBlogDialog(false);
     loadData();
   };
@@ -238,10 +244,16 @@ const AdminModerationPage = () => {
     if (editingProjectId) { ({ error } = await supabase.from("projects").update(payload).eq("id", editingProjectId)); }
     else { ({ error } = await supabase.from("projects").insert(payload)); }
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    if (publish && !editingProjectId) {
-      await supabase.functions.invoke("notify-subscribers", { body: { type: "project", title: projectForm.title } });
+    if (publish) {
+      try {
+        await supabase.functions.invoke("notify-subscribers", {
+          body: { type: "project", title: projectForm.title, description: projectForm.description?.substring(0, 200) || "" },
+        });
+        toast({ title: editingProjectId ? "Project updated & subscribers notified" : "Project published & subscribers notified" });
+      } catch { toast({ title: editingProjectId ? "Project updated" : "Project created" }); }
+    } else {
+      toast({ title: editingProjectId ? "Project saved as draft" : "Project draft created" });
     }
-    toast({ title: editingProjectId ? "Project updated" : "Project created" });
     setShowProjectDialog(false);
     loadData();
   };
