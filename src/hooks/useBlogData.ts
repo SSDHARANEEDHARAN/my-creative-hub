@@ -74,22 +74,40 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
     }
   }, [postId, userEmail]);
 
-  // Track view once per session per post
+  // Track view once per user (unique views only)
   useEffect(() => {
     if (!postId || viewTracked.current) return;
-    const viewKey = `blog_viewed_${postId}`;
-    if (sessionStorage.getItem(viewKey)) {
-      viewTracked.current = true;
-      return;
-    }
+    
     const trackView = async () => {
+      // For logged-in users, check if they already viewed
+      if (userEmail) {
+        const { data: existingView } = await supabase
+          .from("blog_views")
+          .select("id")
+          .eq("post_id", postId)
+          .eq("viewer_email", userEmail)
+          .maybeSingle();
+        
+        if (existingView) {
+          viewTracked.current = true;
+          return; // Already viewed by this user
+        }
+      } else {
+        // For anonymous users, use sessionStorage
+        const viewKey = `blog_viewed_${postId}`;
+        if (sessionStorage.getItem(viewKey)) {
+          viewTracked.current = true;
+          return;
+        }
+        sessionStorage.setItem(viewKey, "1");
+      }
+      
       try {
         await supabase.from("blog_views").insert({
           post_id: postId,
           viewer_email: userEmail || null,
           viewer_name: userName || null,
         });
-        sessionStorage.setItem(viewKey, "1");
         viewTracked.current = true;
         setViewCount((c) => c + 1);
       } catch (e) {
