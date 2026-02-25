@@ -48,7 +48,7 @@ const checkRateLimit = (ip: string): { allowed: boolean; retryAfter?: number } =
   return { allowed: true };
 };
 
-// ─── Unified Email Template ───
+// ─── Premium Email Template ───
 const buildEmail = (opts: {
   emoji: string; headline: string; body: string;
   ctaUrl?: string; ctaLabel?: string;
@@ -56,20 +56,29 @@ const buildEmail = (opts: {
 }) => `
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-serif;">
-<div style="max-width:600px;margin:0 auto;background:#ffffff;">
-  <div style="background:linear-gradient(135deg,#0a0a0a,#1a1a2e);padding:32px 24px;text-align:center;">
-    <p style="margin:0 0 8px;font-size:14px;color:#a1a1aa;letter-spacing:2px;text-transform:uppercase;">ArtTech Engine</p>
-    <h1 style="margin:0;font-size:22px;color:#ffffff;font-weight:700;">${opts.emoji} ${opts.headline}</h1>
+<body style="margin:0;padding:0;background:#eaeaea;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<div style="max-width:620px;margin:24px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+  <!-- Accent Bar -->
+  <div style="height:4px;background:linear-gradient(90deg,#111111,#444444,#111111);"></div>
+  <!-- Header -->
+  <div style="padding:36px 32px 28px;text-align:center;border-bottom:1px solid #f0f0f0;">
+    <div style="display:inline-block;width:48px;height:48px;background:#111;border-radius:10px;line-height:48px;font-size:20px;color:#fff;font-weight:800;letter-spacing:-1px;margin-bottom:14px;">AE</div>
+    <p style="margin:0 0 6px;font-size:11px;color:#999;letter-spacing:3px;text-transform:uppercase;font-weight:600;">ArtTech Engine</p>
+    <h1 style="margin:0;font-size:20px;color:#111;font-weight:700;line-height:1.3;">${opts.emoji} ${opts.headline}</h1>
   </div>
-  <div style="padding:32px 24px;background:#ffffff;">
+  <!-- Body -->
+  <div style="padding:28px 32px 32px;">
     ${opts.body}
-    ${opts.ctaUrl ? `<div style="text-align:center;margin:28px 0 8px;"><a href="${opts.ctaUrl}" style="display:inline-block;background:#0a0a0a;color:#ffffff;padding:14px 32px;text-decoration:none;font-weight:600;font-size:15px;border-radius:6px;">${opts.ctaLabel || 'View Now'}</a></div>` : ''}
+    ${opts.ctaUrl ? `
+    <div style="text-align:center;margin:32px 0 12px;">
+      <a href="${opts.ctaUrl}" style="display:inline-block;background:#111;color:#fff;padding:13px 36px;text-decoration:none;font-weight:600;font-size:14px;border-radius:8px;letter-spacing:0.5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">${opts.ctaLabel || 'View Now'} →</a>
+    </div>` : ''}
   </div>
-  <div style="padding:20px 24px;text-align:center;background:#1a1a2e;color:#71717a;font-size:12px;">
-    <p style="margin:0 0 6px;">© ${new Date().getFullYear()} Dharaneedharan SS — ArtTech Engine</p>
-    ${opts.footerText ? `<p style="margin:0 0 6px;">${opts.footerText}</p>` : ''}
-    ${opts.unsubscribeUrl ? `<p style="margin:0;"><a href="${opts.unsubscribeUrl}" style="color:#71717a;text-decoration:underline;">Unsubscribe</a></p>` : ''}
+  <!-- Footer -->
+  <div style="padding:20px 32px;text-align:center;background:#fafafa;border-top:1px solid #f0f0f0;">
+    <p style="margin:0 0 4px;font-size:11px;color:#aaa;letter-spacing:1px;">© ${new Date().getFullYear()} DHARANEEDHARAN SS</p>
+    ${opts.footerText ? `<p style="margin:0 0 4px;font-size:11px;color:#999;">${opts.footerText}</p>` : ''}
+    ${opts.unsubscribeUrl ? `<p style="margin:0;"><a href="${opts.unsubscribeUrl}" style="color:#999;text-decoration:underline;font-size:11px;">Unsubscribe</a></p>` : ''}
   </div>
 </div>
 </body></html>`;
