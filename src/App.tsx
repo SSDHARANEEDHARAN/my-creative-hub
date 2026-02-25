@@ -31,6 +31,7 @@ const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
 const UnsubscribePage = lazy(() => import("./pages/UnsubscribePage"));
+const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const AnimatedRoutes = () => {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/unsubscribe" element={<UnsubscribePage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route
             path="/services"
             element={
