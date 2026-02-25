@@ -20,6 +20,7 @@ const ParticleField = () => {
       opacity: number;
       pulse: number;
       pulseSpeed: number;
+      colorIndex: number;
     }> = [];
 
     const resize = () => {
@@ -34,12 +35,13 @@ const ParticleField = () => {
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.offsetWidth,
         y: Math.random() * canvas.offsetHeight,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.7 + 0.3,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        size: Math.random() * 2.5 + 0.8,
+        opacity: Math.random() * 0.6 + 0.2,
         pulse: Math.random() * Math.PI * 2,
-        pulseSpeed: Math.random() * 0.03 + 0.01,
+        pulseSpeed: Math.random() * 0.02 + 0.008,
+        colorIndex: Math.random() > 0.5 ? 1 : 0,
       }));
     };
 
@@ -51,9 +53,10 @@ const ParticleField = () => {
       ctx.clearRect(0, 0, w, h);
 
       const dark = isDark();
-      const accentR = dark ? 130 : 80;
-      const accentG = dark ? 160 : 100;
-      const accentB = dark ? 255 : 200;
+      // Dual-tone particles: primary blue + secondary cyan
+      const colors = dark 
+        ? [{ r: 100, g: 140, b: 255 }, { r: 0, g: 220, b: 200 }]
+        : [{ r: 60, g: 80, b: 180 }, { r: 0, g: 160, b: 150 }];
 
       for (const p of particles) {
         p.x += p.vx;
@@ -66,11 +69,12 @@ const ParticleField = () => {
         if (p.y > h) p.y = 0;
 
         const currentOpacity = p.opacity * (0.5 + 0.5 * Math.sin(p.pulse));
+        const c = colors[p.colorIndex] || colors[0];
 
         // Glow effect
         const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 3);
-        gradient.addColorStop(0, `rgba(${accentR},${accentG},${accentB},${currentOpacity})`);
-        gradient.addColorStop(1, `rgba(${accentR},${accentG},${accentB},0)`);
+        gradient.addColorStop(0, `rgba(${c.r},${c.g},${c.b},${currentOpacity})`);
+        gradient.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0)`);
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
@@ -79,7 +83,7 @@ const ParticleField = () => {
         // Core dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${accentR},${accentG},${accentB},${currentOpacity * 1.2})`;
+        ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${currentOpacity * 1.2})`;
         ctx.fill();
       }
 
@@ -91,12 +95,13 @@ const ParticleField = () => {
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < maxDist) {
-            const alpha = (1 - dist / maxDist) * 0.25;
+            const alpha = (1 - dist / maxDist) * 0.2;
+            const lc = colors[0];
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(${accentR},${accentG},${accentB},${alpha})`;
-            ctx.lineWidth = 0.8;
+            ctx.strokeStyle = `rgba(${lc.r},${lc.g},${lc.b},${alpha})`;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
         }
