@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_content: {
+        Row: {
+          content: Json
+          id: string
+          section_key: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          id?: string
+          section_key: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          id?: string
+          section_key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_comments: {
         Row: {
           content: string
@@ -149,6 +170,39 @@ export type Database = {
           post_id?: string
           viewer_email?: string | null
           viewer_name?: string | null
+        }
+        Relationships: []
+      }
+      certificates: {
+        Row: {
+          category: string
+          created_at: string
+          date: string | null
+          id: string
+          image_url: string | null
+          issuer: string
+          sort_order: number | null
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          date?: string | null
+          id?: string
+          image_url?: string | null
+          issuer?: string
+          sort_order?: number | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          date?: string | null
+          id?: string
+          image_url?: string | null
+          issuer?: string
+          sort_order?: number | null
+          title?: string
         }
         Relationships: []
       }
@@ -361,6 +415,42 @@ export type Database = {
           live_url?: string | null
           tech_stack?: string[] | null
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      skills: {
+        Row: {
+          category: string
+          color_token: string | null
+          created_at: string
+          id: string
+          level: number
+          name: string
+          skill_type: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          color_token?: string | null
+          created_at?: string
+          id?: string
+          level?: number
+          name: string
+          skill_type?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color_token?: string | null
+          created_at?: string
+          id?: string
+          level?: number
+          name?: string
+          skill_type?: string
+          sort_order?: number | null
           updated_at?: string
         }
         Relationships: []
