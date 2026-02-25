@@ -230,17 +230,17 @@ const AboutPage = () => {
                   <h2 className="font-display text-3xl md:text-4xl font-bold">Skills & <span className="text-gradient">Proficiency</span></h2>
                 </div>
               </ScrollReveal>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
                 {skills.map((skill, index) => (
                   <ScrollReveal key={skill.title} delay={index * 80}>
-                    <div className="p-5 bg-card border-2 border-border sharp-card group hover:border-primary transition-all duration-300 text-center h-full">
-                      <div className={`w-11 h-11 bg-secondary border border-border flex items-center justify-center mb-3 mx-auto ${skill.color} group-hover:scale-110 group-hover:border-primary transition-all duration-300`}>{skill.icon}</div>
+                    <div className="p-5 bg-card border-2 border-border sharp-card group hover:border-primary transition-all duration-300 text-center h-full flex flex-col items-center">
+                      <div className={`w-11 h-11 bg-secondary border border-border flex items-center justify-center mb-3 ${skill.color} group-hover:scale-110 group-hover:border-primary transition-all duration-300`}>{skill.icon}</div>
                       <h3 className="font-display text-base font-semibold mb-1 group-hover:text-primary transition-colors">{skill.title}</h3>
                       <p className="text-muted-foreground text-sm mb-3">{skill.desc}</p>
-                      <div className="w-full">
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-muted-foreground">Proficiency</span>
-                          <span className="text-primary font-semibold">{skill.level}%</span>
+                      <div className="w-full mt-auto">
+                        <div className="flex items-baseline justify-between gap-2 text-xs mb-1.5">
+                          <span className="text-muted-foreground truncate">Proficiency</span>
+                          <span className="text-primary font-semibold font-mono tabular-nums shrink-0">{skill.level}%</span>
                         </div>
                         <div className="h-2 bg-muted rounded-full overflow-hidden">
                           <div className="h-full bg-primary rounded-full transition-all duration-1000 ease-out" style={{ width: `${skill.level}%` }} />

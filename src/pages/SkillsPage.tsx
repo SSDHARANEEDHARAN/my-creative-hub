@@ -45,20 +45,20 @@ const SkillBar = memo(({ skill, index, isVisible, delayOffset = 0 }: {
   delayOffset?: number;
 }) => (
   <div 
-    className="space-y-3 transition-all duration-500"
+    className="space-y-2 w-full transition-all duration-500"
     style={{
       opacity: isVisible ? 1 : 0,
       transform: isVisible ? 'translateX(0)' : 'translateX(-20px)',
       transitionDelay: `${delayOffset + index * 100}ms`
     }}
   >
-    <div className="flex justify-between items-center">
-      <span className="font-medium text-foreground text-sm sm:text-base">{skill.name}</span>
-      <span className="text-xs sm:text-sm text-muted-foreground font-mono">{skill.level}%</span>
+    <div className="flex items-baseline justify-between gap-4">
+      <span className="font-medium text-foreground text-sm sm:text-base truncate min-w-0">{skill.name}</span>
+      <span className="text-xs sm:text-sm text-primary font-mono font-semibold shrink-0 tabular-nums">{skill.level}%</span>
     </div>
-    <div className="h-2 sm:h-3 bg-muted overflow-hidden border border-border">
+    <div className="relative h-2.5 sm:h-3 bg-muted overflow-hidden border border-border rounded-sm">
       <div
-        className="h-full bg-foreground transition-all duration-1000 ease-out"
+        className="absolute inset-y-0 left-0 bg-foreground transition-all duration-1000 ease-out rounded-sm"
         style={{
           width: isVisible ? `${skill.level}%` : '0%',
           transitionDelay: `${delayOffset + index * 150}ms`
@@ -145,24 +145,24 @@ const SkillsPage = () => {
               </div>
 
               {/* IT Skills Section */}
-              <div className="mb-12 sm:mb-20">
-                <div className="flex items-center gap-3 mb-6 sm:mb-10">
+              <div className="mb-12 sm:mb-20 max-w-5xl mx-auto">
+                <div className="flex items-center justify-center gap-3 mb-6 sm:mb-10">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-foreground flex items-center justify-center">
                     <Cpu className="text-background" size={20} />
                   </div>
                   <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">IT & Software Development</h2>
                 </div>
                 
-                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start justify-items-center">
-                  <div className="space-y-4 sm:space-y-6">
+                <div className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
+                  <div className="space-y-5 sm:space-y-6 w-full">
                     {itSkills.map((skill, index) => (
                       <SkillBar key={skill.name} skill={skill} index={index} isVisible={isVisible} delayOffset={100} />
                     ))}
                   </div>
 
-                  <div>
-                    <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground">Related Technologies</h4>
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <div className="w-full">
+                    <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground text-center md:text-left">Related Technologies</h4>
+                    <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
                       {itTechnologies.map((tech, index) => (
                         <TechTag 
                           key={tech} 
@@ -178,24 +178,24 @@ const SkillsPage = () => {
               </div>
 
               {/* Non-IT Skills Section */}
-              <div>
-                <div className="flex items-center gap-3 mb-6 sm:mb-10">
+              <div className="max-w-5xl mx-auto">
+                <div className="flex items-center justify-center gap-3 mb-6 sm:mb-10">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted-foreground flex items-center justify-center">
                     <Cog className="text-background" size={20} />
                   </div>
                   <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">Engineering & CAD Tools</h2>
                 </div>
                 
-                <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start justify-items-center">
-                  <div className="space-y-4 sm:space-y-6">
+                <div className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
+                  <div className="space-y-5 sm:space-y-6 w-full">
                     {nonItSkills.map((skill, index) => (
                       <SkillBar key={skill.name} skill={skill} index={index} isVisible={isVisible} delayOffset={500} />
                     ))}
                   </div>
 
-                  <div>
-                    <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground">Related Technologies</h4>
-                    <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <div className="w-full">
+                    <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground text-center md:text-left">Related Technologies</h4>
+                    <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
                       {nonItTechnologies.map((tech, index) => (
                         <TechTag 
                           key={tech} 
@@ -211,7 +211,7 @@ const SkillsPage = () => {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-12 sm:mt-20">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-12 sm:mt-20 max-w-4xl mx-auto">
                 {stats.map((stat, index) => (
                   <div
                     key={stat.label}
