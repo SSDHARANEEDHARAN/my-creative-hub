@@ -3,1019 +3,281 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const OWNER_EMAIL = "tharaneetharanss@gmail.com";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.lovable.app";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Input validation schema for contact form
 const ContactEmailSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100, "Name too long").trim(),
-  email: z.string().email("Invalid email address").max(255, "Email too long"),
-  subject: z.string().min(1, "Subject is required").max(200, "Subject too long").trim(),
-  message: z.string().min(1, "Message is required").max(5000, "Message too long").trim(),
-  // Optional service request fields
+  name: z.string().min(1).max(100).trim(),
+  email: z.string().email().max(255),
+  subject: z.string().min(1).max(200).trim(),
+  message: z.string().min(1).max(5000).trim(),
   serviceType: z.string().optional(),
   serviceCategory: z.string().optional(),
   budget: z.string().optional(),
   timeline: z.string().optional(),
   requirements: z.string().optional(),
-  // Blog notification fields
   type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
-  // Comment reply fields
   originalComment: z.string().optional(),
   replyContent: z.string().optional(),
 });
 
 type ContactEmailRequest = z.infer<typeof ContactEmailSchema>;
 
-// In-memory rate limiting store (per IP, resets on function cold start)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_MAX = 10; // Max emails per window
-const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
 
-// HTML escape function to prevent XSS
 const escapeHtml = (str: string): string => {
-  const htmlEscapes: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  };
-  return str.replace(/[&<>"']/g, (match) => htmlEscapes[match] || match);
+  const m: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return str.replace(/[&<>"']/g, (c) => m[c] || c);
 };
 
-// Rate limiting check
 const checkRateLimit = (ip: string): { allowed: boolean; retryAfter?: number } => {
   const now = Date.now();
-  const record = rateLimitStore.get(ip);
-
-  if (!record || now > record.resetTime) {
-    rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
-    return { allowed: true };
-  }
-
-  if (record.count >= RATE_LIMIT_MAX) {
-    const retryAfter = Math.ceil((record.resetTime - now) / 1000);
-    return { allowed: false, retryAfter };
-  }
-
-  record.count++;
-  rateLimitStore.set(ip, record);
+  const r = rateLimitStore.get(ip);
+  if (!r || now > r.resetTime) { rateLimitStore.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS }); return { allowed: true }; }
+  if (r.count >= RATE_LIMIT_MAX) return { allowed: false, retryAfter: Math.ceil((r.resetTime - now) / 1000) };
+  r.count++;
   return { allowed: true };
 };
 
+// ─── Unified Email Template ───
+const buildEmail = (opts: {
+  emoji: string; headline: string; body: string;
+  ctaUrl?: string; ctaLabel?: string;
+  footerText?: string; unsubscribeUrl?: string;
+}) => `
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Segoe UI',Arial,sans-serif;">
+<div style="max-width:600px;margin:0 auto;background:#ffffff;">
+  <div style="background:linear-gradient(135deg,#0a0a0a,#1a1a2e);padding:32px 24px;text-align:center;">
+    <p style="margin:0 0 8px;font-size:14px;color:#a1a1aa;letter-spacing:2px;text-transform:uppercase;">ArtTech Engine</p>
+    <h1 style="margin:0;font-size:22px;color:#ffffff;font-weight:700;">${opts.emoji} ${opts.headline}</h1>
+  </div>
+  <div style="padding:32px 24px;background:#ffffff;">
+    ${opts.body}
+    ${opts.ctaUrl ? `<div style="text-align:center;margin:28px 0 8px;"><a href="${opts.ctaUrl}" style="display:inline-block;background:#0a0a0a;color:#ffffff;padding:14px 32px;text-decoration:none;font-weight:600;font-size:15px;border-radius:6px;">${opts.ctaLabel || 'View Now'}</a></div>` : ''}
+  </div>
+  <div style="padding:20px 24px;text-align:center;background:#1a1a2e;color:#71717a;font-size:12px;">
+    <p style="margin:0 0 6px;">© ${new Date().getFullYear()} Dharaneedharan SS — ArtTech Engine</p>
+    ${opts.footerText ? `<p style="margin:0 0 6px;">${opts.footerText}</p>` : ''}
+    ${opts.unsubscribeUrl ? `<p style="margin:0;"><a href="${opts.unsubscribeUrl}" style="color:#71717a;text-decoration:underline;">Unsubscribe</a></p>` : ''}
+  </div>
+</div>
+</body></html>`;
+
+const infoRow = (label: string, value: string) =>
+  `<tr><td style="padding:8px 0;color:#6b7280;font-weight:600;width:110px;vertical-align:top;">${label}:</td><td style="padding:8px 0;color:#1a1a1a;">${value}</td></tr>`;
+
+const sendEmail = async (to: string, subject: string, html: string, replyTo?: string) => {
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+      body: JSON.stringify({ from: "ArtTech Engine <onboarding@resend.dev>", to: [to], subject, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
+    });
+    if (!res.ok) console.warn("Email send warning:", await res.text());
+    else console.log("Email sent to:", to);
+    return res.ok;
+  } catch (e) { console.warn("Email failed:", e); return false; }
+};
+
 const handler = async (req: Request): Promise<Response> => {
-  console.log("Received request to send-contact-email function");
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || 
-                   req.headers.get("x-real-ip") || 
-                   "unknown";
-
-  const rateLimit = checkRateLimit(clientIp);
-  if (!rateLimit.allowed) {
-    console.log(`Rate limit exceeded for IP: ${clientIp}`);
-    return new Response(
-      JSON.stringify({ 
-        error: "Too many requests. Please try again later.",
-        retryAfter: rateLimit.retryAfter 
-      }),
-      {
-        status: 429,
-        headers: { 
-          "Content-Type": "application/json", 
-          "Retry-After": String(rateLimit.retryAfter),
-          ...corsHeaders 
-        },
-      }
-    );
-  }
+  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const rl = checkRateLimit(clientIp);
+  if (!rl.allowed) return new Response(JSON.stringify({ error: "Too many requests." }), { status: 429, headers: { ...corsHeaders, "Retry-After": String(rl.retryAfter) } });
 
   try {
     const rawBody = await req.json();
     const parseResult = ContactEmailSchema.safeParse(rawBody);
+    if (!parseResult.success) return new Response(JSON.stringify({ error: `Validation: ${parseResult.error.errors.map(e => e.message).join(", ")}` }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } });
 
-    if (!parseResult.success) {
-      const errors = parseResult.error.errors.map(e => e.message).join(", ");
-      console.log(`Validation failed: ${errors}`);
-      return new Response(
-        JSON.stringify({ error: `Validation failed: ${errors}` }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        }
-      );
-    }
+    const d: ContactEmailRequest = parseResult.data;
+    const sN = escapeHtml(d.name), sE = escapeHtml(d.email), sS = escapeHtml(d.subject), sM = escapeHtml(d.message);
+    const type = d.type || "contact";
 
-    const data: ContactEmailRequest = parseResult.data;
-    const { name, email, subject, message, serviceType, serviceCategory, budget, timeline, requirements, type, blogTitle, blogUrl, comment, originalComment, replyContent } = data;
-
-    const safeName = escapeHtml(name);
-    const safeEmail = escapeHtml(email);
-    const safeSubject = escapeHtml(subject);
-    const safeMessage = escapeHtml(message);
-    const safeServiceType = serviceType ? escapeHtml(serviceType) : null;
-    const safeServiceCategory = serviceCategory ? escapeHtml(serviceCategory) : null;
-    const safeBudget = budget ? escapeHtml(budget) : null;
-    const safeTimeline = timeline ? escapeHtml(timeline) : null;
-    const safeRequirements = requirements ? escapeHtml(requirements) : null;
-    const safeBlogTitle = blogTitle ? escapeHtml(blogTitle) : null;
-    const safeBlogUrl = blogUrl ? escapeHtml(blogUrl) : null;
-    const safeComment = comment ? escapeHtml(comment) : null;
-    const safeOriginalComment = originalComment ? escapeHtml(originalComment) : null;
-    const safeReplyContent = replyContent ? escapeHtml(replyContent) : null;
-
-    console.log(`Processing ${type || 'contact'} form from: ${safeName} (${safeEmail})`);
-
-    // Handle newsletter subscription
+    // ─── Newsletter ───
     if (type === "newsletter") {
-      const newsletterHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #ff9800, #ff5722); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">📰 New Newsletter Subscriber!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">New Subscription</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
-                <td style="padding: 10px 0; color: #333;">${safeName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
-                <td style="padding: 10px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a></td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Subscribed:</td>
-                <td style="padding: 10px 0; color: #333;">${new Date().toLocaleString()}</td>
-              </tr>
-            </table>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">This subscriber signed up through your portfolio website.</p>
-          </div>
-        </div>
-      `;
+      // Notify admin
+      await sendEmail(OWNER_EMAIL, `📰 New Subscriber: ${sN}`, buildEmail({
+        emoji: "📰", headline: "New Newsletter Subscriber!",
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        footerText: "Subscriber signed up through your portfolio.",
+      }), d.email);
 
-      // Try to send notification email to owner (non-blocking)
+      // Get unsubscribe token
+      let unsub = "";
       try {
-        const response = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "Portfolio Newsletter <onboarding@resend.dev>",
-            to: [OWNER_EMAIL],
-            reply_to: email,
-            subject: `📰 New Newsletter Subscriber: ${safeName}`,
-            html: newsletterHtml,
-          }),
-        });
+        const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+        const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/newsletter_subscribers?email=eq.${encodeURIComponent(d.email)}&select=unsubscribe_token`, { headers: { apikey: SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}` } });
+        const data = await r.json();
+        if (data?.[0]) unsub = data[0].unsubscribe_token;
+      } catch (e) { console.error("Token fetch error:", e); }
 
-        if (!response.ok) {
-          const error = await response.text();
-          console.warn("Resend API warning (notification):", error);
-          // Don't throw - continue with subscription flow
-        }
-      } catch (emailError) {
-        console.warn("Email notification failed (non-critical):", emailError);
-        // Don't throw - continue with subscription flow
-      }
+      // Welcome email to subscriber
+      await sendEmail(d.email, "🎉 Welcome to ArtTech Engine Newsletter!", buildEmail({
+        emoji: "🎉", headline: "Welcome to the Newsletter!",
+        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
+        <p style="color:#374151;font-size:16px;line-height:1.7;">Thank you for subscribing! You'll receive updates about:</p>
+        <ul style="color:#374151;line-height:2;font-size:15px;">
+          <li>🚀 New projects and case studies</li><li>📝 Latest blog posts</li><li>💡 Industry insights</li><li>🎯 Exclusive content</li>
+        </ul>`,
+        ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+        unsubscribeUrl: `${SITE_URL}/unsubscribe?token=${unsub}`,
+      }));
 
-      // Generate unsubscribe token and update subscriber
-      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
-      
-      // Fetch the unsubscribe token for this subscriber
-      let unsubscribeToken = "";
-      try {
-        const tokenResponse = await fetch(
-          `${SUPABASE_URL}/rest/v1/newsletter_subscribers?email=eq.${encodeURIComponent(email)}&select=unsubscribe_token`,
-          {
-            headers: {
-              "apikey": SUPABASE_SERVICE_ROLE_KEY!,
-              "Authorization": `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-            },
-          }
-        );
-        const tokenData = await tokenResponse.json();
-        if (tokenData && tokenData[0]) {
-          unsubscribeToken = tokenData[0].unsubscribe_token;
-        }
-      } catch (e) {
-        console.error("Failed to fetch unsubscribe token:", e);
-      }
-
-      const unsubscribeUrl = `${SITE_URL}/unsubscribe?token=${unsubscribeToken}`;
-      const blogUrl = `${SITE_URL}/#blog`;
-
-      // Send welcome email to subscriber
-      const welcomeHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🎉 Welcome to ArtTech Engine Newsletter!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Thank you for subscribing to my newsletter! You'll now receive updates about:
-            </p>
-            <ul style="color: #555; line-height: 1.8;">
-              <li>🚀 New projects and case studies</li>
-              <li>📝 Latest blog posts and tutorials</li>
-              <li>💡 Industry insights and tips</li>
-              <li>🎯 Exclusive content and early access</li>
-            </ul>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Stay tuned for exciting updates!
-            </p>
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
-              <h3 style="color: #333; margin-bottom: 15px;">Quick Links</h3>
-              <table style="width: 100%;">
-                <tr>
-                  <td style="padding: 10px 0;">
-                    <a href="${blogUrl}" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">📖 Read Our Blog</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0;">
-                    <a href="${SITE_URL}" style="display: inline-block; background: #0066cc; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">🏠 Visit Website</a>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0 0 10px 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
-            <p style="margin: 0;">
-              <a href="${unsubscribeUrl}" style="color: #999; text-decoration: underline;">Unsubscribe from this newsletter</a>
-            </p>
-          </div>
-        </div>
-      `;
-
-      // Try to send welcome email to subscriber (non-blocking)
-      try {
-        const welcomeResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "ArtTech Engine Newsletter <onboarding@resend.dev>",
-            to: [email],
-            subject: `🎉 Welcome to ArtTech Engine Newsletter!`,
-            html: welcomeHtml,
-          }),
-        });
-
-        if (!welcomeResponse.ok) {
-          const error = await welcomeResponse.text();
-          console.warn("Resend API warning (welcome email):", error);
-          // Don't throw - subscription was still successful
-        }
-      } catch (emailError) {
-        console.warn("Welcome email failed (non-critical):", emailError);
-        // Don't throw - subscription was still successful
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, message: "Successfully subscribed to newsletter!" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
-    // Handle blog like notification
+    // ─── Blog Like ───
     if (type === "blog_like") {
-      const likeHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #e91e63, #9c27b0); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">❤️ Someone Liked Your Blog Post!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">New Like Notification</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">From:</td>
-                <td style="padding: 10px 0; color: #333;">${safeName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
-                <td style="padding: 10px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a></td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Article:</td>
-                <td style="padding: 10px 0; color: #333;">${safeBlogTitle}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Link:</td>
-                <td style="padding: 10px 0; color: #333;"><a href="${safeBlogUrl}" style="color: #0066cc;">View Article</a></td>
-              </tr>
-            </table>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">This notification was sent from your portfolio website.</p>
-          </div>
-        </div>
-      `;
-
-      // Try to send like notification (non-blocking)
-      try {
-        const response = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "Portfolio Blog <onboarding@resend.dev>",
-            to: [OWNER_EMAIL],
-            reply_to: email,
-            subject: `❤️ New Like: ${safeBlogTitle}`,
-            html: likeHtml,
-          }),
-        });
-
-        if (!response.ok) {
-          const error = await response.text();
-          console.warn("Resend API warning (like notification):", error);
-        }
-      } catch (emailError) {
-        console.warn("Like notification failed (non-critical):", emailError);
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, message: "Like recorded successfully!" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+      const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
+      await sendEmail(OWNER_EMAIL, `❤️ New Like: ${sT}`, buildEmail({
+        emoji: "❤️", headline: "Someone Liked Your Post!",
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Article", sT)}</table>`,
+        ctaUrl: d.blogUrl, ctaLabel: "View Article",
+      }), d.email);
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
-    // Handle blog comment notification
+    // ─── Blog Comment ───
     if (type === "blog_comment") {
-      const commentHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #2196f3, #00bcd4); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">💬 New Comment on Your Blog!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">New Comment Notification</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">From:</td>
-                <td style="padding: 10px 0; color: #333;">${safeName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
-                <td style="padding: 10px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a></td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Article:</td>
-                <td style="padding: 10px 0; color: #333;">${safeBlogTitle}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Link:</td>
-                <td style="padding: 10px 0; color: #333;"><a href="${safeBlogUrl}" style="color: #0066cc;">View Article</a></td>
-              </tr>
-            </table>
-            <h3 style="color: #333; margin-top: 20px;">Comment:</h3>
-            <div style="background: #ffffff; padding: 15px; border-left: 4px solid #2196f3; margin-top: 10px;">
-              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeComment}</p>
-            </div>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">Reply directly to this email to respond to ${safeName}.</p>
-          </div>
-        </div>
-      `;
-
-      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
-
-      // Try to send comment notification to admin (non-blocking)
-      try {
-        const response = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "Portfolio Blog <onboarding@resend.dev>",
-            to: [OWNER_EMAIL],
-            reply_to: email,
-            subject: `💬 New Comment: ${safeBlogTitle}`,
-            html: commentHtml,
-          }),
-        });
-
-        if (!response.ok) {
-          const error = await response.text();
-          console.warn("Resend API warning (comment notification):", error);
-        } else {
-          console.log("Comment notification sent to admin:", OWNER_EMAIL);
-        }
-      } catch (emailError) {
-        console.warn("Comment notification failed (non-critical):", emailError);
-      }
-
-      // Send thank-you/confirmation email to the commenter
-      const commenterConfirmHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">💬 Thanks for Your Comment!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Thank you for commenting on the blog post: <strong>${safeBlogTitle}</strong>
-            </p>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Your comment has been received and is now visible on the blog. We appreciate you taking the time to share your thoughts!
-            </p>
-            
-            <div style="background: #ffffff; padding: 15px; border-left: 4px solid #2196f3; margin: 20px 0;">
-              <p style="color: #666; margin: 0 0 5px 0; font-size: 12px;">Your comment:</p>
-              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeComment}</p>
-            </div>
-            
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              If the author replies to your comment, you'll receive an email notification.
-            </p>
-            
-            <div style="text-align: center; margin-top: 30px;">
-              <a href="${SITE_URL}/#blog" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">📖 View Blog</a>
-            </div>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">Thank you for engaging with our blog!</p>
-            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
-          </div>
-        </div>
-      `;
-
-      // Try to send confirmation email to commenter (non-blocking)
-      try {
-        const confirmResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "ArtTech Engine Blog <onboarding@resend.dev>",
-            to: [email],
-            subject: `💬 Thanks for commenting on: ${safeBlogTitle}`,
-            html: commenterConfirmHtml,
-          }),
-        });
-
-        if (!confirmResponse.ok) {
-          const error = await confirmResponse.text();
-          console.warn("Resend API warning (comment confirmation):", error);
-        } else {
-          console.log("Comment confirmation sent to:", email);
-        }
-      } catch (emailError) {
-        console.warn("Comment confirmation email failed (non-critical):", emailError);
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, message: "Comment submitted successfully!" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+      const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
+      const sC = d.comment ? escapeHtml(d.comment) : "";
+      // Admin notification
+      await sendEmail(OWNER_EMAIL, `💬 New Comment: ${sT}`, buildEmail({
+        emoji: "💬", headline: "New Comment on Your Blog!",
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Article", sT)}</table>
+        <div style="background:#f8f9fa;border-left:4px solid #2563eb;padding:16px;margin:16px 0;"><p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p></div>`,
+        ctaUrl: d.blogUrl, ctaLabel: "View Article",
+      }), d.email);
+      // Commenter confirmation
+      await sendEmail(d.email, `💬 Thanks for commenting on: ${sT}`, buildEmail({
+        emoji: "💬", headline: "Thanks for Your Comment!",
+        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
+        <p style="color:#374151;font-size:16px;line-height:1.7;">Your comment on <strong>${sT}</strong> has been received and is now visible.</p>
+        <div style="background:#f8f9fa;border-left:4px solid #2563eb;padding:16px;margin:16px 0;">
+          <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your comment:</p>
+          <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p>
+        </div>`,
+        ctaUrl: d.blogUrl, ctaLabel: "View Blog",
+      }));
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
-    // Handle comment reply notification (sent to the commenter)
+    // ─── Comment Reply ───
     if (type === "comment_reply") {
-      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
-      
-      const replyHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #4CAF50, #45a049); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">💬 You Got a Reply!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Dharaneedharan SS has replied to your comment on the blog post: <strong>${safeBlogTitle}</strong>
-            </p>
-            
-            <div style="background: #ffffff; padding: 15px; border-left: 4px solid #ccc; margin: 20px 0;">
-              <p style="color: #666; margin: 0 0 5px 0; font-size: 12px;">Your comment:</p>
-              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeOriginalComment}</p>
-            </div>
-            
-            <div style="background: #e8f5e9; padding: 15px; border-left: 4px solid #4CAF50; margin: 20px 0;">
-              <p style="color: #2e7d32; margin: 0 0 5px 0; font-size: 12px; font-weight: bold;">Reply from Dharaneedharan SS:</p>
-              <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeReplyContent}</p>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-              <a href="${SITE_URL}/#blog" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">📖 View Blog</a>
-            </div>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">Thank you for engaging with our blog!</p>
-            <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
-          </div>
+      const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
+      const sOC = d.originalComment ? escapeHtml(d.originalComment) : "";
+      const sRC = d.replyContent ? escapeHtml(d.replyContent) : "";
+      await sendEmail(d.email, `💬 Reply to your comment on: ${sT}`, buildEmail({
+        emoji: "💬", headline: "You Got a Reply!",
+        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
+        <p style="color:#374151;font-size:16px;line-height:1.7;">Dharaneedharan SS replied to your comment on <strong>${sT}</strong>.</p>
+        <div style="background:#f8f9fa;border-left:4px solid #d1d5db;padding:16px;margin:16px 0;">
+          <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your comment:</p>
+          <p style="margin:0;color:#374151;line-height:1.6;white-space:pre-wrap;">${sOC}</p>
         </div>
-      `;
-
-      // Send reply notification to commenter
-      try {
-        const response = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "ArtTech Engine Blog <onboarding@resend.dev>",
-            to: [email],
-            subject: `💬 Reply to your comment on: ${safeBlogTitle}`,
-            html: replyHtml,
-          }),
-        });
-
-        if (!response.ok) {
-          const error = await response.text();
-          console.warn("Resend API warning (reply notification):", error);
-        } else {
-          console.log("Reply notification sent to:", email);
-        }
-      } catch (emailError) {
-        console.warn("Reply notification failed (non-critical):", emailError);
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, message: "Reply notification sent!" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+        <div style="background:#ecfdf5;border-left:4px solid #10b981;padding:16px;margin:16px 0;">
+          <p style="margin:0 0 4px;color:#059669;font-size:12px;font-weight:600;">Reply from Dharaneedharan SS:</p>
+          <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sRC}</p>
+        </div>`,
+        ctaUrl: `${SITE_URL}/blog`, ctaLabel: "View Blog",
+      }));
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
-    // Handle guest visitor welcome
+    // ─── Guest Welcome ───
     if (type === "guest_welcome") {
-      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
-      
-      // Send notification to admin about new guest visitor
-      const guestNotifyHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #9c27b0, #673ab7); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">👤 New Guest Visitor!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">New Guest Registration</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
-                <td style="padding: 10px 0; color: #333;">${safeName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
-                <td style="padding: 10px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a></td>
-              </tr>
-              <tr>
-                <td style="padding: 10px 0; color: #666; font-weight: bold;">Visited:</td>
-                <td style="padding: 10px 0; color: #333;">${new Date().toLocaleString()}</td>
-              </tr>
-            </table>
-            <p style="color: #666; margin-top: 15px; font-style: italic;">
-              Note: Guest visitors can view all content except the Services page.
-            </p>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">This visitor registered as a guest on your portfolio website.</p>
-          </div>
-        </div>
-      `;
-
-      // Try to send notification to admin (non-blocking)
-      try {
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "Portfolio Guest <onboarding@resend.dev>",
-            to: [OWNER_EMAIL],
-            reply_to: email,
-            subject: `👤 New Guest Visitor: ${safeName}`,
-            html: guestNotifyHtml,
-          }),
-        });
-      } catch (emailError) {
-        console.warn("Guest notification failed (non-critical):", emailError);
-      }
-
-      // Send welcome email to guest
-      const guestWelcomeHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">👋 Welcome to My Portfolio!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}!</h2>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Thank you for visiting my portfolio! As a guest, you can explore:
-            </p>
-            <ul style="color: #555; line-height: 1.8;">
-              <li>📖 Blog posts and articles</li>
-              <li>💼 Projects and case studies</li>
-              <li>🎨 Gallery and testimonials</li>
-              <li>📧 Contact information</li>
-            </ul>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              <strong>Want full access?</strong> Create an account to unlock the Services page and more features!
-            </p>
-            <div style="text-align: center; margin-top: 30px;">
-              <a href="${SITE_URL}" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">🏠 Visit Portfolio</a>
-            </div>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
-          </div>
-        </div>
-      `;
-
-      // Try to send welcome email to guest (non-blocking)
-      try {
-        await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "ArtTech Engine Portfolio <onboarding@resend.dev>",
-            to: [email],
-            subject: `👋 Welcome to Dharaneedharan's Portfolio!`,
-            html: guestWelcomeHtml,
-          }),
-        });
-      } catch (emailError) {
-        console.warn("Guest welcome email failed (non-critical):", emailError);
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, message: "Guest registration successful!" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+      await sendEmail(OWNER_EMAIL, `👤 New Guest: ${sN}`, buildEmail({
+        emoji: "👤", headline: "New Guest Visitor!",
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+      }), d.email);
+      await sendEmail(d.email, "👋 Welcome to My Portfolio!", buildEmail({
+        emoji: "👋", headline: "Welcome!",
+        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
+        <p style="color:#374151;font-size:16px;line-height:1.7;">Thank you for visiting! As a guest you can explore:</p>
+        <ul style="color:#374151;line-height:2;font-size:15px;"><li>📖 Blog posts</li><li>💼 Projects</li><li>🎨 Gallery</li><li>📧 Contact</li></ul>`,
+        ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+      }));
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
-    // Handle user onboarding (simple name + email submission)
+    // ─── User Onboarding ───
     if (type === "user_onboarding") {
-      const SITE_URL = "https://id-preview--874a86dd-9d1d-452a-9c07-33267b933151.lovable.app";
-      
-      // Send notification to admin about new user login
-      const adminNotifyHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #2196f3, #1976d2); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🆕 New User Login</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">New User Registration</h2>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 12px 0; color: #666; font-weight: bold; width: 100px;">Name:</td>
-                <td style="padding: 12px 0; color: #333; font-size: 16px;">${safeName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 12px 0; color: #666; font-weight: bold;">Email:</td>
-                <td style="padding: 12px 0; color: #333;"><a href="mailto:${safeEmail}" style="color: #0066cc; font-size: 16px;">${safeEmail}</a></td>
-              </tr>
-              <tr>
-                <td style="padding: 12px 0; color: #666; font-weight: bold;">Time:</td>
-                <td style="padding: 12px 0; color: #333;">${new Date().toLocaleString()}</td>
-              </tr>
-            </table>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">New user registered via the onboarding page.</p>
-          </div>
-        </div>
-      `;
-
-      // Send admin notification
-      try {
-        const adminResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "ArtTech Engine Onboarding <onboarding@resend.dev>",
-            to: [OWNER_EMAIL],
-            reply_to: email,
-            subject: `🆕 New User Login: ${safeName}`,
-            html: adminNotifyHtml,
-          }),
-        });
-        
-        if (!adminResponse.ok) {
-          const error = await adminResponse.text();
-          console.warn("Admin notification failed:", error);
-        } else {
-          console.log("Admin notification sent successfully");
-        }
-      } catch (emailError) {
-        console.warn("Admin notification failed (non-critical):", emailError);
-      }
-
-      // Send welcome email to user
-      const userWelcomeHtml = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-          <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">🎉 Welcome!</h1>
-          </div>
-          <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-            <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Thanks for signing up! We're excited to have you here.
-            </p>
-            <p style="color: #555; line-height: 1.8; font-size: 16px;">
-              Feel free to explore my portfolio and discover:
-            </p>
-            <ul style="color: #555; line-height: 1.8;">
-              <li>🚀 Innovative projects and case studies</li>
-              <li>📝 Insightful blog posts</li>
-              <li>💼 Professional services</li>
-              <li>🎨 Creative work gallery</li>
-            </ul>
-            <div style="text-align: center; margin-top: 30px;">
-              <a href="${SITE_URL}" style="display: inline-block; background: linear-gradient(135deg, #000000, #333333); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">🏠 Visit Portfolio</a>
-            </div>
-          </div>
-          <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-            <p style="margin: 0;">© ${new Date().getFullYear()} Dharaneedharan SS - ArtTech Engine</p>
-          </div>
-        </div>
-      `;
-
-      // Send welcome email to user
-      try {
-        const userResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${RESEND_API_KEY}`,
-          },
-          body: JSON.stringify({
-            from: "ArtTech Engine <onboarding@resend.dev>",
-            to: [email],
-            subject: "🎉 Welcome!",
-            html: userWelcomeHtml,
-          }),
-        });
-        
-        if (!userResponse.ok) {
-          const error = await userResponse.text();
-          console.warn("User welcome email failed:", error);
-        } else {
-          console.log("User welcome email sent to:", email);
-        }
-      } catch (emailError) {
-        console.warn("User welcome email failed (non-critical):", emailError);
-      }
-
-      return new Response(
-        JSON.stringify({ success: true, message: "User onboarding successful!" }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+      await sendEmail(OWNER_EMAIL, `🆕 New User: ${sN}`, buildEmail({
+        emoji: "🆕", headline: "New User Login",
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+      }), d.email);
+      await sendEmail(d.email, "🎉 Welcome!", buildEmail({
+        emoji: "🎉", headline: "Welcome!",
+        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
+        <p style="color:#374151;font-size:16px;line-height:1.7;">Thanks for signing up! Explore:</p>
+        <ul style="color:#374151;line-height:2;font-size:15px;"><li>🚀 Projects</li><li>📝 Blog</li><li>💼 Services</li><li>🎨 Gallery</li></ul>`,
+        ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+      }));
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
-    // Build email content based on whether it's a service request or general contact
-    const isServiceRequest = safeServiceType && safeServiceCategory;
-    
-    let emailSubject = isServiceRequest 
-      ? `Service Request: ${safeServiceType} - ${safeServiceCategory}`
-      : `Portfolio Contact: ${safeSubject}`;
-    
-    let emailHtml = `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-        <div style="background: linear-gradient(135deg, #000000, #333333); padding: 30px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px;">
-            ${isServiceRequest ? '🚀 New Service Request' : '📬 New Contact Message'}
-          </h1>
-        </div>
-        
-        <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-          <h2 style="color: #333; margin-top: 0; border-bottom: 2px solid #000; padding-bottom: 10px;">
-            Contact Information
-          </h2>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Name:</td>
-              <td style="padding: 10px 0; color: #333;">${safeName}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold;">Email:</td>
-              <td style="padding: 10px 0; color: #333;">
-                <a href="mailto:${safeEmail}" style="color: #0066cc;">${safeEmail}</a>
-              </td>
-            </tr>
-          </table>
-    `;
+    // ─── Contact / Service ───
+    const isService = d.serviceType && d.serviceCategory;
+    const svcType = d.serviceType ? escapeHtml(d.serviceType) : "";
+    const svcCat = d.serviceCategory ? escapeHtml(d.serviceCategory) : "";
+    const sBudget = d.budget ? escapeHtml(d.budget) : "";
+    const sTimeline = d.timeline ? escapeHtml(d.timeline) : "";
+    const sReqs = d.requirements ? escapeHtml(d.requirements) : "";
 
-    if (isServiceRequest) {
-      emailHtml += `
-          <h2 style="color: #333; margin-top: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
-            Service Details
-          </h2>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Category:</td>
-              <td style="padding: 10px 0; color: #333;">${safeServiceCategory}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold;">Service:</td>
-              <td style="padding: 10px 0; color: #333;">${safeServiceType}</td>
-            </tr>
-            ${safeBudget ? `
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold;">Budget:</td>
-              <td style="padding: 10px 0; color: #333;">${safeBudget}</td>
-            </tr>
-            ` : ''}
-            ${safeTimeline ? `
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold;">Timeline:</td>
-              <td style="padding: 10px 0; color: #333;">${safeTimeline}</td>
-            </tr>
-            ` : ''}
-          </table>
-          
-          ${safeRequirements ? `
-          <h2 style="color: #333; margin-top: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
-            Project Requirements
-          </h2>
-          <div style="background: #ffffff; padding: 15px; border: 1px solid #ddd; border-radius: 4px;">
-            <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeRequirements}</p>
-          </div>
-          ` : ''}
-      `;
+    let bodyRows = `${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}`;
+    if (isService) {
+      bodyRows += `${infoRow("Category", svcCat)}${infoRow("Service", svcType)}`;
+      if (sBudget) bodyRows += infoRow("Budget", sBudget);
+      if (sTimeline) bodyRows += infoRow("Timeline", sTimeline);
     } else {
-      emailHtml += `
-          <h2 style="color: #333; margin-top: 30px; border-bottom: 2px solid #000; padding-bottom: 10px;">
-            Message Details
-          </h2>
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 10px 0; color: #666; font-weight: bold; width: 120px;">Subject:</td>
-              <td style="padding: 10px 0; color: #333;">${safeSubject}</td>
-            </tr>
-          </table>
-          <div style="background: #ffffff; padding: 15px; border: 1px solid #ddd; border-radius: 4px; margin-top: 15px;">
-            <p style="color: #333; line-height: 1.6; margin: 0; white-space: pre-wrap;">${safeMessage}</p>
-          </div>
-      `;
+      bodyRows += infoRow("Subject", sS);
     }
 
-    emailHtml += `
-        </div>
-        
-        <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-          <p style="margin: 0;">This email was sent from your portfolio website contact form.</p>
-          <p style="margin: 5px 0 0 0;">Reply directly to this email to respond to ${safeName}.</p>
-        </div>
+    const messageBlock = `<div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;">
+      <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${isService && sReqs ? sReqs : sM}</p></div>`;
+
+    // Admin notification
+    await sendEmail(OWNER_EMAIL, isService ? `🚀 Service Request: ${svcType}` : `📬 Contact: ${sS}`, buildEmail({
+      emoji: isService ? "🚀" : "📬", headline: isService ? "New Service Request" : "New Contact Message",
+      body: `<table style="width:100%;border-collapse:collapse;">${bodyRows}</table>${messageBlock}`,
+      footerText: `Reply directly to respond to ${sN}.`,
+    }), d.email);
+
+    // User confirmation
+    await sendEmail(d.email, "✅ Message Received — ArtTech Engine", buildEmail({
+      emoji: "✅", headline: "Thank You for Reaching Out!",
+      body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
+      <p style="color:#374151;font-size:16px;line-height:1.7;">I've received your message and will respond within <strong>24 hours</strong>.</p>
+      <div style="background:#ecfdf5;padding:20px;border-radius:8px;margin:16px 0;">
+        <h3 style="color:#059669;margin:0 0 8px;">What's Next?</h3>
+        <ul style="color:#374151;line-height:1.8;margin:0;"><li>I'll review your message</li><li>Personalized response within 24h</li><li>We can schedule a call if needed</li></ul>
       </div>
-    `;
+      <div style="background:#f8f9fa;border-left:4px solid #10b981;padding:16px;margin:16px 0;">
+        <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your message:</p>
+        <p style="margin:0;color:#374151;font-size:14px;">${sM.substring(0, 200)}${sM.length > 200 ? '...' : ''}</p>
+      </div>`,
+      ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+      footerText: "📧 tharaneetharanss@gmail.com | 📱 +91 8870086023",
+    }));
 
-    // Send notification email to owner (non-blocking for trial accounts)
-    let emailSent = false;
-    try {
-      const notificationResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "Portfolio Contact <onboarding@resend.dev>",
-          to: [OWNER_EMAIL],
-          reply_to: email,
-          subject: emailSubject,
-          html: emailHtml,
-        }),
-      });
-
-      if (!notificationResponse.ok) {
-        const error = await notificationResponse.text();
-        console.warn("Resend API warning (contact notification):", error);
-      } else {
-        const result = await notificationResponse.json();
-        console.log("Email sent successfully to owner:", result);
-        emailSent = true;
-      }
-    } catch (emailError) {
-      console.warn("Contact notification failed (non-critical):", emailError);
-    }
-
-    // Send thank-you confirmation email to the user
-    const thankYouHtml = `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #ffffff;">
-        <div style="background: linear-gradient(135deg, #4CAF50, #45a049); padding: 30px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 24px;">✅ Thank You for Reaching Out!</h1>
-        </div>
-        
-        <div style="padding: 30px; background: #f8f9fa; border: 1px solid #e9ecef;">
-          <h2 style="color: #333; margin-top: 0;">Hi ${safeName}! 👋</h2>
-          
-          <p style="color: #555; line-height: 1.8; font-size: 16px;">
-            Thank you for contacting me through my portfolio website. I have received your message and will get back to you within <strong>24 hours</strong>.
-          </p>
-          
-          <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #2e7d32; margin-top: 0;">What's Next?</h3>
-            <ul style="color: #555; line-height: 1.8;">
-              <li>I'll review your message carefully</li>
-              <li>You'll receive a personalized response within 24 hours</li>
-              <li>We can schedule a call to discuss your project in detail</li>
-            </ul>
-          </div>
-          
-          <h3 style="color: #333; margin-top: 25px;">Your Message Summary:</h3>
-          <div style="background: #ffffff; padding: 15px; border-left: 4px solid #4CAF50; margin: 15px 0;">
-            <p style="color: #666; margin: 5px 0;"><strong>Subject:</strong> ${safeSubject}</p>
-            <p style="color: #666; margin: 5px 0; white-space: pre-wrap;"><strong>Message:</strong> ${safeMessage.substring(0, 200)}${safeMessage.length > 200 ? '...' : ''}</p>
-          </div>
-          
-          <p style="color: #555; line-height: 1.8; font-size: 16px;">
-            In the meantime, feel free to explore my portfolio or connect with me on social media.
-          </p>
-          
-          <div style="text-align: center; margin-top: 30px;">
-            <a href="https://www.linkedin.com/in/dharaneedharan-ss-70941a211/" style="display: inline-block; padding: 12px 25px; background: #0077b5; color: white; text-decoration: none; border-radius: 5px; margin: 5px;">LinkedIn</a>
-            <a href="https://github.com/SSDHARANEEDHARAN" style="display: inline-block; padding: 12px 25px; background: #333; color: white; text-decoration: none; border-radius: 5px; margin: 5px;">GitHub</a>
-          </div>
-        </div>
-        
-        <div style="padding: 20px; text-align: center; background: #333; color: #999; font-size: 12px;">
-          <p style="margin: 0;">Best regards,</p>
-          <p style="margin: 5px 0; color: #fff; font-weight: bold;">Tharaneetharan SS</p>
-          <p style="margin: 5px 0;">Full Stack Developer & CAD Engineer</p>
-          <p style="margin: 10px 0 0 0; color: #666;">📧 tharaneetharanss@gmail.com | 📱 +91 8870086023</p>
-        </div>
-      </div>
-    `;
-
-    // Send confirmation email to user (non-blocking)
-    try {
-      const confirmationResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: "Tharaneetharan SS <onboarding@resend.dev>",
-          to: [email],
-          subject: `Thank you for contacting me, ${safeName}! ✅`,
-          html: thankYouHtml,
-        }),
-      });
-
-      if (confirmationResponse.ok) {
-        console.log("Confirmation email sent to user:", email);
-      } else {
-        const error = await confirmationResponse.text();
-        console.warn("Resend API warning (confirmation email):", error);
-      }
-    } catch (emailError) {
-      console.warn("Confirmation email failed (non-critical):", emailError);
-    }
-
-    return new Response(
-      JSON.stringify({ success: true, message: "Your message has been sent successfully!" }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
-  } catch (error: any) {
-    console.error("Error in send-contact-email function:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to send message. Please try again later." }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
+    return new Response(JSON.stringify({ success: true, emailSent: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
+  } catch (error) {
+    console.error("send-contact-email error:", error);
+    return new Response(JSON.stringify({ error: "Failed to process request" }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
   }
 };
 
