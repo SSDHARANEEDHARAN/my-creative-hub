@@ -468,6 +468,87 @@ const SubscribersPage = () => {
                 Showing {filteredSubscribers.length} of {subscribers.length} subscribers
               </p>
             )}
+
+            {/* Newsletter Activity Panel */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="mt-8"
+            >
+              <h2 className="text-xl font-bold text-foreground mb-4">Recent Activity</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Recent Subscriptions */}
+                <div className="bg-card border border-border rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Users className="w-4 h-4 text-primary" />
+                    Recent Subscriptions
+                  </h3>
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    {subscribers.slice(0, 8).map((sub) => (
+                      <div key={sub.id} className="flex justify-between items-center text-sm">
+                        <span className="text-foreground truncate max-w-[60%]">{sub.email}</span>
+                        <span className="text-muted-foreground text-xs">
+                          {new Date(sub.subscribed_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                        </span>
+                      </div>
+                    ))}
+                    {subscribers.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No subscriptions yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Source Breakdown */}
+                <div className="bg-card border border-border rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-primary" />
+                    Subscription Sources
+                  </h3>
+                  <div className="space-y-2">
+                    {Object.entries(
+                      subscribers.reduce<Record<string, number>>((acc, sub) => {
+                        const src = sub.source || "unknown";
+                        acc[src] = (acc[src] || 0) + 1;
+                        return acc;
+                      }, {})
+                    ).map(([source, count]) => (
+                      <div key={source} className="flex justify-between items-center text-sm">
+                        <Badge variant="outline" className="capitalize">{source}</Badge>
+                        <span className="font-medium text-foreground">{count}</span>
+                      </div>
+                    ))}
+                    {subscribers.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No data yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status Summary */}
+                <div className="bg-card border border-border rounded-xl p-6">
+                  <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-primary" />
+                    Delivery Summary
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Active & Reachable</span>
+                      <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20">{activeSubscribers.length}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Unsubscribed</span>
+                      <Badge variant="secondary">{subscribers.filter((s) => !s.is_active).length}</Badge>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-muted-foreground">Delivery Rate</span>
+                      <span className="font-medium text-foreground">
+                        {subscribers.length > 0 ? Math.round((activeSubscribers.length / subscribers.length) * 100) : 0}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </main>
 

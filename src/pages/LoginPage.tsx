@@ -231,6 +231,25 @@ const LoginPage = () => {
                     <p className="text-muted-foreground mt-2">Access your account</p>
                   </div>
 
+                  {/* OAuth Error Banner */}
+                  {oauthError && (
+                    <div className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+                      <p className="text-sm font-medium text-destructive mb-3">
+                        Authentication failed. Please try again.
+                      </p>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="flex-1 h-9 text-xs" onClick={handleGoogleLogin} disabled={isGoogleLoading}>
+                          {isGoogleLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
+                          Retry Google
+                        </Button>
+                        <Button size="sm" variant="outline" className="flex-1 h-9 text-xs" onClick={handleAppleLogin} disabled={isAppleLoading}>
+                          {isAppleLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
+                          Retry Apple
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* OAuth Buttons */}
                   <div className="space-y-3 mb-4">
                     <Button type="button" variant="outline" className="w-full h-12" disabled={isGoogleLoading || isAppleLoading} onClick={handleGoogleLogin}>
