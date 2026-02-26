@@ -9,23 +9,32 @@ const corsHeaders = {
 
 const requestSchema = z.object({ email: z.string().email().max(255) });
 
-// Premium email template
+// SVG AE Logo
+const AE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="10" fill="#0a0a0a"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="-1" fill="#ffffff">AE</text></svg>`;
+
+const AE_LOGO_HTML = `
+<!--[if !mso]><!-->
+<img src="data:image/svg+xml;base64,${btoa(AE_LOGO_SVG)}" alt="ArtTech Engine" width="48" height="48" style="display:block;margin:0 auto 14px;border:0;" />
+<!--<![endif]-->`;
+
 const buildEmailHtml = (opts: { emoji: string; headline: string; body: string }) => `
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#eaeaea;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${opts.headline}</title>
+</head>
+<body style="margin:0;padding:0;background:#eaeaea;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
 <div style="max-width:620px;margin:24px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-  <div style="height:4px;background:linear-gradient(90deg,#111111,#444444,#111111);"></div>
+  <div style="height:4px;background:linear-gradient(90deg,#0a0a0a 0%,#333333 50%,#0a0a0a 100%);"></div>
   <div style="padding:36px 32px 28px;text-align:center;border-bottom:1px solid #f0f0f0;">
-    <div style="display:inline-block;width:48px;height:48px;background:#111;border-radius:10px;line-height:48px;font-size:20px;color:#fff;font-weight:800;letter-spacing:-1px;margin-bottom:14px;">AE</div>
+    ${AE_LOGO_HTML}
     <p style="margin:0 0 6px;font-size:11px;color:#999;letter-spacing:3px;text-transform:uppercase;font-weight:600;">ArtTech Engine</p>
-    <h1 style="margin:0;font-size:20px;color:#111;font-weight:700;line-height:1.3;">${opts.emoji} ${opts.headline}</h1>
+    <h1 style="margin:0;font-size:20px;color:#0a0a0a;font-weight:700;line-height:1.3;">${opts.emoji} ${opts.headline}</h1>
   </div>
   <div style="padding:28px 32px 32px;">
     ${opts.body}
   </div>
   <div style="padding:20px 32px;text-align:center;background:#fafafa;border-top:1px solid #f0f0f0;">
-    <p style="margin:0 0 4px;font-size:11px;color:#aaa;letter-spacing:1px;">© ${new Date().getFullYear()} DHARANEEDHARAN SS</p>
+    <p style="margin:0 0 4px;font-size:11px;color:#aaa;letter-spacing:1px;">© ${new Date().getFullYear()} DHARANEEDHARAN SS · ArtTech Engine</p>
     <p style="margin:0;color:#999;font-size:11px;">This is an automated security email. Do not share this code.</p>
   </div>
 </div>
@@ -40,7 +49,6 @@ Deno.serve(async (req) => {
 
     const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    // Check if email exists
     const { data: users, error: userError } = await supabaseAdmin.auth.admin.listUsers();
     if (userError) throw userError;
 
@@ -49,14 +57,12 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "No account found with this email" }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Rate limit
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
     const { count } = await supabaseAdmin.from("otp_codes").select("*", { count: "exact", head: true }).eq("email", email.toLowerCase()).gte("created_at", oneHourAgo);
     if ((count ?? 0) >= 3) {
       return new Response(JSON.stringify({ error: "Too many OTP requests. Try again later." }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // Generate OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
