@@ -3,7 +3,7 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const OWNER_EMAIL = "tharaneetharanss@gmail.com";
-const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.lovable.app";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.vercel.app";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,35 +48,56 @@ const checkRateLimit = (ip: string): { allowed: boolean; retryAfter?: number } =
   return { allowed: true };
 };
 
-// ─── Premium Email Template ───
+// SVG AE Logo (inline, works in all email clients that support SVG)
+const AE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="10" fill="#0a0a0a"/>
+  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="-1" fill="#ffffff">AE</text>
+</svg>`;
+
+// Fallback for email clients that don't support SVG
+const AE_LOGO_HTML = `
+<!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" style="width:48px;height:48px;" arcsize="21%" fillcolor="#0a0a0a" stroke="f">
+  <v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
+    <center style="font-size:20px;font-weight:800;color:#ffffff;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:-1px;">AE</center>
+  </v:textbox>
+</v:roundrect>
+<![endif]-->
+<!--[if !mso]><!-->
+<img src="data:image/svg+xml;base64,${btoa(AE_LOGO_SVG.replace(/\n\s*/g, ''))}" alt="ArtTech Engine" width="48" height="48" style="display:block;margin:0 auto 14px;border:0;" />
+<!--<![endif]-->`;
+
+// ─── Premium Email Template with SVG Logo ───
 const buildEmail = (opts: {
   emoji: string; headline: string; body: string;
   ctaUrl?: string; ctaLabel?: string;
   footerText?: string; unsubscribeUrl?: string;
 }) => `
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#eaeaea;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${opts.headline}</title>
+</head>
+<body style="margin:0;padding:0;background:#eaeaea;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
 <div style="max-width:620px;margin:24px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
   <!-- Accent Bar -->
-  <div style="height:4px;background:linear-gradient(90deg,#111111,#444444,#111111);"></div>
+  <div style="height:4px;background:linear-gradient(90deg,#0a0a0a 0%,#333333 50%,#0a0a0a 100%);"></div>
   <!-- Header -->
   <div style="padding:36px 32px 28px;text-align:center;border-bottom:1px solid #f0f0f0;">
-    <div style="display:inline-block;width:48px;height:48px;background:#111;border-radius:10px;line-height:48px;font-size:20px;color:#fff;font-weight:800;letter-spacing:-1px;margin-bottom:14px;">AE</div>
+    ${AE_LOGO_HTML}
     <p style="margin:0 0 6px;font-size:11px;color:#999;letter-spacing:3px;text-transform:uppercase;font-weight:600;">ArtTech Engine</p>
-    <h1 style="margin:0;font-size:20px;color:#111;font-weight:700;line-height:1.3;">${opts.emoji} ${opts.headline}</h1>
+    <h1 style="margin:0;font-size:20px;color:#0a0a0a;font-weight:700;line-height:1.3;">${opts.emoji} ${opts.headline}</h1>
   </div>
   <!-- Body -->
   <div style="padding:28px 32px 32px;">
     ${opts.body}
     ${opts.ctaUrl ? `
     <div style="text-align:center;margin:32px 0 12px;">
-      <a href="${opts.ctaUrl}" style="display:inline-block;background:#111;color:#fff;padding:13px 36px;text-decoration:none;font-weight:600;font-size:14px;border-radius:8px;letter-spacing:0.5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">${opts.ctaLabel || 'View Now'} →</a>
+      <a href="${opts.ctaUrl}" style="display:inline-block;background:#0a0a0a;color:#ffffff;padding:13px 36px;text-decoration:none;font-weight:600;font-size:14px;border-radius:8px;letter-spacing:0.5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">${opts.ctaLabel || 'View Now'} →</a>
     </div>` : ''}
   </div>
   <!-- Footer -->
   <div style="padding:20px 32px;text-align:center;background:#fafafa;border-top:1px solid #f0f0f0;">
-    <p style="margin:0 0 4px;font-size:11px;color:#aaa;letter-spacing:1px;">© ${new Date().getFullYear()} DHARANEEDHARAN SS</p>
+    <p style="margin:0 0 4px;font-size:11px;color:#aaa;letter-spacing:1px;">© ${new Date().getFullYear()} DHARANEEDHARAN SS · ArtTech Engine</p>
     ${opts.footerText ? `<p style="margin:0 0 4px;font-size:11px;color:#999;">${opts.footerText}</p>` : ''}
     ${opts.unsubscribeUrl ? `<p style="margin:0;"><a href="${opts.unsubscribeUrl}" style="color:#999;text-decoration:underline;font-size:11px;">Unsubscribe</a></p>` : ''}
   </div>
@@ -117,14 +138,12 @@ const handler = async (req: Request): Promise<Response> => {
 
     // ─── Newsletter ───
     if (type === "newsletter") {
-      // Notify admin
       await sendEmail(OWNER_EMAIL, `📰 New Subscriber: ${sN}`, buildEmail({
         emoji: "📰", headline: "New Newsletter Subscriber!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
         footerText: "Subscriber signed up through your portfolio.",
       }), d.email);
 
-      // Get unsubscribe token
       let unsub = "";
       try {
         const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -134,7 +153,6 @@ const handler = async (req: Request): Promise<Response> => {
         if (data?.[0]) unsub = data[0].unsubscribe_token;
       } catch (e) { console.error("Token fetch error:", e); }
 
-      // Welcome email to subscriber
       await sendEmail(d.email, "🎉 Welcome to ArtTech Engine Newsletter!", buildEmail({
         emoji: "🎉", headline: "Welcome to the Newsletter!",
         body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
@@ -154,7 +172,7 @@ const handler = async (req: Request): Promise<Response> => {
       const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
       await sendEmail(OWNER_EMAIL, `❤️ New Like: ${sT}`, buildEmail({
         emoji: "❤️", headline: "Someone Liked Your Post!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Article", sT)}</table>`,
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Article", sT)}</table>`,
         ctaUrl: d.blogUrl, ctaLabel: "View Article",
       }), d.email);
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
@@ -164,19 +182,17 @@ const handler = async (req: Request): Promise<Response> => {
     if (type === "blog_comment") {
       const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
       const sC = d.comment ? escapeHtml(d.comment) : "";
-      // Admin notification
       await sendEmail(OWNER_EMAIL, `💬 New Comment: ${sT}`, buildEmail({
         emoji: "💬", headline: "New Comment on Your Blog!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Article", sT)}</table>
-        <div style="background:#f8f9fa;border-left:4px solid #2563eb;padding:16px;margin:16px 0;"><p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p></div>`,
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Article", sT)}</table>
+        <div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;"><p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p></div>`,
         ctaUrl: d.blogUrl, ctaLabel: "View Article",
       }), d.email);
-      // Commenter confirmation
       await sendEmail(d.email, `💬 Thanks for commenting on: ${sT}`, buildEmail({
         emoji: "💬", headline: "Thanks for Your Comment!",
         body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
         <p style="color:#374151;font-size:16px;line-height:1.7;">Your comment on <strong>${sT}</strong> has been received and is now visible.</p>
-        <div style="background:#f8f9fa;border-left:4px solid #2563eb;padding:16px;margin:16px 0;">
+        <div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
           <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your comment:</p>
           <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p>
         </div>`,
@@ -194,12 +210,12 @@ const handler = async (req: Request): Promise<Response> => {
         emoji: "💬", headline: "You Got a Reply!",
         body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
         <p style="color:#374151;font-size:16px;line-height:1.7;">Dharaneedharan SS replied to your comment on <strong>${sT}</strong>.</p>
-        <div style="background:#f8f9fa;border-left:4px solid #d1d5db;padding:16px;margin:16px 0;">
+        <div style="background:#f8f9fa;border-left:4px solid #d1d5db;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
           <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your comment:</p>
           <p style="margin:0;color:#374151;line-height:1.6;white-space:pre-wrap;">${sOC}</p>
         </div>
-        <div style="background:#ecfdf5;border-left:4px solid #10b981;padding:16px;margin:16px 0;">
-          <p style="margin:0 0 4px;color:#059669;font-size:12px;font-weight:600;">Reply from Dharaneedharan SS:</p>
+        <div style="background:#f0fdf4;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
+          <p style="margin:0 0 4px;color:#0a0a0a;font-size:12px;font-weight:600;">Reply from Dharaneedharan SS:</p>
           <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sRC}</p>
         </div>`,
         ctaUrl: `${SITE_URL}/blog`, ctaLabel: "View Blog",
@@ -211,9 +227,9 @@ const handler = async (req: Request): Promise<Response> => {
     if (type === "guest_welcome") {
       await sendEmail(OWNER_EMAIL, `👤 New Guest: ${sN}`, buildEmail({
         emoji: "👤", headline: "New Guest Visitor!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
       }), d.email);
-      await sendEmail(d.email, "👋 Welcome to My Portfolio!", buildEmail({
+      await sendEmail(d.email, "👋 Welcome to ArtTech Engine!", buildEmail({
         emoji: "👋", headline: "Welcome!",
         body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
         <p style="color:#374151;font-size:16px;line-height:1.7;">Thank you for visiting! As a guest you can explore:</p>
@@ -227,9 +243,9 @@ const handler = async (req: Request): Promise<Response> => {
     if (type === "user_onboarding") {
       await sendEmail(OWNER_EMAIL, `🆕 New User: ${sN}`, buildEmail({
         emoji: "🆕", headline: "New User Login",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
       }), d.email);
-      await sendEmail(d.email, "🎉 Welcome!", buildEmail({
+      await sendEmail(d.email, "🎉 Welcome to ArtTech Engine!", buildEmail({
         emoji: "🎉", headline: "Welcome!",
         body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
         <p style="color:#374151;font-size:16px;line-height:1.7;">Thanks for signing up! Explore:</p>
@@ -247,7 +263,7 @@ const handler = async (req: Request): Promise<Response> => {
     const sTimeline = d.timeline ? escapeHtml(d.timeline) : "";
     const sReqs = d.requirements ? escapeHtml(d.requirements) : "";
 
-    let bodyRows = `${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#2563eb;">${sE}</a>`)}`;
+    let bodyRows = `${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}`;
     if (isService) {
       bodyRows += `${infoRow("Category", svcCat)}${infoRow("Service", svcType)}`;
       if (sBudget) bodyRows += infoRow("Budget", sBudget);
@@ -256,26 +272,24 @@ const handler = async (req: Request): Promise<Response> => {
       bodyRows += infoRow("Subject", sS);
     }
 
-    const messageBlock = `<div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;">
+    const messageBlock = `<div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
       <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${isService && sReqs ? sReqs : sM}</p></div>`;
 
-    // Admin notification
     await sendEmail(OWNER_EMAIL, isService ? `🚀 Service Request: ${svcType}` : `📬 Contact: ${sS}`, buildEmail({
       emoji: isService ? "🚀" : "📬", headline: isService ? "New Service Request" : "New Contact Message",
       body: `<table style="width:100%;border-collapse:collapse;">${bodyRows}</table>${messageBlock}`,
       footerText: `Reply directly to respond to ${sN}.`,
     }), d.email);
 
-    // User confirmation
     await sendEmail(d.email, "✅ Message Received — ArtTech Engine", buildEmail({
       emoji: "✅", headline: "Thank You for Reaching Out!",
       body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
       <p style="color:#374151;font-size:16px;line-height:1.7;">I've received your message and will respond within <strong>24 hours</strong>.</p>
-      <div style="background:#ecfdf5;padding:20px;border-radius:8px;margin:16px 0;">
-        <h3 style="color:#059669;margin:0 0 8px;">What's Next?</h3>
+      <div style="background:#f0fdf4;padding:20px;border-radius:8px;margin:16px 0;border:1px solid #e5e7eb;">
+        <h3 style="color:#0a0a0a;margin:0 0 8px;">What's Next?</h3>
         <ul style="color:#374151;line-height:1.8;margin:0;"><li>I'll review your message</li><li>Personalized response within 24h</li><li>We can schedule a call if needed</li></ul>
       </div>
-      <div style="background:#f8f9fa;border-left:4px solid #10b981;padding:16px;margin:16px 0;">
+      <div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
         <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your message:</p>
         <p style="margin:0;color:#374151;font-size:14px;">${sM.substring(0, 200)}${sM.length > 200 ? '...' : ''}</p>
       </div>`,
