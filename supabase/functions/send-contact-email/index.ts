@@ -48,64 +48,76 @@ const checkRateLimit = (ip: string): { allowed: boolean; retryAfter?: number } =
   return { allowed: true };
 };
 
-// SVG AE Logo (inline, works in all email clients that support SVG)
-const AE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
-  <rect width="48" height="48" rx="10" fill="#0a0a0a"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="22" font-weight="800" letter-spacing="-1" fill="#ffffff">AE</text>
-</svg>`;
+// ─── Shuttle Glassmorphism SVG Background ───
+const SVG_BG = `<svg xmlns="http://www.w3.org/2000/svg" width="620" height="120" viewBox="0 0 620 120" fill="none"><defs><linearGradient id="g1" x1="0" y1="0" x2="620" y2="120" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0a0a0a" stop-opacity="0.95"/><stop offset="50%" stop-color="#1a1a2e" stop-opacity="0.9"/><stop offset="100%" stop-color="#0a0a0a" stop-opacity="0.95"/></linearGradient><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/></pattern></defs><rect width="620" height="120" fill="url(#g1)"/><rect width="620" height="120" fill="url(#grid)"/><circle cx="520" cy="30" r="60" fill="rgba(255,255,255,0.015)"/><circle cx="80" cy="90" r="45" fill="rgba(255,255,255,0.01)"/></svg>`;
+const SVG_BG_B64 = btoa(SVG_BG.replace(/\n\s*/g, ''));
 
-// Fallback for email clients that don't support SVG
-const AE_LOGO_HTML = `
-<!--[if mso]>
-<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" style="width:48px;height:48px;" arcsize="21%" fillcolor="#0a0a0a" stroke="f">
-  <v:textbox style="mso-fit-shape-to-text:true" inset="0,0,0,0">
-    <center style="font-size:20px;font-weight:800;color:#ffffff;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;letter-spacing:-1px;">AE</center>
-  </v:textbox>
-</v:roundrect>
-<![endif]-->
-<!--[if !mso]><!-->
-<img src="data:image/svg+xml;base64,${btoa(AE_LOGO_SVG.replace(/\n\s*/g, ''))}" alt="ArtTech Engine" width="48" height="48" style="display:block;margin:0 auto 14px;border:0;" />
-<!--<![endif]-->`;
+// ─── AE Logo SVG (transparent, clean) ───
+const AE_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52" fill="none"><rect x="1" y="1" width="50" height="50" rx="12" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="-0.5" fill="#ffffff">AE</text></svg>`;
+const AE_LOGO_B64 = btoa(AE_LOGO_SVG.replace(/\n\s*/g, ''));
 
-// ─── Premium Email Template with SVG Logo ───
+// ─── AE Logo for light sections ───
+const AE_LOGO_DARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="0.5" y="0.5" width="35" height="35" rx="8" fill="#0a0a0a" stroke="#1a1a1a" stroke-width="0.5"/><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="'Helvetica Neue',Helvetica,Arial,sans-serif" font-size="14" font-weight="800" letter-spacing="-0.5" fill="#ffffff">AE</text></svg>`;
+const AE_LOGO_DARK_B64 = btoa(AE_LOGO_DARK_SVG.replace(/\n\s*/g, ''));
+
+// ─── Shuttle Email Template ───
 const buildEmail = (opts: {
   emoji: string; headline: string; body: string;
   ctaUrl?: string; ctaLabel?: string;
   footerText?: string; unsubscribeUrl?: string;
 }) => `
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${opts.headline}</title>
 </head>
-<body style="margin:0;padding:0;background:#eaeaea;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;">
-<div style="max-width:620px;margin:24px auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-  <!-- Accent Bar -->
-  <div style="height:4px;background:linear-gradient(90deg,#0a0a0a 0%,#333333 50%,#0a0a0a 100%);"></div>
-  <!-- Header -->
-  <div style="padding:36px 32px 28px;text-align:center;border-bottom:1px solid #f0f0f0;">
-    ${AE_LOGO_HTML}
-    <p style="margin:0 0 6px;font-size:11px;color:#999;letter-spacing:3px;text-transform:uppercase;font-weight:600;">ArtTech Engine</p>
-    <h1 style="margin:0;font-size:20px;color:#0a0a0a;font-weight:700;line-height:1.3;">${opts.emoji} ${opts.headline}</h1>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;">
+
+<!-- Outer Container -->
+<div style="max-width:620px;margin:32px auto;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.12),0 1px 3px rgba(0,0,0,0.06);">
+
+  <!-- Header with SVG Background -->
+  <div style="background:url('data:image/svg+xml;base64,${SVG_BG_B64}') center/cover no-repeat,#0a0a0a;padding:40px 36px 36px;text-align:center;">
+    <!--[if !mso]><!-->
+    <img src="data:image/svg+xml;base64,${AE_LOGO_B64}" alt="AE" width="52" height="52" style="display:block;margin:0 auto 16px;border:0;" />
+    <!--<![endif]-->
+    <p style="margin:0 0 8px;font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:4px;text-transform:uppercase;font-weight:600;">ArtTech Engine</p>
+    <h1 style="margin:0;font-size:22px;color:#ffffff;font-weight:700;line-height:1.3;letter-spacing:-0.3px;">${opts.emoji} ${opts.headline}</h1>
   </div>
-  <!-- Body -->
-  <div style="padding:28px 32px 32px;">
-    ${opts.body}
-    ${opts.ctaUrl ? `
-    <div style="text-align:center;margin:32px 0 12px;">
-      <a href="${opts.ctaUrl}" style="display:inline-block;background:#0a0a0a;color:#ffffff;padding:13px 36px;text-decoration:none;font-weight:600;font-size:14px;border-radius:8px;letter-spacing:0.5px;box-shadow:0 2px 8px rgba(0,0,0,0.15);">${opts.ctaLabel || 'View Now'} →</a>
-    </div>` : ''}
+
+  <!-- Glassmorphism Card Body -->
+  <div style="background:#ffffff;padding:0;">
+    <div style="border-top:1px solid rgba(0,0,0,0.04);padding:32px 36px 36px;">
+      ${opts.body}
+      ${opts.ctaUrl ? `
+      <div style="text-align:center;margin:28px 0 8px;">
+        <a href="${opts.ctaUrl}" style="display:inline-block;background:#0a0a0a;color:#ffffff;padding:14px 40px;text-decoration:none;font-weight:600;font-size:14px;border-radius:10px;letter-spacing:0.3px;box-shadow:0 4px 14px rgba(0,0,0,0.18);transition:all 0.2s;">${opts.ctaLabel || 'View Now'} &rarr;</a>
+      </div>` : ''}
+    </div>
   </div>
-  <!-- Footer -->
-  <div style="padding:20px 32px;text-align:center;background:#fafafa;border-top:1px solid #f0f0f0;">
-    <p style="margin:0 0 4px;font-size:11px;color:#aaa;letter-spacing:1px;">© ${new Date().getFullYear()} DHARANEEDHARAN SS · ArtTech Engine</p>
-    ${opts.footerText ? `<p style="margin:0 0 4px;font-size:11px;color:#999;">${opts.footerText}</p>` : ''}
-    ${opts.unsubscribeUrl ? `<p style="margin:0;"><a href="${opts.unsubscribeUrl}" style="color:#999;text-decoration:underline;font-size:11px;">Unsubscribe</a></p>` : ''}
+
+  <!-- Frost Footer -->
+  <div style="background:#fafafa;border-top:1px solid #f0f0f0;padding:24px 36px;text-align:center;">
+    <img src="data:image/svg+xml;base64,${AE_LOGO_DARK_B64}" alt="AE" width="24" height="24" style="display:block;margin:0 auto 10px;border:0;opacity:0.6;" />
+    <p style="margin:0 0 4px;font-size:11px;color:#b0b0b0;letter-spacing:0.5px;">© ${new Date().getFullYear()} Dharaneedharan SS · ArtTech Engine</p>
+    ${opts.footerText ? `<p style="margin:0 0 4px;font-size:11px;color:#c0c0c0;">${opts.footerText}</p>` : ''}
+    ${opts.unsubscribeUrl ? `<p style="margin:4px 0 0;"><a href="${opts.unsubscribeUrl}" style="color:#999;text-decoration:underline;font-size:11px;letter-spacing:0.3px;">Unsubscribe</a></p>` : ''}
   </div>
+
 </div>
+
 </body></html>`;
 
 const infoRow = (label: string, value: string) =>
-  `<tr><td style="padding:8px 0;color:#6b7280;font-weight:600;width:110px;vertical-align:top;">${label}:</td><td style="padding:8px 0;color:#1a1a1a;">${value}</td></tr>`;
+  `<tr><td style="padding:10px 12px 10px 0;color:#9ca3af;font-weight:500;width:100px;vertical-align:top;font-size:13px;border-bottom:1px solid #f5f5f5;">${label}</td><td style="padding:10px 0;color:#1a1a1a;font-size:14px;border-bottom:1px solid #f5f5f5;">${value}</td></tr>`;
+
+const glassCard = (content: string) =>
+  `<div style="background:linear-gradient(135deg,#f8f9fa 0%,#ffffff 50%,#f8f9fa 100%);border:1px solid #e8e8ec;border-radius:12px;padding:20px 22px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.03);">${content}</div>`;
+
+const quoteBlock = (content: string, label?: string) =>
+  `<div style="background:linear-gradient(135deg,rgba(10,10,10,0.02) 0%,rgba(10,10,10,0.04) 100%);border-left:3px solid #0a0a0a;padding:16px 20px;margin:16px 0;border-radius:0 10px 10px 0;">
+    ${label ? `<p style="margin:0 0 6px;color:#9ca3af;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">${label}</p>` : ''}
+    <p style="margin:0;color:#1a1a1a;line-height:1.7;white-space:pre-wrap;font-size:14px;">${content}</p>
+  </div>`;
 
 const sendEmail = async (to: string, subject: string, html: string, replyTo?: string) => {
   try {
@@ -139,8 +151,8 @@ const handler = async (req: Request): Promise<Response> => {
     // ─── Newsletter ───
     if (type === "newsletter") {
       await sendEmail(OWNER_EMAIL, `📰 New Subscriber: ${sN}`, buildEmail({
-        emoji: "📰", headline: "New Newsletter Subscriber!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        emoji: "📰", headline: "New Newsletter Subscriber",
+        body: `${glassCard(`<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`)}`,
         footerText: "Subscriber signed up through your portfolio.",
       }), d.email);
 
@@ -153,14 +165,19 @@ const handler = async (req: Request): Promise<Response> => {
         if (data?.[0]) unsub = data[0].unsubscribe_token;
       } catch (e) { console.error("Token fetch error:", e); }
 
-      await sendEmail(d.email, "🎉 Welcome to ArtTech Engine Newsletter!", buildEmail({
-        emoji: "🎉", headline: "Welcome to the Newsletter!",
-        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
-        <p style="color:#374151;font-size:16px;line-height:1.7;">Thank you for subscribing! You'll receive updates about:</p>
-        <ul style="color:#374151;line-height:2;font-size:15px;">
-          <li>🚀 New projects and case studies</li><li>📝 Latest blog posts</li><li>💡 Industry insights</li><li>🎯 Exclusive content</li>
-        </ul>`,
-        ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+      await sendEmail(d.email, "🎉 Welcome to ArtTech Engine", buildEmail({
+        emoji: "🎉", headline: "Welcome Aboard!",
+        body: `<p style="color:#1a1a1a;margin:0 0 6px;font-size:18px;font-weight:700;">Hi ${sN} 👋</p>
+        <p style="color:#6b7280;font-size:15px;line-height:1.8;margin:0 0 20px;">You're now part of the ArtTech Engine community. Here's what you'll get:</p>
+        ${glassCard(`
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">🚀 &nbsp; New projects &amp; case studies</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">📝 &nbsp; Latest blog posts &amp; insights</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">💡 &nbsp; Industry trends &amp; analysis</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">🎯 &nbsp; Exclusive subscriber content</p>
+          </div>
+        `)}`,
+        ctaUrl: SITE_URL, ctaLabel: "Explore Portfolio",
         unsubscribeUrl: `${SITE_URL}/unsubscribe?token=${unsub}`,
       }));
 
@@ -171,8 +188,8 @@ const handler = async (req: Request): Promise<Response> => {
     if (type === "blog_like") {
       const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
       await sendEmail(OWNER_EMAIL, `❤️ New Like: ${sT}`, buildEmail({
-        emoji: "❤️", headline: "Someone Liked Your Post!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Article", sT)}</table>`,
+        emoji: "❤️", headline: "Someone Liked Your Post",
+        body: `${glassCard(`<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Article", sT)}</table>`)}`,
         ctaUrl: d.blogUrl, ctaLabel: "View Article",
       }), d.email);
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
@@ -183,19 +200,16 @@ const handler = async (req: Request): Promise<Response> => {
       const sT = d.blogTitle ? escapeHtml(d.blogTitle) : "";
       const sC = d.comment ? escapeHtml(d.comment) : "";
       await sendEmail(OWNER_EMAIL, `💬 New Comment: ${sT}`, buildEmail({
-        emoji: "💬", headline: "New Comment on Your Blog!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Article", sT)}</table>
-        <div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;"><p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p></div>`,
+        emoji: "💬", headline: "New Comment on Your Blog",
+        body: `${glassCard(`<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Article", sT)}</table>`)}
+        ${quoteBlock(sC, "Comment")}`,
         ctaUrl: d.blogUrl, ctaLabel: "View Article",
       }), d.email);
       await sendEmail(d.email, `💬 Thanks for commenting on: ${sT}`, buildEmail({
-        emoji: "💬", headline: "Thanks for Your Comment!",
-        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
-        <p style="color:#374151;font-size:16px;line-height:1.7;">Your comment on <strong>${sT}</strong> has been received and is now visible.</p>
-        <div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
-          <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your comment:</p>
-          <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sC}</p>
-        </div>`,
+        emoji: "💬", headline: "Thanks for Your Comment",
+        body: `<p style="color:#1a1a1a;margin:0 0 6px;font-size:18px;font-weight:700;">Hi ${sN} 👋</p>
+        <p style="color:#6b7280;font-size:15px;line-height:1.8;margin:0 0 16px;">Your comment on <strong style="color:#0a0a0a;">${sT}</strong> has been received and is now visible.</p>
+        ${quoteBlock(sC, "Your Comment")}`,
         ctaUrl: d.blogUrl, ctaLabel: "View Blog",
       }));
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
@@ -208,15 +222,12 @@ const handler = async (req: Request): Promise<Response> => {
       const sRC = d.replyContent ? escapeHtml(d.replyContent) : "";
       await sendEmail(d.email, `💬 Reply to your comment on: ${sT}`, buildEmail({
         emoji: "💬", headline: "You Got a Reply!",
-        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
-        <p style="color:#374151;font-size:16px;line-height:1.7;">Dharaneedharan SS replied to your comment on <strong>${sT}</strong>.</p>
-        <div style="background:#f8f9fa;border-left:4px solid #d1d5db;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
-          <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your comment:</p>
-          <p style="margin:0;color:#374151;line-height:1.6;white-space:pre-wrap;">${sOC}</p>
-        </div>
-        <div style="background:#f0fdf4;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
-          <p style="margin:0 0 4px;color:#0a0a0a;font-size:12px;font-weight:600;">Reply from Dharaneedharan SS:</p>
-          <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${sRC}</p>
+        body: `<p style="color:#1a1a1a;margin:0 0 6px;font-size:18px;font-weight:700;">Hi ${sN} 👋</p>
+        <p style="color:#6b7280;font-size:15px;line-height:1.8;margin:0 0 16px;">Dharaneedharan SS replied to your comment on <strong style="color:#0a0a0a;">${sT}</strong>.</p>
+        ${quoteBlock(sOC, "Your Comment")}
+        <div style="background:linear-gradient(135deg,rgba(10,10,10,0.04) 0%,rgba(10,10,10,0.07) 100%);border-left:3px solid #0a0a0a;padding:16px 20px;margin:16px 0;border-radius:0 10px 10px 0;">
+          <p style="margin:0 0 6px;color:#0a0a0a;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;">Admin Reply</p>
+          <p style="margin:0;color:#1a1a1a;line-height:1.7;white-space:pre-wrap;font-size:14px;">${sRC}</p>
         </div>`,
         ctaUrl: `${SITE_URL}/blog`, ctaLabel: "View Blog",
       }));
@@ -226,15 +237,22 @@ const handler = async (req: Request): Promise<Response> => {
     // ─── Guest Welcome ───
     if (type === "guest_welcome") {
       await sendEmail(OWNER_EMAIL, `👤 New Guest: ${sN}`, buildEmail({
-        emoji: "👤", headline: "New Guest Visitor!",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        emoji: "👤", headline: "New Guest Visitor",
+        body: `${glassCard(`<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`)}`,
       }), d.email);
-      await sendEmail(d.email, "👋 Welcome to ArtTech Engine!", buildEmail({
+      await sendEmail(d.email, "👋 Welcome to ArtTech Engine", buildEmail({
         emoji: "👋", headline: "Welcome!",
-        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
-        <p style="color:#374151;font-size:16px;line-height:1.7;">Thank you for visiting! As a guest you can explore:</p>
-        <ul style="color:#374151;line-height:2;font-size:15px;"><li>📖 Blog posts</li><li>💼 Projects</li><li>🎨 Gallery</li><li>📧 Contact</li></ul>`,
-        ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+        body: `<p style="color:#1a1a1a;margin:0 0 6px;font-size:18px;font-weight:700;">Hi ${sN} 👋</p>
+        <p style="color:#6b7280;font-size:15px;line-height:1.8;margin:0 0 20px;">Thanks for visiting! As a guest you can explore:</p>
+        ${glassCard(`
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">📖 &nbsp; Blog posts &amp; articles</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">💼 &nbsp; Projects &amp; case studies</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">🎨 &nbsp; Gallery &amp; certificates</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">📧 &nbsp; Contact &amp; services</p>
+          </div>
+        `)}`,
+        ctaUrl: SITE_URL, ctaLabel: "Explore Now",
       }));
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
@@ -243,14 +261,21 @@ const handler = async (req: Request): Promise<Response> => {
     if (type === "user_onboarding") {
       await sendEmail(OWNER_EMAIL, `🆕 New User: ${sN}`, buildEmail({
         emoji: "🆕", headline: "New User Login",
-        body: `<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`,
+        body: `${glassCard(`<table style="width:100%;border-collapse:collapse;">${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Time", new Date().toLocaleString())}</table>`)}`,
       }), d.email);
-      await sendEmail(d.email, "🎉 Welcome to ArtTech Engine!", buildEmail({
+      await sendEmail(d.email, "🎉 Welcome to ArtTech Engine", buildEmail({
         emoji: "🎉", headline: "Welcome!",
-        body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
-        <p style="color:#374151;font-size:16px;line-height:1.7;">Thanks for signing up! Explore:</p>
-        <ul style="color:#374151;line-height:2;font-size:15px;"><li>🚀 Projects</li><li>📝 Blog</li><li>💼 Services</li><li>🎨 Gallery</li></ul>`,
-        ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
+        body: `<p style="color:#1a1a1a;margin:0 0 6px;font-size:18px;font-weight:700;">Hi ${sN} 👋</p>
+        <p style="color:#6b7280;font-size:15px;line-height:1.8;margin:0 0 20px;">Thanks for signing up! Here's what awaits you:</p>
+        ${glassCard(`
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">🚀 &nbsp; Projects &amp; portfolio</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">📝 &nbsp; Blog &amp; insights</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">💼 &nbsp; Services &amp; consulting</p>
+            <p style="margin:0;color:#1a1a1a;font-size:14px;">🎨 &nbsp; Gallery &amp; certificates</p>
+          </div>
+        `)}`,
+        ctaUrl: SITE_URL, ctaLabel: "Get Started",
       }));
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
@@ -263,7 +288,7 @@ const handler = async (req: Request): Promise<Response> => {
     const sTimeline = d.timeline ? escapeHtml(d.timeline) : "";
     const sReqs = d.requirements ? escapeHtml(d.requirements) : "";
 
-    let bodyRows = `${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;">${sE}</a>`)}`;
+    let bodyRows = `${infoRow("Name", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#0a0a0a;font-weight:600;text-decoration:none;">${sE}</a>`)}`;
     if (isService) {
       bodyRows += `${infoRow("Category", svcCat)}${infoRow("Service", svcType)}`;
       if (sBudget) bodyRows += infoRow("Budget", sBudget);
@@ -272,35 +297,33 @@ const handler = async (req: Request): Promise<Response> => {
       bodyRows += infoRow("Subject", sS);
     }
 
-    const messageBlock = `<div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
-      <p style="margin:0;color:#1a1a1a;line-height:1.6;white-space:pre-wrap;">${isService && sReqs ? sReqs : sM}</p></div>`;
-
     await sendEmail(OWNER_EMAIL, isService ? `🚀 Service Request: ${svcType}` : `📬 Contact: ${sS}`, buildEmail({
       emoji: isService ? "🚀" : "📬", headline: isService ? "New Service Request" : "New Contact Message",
-      body: `<table style="width:100%;border-collapse:collapse;">${bodyRows}</table>${messageBlock}`,
+      body: `${glassCard(`<table style="width:100%;border-collapse:collapse;">${bodyRows}</table>`)}
+      ${quoteBlock(isService && sReqs ? sReqs : sM, isService ? "Requirements" : "Message")}`,
       footerText: `Reply directly to respond to ${sN}.`,
     }), d.email);
 
     await sendEmail(d.email, "✅ Message Received — ArtTech Engine", buildEmail({
-      emoji: "✅", headline: "Thank You for Reaching Out!",
-      body: `<h2 style="color:#1a1a1a;margin:0 0 12px;font-size:20px;">Hi ${sN}! 👋</h2>
-      <p style="color:#374151;font-size:16px;line-height:1.7;">I've received your message and will respond within <strong>24 hours</strong>.</p>
-      <div style="background:#f0fdf4;padding:20px;border-radius:8px;margin:16px 0;border:1px solid #e5e7eb;">
-        <h3 style="color:#0a0a0a;margin:0 0 8px;">What's Next?</h3>
-        <ul style="color:#374151;line-height:1.8;margin:0;"><li>I'll review your message</li><li>Personalized response within 24h</li><li>We can schedule a call if needed</li></ul>
-      </div>
-      <div style="background:#f8f9fa;border-left:4px solid #0a0a0a;padding:16px;margin:16px 0;border-radius:0 6px 6px 0;">
-        <p style="margin:0 0 4px;color:#6b7280;font-size:12px;">Your message:</p>
-        <p style="margin:0;color:#374151;font-size:14px;">${sM.substring(0, 200)}${sM.length > 200 ? '...' : ''}</p>
-      </div>`,
+      emoji: "✅", headline: "Thank You for Reaching Out",
+      body: `<p style="color:#1a1a1a;margin:0 0 6px;font-size:18px;font-weight:700;">Hi ${sN} 👋</p>
+      <p style="color:#6b7280;font-size:15px;line-height:1.8;margin:0 0 20px;">I've received your message and will respond within <strong style="color:#0a0a0a;">24 hours</strong>.</p>
+      ${glassCard(`
+        <p style="margin:0 0 12px;color:#0a0a0a;font-size:14px;font-weight:700;">What's Next?</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <p style="margin:0;color:#374151;font-size:14px;">✓ &nbsp; I'll review your message carefully</p>
+          <p style="margin:0;color:#374151;font-size:14px;">✓ &nbsp; Personalized response within 24h</p>
+          <p style="margin:0;color:#374151;font-size:14px;">✓ &nbsp; We can schedule a call if needed</p>
+        </div>
+      `)}
+      ${quoteBlock(sM.substring(0, 200) + (sM.length > 200 ? '...' : ''), "Your Message")}`,
       ctaUrl: SITE_URL, ctaLabel: "Visit Portfolio",
-      footerText: "📧 tharaneetharanss@gmail.com | 📱 +91 8870086023",
     }));
 
-    return new Response(JSON.stringify({ success: true, emailSent: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
   } catch (error) {
-    console.error("send-contact-email error:", error);
-    return new Response(JSON.stringify({ error: "Failed to process request" }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    console.error("Contact email error:", error);
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "An error occurred" }), { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } });
   }
 };
 
