@@ -267,14 +267,14 @@ const AboutPage = () => {
                 </div>
               </ScrollReveal>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl mx-auto justify-items-center">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl mx-auto">
                 {certifications.map((cert, index) => (
                   <ScrollReveal key={cert.name} delay={index * 50} className="h-full">
                     <button
                       onClick={() => handleCertificateClick(cert)}
-                      className="w-full h-full min-h-[120px] text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+                      className="w-full h-[130px] text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
                     >
-                      <div className="flex items-start gap-3 h-full">
+                      <div className="flex items-start gap-3">
                         <div className="w-10 h-10 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
                           <Award size={18} className="text-primary" />
                         </div>
