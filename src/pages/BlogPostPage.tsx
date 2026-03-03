@@ -17,76 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import { useBlogData } from "@/hooks/useBlogData";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  image: string;
-  date: string;
-  readTime: string;
-  category: string;
-  author: { name: string; avatar: string };
-}
-
-
-const blogPosts: BlogPost[] = [
-  {
-    id: "1",
-    title: "The Future of Web Development in 2024",
-    excerpt: "Exploring the latest trends and technologies shaping the web development landscape.",
-    content: `## Introduction\n\nThe web development landscape is constantly evolving. From AI-powered tools to new frameworks, here's what's changing the game in 2024.\n\n## AI-Assisted Development\n\nWe're seeing a massive shift towards **AI-assisted development**, where tools like GitHub Copilot and ChatGPT are revolutionizing how developers write code.\n\n- Automated code generation\n- Intelligent code review suggestions\n- Bug detection and fixing\n- Documentation generation\n\n## WebAssembly Revolution\n\n**WebAssembly** is enabling near-native performance in browsers, opening doors for complex applications that were previously impossible on the web.\n\n### Key Benefits:\n1. Near-native execution speed\n2. Language-agnostic compilation\n3. Secure sandboxed execution\n4. Seamless JavaScript interop\n\n## Server Components\n\nReact Server Components and frameworks like **Next.js 14** are blurring the line between server and client rendering, offering:\n\n- Improved initial load times\n- Reduced client-side JavaScript\n- Better SEO out of the box\n- Simplified data fetching\n\n## Conclusion\n\nThe future of web development is exciting. By embracing these technologies, developers can build faster, more accessible, and more powerful web applications.`,
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=500&fit=crop",
-    date: "Dec 20, 2024", readTime: "5 min read", category: "Technology",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-  {
-    id: "2",
-    title: "Designing for Accessibility: A Complete Guide",
-    excerpt: "Why accessibility matters and how to implement inclusive design practices.",
-    content: `## Why Accessibility Matters\n\nAccessibility isn't just a nice-to-have — it's **essential**. Over 1 billion people worldwide live with some form of disability.\n\n## WCAG Guidelines\n\nThe Web Content Accessibility Guidelines (WCAG) provide a framework:\n\n### Four Principles (POUR):\n1. **Perceivable** — Information must be presentable to users\n2. **Operable** — Interface components must be operable\n3. **Understandable** — Information and operation must be understandable\n4. **Robust** — Content must be robust enough for assistive technologies\n\n## Practical Tips\n\n- Use semantic HTML elements (\`<nav>\`, \`<main>\`, \`<article>\`)\n- Provide alt text for all images\n- Ensure sufficient color contrast (4.5:1 ratio minimum)\n- Support keyboard navigation throughout\n- Use ARIA labels where semantic HTML isn't sufficient\n\n## Conclusion\n\nBuilding accessible websites benefits everyone. Start with semantic HTML, add proper labels, and test with real assistive technologies.`,
-    image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&h=500&fit=crop",
-    date: "Dec 15, 2024", readTime: "8 min read", category: "Design",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-  {
-    id: "3",
-    title: "Building Scalable React Applications",
-    excerpt: "Best practices and architectural patterns for maintainable React codebases.",
-    content: `## Architecture Matters\n\nScaling React applications requires careful planning. Here are the patterns that have worked in production.\n\n## Component Composition\n\nUse **composition over inheritance**:\n\n- Break components into small, focused pieces\n- Use render props and hooks for shared logic\n- Keep components under 200 lines\n\n## State Management\n\nChoose the right tool for the job:\n\n- **Local state** — \`useState\` for component-specific data\n- **Context API** — For theme, auth, and global settings\n- **React Query** — For server state and caching\n- **Zustand/Jotai** — For complex client state\n\n## Code Splitting\n\nImplement lazy loading for better performance:\n\n- Route-based splitting with \`React.lazy()\`\n- Component-level splitting for heavy modules\n- Use \`Suspense\` boundaries for loading states\n\n## Conclusion\n\nA well-structured React app scales naturally. Invest in architecture early to save time later.`,
-    image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=500&fit=crop",
-    date: "Dec 10, 2024", readTime: "10 min read", category: "Development",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-  {
-    id: "4",
-    title: "Mastering TypeScript: Advanced Patterns",
-    excerpt: "Deep dive into advanced TypeScript patterns for better code quality.",
-    content: `## Beyond Basic Types\n\nTypeScript offers powerful features beyond basic type annotations. Let's explore advanced patterns.\n\n## Generics\n\nGenerics allow you to write reusable, type-safe code:\n\n\`\`\`typescript\nfunction identity<T>(arg: T): T {\n  return arg;\n}\n\`\`\`\n\n## Conditional Types\n\nCreate types that depend on conditions:\n\n\`\`\`typescript\ntype IsString<T> = T extends string ? true : false;\n\`\`\`\n\n## Best Practices\n\n1. Prefer **interfaces** for object shapes\n2. Use **type** for unions and intersections\n3. Avoid **any** — use **unknown** instead\n4. Enable strict mode in tsconfig\n\n## Conclusion\n\nAdvanced TypeScript patterns make your code more expressive and catch bugs at compile time.`,
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop",
-    date: "Dec 5, 2024", readTime: "12 min read", category: "Development",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-  {
-    id: "5",
-    title: "Introduction to CAD Engineering with SolidWorks",
-    excerpt: "Getting started with SolidWorks for mechanical design and 3D modeling.",
-    content: `## What is SolidWorks?\n\n**SolidWorks** is one of the most powerful CAD tools for mechanical engineering, used by millions of engineers worldwide.\n\n## Getting Started\n\n### Core Concepts:\n1. **Sketching** — 2D profiles that define 3D features\n2. **Features** — Extrude, revolve, sweep, loft\n3. **Assemblies** — Combining multiple parts\n4. **Drawings** — 2D engineering documentation\n\n## Best Practices\n\n- Start with a clear **design intent**\n- Use **reference planes** for complex geometry\n- Apply **GD&T** standards for manufacturing\n- Organize features logically in the feature tree\n\n## Conclusion\n\nSolidWorks is an essential tool for any mechanical engineer. Master the fundamentals and build from there.`,
-    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=500&fit=crop",
-    date: "Dec 1, 2024", readTime: "7 min read", category: "Engineering",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-  {
-    id: "6",
-    title: "IoT Project: Building a Smart Home System",
-    excerpt: "Step-by-step guide to creating an IoT-based home automation system.",
-    content: `## Project Overview\n\nLearn how to build a complete **smart home system** from scratch using Arduino and Raspberry Pi.\n\n## Hardware Requirements\n\n- **Raspberry Pi 4** — Central hub\n- **Arduino Uno** — Sensor nodes\n- **DHT22** — Temperature & humidity sensor\n- **PIR sensor** — Motion detection\n- **Relay modules** — Appliance control\n- **ESP8266** — WiFi connectivity\n\n## Architecture\n\n### System Design:\n1. Sensor nodes collect data via Arduino\n2. ESP8266 sends data to Raspberry Pi over MQTT\n3. Raspberry Pi processes and stores data\n4. Web dashboard for monitoring and control\n\n## Key Features\n\n- Real-time temperature and humidity monitoring\n- Motion-triggered lighting automation\n- Remote appliance control via mobile app\n- Historical data analysis and trends\n- Alert notifications for anomalies\n\n## Conclusion\n\nBuilding a smart home system teaches invaluable skills in embedded systems, networking, and full-stack development.`,
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=500&fit=crop",
-    date: "Nov 28, 2024", readTime: "15 min read", category: "IoT",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-];
+import { blogPosts } from "@/data/blogPostsData";
 
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -215,33 +146,10 @@ const BlogPostPage = () => {
                       </button>
                       {showShareMenu && (
                         <div className="absolute right-0 top-full mt-2 bg-card border border-border shadow-lg z-20 min-w-[180px]">
-                          <a
-                            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`}
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors"
-                          >
-                            <Twitter size={16} /> Twitter / X
-                          </a>
-                          <a
-                            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors"
-                          >
-                            <Linkedin size={16} /> LinkedIn
-                          </a>
-                          <a
-                            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-                            target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors"
-                          >
-                            <Facebook size={16} /> Facebook
-                          </a>
-                          <button
-                            onClick={handleCopyLink}
-                            className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors w-full text-left"
-                          >
-                            <Link2 size={16} /> Copy Link
-                          </button>
+                          <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors"><Twitter size={16} /> Twitter / X</a>
+                          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors"><Linkedin size={16} /> LinkedIn</a>
+                          <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors"><Facebook size={16} /> Facebook</a>
+                          <button onClick={handleCopyLink} className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-secondary transition-colors w-full text-left"><Link2 size={16} /> Copy Link</button>
                         </div>
                       )}
                     </div>
@@ -263,95 +171,103 @@ const BlogPostPage = () => {
                     prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
                     prose-li:text-muted-foreground
                     prose-strong:text-foreground
-                    prose-code:text-primary prose-code:bg-secondary prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
-                    prose-pre:bg-secondary prose-pre:border prose-pre:border-border prose-pre:rounded-lg
+                    prose-code:text-foreground prose-code:bg-secondary prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
+                    prose-pre:bg-secondary prose-pre:border prose-pre:border-border
                     prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                    prose-ol:text-muted-foreground prose-ul:text-muted-foreground
+                    prose-table:text-sm prose-th:text-foreground prose-td:text-muted-foreground
+                    prose-th:border-border prose-td:border-border
                   ">
                     <ReactMarkdown>{post.content}</ReactMarkdown>
                   </article>
                 </ScrollReveal>
 
-                {/* Like, Comment, View Stats Bar */}
+                {/* Engagement Bar */}
                 <ScrollReveal delay={200}>
-                  <div className="flex flex-wrap items-center gap-3 mt-12 pt-6 border-t-2 border-border">
-                    <button
-                      onClick={handleLike}
-                      className={`flex items-center gap-2 px-5 py-2.5 font-medium text-sm transition-colors ${userHasLiked ? "bg-red-500 text-white" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
-                    >
-                      <Heart size={16} fill={userHasLiked ? "currentColor" : "none"} /> {likeCount} Likes
-                    </button>
-                    <button
-                      onClick={() => setShowCommentForm(!showCommentForm)}
-                      className="flex items-center gap-2 px-5 py-2.5 bg-secondary text-muted-foreground hover:text-foreground font-medium text-sm transition-colors"
-                    >
-                      <MessageCircle size={16} /> {commentCount} Comments
-                    </button>
-                    <span className="flex items-center gap-2 px-5 py-2.5 bg-secondary/50 text-muted-foreground text-sm">
-                      <Eye size={16} /> {viewCount} Readers
-                    </span>
+                  <div className="mt-12 pt-8 border-t border-border">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${userHasLiked ? "bg-red-500/10 text-red-500 border border-red-500/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+                          <Heart size={18} fill={userHasLiked ? "currentColor" : "none"} />
+                          <span className="text-sm font-medium">{likeCount}</span>
+                        </button>
+                        <button onClick={() => { if (!currentUserEmail) { setShowAccessModal(true); return; } setShowCommentForm(!showCommentForm); }} className="flex items-center gap-2 px-4 py-2 bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+                          <MessageCircle size={18} />
+                          <span className="text-sm font-medium">{commentCount}</span>
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Eye size={14} /> {viewCount} readers
+                      </div>
+                    </div>
                   </div>
                 </ScrollReveal>
 
-                {/* Comments List */}
-                {postComments.length > 0 && (
-                  <div className="mt-8 space-y-4">
-                    <h4 className="font-display font-bold text-lg">Comments</h4>
-                    {postComments.map((comment) => (
-                      <div key={comment.id} className="p-4 bg-secondary/50 border border-border">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="w-8 h-8 bg-foreground/20 rounded-full flex items-center justify-center text-xs font-bold">
-                            {comment.name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <p className="font-medium text-sm">{comment.name}</p>
-                            <p className="text-xs text-muted-foreground">{new Date(comment.created_at).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{comment.content}</p>
-                        {comment.reply && (
-                          <div className="mt-3 ml-6 p-3 bg-primary/10 border-l-2 border-primary">
-                            <div className="flex items-center gap-2 mb-1">
-                              <User size={14} className="text-primary" />
-                              <span className="text-xs font-medium text-primary">Author Reply</span>
-                              {comment.reply_date && <span className="text-xs text-muted-foreground">{new Date(comment.reply_date).toLocaleDateString()}</span>}
-                            </div>
-                            <p className="text-sm text-foreground">{comment.reply}</p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
                 {/* Comment Form */}
                 {showCommentForm && (
-                  <form onSubmit={handleComment} className="mt-6 p-6 bg-secondary/30 border border-border space-y-4">
-                    <h4 className="font-display font-bold">Leave a Comment</h4>
-                    <input type="text" name="website" value={commentData.honeypot} onChange={(e) => setCommentData({ ...commentData, honeypot: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" />
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <Input placeholder="Your Name *" value={commentData.name || currentUserName || ""} onChange={(e) => setCommentData({ ...commentData, name: e.target.value })} required disabled={!!currentUserName} />
-                      <Input type="email" placeholder="Your Email *" value={commentData.email || currentUserEmail || ""} onChange={(e) => setCommentData({ ...commentData, email: e.target.value })} required disabled={!!currentUserEmail} />
+                  <ScrollReveal delay={100}>
+                    <form onSubmit={handleComment} className="mt-8 p-6 bg-secondary/30 border border-border space-y-4">
+                      <h3 className="font-display font-bold text-lg">Leave a Comment</h3>
+                      <input type="text" className="hidden" value={commentData.honeypot} onChange={(e) => setCommentData({ ...commentData, honeypot: e.target.value })} tabIndex={-1} autoComplete="off" />
+                      {!currentUserEmail && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <Input placeholder="Your name" value={commentData.name} onChange={(e) => setCommentData({ ...commentData, name: e.target.value })} />
+                          <Input type="email" placeholder="Your email" value={commentData.email} onChange={(e) => setCommentData({ ...commentData, email: e.target.value })} />
+                        </div>
+                      )}
+                      <Textarea placeholder="Write your comment..." value={commentData.text} onChange={(e) => setCommentData({ ...commentData, text: e.target.value })} rows={4} />
+                      <Button type="submit" disabled={isSubmitting} className="gap-2">
+                        <Send size={14} /> {isSubmitting ? "Submitting..." : "Submit Comment"}
+                      </Button>
+                    </form>
+                  </ScrollReveal>
+                )}
+
+                {/* Comments List */}
+                {postComments.length > 0 && (
+                  <ScrollReveal delay={200}>
+                    <div className="mt-10">
+                      <h3 className="font-display font-bold text-xl mb-6">Comments ({commentCount})</h3>
+                      <div className="space-y-6">
+                        {postComments.map((comment) => (
+                          <div key={comment.id} className="p-5 bg-card border border-border">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="w-8 h-8 bg-foreground/10 flex items-center justify-center">
+                                <User size={14} className="text-foreground" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-sm">{comment.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(comment.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-muted-foreground text-sm leading-relaxed">{comment.content}</p>
+                            {comment.reply && (
+                              <div className="mt-4 ml-6 p-4 bg-secondary/50 border-l-2 border-foreground">
+                                <p className="text-xs font-medium mb-1">Author Reply</p>
+                                <p className="text-muted-foreground text-sm">{comment.reply}</p>
+                                {comment.reply_date && (
+                                  <p className="text-xs text-muted-foreground mt-2">
+                                    {new Date(comment.reply_date).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <Textarea placeholder="Write your comment... *" value={commentData.text} onChange={(e) => setCommentData({ ...commentData, text: e.target.value })} required rows={4} className="resize-none" />
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? "Submitting..." : <><Send size={14} className="mr-2" /> Submit Comment</>}
-                    </Button>
-                    <p className="text-xs text-muted-foreground">Your comment will be visible after admin approval.</p>
-                  </form>
+                  </ScrollReveal>
                 )}
               </div>
             </div>
           </section>
         </main>
         <Footer />
-        <GuestAccessModal isOpen={showAccessModal} onClose={() => setShowAccessModal(false)} />
-        <ImageLightbox
-          images={[{ src: post.image, alt: post.title }]}
-          isOpen={lightboxOpen}
-          onClose={() => setLightboxOpen(false)}
-        />
       </div>
+
+      <GuestAccessModal isOpen={showAccessModal} onClose={() => setShowAccessModal(false)} />
+      <ImageLightbox images={[{ src: post.image, alt: post.title }]} initialIndex={0} isOpen={lightboxOpen} onClose={() => setLightboxOpen(false)} />
     </>
   );
 };
