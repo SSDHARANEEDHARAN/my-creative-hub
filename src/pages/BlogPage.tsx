@@ -30,68 +30,112 @@ interface BlogPost {
 const staticPosts: BlogPost[] = [
   {
     id: "1",
-    title: "The Future of Web Development in 2024",
-    excerpt: "Exploring the latest trends and technologies shaping the web development landscape, from AI integration to WebAssembly.",
+    title: "Edge Computing Meets IoT: Real-Time Processing in 2025",
+    excerpt: "How edge computing eliminates latency in industrial IoT deployments, enabling real-time decision making at the sensor level without cloud dependency.",
     content: "",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=500&fit=crop",
-    date: "Dec 20, 2024",
-    readTime: "5 min read",
-    category: "Technology",
+    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=500&fit=crop",
+    date: "Jan 15, 2025",
+    readTime: "8 min read",
+    category: "IoT",
     author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "2",
-    title: "Designing for Accessibility: A Complete Guide",
-    excerpt: "Why accessibility matters and how to implement inclusive design practices that benefit all users.",
+    title: "Designing Micro-Interactions That Drive User Retention",
+    excerpt: "A deep dive into crafting subtle animations and feedback loops that keep users engaged — from button states to page transitions using Framer Motion.",
     content: "",
     image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=800&h=500&fit=crop",
-    date: "Dec 15, 2024",
-    readTime: "8 min read",
+    date: "Feb 10, 2025",
+    readTime: "6 min read",
     category: "Design",
     author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
     id: "3",
-    title: "Building Scalable React Applications",
-    excerpt: "Best practices and architectural patterns for creating maintainable React codebases that grow with your team.",
+    title: "Building a Full-Stack PLM Dashboard with React & Supabase",
+    excerpt: "Lessons from architecting a product lifecycle management dashboard — handling complex data relationships, role-based access, and real-time collaboration.",
     content: "",
-    image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=500&fit=crop",
-    date: "Dec 10, 2024",
-    readTime: "10 min read",
-    category: "Development",
-    author: { name: "Dharaneedharan SS", avatar: "" },
-  },
-  {
-    id: "4",
-    title: "Mastering TypeScript: Advanced Patterns",
-    excerpt: "Deep dive into advanced TypeScript patterns that will level up your development skills and code quality.",
-    content: "",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop",
-    date: "Dec 5, 2024",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=500&fit=crop",
+    date: "Mar 22, 2025",
     readTime: "12 min read",
     category: "Development",
     author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
-    id: "5",
-    title: "Introduction to CAD Engineering with SolidWorks",
-    excerpt: "Getting started with SolidWorks for mechanical design and 3D modeling in engineering projects.",
+    id: "4",
+    title: "SolidWorks to Web: Rendering 3D CAD Models in the Browser",
+    excerpt: "Exploring the pipeline from SolidWorks assemblies to interactive Three.js renders, including mesh optimization and material mapping techniques.",
     content: "",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&h=500&fit=crop",
-    date: "Dec 1, 2024",
-    readTime: "7 min read",
+    date: "May 5, 2025",
+    readTime: "10 min read",
     category: "Engineering",
     author: { name: "Dharaneedharan SS", avatar: "" },
   },
   {
+    id: "5",
+    title: "AI-Powered Code Reviews: Integrating LLMs into CI/CD Pipelines",
+    excerpt: "How to set up automated code review agents using large language models that catch bugs, suggest refactors, and enforce coding standards before merge.",
+    content: "",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=500&fit=crop",
+    date: "Jul 18, 2025",
+    readTime: "9 min read",
+    category: "Technology",
+    author: { name: "Dharaneedharan SS", avatar: "" },
+  },
+  {
     id: "6",
-    title: "IoT Project: Building a Smart Home System",
-    excerpt: "Step-by-step guide to creating an IoT-based home automation system using Arduino and Raspberry Pi.",
+    title: "Responsive Design Systems: Beyond Breakpoints in 2025",
+    excerpt: "Moving past static breakpoints to fluid typography, container queries, and intrinsic layouts that adapt to any screen without media queries.",
+    content: "",
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&h=500&fit=crop",
+    date: "Sep 2, 2025",
+    readTime: "7 min read",
+    category: "Design",
+    author: { name: "Dharaneedharan SS", avatar: "" },
+  },
+  {
+    id: "7",
+    title: "Building Predictive Maintenance Systems with Arduino & ML",
+    excerpt: "A hands-on guide to collecting vibration sensor data with Arduino, training anomaly detection models, and deploying predictions on Raspberry Pi edge devices.",
     content: "",
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=500&fit=crop",
-    date: "Nov 28, 2024",
-    readTime: "15 min read",
+    date: "Nov 10, 2025",
+    readTime: "14 min read",
     category: "IoT",
+    author: { name: "Dharaneedharan SS", avatar: "" },
+  },
+  {
+    id: "8",
+    title: "React Server Components in Production: Lessons from 2026",
+    excerpt: "Real-world performance gains and architectural trade-offs after migrating a high-traffic portfolio platform to React Server Components.",
+    content: "",
+    image: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=500&fit=crop",
+    date: "Jan 8, 2026",
+    readTime: "11 min read",
+    category: "Development",
+    author: { name: "Dharaneedharan SS", avatar: "" },
+  },
+  {
+    id: "9",
+    title: "Digital Twin Technology in Manufacturing: A 2026 Perspective",
+    excerpt: "How digital twin simulations powered by FlexSim and real-time IoT data are transforming factory floor optimization and reducing downtime by 40%.",
+    content: "",
+    image: "https://images.unsplash.com/photo-1565043666747-69f6646db940?w=800&h=500&fit=crop",
+    date: "Feb 20, 2026",
+    readTime: "13 min read",
+    category: "Engineering",
+    author: { name: "Dharaneedharan SS", avatar: "" },
+  },
+  {
+    id: "10",
+    title: "Zero-Trust Architecture for Web Applications in 2026",
+    excerpt: "Implementing zero-trust security patterns with RLS policies, JWT validation, and edge function middleware to protect modern web applications.",
+    content: "",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop",
+    date: "Mar 3, 2026",
+    readTime: "10 min read",
+    category: "Technology",
     author: { name: "Dharaneedharan SS", avatar: "" },
   },
 ];
@@ -261,9 +305,9 @@ const BlogPage = () => {
               {/* Other Posts Grid */}
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                 {otherPosts.map((post, index) => (
-                  <ScrollReveal key={post.id} delay={index * 50}>
+                  <ScrollReveal key={post.id} delay={index * 50} className="h-full">
                     <article
-                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer"
+                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col"
                       onClick={() => navigate(`/blog/${post.id}`)}
                     >
                       <div className="relative overflow-hidden aspect-[16/10]">
@@ -272,14 +316,14 @@ const BlogPage = () => {
                           <span className="px-2 sm:px-3 py-1 bg-card/90 backdrop-blur-sm text-foreground text-xs font-medium">{post.category}</span>
                         </div>
                       </div>
-                      <div className="p-4 sm:p-6">
+                      <div className="p-4 sm:p-6 flex flex-col flex-1">
                         <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground mb-3 sm:mb-4">
                           <span>{post.date}</span>
                           <span className="flex items-center gap-1"><Clock size={12} /> {post.readTime}</span>
                         </div>
                         <h3 className="font-display text-base sm:text-lg font-semibold mb-2 sm:mb-3 group-hover:text-muted-foreground transition-colors line-clamp-2">{post.title}</h3>
-                        <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2">{post.excerpt}</p>
-                        <div className="flex items-center justify-between pt-3 sm:pt-4">
+                        <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 flex-1">{post.excerpt}</p>
+                        <div className="flex items-center justify-between pt-3 sm:pt-4 mt-auto border-t border-border">
                           <div className="flex items-center gap-2 sm:gap-3">
                             <button
                               onClick={(e) => handleLike(post.id, e)}
