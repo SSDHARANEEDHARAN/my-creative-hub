@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import { useBlogListCounts } from "@/hooks/useBlogData";
+import { useDownloadCounts } from "@/hooks/useDownloadCount";
 
 import { blogPosts as staticPosts, BlogPost } from "@/data/blogPostsData";
 
