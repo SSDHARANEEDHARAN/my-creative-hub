@@ -6,11 +6,12 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye } from "lucide-react";
+import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import { useBlogListCounts } from "@/hooks/useBlogData";
+import { useDownloadCounts } from "@/hooks/useDownloadCount";
 
 import { blogPosts as staticPosts, BlogPost } from "@/data/blogPostsData";
 
@@ -28,6 +29,7 @@ const BlogPage = () => {
 
   const postIds = posts.map((p) => p.id);
   const { likeCounts, commentCounts, viewCounts, userLikes, setUserLikes, setLikeCounts } = useBlogListCounts(postIds, currentUserEmail);
+  const downloadCounts = useDownloadCounts("blog", postIds);
 
   const categories = ["All", ...Array.from(new Set(posts.map((p) => p.category)))];
 
@@ -164,6 +166,9 @@ const BlogPage = () => {
                               <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
                             </span>
                             <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                              <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
+                            </span>
+                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
                               <Clock size={16} /> {featuredPost.readTime}
                             </span>
                           </div>
@@ -212,6 +217,9 @@ const BlogPage = () => {
                             </span>
                             <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
                               <Eye size={14} /> {viewCounts[post.id] || 0}
+                            </span>
+                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                              <Download size={14} /> {downloadCounts[post.id] || 0}
                             </span>
                           </div>
                           <ArrowRight size={14} className="text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
