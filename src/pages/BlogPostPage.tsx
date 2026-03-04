@@ -12,12 +12,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Clock, ArrowLeft, Send, User, Calendar, Tag, Eye, Share2, Twitter, Linkedin, Link2, Facebook } from "lucide-react";
+import { Heart, MessageCircle, Clock, ArrowLeft, Send, User, Calendar, Tag, Eye, Share2, Twitter, Linkedin, Link2, Facebook, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import { useBlogData } from "@/hooks/useBlogData";
 import { blogPosts } from "@/data/blogPostsData";
+import BlogDownloadButton from "@/components/BlogDownloadButton";
+import { useDownloadCount } from "@/hooks/useDownloadCount";
 
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -186,7 +188,7 @@ const BlogPostPage = () => {
                   <div className="mt-12 pt-8 border-t border-border">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${userHasLiked ? "bg-red-500/10 text-red-500 border border-red-500/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
+                        <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${userHasLiked ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
                           <Heart size={18} fill={userHasLiked ? "currentColor" : "none"} />
                           <span className="text-sm font-medium">{likeCount}</span>
                         </button>
@@ -194,6 +196,16 @@ const BlogPostPage = () => {
                           <MessageCircle size={18} />
                           <span className="text-sm font-medium">{commentCount}</span>
                         </button>
+                        <BlogDownloadButton
+                          postId={post.id}
+                          title={post.title}
+                          content={post.content}
+                          author={post.author.name}
+                          date={post.date}
+                          category={post.category}
+                          downloadCount={blogDownloadCount}
+                          onDownloaded={refreshBlogDownloads}
+                        />
                       </div>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Eye size={14} /> {viewCount} readers
