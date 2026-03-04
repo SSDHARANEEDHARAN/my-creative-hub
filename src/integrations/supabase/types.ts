@@ -206,6 +206,36 @@ export type Database = {
         }
         Relationships: []
       }
+      download_tracking: {
+        Row: {
+          content_id: string
+          content_type: string
+          created_at: string | null
+          downloader_email: string | null
+          downloader_name: string | null
+          file_type: string
+          id: string
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          created_at?: string | null
+          downloader_email?: string | null
+          downloader_name?: string | null
+          file_type: string
+          id?: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          created_at?: string | null
+          downloader_email?: string | null
+          downloader_name?: string | null
+          file_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       guest_visitors: {
         Row: {
           email: string
