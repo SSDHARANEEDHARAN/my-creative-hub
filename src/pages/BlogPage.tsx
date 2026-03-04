@@ -29,6 +29,7 @@ const BlogPage = () => {
 
   const postIds = posts.map((p) => p.id);
   const { likeCounts, commentCounts, viewCounts, userLikes, setUserLikes, setLikeCounts } = useBlogListCounts(postIds, currentUserEmail);
+  const downloadCounts = useDownloadCounts("blog", postIds);
 
   const categories = ["All", ...Array.from(new Set(posts.map((p) => p.category)))];
 
