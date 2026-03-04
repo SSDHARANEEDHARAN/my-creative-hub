@@ -6,6 +6,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
 import { engineeringProjects } from "@/data/projectsData";
+import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
+import { useDownloadCount } from "@/hooks/useDownloadCount";
 
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
