@@ -48,6 +48,7 @@ const BlogPostPage = () => {
     refresh: refreshData,
   } = useBlogData(id || "", currentUserEmail, currentUserName);
 
+  const { count: blogDownloadCount, refresh: refreshBlogDownloads } = useDownloadCount("blog", id || "");
   const handleLike = async () => {
     if (!currentUserEmail || !currentUserName) { setShowAccessModal(true); return; }
     await addLike(currentUserName, currentUserEmail);
