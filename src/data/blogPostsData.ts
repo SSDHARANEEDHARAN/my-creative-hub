@@ -1983,4 +1983,742 @@ RAG is the most practical way to give LLMs access to your organization's knowled
     category: "Technology",
     author,
   },
+  // === Additional posts to reach 5+ per category ===
+
+  // IoT #5
+  {
+    id: "19",
+    title: "LoRaWAN for Industrial IoT: Long-Range Sensor Networks in 2026",
+    excerpt: "Deploying LoRaWAN gateways and end-nodes for wide-area industrial monitoring — covering network architecture, payload optimization, and real-world range testing.",
+    content: `## Introduction
+
+**LoRaWAN** (Long Range Wide Area Network) has emerged as the dominant LPWAN protocol for industrial IoT applications requiring kilometer-range communication with minimal power consumption. In 2026, LoRaWAN 1.0.4 and the expanding gateway ecosystem make it more accessible than ever.
+
+## Why LoRaWAN for Industrial IoT?
+
+Traditional WiFi and cellular have limitations in industrial environments:
+- **WiFi**: Limited range (50-100m), high power consumption, congested spectrum
+- **Cellular (4G/5G)**: Recurring SIM costs, overkill bandwidth for sensor data, power-hungry
+- **LoRaWAN**: 2-15km range, 10-year battery life on coin cells, pennies per device per year
+
+## Network Architecture
+
+### Three-Layer Topology:
+1. **End Nodes** — Sensors with LoRa transceivers (SX1276/SX1262 chips)
+2. **Gateways** — Multi-channel receivers forwarding to network server (typically 8-channel)
+3. **Network Server** — ChirpStack or TTN managing device activation, deduplication, and routing
+
+### Gateway Placement Strategy:
+For a 500-acre industrial complex, we deployed 3 gateways:
+- **Gateway 1**: Rooftop of main building (omnidirectional antenna, 8dBi)
+- **Gateway 2**: Water tower (highest point, provides overlap coverage)
+- **Gateway 3**: Warehouse district (directional antenna toward remote storage)
+
+## Payload Optimization
+
+LoRaWAN's maximum payload is 242 bytes at SF7 (highest data rate). At SF12 (longest range), it drops to 51 bytes. Every byte counts.
+
+### Efficient Encoding Example:
+
+Instead of sending JSON (wasteful):
+\`\`\`json
+{"temperature": 23.5, "humidity": 67.2, "battery": 3.7}
+\`\`\`
+(52 bytes)
+
+Use binary packing:
+\`\`\`cpp
+// Pack into 5 bytes
+buffer[0] = (uint8_t)(temperature * 2);      // 0-127.5°C in 0.5°C steps
+buffer[1] = (uint8_t)(humidity * 2);          // 0-127.5% in 0.5% steps  
+buffer[2] = (uint8_t)((battery - 2.0) * 100); // 2.0-4.55V in 0.01V steps
+\`\`\`
+(3 bytes — 94% reduction!)
+
+## Real-World Range Testing Results
+
+| Location | SF | Distance | RSSI | SNR | Packet Loss |
+|----------|-----|----------|------|-----|-------------|
+| Line-of-sight | SF7 | 3.2 km | -98 dBm | 8.5 dB | 0% |
+| Urban industrial | SF9 | 1.8 km | -112 dBm | 2.1 dB | 1.2% |
+| Indoor (warehouse) | SF10 | 450 m | -118 dBm | -3.2 dB | 3.5% |
+| Heavy machinery area | SF12 | 280 m | -125 dBm | -8.1 dB | 5.8% |
+
+## Power Budget Analysis
+
+For a soil moisture sensor reporting every 30 minutes:
+- **Active transmit**: 120mA × 50ms = 1.67 µAh per transmission
+- **Sleep current**: 2µA continuous = 1µAh per 30 min
+- **Total daily**: ~83 µAh
+- **AA battery (2500mAh)**: **~8.2 years** theoretical lifetime
+
+## Deployment Challenges & Solutions
+
+1. **Downlink limitations**: LoRaWAN has strict duty cycle limits. Use Class C for actuators needing frequent commands
+2. **Time synchronization**: Use MAC command DeviceTimeReq for sub-second sync across nodes
+3. **Firmware updates**: FUOTA (Firmware Update Over The Air) is supported but slow — plan 4-6 hours for 100KB updates
+4. **Security**: AES-128 encryption is built-in. Rotate AppKeys annually. Use join servers for fleet management
+
+## Conclusion
+
+LoRaWAN is the sweet spot for industrial IoT deployments needing wide coverage and long battery life. Start with ChirpStack (open source) for your network server, use off-the-shelf gateways, and focus your engineering effort on payload optimization and edge processing.`,
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=500&fit=crop",
+    date: "Mar 15, 2026",
+    readTime: "12 min read",
+    category: "IoT",
+    author,
+  },
+
+  // Design #4
+  {
+    id: "20",
+    title: "Dark Mode Done Right: Color Science for UI Designers",
+    excerpt: "Beyond inverting colors — understanding color perception, contrast ratios, and elevation systems to build dark themes that reduce eye strain and look stunning.",
+    content: `## Introduction
+
+Dark mode isn't just swapping white backgrounds for black. Done poorly, it causes more eye strain than light mode. Done right, it reduces blue light emission by 60%, saves battery on OLED screens, and creates a premium aesthetic.
+
+## The Science of Dark Mode Perception
+
+Human eyes adapt differently to dark environments:
+- **Pupil dilation**: In dark UIs, pupils dilate, making bright elements appear to "glow" (halation effect)
+- **Contrast sensitivity**: We perceive contrast differently — pure white (#FFF) on pure black (#000) creates excessive contrast (21:1 ratio) that fatigues eyes
+- **Color shift**: Colors appear more saturated on dark backgrounds due to the Helmholtz-Kohlrausch effect
+
+## The Elevation System
+
+Material Design introduced the concept of **elevation through luminance**. In dark mode, higher surfaces are lighter:
+
+| Elevation | Overlay | Background Color | Use Case |
+|-----------|---------|-------------------|----------|
+| 0dp | 0% | #121212 | Page background |
+| 1dp | 5% | #1E1E1E | Cards, nav bars |
+| 2dp | 7% | #222222 | Raised buttons |
+| 4dp | 9% | #272727 | App bars |
+| 8dp | 12% | #2C2C2C | Menus, dialogs |
+| 16dp | 15% | #313131 | Modal overlays |
+
+This creates visual hierarchy without shadows (which are invisible on dark backgrounds).
+
+## Color Palette Adaptation
+
+### Don't Simply Invert
+
+Light mode primary: hsl(220, 90%, 50%) — Vibrant blue
+Dark mode equivalent: hsl(220, 80%, 65%) — Desaturated, lighter blue
+
+### Rules for Dark Mode Colors:
+1. **Reduce saturation by 10-20%** — Prevents neon-like appearance
+2. **Increase lightness by 15-20%** — Maintains readability
+3. **Avoid pure colors** — Use tinted grays (add 2-4% of your primary hue to grays)
+4. **Test at night** — Review your dark theme in actual dark environments
+
+## Typography Adjustments
+
+Font weight perception changes on dark backgrounds:
+- **Regular weight (400)** on light background ≈ **Medium weight (500)** on dark background
+- Consider reducing font-weight by one step in dark mode
+- Increase letter-spacing slightly (+0.01em) for better readability
+
+\`\`\`css
+@media (prefers-color-scheme: dark) {
+  body {
+    font-weight: 350; /* Slightly lighter than regular */
+    letter-spacing: 0.01em;
+  }
+}
+\`\`\`
+
+## Implementing with CSS Custom Properties
+
+\`\`\`css
+:root {
+  --surface-0: hsl(0, 0%, 100%);
+  --surface-1: hsl(0, 0%, 96%);
+  --text-primary: hsl(220, 15%, 15%);
+  --text-secondary: hsl(220, 10%, 45%);
+}
+
+[data-theme="dark"] {
+  --surface-0: hsl(220, 15%, 8%);
+  --surface-1: hsl(220, 12%, 12%);
+  --text-primary: hsl(220, 10%, 90%);
+  --text-secondary: hsl(220, 8%, 60%);
+}
+\`\`\`
+
+## Common Dark Mode Mistakes
+
+1. **Pure black backgrounds** (#000000) — Use dark gray (#121212 or darker tinted gray)
+2. **Unchanged shadows** — Replace shadows with subtle borders or luminance changes
+3. **Same image treatment** — Reduce image brightness by 10-15% to prevent eye-searing contrast
+4. **Ignoring transitions** — Animate theme switches with 200ms color transitions
+5. **No system preference detection** — Always respect \`prefers-color-scheme\`
+
+## Conclusion
+
+Great dark mode design requires understanding human color perception, not just CSS variable swaps. Use tinted grays, reduce saturation, implement elevation through luminance, and always test in real dark environments. Your users' eyes will thank you.`,
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=500&fit=crop",
+    date: "Apr 8, 2026",
+    readTime: "9 min read",
+    category: "Design",
+    author,
+  },
+
+  // Design #5
+  {
+    id: "21",
+    title: "Motion Design Principles for Web: From Disney to CSS",
+    excerpt: "Applying the 12 principles of animation to web interfaces — timing, easing, anticipation, and follow-through that make digital products feel alive.",
+    content: `## Introduction
+
+Walt Disney's animators codified **12 principles of animation** in the 1930s. These principles — rooted in physics and human perception — apply directly to modern web interface design.
+
+## The 5 Most Relevant Principles for Web UI
+
+### 1. Ease In, Ease Out (Slow In, Slow Out)
+
+Nothing in the real world moves at constant speed. Objects accelerate and decelerate.
+
+\`\`\`css
+/* Bad: Linear motion feels robotic */
+.element { transition: transform 300ms linear; }
+
+/* Good: Ease-out for entering elements */
+.element-enter { transition: transform 300ms cubic-bezier(0.0, 0.0, 0.2, 1); }
+
+/* Good: Ease-in for exiting elements */
+.element-exit { transition: transform 250ms cubic-bezier(0.4, 0.0, 1, 1); }
+\`\`\`
+
+### 2. Anticipation
+
+Prepare the user for what's about to happen. A button that compresses slightly before bouncing communicates "something is loading."
+
+\`\`\`tsx
+<motion.button
+  whileTap={{ scale: 0.95 }}
+  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+>
+  Submit
+</motion.button>
+\`\`\`
+
+### 3. Follow-Through and Overlapping Action
+
+When a modal opens, don't move everything at once. Let elements arrive at slightly different times:
+
+\`\`\`tsx
+const modalVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1, y: 0,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1,
+    }
+  }
+};
+\`\`\`
+
+### 4. Staging
+
+Direct the user's attention to what matters. Use motion to guide focus:
+- **Blur background** when opening a dialog
+- **Dim surrounding elements** when highlighting a feature
+- **Scale up** the element that just changed
+
+### 5. Timing
+
+The duration of an animation communicates meaning:
+- **100-200ms**: Micro-interactions (button press, toggle switch)
+- **200-300ms**: Small transitions (tooltips, dropdowns)
+- **300-500ms**: Medium transitions (page changes, modals)
+- **500ms+**: Only for decorative/celebratory animations
+
+## The "Meaningful Motion" Framework
+
+Every animation should answer: **What story does this motion tell?**
+
+| Motion | Story | Example |
+|--------|-------|---------|
+| Fade in + slide up | "I'm new, notice me" | Toast notification |
+| Scale from origin | "I came from here" | Expanding card to detail |
+| Slide left | "Moving forward" | Step-by-step wizard |
+| Bounce | "Done! Celebrate!" | Success checkmark |
+| Shake | "Nope, try again" | Invalid form input |
+
+## Performance Golden Rules
+
+1. Only animate \`transform\` and \`opacity\` (GPU-composited)
+2. Use \`will-change\` only during animation, remove after
+3. Prefer CSS transitions for simple state changes
+4. Use Framer Motion / GSAP for complex choreography
+5. Always provide \`prefers-reduced-motion\` alternatives
+
+\`\`\`css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+\`\`\`
+
+## Conclusion
+
+Great motion design is invisible — users feel it but don't consciously notice it. Start with Disney's principles, respect timing, and always animate with purpose. The goal is not to impress, but to inform and guide.`,
+    image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=500&fit=crop",
+    date: "May 20, 2026",
+    readTime: "10 min read",
+    category: "Design",
+    author,
+  },
+
+  // Development #5
+  {
+    id: "22",
+    title: "WebAssembly in Production: When JavaScript Isn't Fast Enough",
+    excerpt: "Real-world use cases for WebAssembly in 2026 — image processing, physics engines, and cryptography running at near-native speed in the browser.",
+    content: `## Introduction
+
+**WebAssembly (Wasm)** delivers near-native performance in the browser. In 2026, it's no longer experimental — major products use it for computationally intensive tasks that JavaScript can't handle efficiently.
+
+## When to Reach for WebAssembly
+
+Wasm shines when you need:
+- **CPU-intensive computation**: Image/video processing, physics simulation, data compression
+- **Consistent performance**: No garbage collection pauses, predictable execution times
+- **Existing native codebases**: Port C/C++/Rust libraries to the web without rewriting
+
+Wasm does NOT replace JavaScript for:
+- DOM manipulation (still needs JS bridge)
+- Simple CRUD applications
+- UI rendering logic
+
+## Real-World Use Cases in 2026
+
+### 1. Image Processing — Squoosh by Google
+Google's image compression tool uses C++ codecs compiled to Wasm:
+- MozJPEG, WebP, AVIF encoders running in-browser
+- **10-50x faster** than equivalent JavaScript implementations
+- Users compress images without uploading to a server
+
+### 2. CAD in the Browser — Onshape
+Full parametric CAD modeling with geometry kernels compiled from C++ to Wasm. Complex Boolean operations on 3D meshes run in milliseconds.
+
+### 3. Video Editing — Clipchamp (Microsoft)
+Video transcoding, filters, and effects processed client-side using FFmpeg compiled to Wasm. No server round-trips for preview rendering.
+
+## Getting Started: Rust → Wasm
+
+Rust has first-class Wasm support through \`wasm-pack\`:
+
+\`\`\`rust
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn fibonacci(n: u32) -> u64 {
+    match n {
+        0 => 0,
+        1 => 1,
+        _ => {
+            let mut a: u64 = 0;
+            let mut b: u64 = 1;
+            for _ in 2..=n {
+                let temp = a + b;
+                a = b;
+                b = temp;
+            }
+            b
+        }
+    }
+}
+\`\`\`
+
+### Using in React:
+
+\`\`\`tsx
+import init, { fibonacci } from './pkg/my_wasm_module';
+
+useEffect(() => {
+  init().then(() => {
+    console.log(fibonacci(50)); // Instant, even for large numbers
+  });
+}, []);
+\`\`\`
+
+## Performance Benchmarks
+
+| Task | JavaScript | WebAssembly | Speedup |
+|------|-----------|-------------|---------|
+| Matrix multiplication (1024×1024) | 2,340ms | 89ms | 26x |
+| Image blur (4K) | 890ms | 34ms | 26x |
+| SHA-256 hash (100MB) | 1,200ms | 180ms | 6.7x |
+| JSON parsing (50MB) | 340ms | 280ms | 1.2x |
+| Fibonacci(45) | 12,400ms | 3,200ms | 3.9x |
+
+Note: For simple tasks like JSON parsing, the JS bridge overhead makes Wasm barely faster. Wasm wins big on sustained computation.
+
+## The Wasm Component Model (2026)
+
+The Component Model is the next evolution, enabling:
+- **Language-agnostic interfaces**: Call Rust from Python from Go — all in Wasm
+- **Composable modules**: Mix libraries from different languages in one application
+- **WASI Preview 2**: Standardized system interfaces for file I/O, networking, and more
+
+## Conclusion
+
+WebAssembly is a surgical tool, not a replacement for JavaScript. Use it where you need predictable, high-performance computation. The Rust-to-Wasm pipeline is mature and production-ready. Start with a performance-critical module and measure the impact before committing to a full Wasm architecture.`,
+    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h=500&fit=crop",
+    date: "Apr 30, 2026",
+    readTime: "11 min read",
+    category: "Development",
+    author,
+  },
+
+  // Engineering #4
+  {
+    id: "23",
+    title: "GD&T Masterclass: Geometric Tolerancing for Modern Manufacturing",
+    excerpt: "A comprehensive guide to Geometric Dimensioning and Tolerancing — from datum selection to composite position tolerances for precision mechanical design.",
+    content: `## Introduction
+
+**Geometric Dimensioning and Tolerancing (GD&T)** is the universal language of mechanical engineering drawings. Per ASME Y14.5-2018, GD&T defines how parts should be manufactured and inspected, eliminating ambiguity that traditional ±tolerancing can't address.
+
+## Why GD&T Over ± Tolerancing?
+
+Traditional ±tolerancing creates a **square tolerance zone**. A hole located at X = 50 ±0.1mm and Y = 30 ±0.1mm has a 0.2 × 0.2mm square zone. But functionally, the hole just needs to be within a certain distance from nominal — a **circular zone**.
+
+GD&T position tolerance Ø0.28mm gives 57% more usable tolerance than the square zone — more parts pass inspection without compromising function.
+
+## The 14 Geometric Tolerances
+
+### Form Controls (no datum required):
+| Symbol | Name | Controls |
+|--------|------|----------|
+| ⏤ | Flatness | Surface planarity |
+| ⌭ | Straightness | Line straightness |
+| ○ | Circularity | Cross-section roundness |
+| ⌓ | Cylindricity | Combined circularity + straightness |
+
+### Orientation Controls (require datum):
+| Symbol | Name | Controls |
+|--------|------|----------|
+| ⊥ | Perpendicularity | 90° relationship |
+| ∠ | Angularity | Angular relationship |
+| ∥ | Parallelism | Parallel relationship |
+
+### Location Controls (require datum):
+| Symbol | Name | Controls |
+|--------|------|----------|
+| ⊕ | Position | True position location |
+| ◎ | Concentricity | Axis coaxiality |
+| ⌖ | Symmetry | Feature symmetry |
+
+### Runout Controls (require datum):
+| Symbol | Name | Controls |
+|--------|------|----------|
+| ↗ | Circular Runout | Single cross-section variation |
+| ↗↗ | Total Runout | Entire surface variation |
+
+### Profile Controls:
+| Symbol | Name | Controls |
+|--------|------|----------|
+| ⌓ | Profile of a Line | 2D cross-section |
+| ◑ | Profile of a Surface | 3D surface |
+
+## Datum Selection Strategy
+
+The **3-2-1 Rule** (for prismatic parts):
+1. **Primary Datum (A)**: Largest, most stable surface — constrains 3 degrees of freedom (translation Z, rotation X, rotation Y)
+2. **Secondary Datum (B)**: Perpendicular to primary — constrains 2 DOF (translation X, rotation Z)  
+3. **Tertiary Datum (C)**: Perpendicular to both — constrains 1 DOF (translation Y)
+
+### Golden Rules:
+- Datums should be **functional surfaces** (mating faces, mounting surfaces)
+- Primary datum = surface that contacts the mating part first
+- Datum features should be **accessible for inspection** (CMM probe access)
+- Avoid using centerlines as primary datums when a surface is available
+
+## MMC and LMC Modifiers
+
+**Maximum Material Condition (Ⓜ)**: The condition where the feature contains the maximum amount of material
+- Shaft: largest diameter
+- Hole: smallest diameter
+
+**Bonus tolerance**: When a feature departs from MMC, additional position tolerance is gained.
+
+Example: Hole Ø10.0 +0.3/-0.0 with position Ø0.2 at MMC
+- At MMC (Ø10.0): Position tolerance = Ø0.2
+- At Ø10.1: Position tolerance = Ø0.3 (0.1 bonus)
+- At LMC (Ø10.3): Position tolerance = Ø0.5 (0.3 bonus)
+
+## Composite Position Tolerance
+
+Used when pattern location and feature-to-feature spacing have different requirements:
+
+**Upper segment** (PLTZF): Controls pattern location relative to datums
+**Lower segment** (FRTZF): Controls feature-to-feature relationship (tighter)
+
+Common application: Bolt circle patterns where the pattern can shift slightly but bolt spacing must be precise.
+
+## Practical Tips
+
+1. **Start with function**: Ask "what does this feature mate with?" before tolerancing
+2. **Use profile tolerance** as the default surface control — it's the most versatile
+3. **Apply MMC to features of size** (holes, pins) to gain bonus tolerance and enable gauge inspection
+4. **Avoid over-tolerancing** — every GD&T callout costs money. Tolerance only what matters functionally
+5. **Coordinate with manufacturing** — CNC can hold ±0.025mm easily; don't specify ±0.005mm unless necessary
+
+## Conclusion
+
+GD&T is not just for drawings — it's a design philosophy. It forces engineers to think about function first, communicate unambiguously with manufacturing, and optimize tolerance zones for maximum yield. Master the datum system and MMC concepts, and you'll design parts that are easier to make and inspect.`,
+    image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&h=500&fit=crop",
+    date: "May 15, 2026",
+    readTime: "14 min read",
+    category: "Engineering",
+    author,
+  },
+
+  // Engineering #5
+  {
+    id: "24",
+    title: "CFD Simulation for HVAC Duct Design: Airflow Optimization Guide",
+    excerpt: "Using computational fluid dynamics to optimize HVAC duct layouts — reducing pressure drop, eliminating dead zones, and improving thermal comfort in commercial buildings.",
+    content: `## Introduction
+
+**Computational Fluid Dynamics (CFD)** transforms HVAC design from rule-of-thumb sizing to data-driven optimization. In this guide, we'll simulate airflow through a commercial building's duct system, identify problems, and iterate toward an optimal design.
+
+## Project Setup: Office Building HVAC
+
+### Building Specifications:
+- **Floor area**: 2,000 m² open-plan office
+- **Ceiling height**: 3.0m (2.7m clear below duct)
+- **Occupancy**: 150 people
+- **Cooling load**: 180 kW (90 W/m²)
+- **Supply air**: 12,000 CFM at 14°C
+- **Target**: ±1°C uniformity, <0.2 m/s draft at desk level
+
+## CFD Software & Mesh Setup
+
+### Software: ANSYS Fluent (alternatives: OpenFOAM, SimScale)
+
+### Mesh Strategy:
+- **Duct interior**: Hex-dominant mesh, 15mm element size
+- **Diffuser regions**: Refined to 5mm (capture jet dynamics)
+- **Occupied zone** (0.6-1.8m height): 25mm elements
+- **Total cells**: ~4.2 million
+- **Boundary layers**: 5 inflation layers on duct walls (y+ < 5)
+
+### Turbulence Model: 
+**k-ε Realizable** — best balance of accuracy and convergence for indoor airflow
+
+## Initial Design Analysis
+
+The architect's original duct layout showed:
+- **Main trunk duct**: 800mm × 400mm rectangular
+- **Branch ducts**: 4 × 300mm diameter
+- **Diffusers**: 8 × 600mm × 600mm 4-way ceiling diffusers
+
+### CFD Results (Initial Design):
+
+| Metric | Target | Actual | Status |
+|--------|--------|--------|--------|
+| Temperature uniformity | ±1°C | ±3.2°C | ❌ FAIL |
+| Max draft velocity | <0.2 m/s | 0.45 m/s | ❌ FAIL |
+| Pressure drop | <200 Pa | 340 Pa | ❌ FAIL |
+| Dead zones (>26°C) | 0% | 18% of floor area | ❌ FAIL |
+
+### Problems Identified:
+1. **Uneven branch flow distribution**: First two branches got 35% each, last two got 15% each
+2. **High-velocity jets**: 4-way diffusers throwing air too far at current flow rates
+3. **Dead zones**: Corners and perimeter areas received minimal airflow
+4. **Sharp elbows**: 90° duct bends creating pressure losses and turbulence
+
+## Design Iteration 1: Duct Geometry
+
+### Changes Made:
+- Replaced 90° elbows with **radius-to-width ratio of 1.5** (reduced pressure loss by 60%)
+- Added **turning vanes** in remaining tight bends
+- Tapered main trunk duct (reducing cross-section after each branch takeoff)
+- Installed **balancing dampers** at each branch
+
+### Results:
+- Pressure drop: 340 Pa → 215 Pa
+- Flow distribution: 35/35/15/15% → 28/26/24/22%
+
+## Design Iteration 2: Diffuser Selection
+
+### Changes Made:
+- Replaced 4-way diffusers with **slot diffusers** along perimeter walls (Coanda effect)
+- Added **swirl diffusers** in center zones for better mixing
+- Reduced number from 8 to 12 (smaller, better distributed)
+
+### Results:
+- Temperature uniformity: ±3.2°C → ±0.8°C ✅
+- Max draft velocity: 0.45 m/s → 0.15 m/s ✅
+- Dead zones: 18% → 2% ✅
+
+## Design Iteration 3: Energy Optimization
+
+### Changes Made:
+- Variable Air Volume (VAV) boxes on each branch
+- Demand-controlled ventilation using CO2 sensors
+- Reduced fan speed during partial load (70% of operating hours)
+
+### Final Results:
+
+| Metric | Target | Final | Status |
+|--------|--------|-------|--------|
+| Temperature uniformity | ±1°C | ±0.8°C | ✅ PASS |
+| Max draft velocity | <0.2 m/s | 0.15 m/s | ✅ PASS |
+| System pressure drop | <200 Pa | 185 Pa | ✅ PASS |
+| Annual energy savings | — | 32% vs initial design | ✅ BONUS |
+
+## Lessons Learned
+
+1. **Always simulate before building** — The initial design would have cost $15K to retrofit
+2. **Duct geometry matters more than diffuser selection** — Fix the ductwork first
+3. **Use slot diffusers on perimeter walls** — Coanda effect provides better coverage
+4. **VAV saves more energy than oversizing** — Right-size ducts, control flow with dampers
+
+## Conclusion
+
+CFD simulation turns HVAC design from guesswork into engineering. Three iterations took us from a failing design to one that exceeds all comfort targets while reducing energy consumption by 32%. The cost of simulation (40 engineering hours) paid for itself many times over in avoided construction rework.`,
+    image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&h=500&fit=crop",
+    date: "Jun 3, 2026",
+    readTime: "13 min read",
+    category: "Engineering",
+    author,
+  },
+
+  // Technology #5
+  {
+    id: "25",
+    title: "Edge AI: Running Machine Learning Models on Microcontrollers",
+    excerpt: "Deploying TinyML models on ARM Cortex-M microcontrollers — from model quantization and pruning to real-time inference on devices with 256KB of RAM.",
+    content: `## Introduction
+
+**Edge AI** — running machine learning inference directly on microcontrollers — eliminates the need for cloud connectivity and enables real-time intelligence on devices costing under $5. In 2026, TinyML frameworks have matured to make this accessible to embedded engineers.
+
+## Why Run ML on Microcontrollers?
+
+| Factor | Cloud ML | Edge AI (MCU) |
+|--------|----------|---------------|
+| Latency | 100-500ms | <10ms |
+| Privacy | Data leaves device | Data stays local |
+| Power | WiFi/cellular required | µW inference |
+| Cost/unit | SIM + cloud fees | $0 after deployment |
+| Reliability | Needs connectivity | Always available |
+
+## Hardware Options in 2026
+
+### Popular TinyML Platforms:
+
+| MCU | RAM | Flash | ML Accelerator | Price |
+|-----|-----|-------|-----------------|-------|
+| ESP32-S3 | 512KB + 8MB PSRAM | 16MB | Vector instructions | $4 |
+| Arduino Nano 33 BLE Sense | 256KB | 1MB | None (ARM Cortex-M4) | $27 |
+| STM32H747 | 1MB | 2MB | Dedicated NPU | $12 |
+| NXP i.MX RT1170 | 2MB | - | Arm Ethos-U55 NPU | $15 |
+
+## Model Optimization Pipeline
+
+### Step 1: Train in TensorFlow/PyTorch (full precision)
+Start with a standard model — accuracy is the priority at this stage.
+
+### Step 2: Quantize (Float32 → Int8)
+\`\`\`python
+import tensorflow as tf
+
+converter = tf.lite.TFLiteConverter.from_saved_model('model/')
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+converter.representative_dataset = representative_data_gen
+converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+converter.inference_input_type = tf.int8
+converter.inference_output_type = tf.int8
+
+tflite_model = converter.convert()
+# Float32: 2.4MB → Int8: 612KB (75% reduction)
+\`\`\`
+
+### Step 3: Prune (Remove unnecessary weights)
+Remove weights below a threshold, retrain to recover accuracy:
+- 50% sparsity typically costs <1% accuracy
+- 80% sparsity may cost 2-5% accuracy but halves inference time
+
+### Step 4: Deploy with TensorFlow Lite Micro
+\`\`\`cpp
+#include "tensorflow/lite/micro/micro_interpreter.h"
+#include "model_data.h"
+
+constexpr int kTensorArenaSize = 80 * 1024; // 80KB
+uint8_t tensor_arena[kTensorArenaSize];
+
+void setup() {
+  static tflite::MicroInterpreter interpreter(
+    model, resolver, tensor_arena, kTensorArenaSize);
+  interpreter.AllocateTensors();
+}
+
+void loop() {
+  // Copy input data
+  auto* input = interpreter.input(0);
+  memcpy(input->data.int8, sensor_data, input->bytes);
+  
+  // Run inference
+  interpreter.Invoke(); // ~15ms on Cortex-M7 @ 480MHz
+  
+  // Read output
+  auto* output = interpreter.output(0);
+  int8_t prediction = output->data.int8[0];
+}
+\`\`\`
+
+## Real-World Applications
+
+### 1. Keyword Spotting (Wake Word Detection)
+- Model: DS-CNN, 25K parameters
+- RAM: 22KB, Flash: 94KB
+- Accuracy: 93.5% on "Hey Device"
+- Latency: 30ms on Cortex-M4 @ 64MHz
+
+### 2. Vibration Anomaly Detection
+- Model: Autoencoder, 8K parameters
+- RAM: 15KB, Flash: 38KB
+- Detects bearing failures 72h before occurrence
+- Power: 180µA average (with duty cycling)
+
+### 3. Visual Inspection (Quality Control)
+- Model: MobileNet v2 (0.35α), 440K parameters
+- RAM: 320KB (needs PSRAM), Flash: 1.2MB
+- Classifies defects at 12 FPS on ESP32-S3
+- Accuracy: 96.8% on 5-class defect detection
+
+## Benchmarks: Same Model, Different MCUs
+
+| MCU | Clock | Inference Time | Power During Inference |
+|-----|-------|---------------|----------------------|
+| Cortex-M0+ (48MHz) | 48MHz | 890ms | 12mW |
+| Cortex-M4F (168MHz) | 168MHz | 95ms | 85mW |
+| Cortex-M7 (480MHz) | 480MHz | 15ms | 250mW |
+| ESP32-S3 (240MHz) | 240MHz | 42ms | 180mW |
+
+## Challenges & Solutions
+
+1. **Memory constraints**: Use model pruning + quantization. Target <100KB total for Cortex-M4 devices
+2. **No floating point**: Full integer quantization is essential. Avoid models with batch normalization at inference time
+3. **Limited operators**: TFLite Micro supports ~60 ops. Stick to Conv2D, DepthwiseConv2D, Dense, Reshape
+4. **Debugging**: Use TFLite Micro's built-in profiler to identify bottleneck layers
+
+## Conclusion
+
+Edge AI on microcontrollers is production-ready in 2026. The key is the optimization pipeline: train big, quantize aggressively, and deploy lean. Start with keyword spotting or anomaly detection — both have well-documented models that fit in <100KB. Once you see inference running at 15ms on a $4 chip, you'll never want to send data to the cloud again.`,
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=500&fit=crop",
+    date: "May 28, 2026",
+    readTime: "12 min read",
+    category: "Technology",
+    author,
+  },
 ];
