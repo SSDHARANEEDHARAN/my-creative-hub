@@ -15,6 +15,7 @@ const ArticlePage = memo(() => {
   const project = article ? engineeringProjects.find(p => p.id === article.id) : undefined;
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -373,6 +374,30 @@ const ArticlePage = memo(() => {
                     />
                   ))}
                 </div>
+              </div>
+
+              {/* Download Section */}
+              <div 
+                className="mt-12 p-8 bg-secondary/30 border border-border"
+                style={{
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                  transition: 'all 0.6s ease-out',
+                  transitionDelay: '850ms'
+                }}
+              >
+                <h3 className="font-display text-xl font-bold mb-3">Download Project Files</h3>
+                <p className="text-muted-foreground mb-6 text-sm">
+                  Get the full case study as PDF or download the SolidWorks/STEP CAD files for this project.
+                </p>
+                <ProjectDownloadDialog
+                  projectId={project.id}
+                  projectTitle={project.title}
+                  projectDescription={project.description}
+                  tags={project.tags}
+                  downloadCount={projectDownloadCount}
+                  onDownloaded={refreshProjectDownloads}
+                />
               </div>
 
               {/* CTA */}
