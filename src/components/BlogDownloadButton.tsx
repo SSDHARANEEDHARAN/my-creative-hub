@@ -29,19 +29,14 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
       const contentWidth = pageWidth - margin * 2;
 
       const addWatermark = (pageDoc: jsPDF) => {
-        pageDoc.saveGraphicsState();
-        pageDoc.setGState(new jsPDF.GState({ opacity: 0.06 }));
         pageDoc.setFontSize(50);
-        pageDoc.setTextColor(100, 100, 100);
-
+        pageDoc.setTextColor(235, 235, 235);
         const text = "Dharaneedharan SS";
-        // Diagonal watermark
         for (let y = 30; y < pageHeight; y += 80) {
           for (let x = -20; x < pageWidth; x += 120) {
             pageDoc.text(text, x, y, { angle: 35 });
           }
         }
-        pageDoc.restoreGraphicsState();
       };
 
       // Add watermark to first page

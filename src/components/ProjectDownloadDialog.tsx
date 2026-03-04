@@ -30,16 +30,13 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         const contentWidth = pageWidth - margin * 2;
 
         // Watermark
-        doc.saveGraphicsState();
-        doc.setGState(new jsPDF.GState({ opacity: 0.06 }));
         doc.setFontSize(50);
-        doc.setTextColor(100, 100, 100);
+        doc.setTextColor(235, 235, 235);
         for (let y = 30; y < pageHeight; y += 80) {
           for (let x = -20; x < pageWidth; x += 120) {
             doc.text("Dharaneedharan SS", x, y, { angle: 35 });
           }
         }
-        doc.restoreGraphicsState();
 
         // Header
         doc.setFillColor(30, 30, 30);
@@ -94,16 +91,13 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
             doc.text(`© Dharaneedharan SS | Page ${doc.getNumberOfPages()}`, pageWidth / 2, pageHeight - 10, { align: "center" });
             doc.addPage();
             // watermark on new page
-            doc.saveGraphicsState();
-            doc.setGState(new jsPDF.GState({ opacity: 0.06 }));
             doc.setFontSize(50);
-            doc.setTextColor(100, 100, 100);
+            doc.setTextColor(235, 235, 235);
             for (let wy = 30; wy < pageHeight; wy += 80) {
               for (let wx = -20; wx < pageWidth; wx += 120) {
                 doc.text("Dharaneedharan SS", wx, wy, { angle: 35 });
               }
             }
-            doc.restoreGraphicsState();
             y = 20;
           }
 
