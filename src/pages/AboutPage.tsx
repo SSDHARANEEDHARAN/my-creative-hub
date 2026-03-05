@@ -99,13 +99,13 @@ const AboutPage = () => {
         <Navigation />
         <main className="pt-20">
           {/* Hero Profile Section */}
-          <section className="py-20 relative overflow-hidden">
+           <section className="py-12 sm:py-16 md:py-20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-secondary/40 -z-10" style={{ clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }} />
             <div className="absolute bottom-0 left-0 w-1/3 h-1/3 bg-primary/5 -z-10" />
             
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
-                <div className="max-w-4xl mx-auto bg-card border-2 border-border p-8 md:p-12 sharp-card mb-16">
+                <div className="max-w-4xl mx-auto bg-card border-2 border-border p-4 sm:p-6 md:p-8 lg:p-12 sharp-card mb-10 sm:mb-16">
                   <div className="flex flex-col md:flex-row gap-8 items-start">
                     <div className="shrink-0 group/photo">
                       <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-secondary rounded-lg">
@@ -117,12 +117,12 @@ const AboutPage = () => {
                     </div>
                     
                     <div className="flex-1">
-                      <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">Dharaneedharan SS</h1>
-                      <p className="text-xl text-primary font-semibold mb-4">Full Stack Developer & CAD Engineer</p>
+                       <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Dharaneedharan SS</h1>
+                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Full Stack Developer & CAD Engineer</p>
                       
-                      <div className="flex flex-wrap gap-4 text-muted-foreground text-sm mb-6">
+                       <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                         <span className="flex items-center gap-1"><MapPin size={14} className="text-primary" />Namakkal, India</span>
-                        <span className="flex items-center gap-1"><Mail size={14} className="text-primary" />tharaneetharanss@gmail.com</span>
+                        <span className="flex items-center gap-1 break-all"><Mail size={14} className="text-primary shrink-0" />tharaneetharanss@gmail.com</span>
                         <span className="flex items-center gap-1"><Phone size={14} className="text-primary" />+91 8870086023</span>
                       </div>
                       
@@ -150,17 +150,17 @@ const AboutPage = () => {
               </ScrollReveal>
 
               <ScrollReveal delay={100}>
-                <div className="max-w-4xl mx-auto mb-16">
+                <div className="max-w-4xl mx-auto mb-10 sm:mb-16">
                   <div className="section-badge-sharp mb-6">
                     <span className="section-badge-dot-sharp" />
                     <span className="text-secondary-foreground font-medium text-sm uppercase tracking-wider">About Me</span>
                   </div>
-                  <p className="text-muted-foreground text-lg leading-relaxed mb-6">
+                   <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6">
                     I'm a versatile professional with a unique blend of <span className="text-primary font-semibold">IT development</span> and 
                     <span className="text-accent font-semibold"> mechanical engineering</span> expertise. My journey spans across full-stack web development, 
                     embedded systems, and advanced CAD engineering.
                   </p>
-                  <p className="text-muted-foreground text-lg leading-relaxed mb-8">
+                  <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8">
                     With hands-on experience in both IT and Non-IT domains, I bring a holistic approach to problem-solving. 
                     Whether it's building responsive web applications with React, developing IoT solutions, or designing complex 
                     assemblies in SolidWorks and NX, I thrive on creating solutions that make a difference.
@@ -172,22 +172,22 @@ const AboutPage = () => {
           </section>
 
           {/* Experience Section */}
-          <section className="py-20 bg-secondary/30">
-            <div className="container mx-auto px-6">
+           <section className="py-12 sm:py-16 md:py-20 bg-secondary/30">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
                 <div className="text-center mb-12">
                   <div className="section-badge-sharp mx-auto mb-6">
                     <Building2 size={16} className="text-primary" />
                     <span className="text-secondary-foreground font-medium text-sm uppercase tracking-wider">Work Experience</span>
                   </div>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold">Professional <span className="text-gradient">Journey</span></h2>
+                   <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold">Professional <span className="text-gradient">Journey</span></h2>
                 </div>
               </ScrollReveal>
 
               <div className="max-w-4xl mx-auto space-y-6">
                 {experiences.map((exp, index) => (
                   <ScrollReveal key={`${exp.company}-${index}`} delay={index * 100}>
-                    <div className="bg-card border-2 border-border p-6 md:p-8 sharp-card group hover:border-primary transition-all duration-300">
+                    <div className="bg-card border-2 border-border p-4 sm:p-6 md:p-8 sharp-card group hover:border-primary transition-all duration-300">
                       <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-8">
                         <div className="w-14 h-14 bg-secondary border-2 border-border flex items-center justify-center shrink-0 group-hover:border-primary group-hover:bg-primary/10 transition-all duration-300">
                           <Building2 size={24} className="text-primary" />
@@ -219,15 +219,15 @@ const AboutPage = () => {
           </section>
 
           {/* Skills Section */}
-          <section className="py-20">
-            <div className="container mx-auto px-6">
+           <section className="py-12 sm:py-16 md:py-20">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
                 <div className="text-center mb-12">
                   <div className="section-badge-sharp mx-auto mb-6">
                     <Award size={16} className="text-primary" />
                     <span className="text-secondary-foreground font-medium text-sm uppercase tracking-wider">Expertise</span>
                   </div>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold">Skills & <span className="text-gradient">Proficiency</span></h2>
+                  <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold">Skills & <span className="text-gradient">Proficiency</span></h2>
                 </div>
               </ScrollReveal>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
@@ -254,15 +254,15 @@ const AboutPage = () => {
           </section>
 
           {/* Certificates Section */}
-          <section className="py-20 bg-secondary/30">
-            <div className="container mx-auto px-6">
+           <section className="py-12 sm:py-16 md:py-20 bg-secondary/30">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
                 <div className="text-center mb-12">
                   <div className="section-badge-sharp mx-auto mb-6">
                     <Award size={16} className="text-primary" />
                     <span className="text-secondary-foreground font-medium text-sm uppercase tracking-wider">Achievements</span>
                   </div>
-                  <h2 className="font-display text-3xl md:text-4xl font-bold">My <span className="text-gradient">Certifications</span></h2>
+                  <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold">My <span className="text-gradient">Certifications</span></h2>
                   <p className="text-muted-foreground mt-4 max-w-xl mx-auto">Click on any certificate to view details</p>
                 </div>
               </ScrollReveal>
