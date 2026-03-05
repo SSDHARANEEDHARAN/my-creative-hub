@@ -114,14 +114,40 @@
     @apply border-border;
   }
 
+  html {
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Source Sans 3', sans-serif;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
     font-weight: 600;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* Prevent code blocks from overflowing on mobile */
+  pre, code {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent tables from overflowing */
+  table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
   }
 }
 
