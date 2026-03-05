@@ -36,17 +36,17 @@ const GalleryPage = () => {
       <div className="min-h-screen bg-background transition-colors duration-300">
         <Navigation />
         <main className="pt-20">
-          <section className="py-24 bg-muted/30">
-            <div className="container mx-auto px-6">
+          <section className="py-12 sm:py-16 md:py-24 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
-                <div className="text-center mb-16">
-                  <span className="text-primary font-medium text-sm tracking-widest uppercase mb-4 block">Adventures</span>
-                  <h1 className="font-display text-4xl md:text-6xl font-bold mb-6">Travel <span className="text-gradient">Gallery</span></h1>
-                  <p className="text-muted-foreground max-w-2xl mx-auto text-lg">Moments captured from around the world — each destination inspiring new perspectives and creativity.</p>
+                <div className="text-center mb-10 sm:mb-16">
+                  <span className="text-primary font-medium text-xs sm:text-sm tracking-widest uppercase mb-4 block">Adventures</span>
+                  <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">Travel <span className="text-gradient">Gallery</span></h1>
+                  <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">Moments captured from around the world — each destination inspiring new perspectives and creativity.</p>
                 </div>
               </ScrollReveal>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {travelPhotos.map((photo, index) => (
                   <ScrollReveal key={index} delay={index * 100}>
                     <div

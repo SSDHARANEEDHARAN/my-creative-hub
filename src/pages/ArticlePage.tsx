@@ -27,7 +27,7 @@ const ArticlePage = memo(() => {
       <div className="min-h-screen bg-background">
         <Navigation />
         <main className="pt-32 pb-20">
-          <div className="container mx-auto px-6 text-center">
+          <div className="container mx-auto px-4 sm:px-6 text-center">
             <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
             <p className="text-muted-foreground mb-8">The article you're looking for doesn't exist.</p>
             <Link to="/projects" className="text-primary hover:underline">
@@ -53,14 +53,14 @@ const ArticlePage = memo(() => {
         <main className="pt-24 pb-20">
           {/* Hero Section */}
           <section 
-            className="relative py-16 bg-mesh"
+            className="relative py-8 sm:py-12 md:py-16 bg-mesh"
             style={{
               opacity: isVisible ? 1 : 0,
               transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
               transition: 'all 0.6s ease-out'
             }}
           >
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-4 sm:px-6">
               <Link 
                 to="/projects" 
                 className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
@@ -69,7 +69,7 @@ const ArticlePage = memo(() => {
                 Back to Projects
               </Link>
               
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
                 <div>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.tags.map((tag) => (
@@ -82,10 +82,10 @@ const ArticlePage = memo(() => {
                     ))}
                   </div>
                   
-                  <h1 className="font-display text-3xl md:text-5xl font-bold mb-4">
+                   <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
                     {article.title}
                   </h1>
-                  <p className="text-xl text-muted-foreground mb-8">
+                  <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
                     {article.subtitle}
                   </p>
                   
@@ -160,8 +160,8 @@ const ArticlePage = memo(() => {
           </section>
 
           {/* Content Section */}
-          <section ref={contentRef} className="py-16">
-            <div className="container mx-auto px-6 max-w-4xl">
+          <section ref={contentRef} className="py-8 sm:py-12 md:py-16">
+            <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
               {/* Overview */}
               <div 
                 className="mb-12"
@@ -378,7 +378,7 @@ const ArticlePage = memo(() => {
 
               {/* Download Section */}
               <div 
-                className="mt-12 p-8 bg-secondary/30 border border-border"
+                className="mt-8 sm:mt-12 p-4 sm:p-6 md:p-8 bg-secondary/30 border border-border"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
@@ -402,7 +402,7 @@ const ArticlePage = memo(() => {
 
               {/* CTA */}
               <div 
-                className="mt-16 text-center p-8 bg-card rounded-2xl border border-border"
+                className="mt-10 sm:mt-16 text-center p-4 sm:p-6 md:p-8 bg-card rounded-2xl border border-border"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
@@ -410,22 +410,22 @@ const ArticlePage = memo(() => {
                   transitionDelay: '900ms'
                 }}
               >
-                <h3 className="font-display text-2xl font-bold mb-4">
+                <h3 className="font-display text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
                   Interested in Similar Projects?
                 </h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                   Let's discuss how I can help with your engineering challenges.
                 </p>
-                <div className="flex justify-center gap-4">
+                <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                   <Link 
                     to="/contact"
-                    className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
+                    className="px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors text-center text-sm sm:text-base"
                   >
                     Get in Touch
                   </Link>
                   <Link 
                     to="/projects"
-                    className="px-6 py-3 bg-card border-2 border-border rounded-xl font-medium hover:border-primary/50 transition-colors"
+                    className="px-5 sm:px-6 py-2.5 sm:py-3 bg-card border-2 border-border rounded-xl font-medium hover:border-primary/50 transition-colors text-center text-sm sm:text-base"
                   >
                     View More Projects
                   </Link>
