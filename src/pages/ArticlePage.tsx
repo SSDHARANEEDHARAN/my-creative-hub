@@ -410,22 +410,22 @@ const ArticlePage = memo(() => {
                   transitionDelay: '900ms'
                 }}
               >
-                <h3 className="font-display text-2xl font-bold mb-4">
+                <h3 className="font-display text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
                   Interested in Similar Projects?
                 </h3>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
                   Let's discuss how I can help with your engineering challenges.
                 </p>
-                <div className="flex justify-center gap-4">
+                <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                   <Link 
                     to="/contact"
-                    className="px-6 py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors"
+                    className="px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors text-center text-sm sm:text-base"
                   >
                     Get in Touch
                   </Link>
                   <Link 
                     to="/projects"
-                    className="px-6 py-3 bg-card border-2 border-border rounded-xl font-medium hover:border-primary/50 transition-colors"
+                    className="px-5 sm:px-6 py-2.5 sm:py-3 bg-card border-2 border-border rounded-xl font-medium hover:border-primary/50 transition-colors text-center text-sm sm:text-base"
                   >
                     View More Projects
                   </Link>
