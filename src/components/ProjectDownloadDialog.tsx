@@ -106,14 +106,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
             doc.setTextColor(150, 150, 150);
             doc.text(`© Dharaneedharan SS | Page ${doc.getNumberOfPages()}`, pageWidth / 2, pageHeight - 10, { align: "center" });
             doc.addPage();
-            // watermark on new page
-            doc.setFontSize(50);
-            doc.setTextColor(235, 235, 235);
-            for (let wy = 30; wy < pageHeight; wy += 80) {
-              for (let wx = -20; wx < pageWidth; wx += 120) {
-                doc.text("Dharaneedharan SS", wx, wy, { angle: 35 });
-              }
-            }
+            addProjectWatermark(doc);
             y = 20;
           }
 
