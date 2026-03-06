@@ -29,14 +29,36 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
       const contentWidth = pageWidth - margin * 2;
 
       const addWatermark = (pageDoc: jsPDF) => {
-        pageDoc.setFontSize(50);
-        pageDoc.setTextColor(235, 235, 235);
-        const text = "Dharaneedharan SS";
-        for (let y = 30; y < pageHeight; y += 80) {
-          for (let x = -20; x < pageWidth; x += 120) {
-            pageDoc.text(text, x, y, { angle: 35 });
-          }
-        }
+        // Elegant single centered watermark
+        pageDoc.saveGraphicsState();
+        const cx = pageWidth / 2;
+        const cy = pageHeight / 2;
+
+        // Decorative lines
+        pageDoc.setDrawColor(230, 230, 230);
+        pageDoc.setLineWidth(0.3);
+        pageDoc.line(cx - 55, cy - 18, cx + 55, cy - 18);
+        pageDoc.line(cx - 55, cy + 12, cx + 55, cy + 12);
+
+        // Small top label
+        pageDoc.setFontSize(9);
+        pageDoc.setFont("helvetica", "normal");
+        pageDoc.setTextColor(210, 210, 210);
+        pageDoc.text("ARTICLE BY", cx, cy - 10, { align: "center" });
+
+        // Main name
+        pageDoc.setFontSize(28);
+        pageDoc.setFont("helvetica", "bold");
+        pageDoc.setTextColor(225, 225, 225);
+        pageDoc.text("Dharaneedharan SS", cx, cy + 4, { align: "center" });
+
+        // Portfolio tag
+        pageDoc.setFontSize(8);
+        pageDoc.setFont("helvetica", "normal");
+        pageDoc.setTextColor(210, 210, 210);
+        pageDoc.text("www.dharaneedharan.dev", cx, cy + 20, { align: "center" });
+
+        pageDoc.restoreGraphicsState();
       };
 
       // Add watermark to first page
