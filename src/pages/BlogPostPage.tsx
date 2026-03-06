@@ -3,7 +3,7 @@ import ImageLightbox from "@/components/ImageLightbox";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import ReactMarkdown from "react-markdown";
+import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -167,21 +167,7 @@ const BlogPostPage = () => {
             <div className="container mx-auto px-4 sm:px-6">
               <div className="max-w-3xl mx-auto">
                 <ScrollReveal delay={100}>
-                  <article className="prose prose-lg dark:prose-invert max-w-none 
-                    prose-headings:font-display prose-headings:font-bold prose-headings:text-foreground
-                    prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-border prose-h2:pb-2
-                    prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                    prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4
-                    prose-li:text-muted-foreground
-                    prose-strong:text-foreground
-                    prose-code:text-foreground prose-code:bg-secondary prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-                    prose-pre:bg-secondary prose-pre:border prose-pre:border-border
-                    prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                    prose-table:text-sm prose-th:text-foreground prose-td:text-muted-foreground
-                    prose-th:border-border prose-td:border-border
-                  ">
-                    <ReactMarkdown>{post.content}</ReactMarkdown>
-                  </article>
+                  <StyledArticleRenderer content={post.content} />
                 </ScrollReveal>
 
                 {/* Engagement Bar */}
