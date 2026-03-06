@@ -29,14 +29,30 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         const margin = 20;
         const contentWidth = pageWidth - margin * 2;
 
-        // Watermark
-        doc.setFontSize(50);
-        doc.setTextColor(235, 235, 235);
-        for (let y = 30; y < pageHeight; y += 80) {
-          for (let x = -20; x < pageWidth; x += 120) {
-            doc.text("Dharaneedharan SS", x, y, { angle: 35 });
-          }
-        }
+        // Elegant single centered watermark
+        const addProjectWatermark = (d: jsPDF) => {
+          d.saveGraphicsState();
+          const cx = pageWidth / 2;
+          const cy = pageHeight / 2;
+          d.setDrawColor(230, 230, 230);
+          d.setLineWidth(0.3);
+          d.line(cx - 55, cy - 18, cx + 55, cy - 18);
+          d.line(cx - 55, cy + 12, cx + 55, cy + 12);
+          d.setFontSize(9);
+          d.setFont("helvetica", "normal");
+          d.setTextColor(210, 210, 210);
+          d.text("ARTICLE BY", cx, cy - 10, { align: "center" });
+          d.setFontSize(28);
+          d.setFont("helvetica", "bold");
+          d.setTextColor(225, 225, 225);
+          d.text("Dharaneedharan SS", cx, cy + 4, { align: "center" });
+          d.setFontSize(8);
+          d.setFont("helvetica", "normal");
+          d.setTextColor(210, 210, 210);
+          d.text("www.dharaneedharan.dev", cx, cy + 20, { align: "center" });
+          d.restoreGraphicsState();
+        };
+        addProjectWatermark(doc);
 
         // Header
         doc.setFillColor(30, 30, 30);
