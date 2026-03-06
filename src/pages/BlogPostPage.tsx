@@ -3,7 +3,7 @@ import ImageLightbox from "@/components/ImageLightbox";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import ReactMarkdown from "react-markdown";
+import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
