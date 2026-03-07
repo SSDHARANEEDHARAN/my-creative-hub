@@ -18,7 +18,7 @@ import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import { useBlogData } from "@/hooks/useBlogData";
 import { blogPosts } from "@/data/blogPostsData";
-import BlogDownloadButton from "@/components/BlogDownloadButton";
+import BlogDownloadButton from "@/components/blog/BlogDownloadButton";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
 
 const BlogPostPage = () => {
