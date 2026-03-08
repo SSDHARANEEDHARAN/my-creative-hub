@@ -184,6 +184,7 @@ const itProjects: Project[] = [
     images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
     tags: ["React", "Node.js", "PostgreSQL", "AWS S3"],
     liveUrl: "https://lms-platform.example.com",
+    articleUrl: "/projects/article/learning-management",
     featured: false,
     category: "it",
   },
