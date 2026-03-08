@@ -166,6 +166,7 @@ export const itProjects: Project[] = [
     tags: ["Python", "Raspberry Pi", "TensorFlow", "React"],
     articleUrl: "/projects/article/smart-agriculture",
     githubUrl: "https://github.com",
+    liveUrl: "https://smart-agriculture.example.com",
     featured: false,
     category: "it",
   },
