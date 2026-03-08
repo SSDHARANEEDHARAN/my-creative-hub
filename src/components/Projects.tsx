@@ -6,29 +6,40 @@ import { itProjects, engineeringProjects, Project } from "@/data/projectsData";
 
 // Memoized project card components for better performance
 const ProjectLinks = memo(({ project }: { project: Project }) => {
-  if (project.category === "it") {
-    return (
-      <a 
-        href={project.githubUrl} 
-        target="_blank"
-        rel="noopener noreferrer"
-        className="p-2.5 bg-card text-foreground hover:bg-muted transition-colors shadow-md border-2 border-border"
-        title="View on GitHub"
-      >
-        <Github size={16} />
-      </a>
-    );
-  }
   return (
-    <a 
-      href={project.articleUrl} 
-      target="_blank"
-      rel="noopener noreferrer"
-      className="p-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md"
-      title="Read Article"
-    >
-      <FileText size={16} />
-    </a>
+    <div className="flex gap-2">
+      {project.liveUrl && (
+        <a 
+          href={project.liveUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2.5 bg-card text-foreground hover:bg-muted transition-colors shadow-md border-2 border-border"
+          title="View Live"
+        >
+          <ExternalLink size={16} />
+        </a>
+      )}
+      {project.articleUrl && (
+        <a 
+          href={project.articleUrl} 
+          className="p-2.5 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-md"
+          title="Read Case Study"
+        >
+          <FileText size={16} />
+        </a>
+      )}
+      {project.githubUrl && (
+        <a 
+          href={project.githubUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2.5 bg-card text-foreground hover:bg-muted transition-colors shadow-md border-2 border-border"
+          title="View on GitHub"
+        >
+          <Github size={16} />
+        </a>
+      )}
+    </div>
   );
 });
 ProjectLinks.displayName = 'ProjectLinks';
