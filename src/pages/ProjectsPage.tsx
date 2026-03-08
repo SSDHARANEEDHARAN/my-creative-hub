@@ -298,7 +298,7 @@ const engineeringProjects: Project[] = [
     id: 25,
     title: "IoT Smart Home Automation",
     description: "Centralized smart control system for residential environments enabling remote control of lighting, appliances, and security via mobile app.",
-    images: [iotImg, analyticsImg, ecommerceImg, inventoryImg, plmImg],
+    images: [iotHome1, iotHome2, iotHome3, iotHome4, iotHome5],
     tags: ["IoT Systems", "Wireless Communication", "Embedded Controllers"],
     articleUrl: "/projects/article/iot-smart-home-automation",
     featured: false,
