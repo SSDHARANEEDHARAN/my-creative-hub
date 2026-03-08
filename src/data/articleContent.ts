@@ -204,42 +204,47 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 5,
-    slug: "task-management",
-    title: "Task Management System",
-    subtitle: "Collaborative project management with real-time updates",
-    duration: "8 weeks",
-    client: "Software Development Agency - TechCraft Solutions",
+    slug: "swift-upload",
+    title: "Swift Upload & Share – Web-Based File Transfer Platform",
+    subtitle: "Lightweight file upload, storage, and sharing solution",
+    duration: "6 weeks",
+    client: "Personal Project – Safe Eye Platform",
     role: "Full Stack Developer",
-    industry: "Software Services",
-    teamSize: "2 Developers",
-    overview: "Built a collaborative task management application with Kanban boards, real-time updates, time tracking, and team collaboration features. The system supports multiple projects with customizable workflows and integrates with popular tools like Slack and GitHub.",
-    challenge: "The agency needed to track work across 15+ concurrent projects with 40 team members. Existing tools were either too complex or lacked customization. Real-time updates were essential for distributed teams. Integration with existing development workflow (GitHub, Slack) was required.",
-    solution: "Developed React application with Socket.io for real-time collaboration. Implemented customizable Kanban boards with drag-and-drop. Built Node.js backend with MongoDB for flexible data structures. Created webhooks for GitHub and Slack integration.",
+    industry: "Cloud Services & File Management",
+    teamSize: "1 Developer",
+    videoUrl: "/videos/swift-upload-demo.mp4",
+    overview: "Swift Upload & Share is a lightweight web-based file transfer platform designed to allow users to securely upload, store, and share files through a simple web interface. The system enables quick file sharing without requiring complex configuration, making it suitable for personal use, team collaboration, and quick data exchange. The platform also integrates AI-powered file tools including image editing, upscaling, background removal, OCR, PDF compression, and more.",
+    challenge: "Users needed a simple, fast way to share files without complex setup or heavy enterprise tools. The platform had to support drag-and-drop uploading, multiple file formats, anonymous uploads up to 500MB, and authenticated uploads up to 2GB. Additionally, AI-powered file manipulation tools were needed to provide value beyond basic file transfer.",
+    solution: "Built a React.js frontend with a clean, modern UI featuring drag-and-drop file upload, shareable link generation, and a comprehensive AI tools suite. The backend handles file validation, secure storage, and download request management through a scalable cloud architecture deployed on Vercel.",
     process: [
-      { title: "Requirements Gathering", content: "Interviewed 15 team members to understand pain points. Analyzed workflows of existing projects to design flexible board structure." },
-      { title: "UI/UX Design", content: "Created wireframes and prototypes in Figma. Conducted usability testing with 5 users before development." },
-      { title: "Real-time Architecture", content: "Implemented Socket.io for live updates. Designed event system for efficient data synchronization across clients." },
-      { title: "Kanban Implementation", content: "Built drag-and-drop Kanban boards with react-beautiful-dnd. Implemented customizable columns and card templates." },
-      { title: "Integrations", content: "Developed GitHub webhook handlers for automatic task updates. Built Slack bot for notifications and quick actions." },
-      { title: "Time Tracking", content: "Implemented timer functionality with manual time entry. Created reports for project time analysis." }
+      { title: "UI/UX Design", content: "Designed a minimal, intuitive interface with clear upload zones, progress indicators, and a tools discovery page with categorized AI features." },
+      { title: "File Upload System", content: "Implemented drag-and-drop file upload supporting multiple formats with browser-based progress tracking and server-side storage handling." },
+      { title: "File Sharing System", content: "Built shareable link generation for uploaded files enabling quick transfer between users without authentication requirements." },
+      { title: "AI Tools Integration", content: "Integrated AI-powered tools including image editing, upscaling, recoloring, background removal, OCR text extraction, image vectorization, 3D conversion, image-to-video, and PDF tools." },
+      { title: "Authentication System", content: "Implemented user authentication with sign-in/sign-up flows, allowing registered users to upload files up to 2GB and access upload history." },
+      { title: "Deployment", content: "Deployed on Vercel cloud platform with Git-based workflow for continuous deployment and global CDN distribution." }
     ],
     results: [
-      "40 team members actively using system across 15+ projects",
-      "25% improvement in project delivery timelines",
-      "Real-time updates eliminated status meeting time by 2 hours/week",
-      "GitHub integration reduced context switching for developers",
-      "Time tracking data improved project estimation accuracy by 30%",
-      "4.6/5 user satisfaction rating in internal survey"
+      "Anonymous file uploads supported up to 500MB without login",
+      "Authenticated users can share files up to 2GB",
+      "12+ AI-powered file tools available including image editing and PDF manipulation",
+      "Sub-second file link generation for instant sharing",
+      "Responsive design works across all devices and screen sizes",
+      "Cloud deployment ensures global accessibility and fast transfer speeds"
     ],
-    technologies: ["React", "Node.js", "MongoDB", "Socket.io", "Redux", "GitHub API", "Slack API"],
-    toolsUsed: ["VS Code", "Figma", "MongoDB Compass", "Postman", "GitHub"],
+    technologies: ["React.js", "JavaScript", "HTML5", "CSS", "Node.js", "Cloud Storage", "Vercel"],
+    toolsUsed: ["VS Code", "Git", "Vercel Dashboard", "Chrome DevTools"],
     keyMetrics: [
-      { value: "25%", label: "Faster Delivery" },
-      { value: "40", label: "Active Users" },
-      { value: "30%", label: "Better Estimates" },
-      { value: "2hrs/wk", label: "Meetings Saved" }
+      { value: "500MB", label: "Anonymous Upload" },
+      { value: "2GB", label: "Auth Upload Limit" },
+      { value: "12+", label: "AI Tools" },
+      { value: "<1s", label: "Link Generation" }
     ],
-    lessons: ["Real-time updates transform team collaboration for distributed teams", "Integration with existing tools (GitHub, Slack) is essential for developer adoption", "Customizable workflows accommodate different project needs"]
+    lessons: [
+      "Simple, focused tools with minimal friction drive higher user adoption than feature-heavy alternatives",
+      "Supporting anonymous uploads with reasonable limits encourages first-time usage while authentication unlocks premium features",
+      "AI-powered file tools add significant value beyond basic file transfer functionality"
+    ]
   },
   {
     id: 6,
