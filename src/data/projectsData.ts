@@ -309,7 +309,7 @@ export const engineeringProjects: Project[] = [
     id: 114,
     title: "Self-Navigating Robot for Safe Movement",
     description: "Autonomous mobile robot with IoT sensors and real-time navigation for industrial warehouse automation and obstacle avoidance.",
-    images: [iotImg, cadAutomotiveImg, flexsimImg, creoImg, analyticsImg],
+    images: [selfNavRobot1],
     tags: ["IoT", "Autonomous Navigation", "Sensor Integration", "Embedded Systems"],
     articleUrl: "/projects/article/self-navigating-robot",
     featured: false,
