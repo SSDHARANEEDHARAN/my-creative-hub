@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X } from "lucide-react";
 import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 const FloatingContactButton = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -56,18 +57,30 @@ const FloatingContactButton = () => {
                 </button>
               </motion.div>
             ) : (
-              <motion.button
+              <motion.div
                 key="collapsed"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsExpanded(true)}
-                className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-glow animate-pulse-glow"
               >
-                <MessageCircle size={28} className="text-primary-foreground" />
-              </motion.button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsExpanded(true)}
+                        className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center shadow-glow animate-pulse-glow"
+                      >
+                        <MessageCircle size={28} className="text-primary-foreground" />
+                      </motion.button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="text-xs">
+                      Get in touch
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </motion.div>
             )}
           </AnimatePresence>
         </motion.div>
