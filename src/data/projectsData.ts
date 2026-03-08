@@ -142,6 +142,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Electron", "Node.js", "SQLite"],
     articleUrl: "/projects/article/restaurant-pos",
     githubUrl: "https://github.com",
+    liveUrl: "https://restaurant-pos.example.com",
     featured: false,
     category: "it",
   },
