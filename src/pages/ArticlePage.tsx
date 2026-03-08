@@ -133,11 +133,17 @@ const ArticlePage = memo(() => {
                 </div>
                 
                 <div className="relative">
-                  <img 
-                    src={project.images[0]} 
-                    alt={article.title}
-                    className="rounded-2xl shadow-2xl w-full aspect-video object-cover"
-                  />
+                  {project?.images?.[0] ? (
+                    <img 
+                      src={project.images[0]} 
+                      alt={article.title}
+                      className="rounded-2xl shadow-2xl w-full aspect-video object-cover"
+                    />
+                  ) : (
+                    <div className="rounded-2xl shadow-2xl w-full aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                      <h3 className="text-2xl font-bold text-primary">{article.title}</h3>
+                    </div>
+                  )}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-background/50 to-transparent" />
                 </div>
               </div>
