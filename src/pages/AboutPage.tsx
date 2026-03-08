@@ -10,6 +10,16 @@ import { socialLinks } from "@/components/SocialLinks";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import aboutProfilePhoto from "@/assets/about-profile.jpg";
+import certIndustrial from "@/assets/certificates/industrial-training.avif";
+import certInternship from "@/assets/certificates/internship-letter.avif";
+import certProfPractice from "@/assets/certificates/professional-practice.avif";
+import certFour from "@/assets/certificates/certificate-4.avif";
+import certProject from "@/assets/certificates/project-certificate.avif";
+import certSix from "@/assets/certificates/certificate-6.avif";
+import certSeven from "@/assets/certificates/certificate-7.avif";
+import certEight from "@/assets/certificates/certificate-8.avif";
+import certWebinar from "@/assets/certificates/webinar-certificate.avif";
+import certWebinar2 from "@/assets/certificates/webinar-certificate-2.avif";
 
 interface DBCertificate {
   id: string; title: string; issuer: string; date: string;
@@ -30,16 +40,16 @@ const fallbackExperience = [
 ];
 
 const fallbackCertifications = [
-  { name: "Certified SolidWorks Associate (CSWA)", issuer: "Dassault Systèmes", year: "2023" },
-  { name: "Python for Data Science", issuer: "IBM", year: "2023" },
-  { name: "React Developer Certification", issuer: "Meta", year: "2024" },
-  { name: "FlexSim Simulation Basics", issuer: "FlexSim Software", year: "2022" },
-  { name: "Siemens NX CAD Fundamentals", issuer: "Siemens", year: "2023" },
-  { name: "PTC Creo Essentials", issuer: "PTC University", year: "2023" },
-  { name: "Arduino IoT Cloud Certification", issuer: "Arduino", year: "2024" },
-  { name: "Full Stack Web Development", issuer: "Coursera", year: "2024" },
-  { name: "GD&T Fundamentals", issuer: "ASME", year: "2022" },
-  { name: "Lean Six Sigma Yellow Belt", issuer: "ASQ", year: "2023" },
+  { name: "Industrial Training Certificate", issuer: "Industry", year: "2023", image: certIndustrial },
+  { name: "Internship Letter", issuer: "Company", year: "2023", image: certInternship },
+  { name: "Professional Practice Certificate", issuer: "Institution", year: "2023", image: certProfPractice },
+  { name: "Certificate of Achievement", issuer: "Organization", year: "2023", image: certFour },
+  { name: "Project Certificate", issuer: "Institution", year: "2023", image: certProject },
+  { name: "Certificate of Completion", issuer: "Organization", year: "2023", image: certSix },
+  { name: "Certificate of Participation", issuer: "Organization", year: "2023", image: certSeven },
+  { name: "Certificate of Excellence", issuer: "Organization", year: "2023", image: certEight },
+  { name: "Webinar Certificate", issuer: "Organizer", year: "2023", image: certWebinar },
+  { name: "Webinar Certificate 2", issuer: "Organizer", year: "2023", image: certWebinar2 },
 ];
 
 const AboutPage = () => {
