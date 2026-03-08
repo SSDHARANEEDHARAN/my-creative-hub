@@ -45,6 +45,11 @@ import bottleFilling2 from "@/assets/projects/bottle-filling-2.jpg";
 import bottleFilling3 from "@/assets/projects/bottle-filling-3.jpg";
 import bottleFilling4 from "@/assets/projects/bottle-filling-4.jpg";
 import bottleFilling5 from "@/assets/projects/bottle-filling-5.jpg";
+import evRotavator1 from "@/assets/projects/ev-rotavator-1.jpg";
+import evRotavator2 from "@/assets/projects/ev-rotavator-2.jpg";
+import evRotavator3 from "@/assets/projects/ev-rotavator-3.jpg";
+import evRotavator4 from "@/assets/projects/ev-rotavator-4.jpg";
+import evRotavator5 from "@/assets/projects/ev-rotavator-5.jpg";
 
 interface Project {
   id: number;
@@ -346,21 +351,11 @@ const engineeringProjects: Project[] = [
   },
   {
     id: 29,
-    title: "EV Rotator for Agriculture",
-    description: "Motor-driven rotating system for automated crop handling with adjustable rotation speed and minimal crop damage.",
-    images: [cadAutomotiveImg, iotImg, creoImg, plmImg, analyticsImg],
-    tags: ["Agricultural Automation", "Motor Control", "Mechanical Design"],
-    articleUrl: "/projects/article/ev-rotator-agriculture",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 30,
-    title: "Smart Agricultural Monitoring System",
-    description: "IoT-based solution for real-time soil moisture, temperature, and humidity monitoring to improve crop management and reduce water usage.",
-    images: [iotImg, analyticsImg, cadAutomotiveImg, creoImg, plmImg],
-    tags: ["IoT Sensors", "Wireless Communication", "Data Monitoring"],
-    articleUrl: "/projects/article/smart-agriculture-monitoring",
+    title: "EV Agriculture Rotavator Car",
+    description: "Battery-powered electric rotavator vehicle for automated soil tilling, reducing manual labor by 50% with 3–5 km/h operating speed.",
+    images: [evRotavator1, evRotavator2, evRotavator3, evRotavator4, evRotavator5],
+    tags: ["Electric Motor Drive", "Agricultural Automation", "Embedded Control", "Battery Powered"],
+    articleUrl: "/projects/article/ev-rotavator-agriculture",
     featured: false,
     category: "engineering",
   },
