@@ -120,7 +120,7 @@ const Projects = () => {
         {/* Featured Projects - Large Cards */}
         <div 
           key={activeTab}
-          className="grid md:grid-cols-2 gap-6 mb-10 animate-fade-in"
+          className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10 animate-fade-in"
         >
           {featuredProjects.map((project) => (
             <div 
