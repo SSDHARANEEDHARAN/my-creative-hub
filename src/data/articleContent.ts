@@ -74,41 +74,41 @@ export const articleContents: ArticleContent[] = [
   {
     id: 2,
     slug: "iot-smart-home",
-    title: "IoT Smart Home System",
-    subtitle: "Complete home automation with mobile app control",
-    duration: "10 weeks",
-    client: "Smart Living Solutions - Bangalore",
-    role: "IoT Developer",
-    industry: "Home Automation",
-    teamSize: "3 Engineers",
-    overview: "Designed and developed a comprehensive IoT-based smart home system using Arduino and Raspberry Pi as the core controllers. The system enables automated control of lighting, temperature, security cameras, and door locks through a custom React Native mobile application. Implemented MQTT protocol for reliable device communication.",
-    challenge: "The system needed to work reliably in Indian conditions with frequent power outages and variable internet connectivity. Security was paramount as the system controlled door locks and security cameras. The mobile app needed to work both locally (when on home WiFi) and remotely (when away from home).",
-    solution: "Used Raspberry Pi as the central hub with local data storage for offline operation. Implemented MQTT with QoS level 1 for reliable message delivery. Added battery backup for critical components. Created dual-mode app that switches between local and cloud communication automatically.",
+    title: "SmartHome Harmony – IoT Home Automation Platform",
+    subtitle: "Centralized IoT dashboard for smart device control and monitoring",
+    duration: "Ongoing",
+    client: "Open-Source / Personal Project",
+    role: "Full-Stack IoT Developer",
+    industry: "Home Automation / IoT",
+    teamSize: "Solo Developer",
+    overview: "SmartHome Harmony is an open-source IoT-based home automation platform that allows users to monitor and control smart devices through a centralized web dashboard. The system integrates embedded hardware, cloud communication, and web-based control interfaces to create a scalable smart home ecosystem. The platform enables users to manage appliances, track sensor data, automate routines, and monitor energy consumption in real time.",
+    challenge: "Building a unified smart home platform that seamlessly bridges web technologies with embedded IoT hardware posed significant challenges. The system needed to support real-time device communication with minimal latency, handle multiple IoT protocols and ecosystems, and provide a reliable dashboard experience even during intermittent connectivity. Designing a custom IoT PCB board for centralized device management added hardware engineering complexity.",
+    solution: "Implemented a three-layer architecture: a React.js/Next.js web application layer for the dashboard, a Firebase and MQTT-based cloud communication layer for real-time data sync, and an ESP32/Raspberry Pi hardware layer for device control. Designed a custom IoT control PCB board as the central smart home controller. Used Firebase as the free cloud backend with MQTT protocol for reliable real-time device messaging.",
     process: [
-      { title: "Hardware Selection", content: "Selected Arduino Nano for sensor nodes due to low power consumption. Used Raspberry Pi 4 as central hub. Evaluated and selected compatible sensors for temperature, motion, and door status." },
-      { title: "Communication Protocol", content: "Implemented MQTT broker on Raspberry Pi using Mosquitto. Designed topic hierarchy for efficient message routing across 15+ device types." },
-      { title: "Sensor Node Development", content: "Developed firmware for 8 types of sensor nodes using Arduino IDE. Implemented power-saving sleep modes for battery-operated sensors." },
-      { title: "Mobile App Development", content: "Built React Native app with real-time device status, scheduling capabilities, and push notifications for alerts." },
-      { title: "Security Implementation", content: "Implemented TLS encryption for all communications. Added two-factor authentication for app access and biometric unlock option." },
-      { title: "Testing & Installation", content: "Conducted 100+ hours of reliability testing. Installed system in pilot home and refined based on user feedback." }
+      { title: "System Architecture Design", content: "Designed a three-layer architecture comprising the Web Application Layer (dashboard UI), Cloud Communication Layer (Firebase + MQTT), and Hardware Layer (ESP32 controllers, sensor modules, smart relays, custom PCB boards)." },
+      { title: "Web Dashboard Development", content: "Built the SmartHome Harmony dashboard using React.js, Next.js, and Tailwind CSS. Implemented room-based device management, real-time sensor monitoring (temperature, humidity, device status), and energy consumption tracking." },
+      { title: "Cloud Integration", content: "Integrated Firebase as the primary cloud backend for data storage and authentication. Implemented MQTT protocol for real-time bidirectional device communication with low latency." },
+      { title: "Hardware Development", content: "Developed custom IoT control PCB board for centralized device management. Programmed ESP32 microcontrollers for sensor data collection and device actuation. Integrated Raspberry Pi as the gateway controller." },
+      { title: "Automation Engine", content: "Built automation rules engine supporting scheduled device operations, conditional triggers based on sensor data, and voice-assisted automation capabilities." },
+      { title: "Testing & Validation", content: "Conducted real-time hardware testing to ensure reliable communication with the web platform, stable device control, and efficient power management across all connected devices." }
     ],
     results: [
-      "30% reduction in electricity bills through automated lighting and HVAC control",
-      "System maintained 99.5% uptime even during internet outages (local mode)",
-      "Response time under 200ms for all device commands",
-      "Successfully integrated 25+ devices in pilot installation",
-      "Zero security breaches in 12 months of operation",
-      "Mobile app rated 4.7/5 on internal user testing"
+      "Real-time IoT dashboard with sub-second device response times",
+      "Scalable cloud architecture supporting multiple IoT ecosystems",
+      "Custom PCB board designed and tested for centralized home control",
+      "Multi-device automation system with room-based management",
+      "Energy monitoring capabilities with real-time consumption tracking",
+      "Support for Firebase, MQTT, ThingSpeak, ESP RainMaker, and Amazon IoT integrations"
     ],
-    technologies: ["Python", "Arduino", "Raspberry Pi", "MQTT", "React Native", "Node.js", "SQLite", "Firebase"],
-    toolsUsed: ["Arduino IDE", "VS Code", "MQTT Explorer", "Fritzing", "Android Studio", "Xcode"],
+    technologies: ["React.js", "Next.js", "Tailwind CSS", "Firebase", "MQTT Protocol", "ESP32", "Raspberry Pi", "Custom IoT PCB"],
+    toolsUsed: ["VS Code", "Arduino IDE", "Firebase Console", "MQTT Explorer", "PCB Design Tools", "ThingSpeak", "ESP RainMaker"],
     keyMetrics: [
-      { value: "30%", label: "Energy Savings" },
-      { value: "200ms", label: "Response Time" },
-      { value: "25+", label: "Devices Integrated" },
-      { value: "99.5%", label: "Uptime" }
+      { value: "Real-time", label: "Device Control" },
+      { value: "8+", label: "IoT Integrations" },
+      { value: "Custom", label: "PCB Board" },
+      { value: "3-Layer", label: "Architecture" }
     ],
-    lessons: ["Local-first architecture is essential for IoT reliability in Indian conditions", "Battery backup for critical components prevents security vulnerabilities during outages", "MQTT QoS levels must be carefully chosen based on message importance"]
+    lessons: ["A three-layer architecture (Web + Cloud + Hardware) provides the best separation of concerns for IoT platforms", "Firebase offers a reliable free-tier cloud backend for prototyping IoT systems", "Custom PCB development significantly improves reliability over breadboard-based prototypes"]
   },
   {
     id: 3,

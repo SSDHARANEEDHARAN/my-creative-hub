@@ -76,8 +76,8 @@ export const itProjects: Project[] = [
   },
   {
     id: 2,
-    title: "IoT Smart Home System",
-    description: "Embedded system project with Arduino and Raspberry Pi for home automation with mobile app control. Includes temperature monitoring, lighting control, and security features.",
+    title: "SmartHome Harmony – IoT Home Automation",
+    description: "Open-source IoT home automation platform with centralized web dashboard for smart device control, real-time sensor monitoring, automation rules, and energy consumption tracking. Built with React.js, Firebase, MQTT, ESP32, and custom IoT PCB.",
     images: [iotImg, ecommerceImg, analyticsImg, inventoryImg, plmImg],
     tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
     articleUrl: "/projects/article/iot-smart-home",
