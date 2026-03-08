@@ -279,7 +279,7 @@ export const engineeringProjects: Project[] = [
     id: 111,
     title: "EFFI-QUE EV Car",
     description: "Complete 3D CAD design of an electric vehicle platform with structural and battery thermal optimization for sustainable urban transportation.",
-    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
+    images: [effiQue1, effiQue1Avif, effiQue2],
     tags: ["SolidWorks", "FEA", "CAD", "Battery Thermal Analysis", "EV Powertrain"],
     articleUrl: "/projects/article/effi-que-ev-car",
     featured: false,
