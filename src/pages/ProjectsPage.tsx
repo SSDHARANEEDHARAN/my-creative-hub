@@ -162,6 +162,7 @@ const itProjects: Project[] = [
     images: [ecommerceImg, iotImg, analyticsImg, inventoryImg, plmImg],
     tags: ["React Native", "Firebase", "Push Notifications"],
     liveUrl: "https://healthcare-app.example.com",
+    articleUrl: "/projects/article/healthcare-app",
     featured: false,
     category: "it",
   },
