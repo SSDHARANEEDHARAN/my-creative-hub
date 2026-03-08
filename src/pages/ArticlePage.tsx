@@ -85,9 +85,22 @@ const ArticlePage = memo(() => {
                    <h1 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4">
                     {article.title}
                   </h1>
-                  <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
+                  <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-4 sm:mb-6">
                     {article.subtitle}
                   </p>
+                  
+                  {/* View Live Site button for IT projects */}
+                  {project?.liveUrl && project?.category === "it" && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors mb-6 sm:mb-8"
+                    >
+                      <ExternalLink size={18} />
+                      View Live Project
+                    </a>
+                  )}
                   
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     <div className="flex items-center gap-2 text-sm">
