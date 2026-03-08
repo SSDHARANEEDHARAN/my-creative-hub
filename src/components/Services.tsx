@@ -87,20 +87,20 @@ const Services = () => {
                 </div>
               )}
 
-              <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <service.icon className="w-7 h-7 text-primary" />
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform">
+                <service.icon className="w-5 h-5 sm:w-7 sm:h-7 text-primary" />
               </div>
 
-              <h3 className="text-2xl font-bold text-foreground mb-2">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2">
                 {service.title}
               </h3>
-              <p className="text-muted-foreground text-sm mb-6">
+              <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                 {service.description}
               </p>
 
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-foreground">{service.price}</span>
-                <span className="text-muted-foreground ml-2">{service.period}</span>
+              <div className="mb-4 sm:mb-6">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">{service.price}</span>
+                <span className="text-muted-foreground ml-2 text-xs sm:text-sm">{service.period}</span>
               </div>
 
               <ul className="space-y-3 mb-8">
