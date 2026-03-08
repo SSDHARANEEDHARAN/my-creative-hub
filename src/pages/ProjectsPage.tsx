@@ -323,7 +323,7 @@ const engineeringProjects: Project[] = [
     id: 27,
     title: "3D Extruder Machine",
     description: "Precision plastic extrusion system for 3D printing with temperature-controlled heating chamber and multi-filament support.",
-    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
+    images: [extruder1, extruder2, extruder3, extruder4, extruder5],
     tags: ["Additive Manufacturing", "Mechanical Design", "Thermal Control"],
     articleUrl: "/projects/article/3d-extruder-machine",
     featured: false,
