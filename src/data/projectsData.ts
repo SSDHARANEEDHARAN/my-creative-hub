@@ -28,6 +28,11 @@ import bottleFilling2 from "@/assets/projects/bottle-filling-2.jpg";
 import bottleFilling3 from "@/assets/projects/bottle-filling-3.jpg";
 import bottleFilling4 from "@/assets/projects/bottle-filling-4.jpg";
 import bottleFilling5 from "@/assets/projects/bottle-filling-5.jpg";
+import evRotavator1 from "@/assets/projects/ev-rotavator-1.jpg";
+import evRotavator2 from "@/assets/projects/ev-rotavator-2.jpg";
+import evRotavator3 from "@/assets/projects/ev-rotavator-3.jpg";
+import evRotavator4 from "@/assets/projects/ev-rotavator-4.jpg";
+import evRotavator5 from "@/assets/projects/ev-rotavator-5.jpg";
 
 export interface Project {
   id: number;
