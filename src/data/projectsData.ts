@@ -27,6 +27,11 @@ import servoScientific2 from "@/assets/projects/servo-scientific-2.png";
 import servoScientific3 from "@/assets/projects/servo-scientific-3.png";
 import servoScientific4 from "@/assets/projects/servo-scientific-4.png";
 import analyticsImg from "@/assets/project-analytics.jpg";
+import swiftUpload1 from "@/assets/projects/swift-upload-1.png";
+import swiftUpload2 from "@/assets/projects/swift-upload-2.png";
+import swiftUpload3 from "@/assets/projects/swift-upload-3.png";
+import swiftUpload4 from "@/assets/projects/swift-upload-4.png";
+import swiftUpload5 from "@/assets/projects/swift-upload-5.png";
 import perfectHomes1 from "@/assets/projects/perfect-homes-1.png";
 import perfectHomes2 from "@/assets/projects/perfect-homes-2.png";
 import perfectHomes3 from "@/assets/projects/perfect-homes-3.png";
@@ -162,13 +167,12 @@ export const itProjects: Project[] = [
   },
   {
     id: 5,
-    title: "Task Management System",
-    description: "Collaborative project management tool with real-time updates, Kanban boards, team collaboration features, and time tracking.",
-    images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
-    tags: ["React", "Node.js", "Socket.io", "MongoDB"],
-    articleUrl: "/projects/article/task-management",
-    githubUrl: "https://github.com",
-    liveUrl: "https://task-manager.example.com",
+    title: "Swift Upload & Share – File Transfer Platform",
+    description: "Lightweight web-based file transfer platform for secure file uploading, storage, and sharing through generated links with drag-and-drop interface and AI-powered file tools.",
+    images: [swiftUpload1, swiftUpload2, swiftUpload3, swiftUpload4, swiftUpload5],
+    tags: ["React.js", "Node.js", "Cloud Storage", "File Transfer"],
+    articleUrl: "/projects/article/swift-upload",
+    liveUrl: "https://swift-upload-share.vercel.app/",
     featured: false,
     category: "it",
   },
