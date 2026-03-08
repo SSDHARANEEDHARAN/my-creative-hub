@@ -116,42 +116,47 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 3,
-    slug: "inventory-management",
-    title: "Inventory Management App",
-    subtitle: "Cross-platform mobile solution for stock management",
-    duration: "8 weeks",
-    client: "Wholesale Distributor - Chennai Traders",
-    role: "Mobile Developer",
-    industry: "Wholesale Distribution",
-    teamSize: "2 Developers",
-    overview: "Developed a cross-platform mobile application for inventory management with barcode scanning, real-time stock synchronization across multiple warehouses, and automated reorder alerts. The app works offline and syncs data when connectivity is restored.",
-    challenge: "The client operated 5 warehouses with frequent stock movements. Staff had varying technical skills and needed a simple interface. Connectivity was unreliable in some warehouse locations. Integration with existing Tally accounting software was required.",
-    solution: "Built React Native app with offline-first architecture using WatermelonDB. Implemented barcode scanning using device camera. Created sync mechanism that handles conflicts and merges changes. Developed REST API with Python Flask for Tally integration.",
+    slug: "servo-scientific",
+    title: "Servo Scientific – Industrial Manufacturing Company Website",
+    subtitle: "Full-stack web platform for a scientific and industrial equipment manufacturer",
+    duration: "Ongoing",
+    client: "Servo Scientific Suppliers",
+    role: "Full-Stack Web Developer",
+    industry: "Industrial Manufacturing / Scientific Equipment",
+    teamSize: "Solo Developer",
+    overview: "The Servo Scientific Industrial Website is a full-stack web platform developed for a manufacturing and engineering company to showcase its products, services, and technical capabilities online. The platform functions as a digital portfolio and corporate presence for an industrial organization, enabling clients to explore product catalogs, company information, and technical services through an interactive web interface. The project was developed using modern web technologies including React.js for the frontend and MongoDB for data management, creating a scalable and responsive industrial website suitable for manufacturing businesses.",
+    challenge: "The company needed a modern digital platform to present their industrial equipment catalog (heating instruments, industrial furnaces, environmental chambers, heaters, microbiology instruments, thermocouples), engineering services, and manufacturing capabilities. The website required responsive design for desktop and mobile, dynamic product content rendering, a client inquiry and contact system, and scalable architecture for future admin dashboard and product management features.",
+    solution: "Built a full-stack web application with React.js frontend using Tailwind CSS for responsive styling, MongoDB for product and inquiry data storage, Node.js backend environment with REST API communication, and deployed on Vercel for global cloud access. The platform features a structured navigation with product categories, individual product detail pages with image galleries, company overview sections, and a contact/inquiry system for business communications.",
     process: [
-      { title: "Workflow Analysis", content: "Spent 2 weeks observing warehouse operations. Documented 12 key workflows including receiving, picking, and cycle counting." },
-      { title: "Database Design", content: "Designed schema supporting offline operation with conflict resolution. Implemented optimistic updates for responsive UX." },
-      { title: "Barcode Integration", content: "Implemented camera-based barcode scanning with support for multiple formats (EAN-13, Code 128, QR codes)." },
-      { title: "Sync Engine", content: "Built robust sync mechanism handling poor connectivity. Implemented queue-based sync with retry logic." },
-      { title: "Tally Integration", content: "Developed Python middleware for bidirectional sync with Tally. Automated purchase order and stock adjustment entries." },
-      { title: "Training & Rollout", content: "Created video tutorials in Tamil and Hindi. Conducted hands-on training for 35 warehouse staff." }
+      { title: "Requirements Analysis", content: "Documented the company's product categories (Heating Instruments, Industrial Furnace, Environmental Chamber, Heater, Microbiology Instruments, Thermocouple) and defined the website structure for product showcase, company profile, and client contact interface." },
+      { title: "Frontend Development", content: "Built responsive React.js components with Tailwind CSS for the homepage hero section, product category navigation with dropdown menus, individual product detail pages with image carousels, and contact form interface." },
+      { title: "Product Catalog System", content: "Developed dynamic product pages with image galleries, product descriptions, key features, and inquiry buttons. Implemented category-based navigation for easy product browsing." },
+      { title: "Backend & Database Integration", content: "Set up MongoDB database for product information storage, project portfolio management, client inquiry data handling, and company information. Implemented REST API communication between frontend and backend." },
+      { title: "Contact & Inquiry System", content: "Built a contact module allowing users to send business inquiries, request product information, connect with the engineering team, and submit service requests." },
+      { title: "Deployment & Optimization", content: "Deployed on Vercel Cloud with Git-based version control. Optimized for performance, SEO, and mobile responsiveness across all device types." }
     ],
     results: [
-      "Stock accuracy improved from 82% to 98% within 3 months",
-      "Cycle count time reduced by 60% through barcode scanning",
-      "Real-time visibility across all 5 warehouses for management",
-      "Stockout incidents reduced by 45% through automated reorder alerts",
-      "₹15L annual savings from reduced overstocking",
-      "35 users actively using app with 95% adoption rate"
+      "Modern industrial company website with professional product presentation",
+      "Responsive UI optimized for desktop and mobile devices",
+      "Dynamic product catalog with category-based navigation",
+      "Client inquiry and contact system for business communications",
+      "Scalable full-stack architecture ready for future admin dashboard",
+      "Cloud deployment providing global access and fast load times"
     ],
-    technologies: ["React Native", "Firebase", "Python", "Flask", "WatermelonDB", "REST API", "Barcode Scanning"],
-    toolsUsed: ["Expo", "VS Code", "Firebase Console", "Postman", "Charles Proxy"],
+    technologies: ["React.js", "JavaScript", "HTML5", "CSS/Tailwind CSS", "MongoDB", "Node.js", "REST API", "Vercel"],
+    toolsUsed: ["VS Code", "MongoDB Compass", "Vercel Dashboard", "Git", "Postman"],
     keyMetrics: [
-      { value: "98%", label: "Stock Accuracy" },
-      { value: "60%", label: "Time Savings" },
-      { value: "45%", label: "Fewer Stockouts" },
-      { value: "5", label: "Warehouses Connected" }
+      { value: "6+", label: "Product Categories" },
+      { value: "Full-Stack", label: "Architecture" },
+      { value: "Responsive", label: "Multi-Device" },
+      { value: "Cloud", label: "Deployment" }
     ],
-    lessons: ["Offline-first architecture is non-negotiable for warehouse apps", "Barcode scanning significantly improves accuracy and speed over manual entry", "User training in local languages dramatically improves adoption"]
+    conclusionVideoUrl: "/videos/servo-scientific-demo.mp4",
+    lessons: [
+      "Industrial websites require clear product categorization and easy navigation for technical buyers",
+      "Responsive design is critical for manufacturing clients who access product information on various devices",
+      "A structured inquiry system improves client engagement and lead generation for manufacturing companies"
+    ]
   },
   {
     id: 4,
