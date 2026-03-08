@@ -30,6 +30,11 @@ import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
 import mazeRobot4 from "@/assets/projects/maze-robot-4.jpg";
 import mazeRobot5 from "@/assets/projects/maze-robot-5.jpg";
 import rocketStoveImg from "@/assets/projects/rocket-stove.png";
+import iotHome1 from "@/assets/projects/iot-home-1.jpg";
+import iotHome2 from "@/assets/projects/iot-home-2.jpg";
+import iotHome3 from "@/assets/projects/iot-home-3.jpg";
+import iotHome4 from "@/assets/projects/iot-home-4.jpg";
+import iotHome5 from "@/assets/projects/iot-home-5.jpg";
 
 interface Project {
   id: number;
@@ -293,7 +298,7 @@ const engineeringProjects: Project[] = [
     id: 25,
     title: "IoT Smart Home Automation",
     description: "Centralized smart control system for residential environments enabling remote control of lighting, appliances, and security via mobile app.",
-    images: [iotImg, analyticsImg, ecommerceImg, inventoryImg, plmImg],
+    images: [iotHome1, iotHome2, iotHome3, iotHome4, iotHome5],
     tags: ["IoT Systems", "Wireless Communication", "Embedded Controllers"],
     articleUrl: "/projects/article/iot-smart-home-automation",
     featured: false,
