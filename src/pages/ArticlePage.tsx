@@ -5,7 +5,7 @@ import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, User
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
-import { engineeringProjects } from "@/data/projectsData";
+import { engineeringProjects, itProjects } from "@/data/projectsData";
 import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
 
