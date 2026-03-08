@@ -106,6 +106,7 @@ export const itProjects: Project[] = [
     tags: ["Python", "React", "PostgreSQL", "D3.js", "Pandas"],
     articleUrl: "/projects/article/analytics-dashboard",
     githubUrl: "https://github.com",
+    liveUrl: "https://analytics-dashboard.example.com",
     featured: false,
     category: "it",
   },
