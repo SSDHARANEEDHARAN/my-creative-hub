@@ -326,42 +326,43 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 8,
-    slug: "healthcare-app",
-    title: "Healthcare Appointment App",
-    subtitle: "Mobile app for medical appointments and telemedicine",
-    duration: "12 weeks",
-    client: "Multi-specialty Hospital - HealthFirst Chennai",
-    role: "Mobile Developer",
-    industry: "Healthcare",
-    teamSize: "4 Developers",
-    overview: "Developed a comprehensive healthcare mobile application enabling patients to book appointments, access medical records, receive appointment reminders, and conduct video consultations with doctors. The app integrates with the hospital's existing HIS (Hospital Information System).",
-    challenge: "Integration with legacy HIS system using HL7 standards was complex. Patient data privacy and HIPAA-equivalent compliance was mandatory. App needed to work for patients with varying technical skills and accessibility needs. Video consultation quality had to be reliable across varying network conditions.",
-    solution: "Built React Native app with accessibility features built-in. Developed Node.js middleware for HIS integration using HL7 FHIR. Implemented WebRTC-based video consultation with adaptive bitrate. Used Firebase for push notifications and analytics.",
+    slug: "learn-grow-hub",
+    title: "Learn & Grow Hub – E-Learning Platform",
+    subtitle: "Web-based digital learning ecosystem for structured online education",
+    duration: "Ongoing",
+    client: "Personal / Academic Project",
+    role: "Full-Stack Web Developer",
+    industry: "Education Technology",
+    teamSize: "Solo Developer",
+    overview: "Learn & Grow Hub is a web-based E-Learning Platform designed to provide an interactive digital environment for students and learners to access educational content, courses, and learning resources online. The platform simplifies knowledge sharing by offering structured learning materials and an intuitive user interface for course navigation, demonstrating the implementation of a modern educational web application integrating course presentation, learner interaction, and digital content delivery.",
+    challenge: "Creating an engaging and intuitive digital learning platform that organizes diverse educational content into structured modules while ensuring responsive performance across devices. The system needed to handle course browsing, multimedia content delivery, and provide a smooth learning experience with clear navigation for users of varying technical skill levels.",
+    solution: "Built a modern React.js application with Tailwind CSS for responsive design, implementing a component-based architecture for course browsing, content display, and learning module navigation. The platform features category-based course filtering, multimedia learning resources, and a clean UI optimized for both desktop and mobile learning experiences. Deployed on Vercel for global accessibility.",
+    conclusionVideoUrl: "/videos/learn-grow-hub-demo.mp4",
     process: [
-      { title: "Compliance Planning", content: "Documented data privacy requirements. Implemented encryption, access controls, and audit logging per healthcare regulations." },
-      { title: "HIS Integration", content: "Developed integration layer translating HIS data to mobile-friendly format. Implemented real-time slot availability checking." },
-      { title: "Patient Features", content: "Built appointment booking, medical records view, prescription tracking, and lab results display." },
-      { title: "Telemedicine Module", content: "Implemented WebRTC video calling with TURN server fallback. Added waiting room, screen sharing, and prescription capability." },
-      { title: "Accessibility", content: "Implemented VoiceOver/TalkBack support, high contrast mode, and adjustable font sizes for elderly patients." },
-      { title: "Launch & Support", content: "Soft launch with 500 patients. Gathered feedback and iterated before full rollout." }
+      { title: "Platform Architecture Design", content: "Designed a three-layer system: Frontend Layer for user interface and learning interaction, Content Delivery Layer for course materials and multimedia resources, and Hosting & Deployment Layer for stable online accessibility." },
+      { title: "Course Browsing Interface", content: "Implemented category-based course filtering (Embedded Systems, IoT, Industrial Automation, Programming, Electronics, Robotics, etc.), search functionality, and structured course card layouts with pricing, ratings, and enrollment details." },
+      { title: "Course Detail Pages", content: "Built detailed course pages with descriptions, lesson counts, duration, difficulty levels, certificates of completion, reviews, and enrollment options including UPI payment integration." },
+      { title: "Responsive UI Development", content: "Developed a fully responsive layout using Tailwind CSS ensuring smooth navigation across desktop, tablet, and mobile devices with consistent learning experience." },
+      { title: "Content Management", content: "Structured course modules, video learning materials, educational articles, and learning guides into organized and accessible formats for learners." },
+      { title: "Cloud Deployment", content: "Deployed on Vercel Cloud Platform with Git-based development workflow for continuous deployment and global content delivery." }
     ],
     results: [
-      "15,000+ app downloads in first 3 months",
-      "40% reduction in phone calls to appointment desk",
-      "Patient satisfaction improved from 3.8 to 4.5/5 rating",
-      "2,000+ video consultations conducted in first quarter",
-      "85% reduction in appointment no-shows through reminders",
-      "Average app rating of 4.4 on Play Store and App Store"
+      "Fully functional e-learning platform with structured course presentation",
+      "Category-based course browsing across 10+ technical domains",
+      "Responsive design working seamlessly on mobile and desktop",
+      "Cloud-deployed platform with global accessibility via Vercel",
+      "Intuitive navigation enabling easy course discovery and enrollment",
+      "Scalable architecture ready for future features like progress tracking and quizzes"
     ],
-    technologies: ["React Native", "Firebase", "Node.js", "WebRTC", "HL7 FHIR", "Push Notifications"],
-    toolsUsed: ["VS Code", "Expo", "Firebase Console", "Postman", "Jitsi (WebRTC)"],
+    technologies: ["React.js", "JavaScript", "HTML5", "CSS", "Tailwind CSS", "Vercel"],
+    toolsUsed: ["VS Code", "Git", "Vercel Dashboard", "Chrome DevTools", "Figma"],
     keyMetrics: [
-      { value: "15K+", label: "Downloads" },
-      { value: "40%", label: "Fewer Calls" },
-      { value: "2K+", label: "Video Consults" },
-      { value: "85%", label: "Fewer No-shows" }
+      { value: "10+", label: "Course Categories" },
+      { value: "100%", label: "Responsive" },
+      { value: "Global", label: "Cloud Access" },
+      { value: "Fast", label: "Page Load" }
     ],
-    lessons: ["Healthcare app accessibility is essential for elderly patient demographics", "HIS integration requires careful planning and robust error handling", "Video consultation reliability depends heavily on proper TURN server configuration"]
+    lessons: ["Structured content organization is critical for effective e-learning platforms", "Category-based filtering significantly improves course discovery", "Responsive design is essential for mobile learners who make up a large portion of users"]
   },
   {
     id: 9,
