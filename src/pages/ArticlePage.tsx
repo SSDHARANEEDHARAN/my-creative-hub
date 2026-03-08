@@ -370,7 +370,7 @@ const ArticlePage = memo(() => {
               >
                 <h2 className="font-display text-2xl font-bold mb-6">Project Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {project.images.slice(1).map((image, index) => (
+                  {(project?.images || []).slice(1).map((image, index) => (
                     <img 
                       key={index}
                       src={image} 
