@@ -421,10 +421,10 @@ const ArticlePage = memo(() => {
                   Get the full case study as PDF or download the SolidWorks/STEP CAD files for this project.
                 </p>
                 <ProjectDownloadDialog
-                  projectId={project.id}
-                  projectTitle={project.title}
-                  projectDescription={project.description}
-                  tags={project.tags}
+                  projectId={project?.id || article.id}
+                  projectTitle={project?.title || article.title}
+                  projectDescription={project?.description || article.overview}
+                  tags={project?.tags || article.technologies || []}
                   downloadCount={projectDownloadCount}
                   onDownloaded={refreshProjectDownloads}
                 />
