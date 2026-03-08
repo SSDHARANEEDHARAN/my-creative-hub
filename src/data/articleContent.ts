@@ -212,7 +212,7 @@ export const articleContents: ArticleContent[] = [
     role: "Full Stack Developer",
     industry: "Cloud Services & File Management",
     teamSize: "1 Developer",
-    videoUrl: "/videos/swift-upload-demo.mp4",
+    conclusionVideoUrl: "/videos/swift-upload-demo.mp4",
     overview: "Swift Upload & Share is a lightweight web-based file transfer platform designed to allow users to securely upload, store, and share files through a simple web interface. The system enables quick file sharing without requiring complex configuration, making it suitable for personal use, team collaboration, and quick data exchange. The platform also integrates AI-powered file tools including image editing, upscaling, background removal, OCR, PDF compression, and more.",
     challenge: "Users needed a simple, fast way to share files without complex setup or heavy enterprise tools. The platform had to support drag-and-drop uploading, multiple file formats, anonymous uploads up to 500MB, and authenticated uploads up to 2GB. Additionally, AI-powered file manipulation tools were needed to provide value beyond basic file transfer.",
     solution: "Built a React.js frontend with a clean, modern UI featuring drag-and-drop file upload, shareable link generation, and a comprehensive AI tools suite. The backend handles file validation, secure storage, and download request management through a scalable cloud architecture deployed on Vercel.",
