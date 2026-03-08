@@ -775,42 +775,43 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 110,
-    slug: "hydraulic-press",
-    title: "Hydraulic Press Frame Design",
-    subtitle: "500-ton press with FEA-optimized structure",
-    duration: "10 weeks",
-    client: "Stamping Equipment Supplier - Godrej & Boyce",
-    role: "Structural Designer",
-    industry: "Capital Equipment",
-    teamSize: "3 Engineers",
-    overview: "Designed a 500-ton hydraulic press frame with FEA stress analysis and deflection optimization. The project included weld joint design, bolted connection calculations, and complete fabrication specifications. This press is used for automotive body panel stamping requiring tight parallelism and deflection control.",
-    challenge: "The press frame needed to limit bed deflection to 0.15mm under full 500-ton load while meeting weight targets of 9,000kg for shipping constraints. Weld joint design required careful analysis to avoid fatigue failures over 10-year service life (10 million cycles). Foundation loading required detailed force calculations for customer site preparation. Parallelism between slide and bed had to be maintained within 0.05mm.",
-    solution: "Used SolidWorks with FEA simulation for iterative stress optimization over 12 design iterations. Designed frame with strategic ribbing patterns to maximize stiffness-to-weight ratio using topology optimization guidance. Specified proper weld details and inspection requirements for fatigue-critical joints per AWS D1.1.",
+    slug: "mini-conveyor-aluminum",
+    title: "Mini Industrial Conveyor System (Aluminum Structure)",
+    subtitle: "Compact aluminum-framed conveyor with variable speed motor drive",
+    duration: "6 weeks",
+    client: "Laboratory Automation & Prototyping Project",
+    role: "Mechanical Design Engineer",
+    industry: "Industrial Automation & Material Handling",
+    teamSize: "2 Engineers",
+    overview: "The Mini Industrial Conveyor System was designed as a compact material handling solution for laboratory automation setups, small production environments, and engineering prototype demonstrations. The system uses a fully aluminum structural frame, providing high strength while maintaining a lightweight design for easy integration with other automation equipment. The conveyor transports materials across a 510 mm belt length with a 60 mm belt width, operating at speeds up to 52 mm/s. The conveyor is powered by a variable speed motor capable of operating between 20 RPM and 600 RPM, allowing adjustable transport speed depending on application requirements. The 100 mm system height ensures compatibility with tabletop automation systems and modular manufacturing platforms.",
+    challenge: "The key challenges during the design and development process included designing a compact conveyor system with stable belt tracking, maintaining structural rigidity while using lightweight aluminum materials, ensuring smooth material transport under varying load conditions up to 15 kg, and integrating a variable speed drive system for flexible conveyor operation. Another important factor was achieving proper belt alignment and tension control, which is critical for preventing belt slippage and maintaining consistent motion.",
+    solution: "A motor-driven conveyor mechanism was developed with a precision roller system and adjustable belt tension mechanism. The aluminum frame structure provides a balance between durability and lightweight construction, improving portability and system stability. The motor drive system allows adjustable speed control between 20–600 RPM, enabling operators to modify the conveyor speed depending on the material handling process. The aluminum rollers and structural components reduce overall weight while maintaining the mechanical strength required for continuous operation.",
     process: [
-      { title: "Load Analysis", content: "Documented loading conditions including 500-ton central load, 400-ton off-center loads at 4 positions, dynamic effects (1.3 factor), and thermal expansion." },
-      { title: "Concept Design", content: "Developed 4 frame architectures exploring welded mono-block, tie-rod, and gap-frame construction. Selected welded mono-block for stiffness requirements." },
-      { title: "FEA Optimization", content: "Performed 12 iterative FEA studies to optimize rib patterns, plate thicknesses (40-80mm range), and weld locations. Used topology optimization for weight reduction." },
-      { title: "Weld Design", content: "Designed weld joints with appropriate sizing per AWS D1.1. Specified full penetration welds for critical joints with UT inspection requirements." },
-      { title: "Fabrication Specs", content: "Created welding procedure specifications, stress relief requirements, and machining sequence for critical surfaces." },
-      { title: "Documentation", content: "Created 22 fabrication drawings with weld callouts, 8 machining drawings, and QC inspection plan." }
+      { title: "Requirement Analysis", content: "Defined key industrial parameters including conveyor length (510 mm), width (60 mm), load capacity (15 kg), motor speed range (20–600 RPM), and operating height (100 mm)." },
+      { title: "CAD Design", content: "Developed detailed 3D CAD models of the conveyor frame, roller assemblies, and belt alignment system using SolidWorks." },
+      { title: "Material Selection", content: "Selected aluminum alloy as the primary structural material due to its strength-to-weight ratio, corrosion resistance, and ease of fabrication." },
+      { title: "Drive System Integration", content: "Integrated a variable-speed motor capable of delivering 20–600 RPM to control conveyor belt speed with smooth acceleration." },
+      { title: "Fabrication & Assembly", content: "Manufactured aluminum structural components and assembled the conveyor frame, rollers, motor drive, and belt system." },
+      { title: "Performance Testing", content: "Tested the conveyor system under multiple load conditions to verify belt stability, motor performance, and transport efficiency." }
     ],
     results: [
-      "Bed deflection achieved 0.12mm, 20% better than 0.15mm requirement",
-      "Frame weight optimized to 8,500kg meeting shipping target (500kg margin)",
-      "FEA validated factor of safety >3.0 for all static conditions, >2.0 for fatigue",
-      "Parallelism maintained within 0.03mm exceeding 0.05mm requirement",
-      "Fabrication cost reduced 12% through DFM optimization",
-      "Design approved for manufacturing with zero revisions"
+      "Successfully designed a compact aluminum conveyor system within 510 × 60 × 100 mm envelope",
+      "Achieved stable material transport speed of 52 mm/s",
+      "System capable of handling loads up to approximately 15 kg",
+      "Lightweight aluminum construction improves portability and durability",
+      "Variable motor speed (20–600 RPM) allows flexible conveyor operation",
+      "Belt tracking and tension system ensures consistent material transport"
     ],
-    technologies: ["SolidWorks 2023", "FEA", "Structural Analysis", "Weld Design", "Fabrication", "AWS D1.1"],
-    toolsUsed: ["SolidWorks Simulation Premium", "ANSYS Workbench (validation)", "MathCAD (hand calculations)", "AutoCAD (layouts)"],
+    technologies: ["Mechanical Design", "Industrial Automation", "Conveyor Drive Systems", "CAD Modeling", "Fabrication & Assembly"],
+    toolsUsed: ["SolidWorks", "AutoCAD", "Motor Speed Controller", "Aluminum Machining Tools"],
     keyMetrics: [
-      { value: "500-ton", label: "Press Capacity" },
-      { value: "0.12mm", label: "Bed Deflection" },
-      { value: "8,500kg", label: "Frame Weight" },
-      { value: "3.0+", label: "Safety Factor" }
+      { value: "510mm", label: "Conveyor Length" },
+      { value: "52mm/s", label: "Belt Speed" },
+      { value: "15kg", label: "Load Capacity" },
+      { value: "600RPM", label: "Max Motor Speed" }
     ],
-    lessons: ["Iterative FEA enables optimal weight/stiffness balance - worth the computational investment", "Weld joint design requires explicit fatigue consideration for high-cycle applications", "Early fabricator consultation prevents costly design changes"]
+    lessons: ["Aluminum structures provide an excellent balance between strength and lightweight design", "Accurate belt tension adjustment is essential for stable conveyor operation", "Variable motor speed control significantly improves conveyor system flexibility"],
+    conclusionVideoUrl: "/videos/conveyor-alu-demo.mp4"
   },
   {
     id: 111,
