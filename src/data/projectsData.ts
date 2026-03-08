@@ -94,6 +94,7 @@ export const itProjects: Project[] = [
     tags: ["React Native", "Firebase", "Python", "REST API"],
     articleUrl: "/projects/article/inventory-management",
     githubUrl: "https://github.com",
+    liveUrl: "https://inventory-app.example.com",
     featured: false,
     category: "it",
   },
