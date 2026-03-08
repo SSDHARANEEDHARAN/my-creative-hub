@@ -103,12 +103,12 @@ const Skills = () => {
   );
 
   return (
-    <section id="skills" ref={sectionRef} className="py-24 bg-background bg-mesh">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16 animate-fade-up">
-          <span className="text-primary font-medium text-sm tracking-widest uppercase mb-4 block">Expertise</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">Skills & <span className="text-gradient">Technologies</span></h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">A comprehensive toolkit spanning both IT and Engineering domains, refined through years of hands-on experience.</p>
+    <section id="skills" ref={sectionRef} className="py-16 sm:py-20 md:py-24 bg-background bg-mesh">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 sm:mb-16 animate-fade-up">
+          <span className="text-primary font-medium text-xs sm:text-sm tracking-widest uppercase mb-4 block">Expertise</span>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">Skills & <span className="text-gradient">Technologies</span></h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">A comprehensive toolkit spanning both IT and Engineering domains, refined through years of hands-on experience.</p>
         </div>
 
         {/* IT Skills */}
