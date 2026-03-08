@@ -376,7 +376,31 @@ const ArticlePage = memo(() => {
                 </div>
               </div>
 
-              {/* Download Section */}
+              {/* Conclusion Video */}
+              {article.conclusionVideoUrl && (
+                <div 
+                  className="mt-12"
+                  style={{
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 0.6s ease-out',
+                    transitionDelay: '820ms'
+                  }}
+                >
+                  <h2 className="font-display text-2xl font-bold mb-6">Project Demo Video</h2>
+                  <div className="rounded-xl overflow-hidden border border-border">
+                    <video
+                      src={article.conclusionVideoUrl}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full aspect-video object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
               <div 
                 className="mt-8 sm:mt-12 p-4 sm:p-6 md:p-8 bg-secondary/30 border border-border"
                 style={{
