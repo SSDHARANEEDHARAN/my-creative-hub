@@ -151,6 +151,7 @@ const itProjects: Project[] = [
     images: [inventoryImg, ecommerceImg, analyticsImg, iotImg, plmImg],
     tags: ["React", "Electron", "Node.js", "SQLite"],
     liveUrl: "https://restaurant-pos.example.com",
+    articleUrl: "/projects/article/restaurant-pos",
     featured: false,
     category: "it",
   },
