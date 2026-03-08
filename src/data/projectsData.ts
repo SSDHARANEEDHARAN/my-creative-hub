@@ -22,6 +22,10 @@ import smarthome8 from "@/assets/projects/smarthome-8.jpg";
 import smarthome9 from "@/assets/projects/smarthome-9.jpg";
 import smarthome10 from "@/assets/projects/smarthome-10.jpg";
 import inventoryImg from "@/assets/project-inventory.jpg";
+import servoScientific1 from "@/assets/projects/servo-scientific-1.png";
+import servoScientific2 from "@/assets/projects/servo-scientific-2.png";
+import servoScientific3 from "@/assets/projects/servo-scientific-3.png";
+import servoScientific4 from "@/assets/projects/servo-scientific-4.png";
 import analyticsImg from "@/assets/project-analytics.jpg";
 import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
 import flexsimImg from "@/assets/project-flexsim.jpg";
@@ -131,13 +135,12 @@ export const itProjects: Project[] = [
   },
   {
     id: 3,
-    title: "Inventory Management App",
-    description: "Cross-platform mobile application for stock management with barcode scanning, real-time sync, and multi-warehouse support.",
-    images: [inventoryImg, ecommerceImg, iotImg, analyticsImg, plmImg],
-    tags: ["React Native", "Firebase", "Python", "REST API"],
-    articleUrl: "/projects/article/inventory-management",
-    githubUrl: "https://github.com",
-    liveUrl: "https://inventory-app.example.com",
+    title: "Servo Scientific – Industrial Manufacturing Website",
+    description: "Full-stack industrial company website with product catalog, service showcase, client inquiry system, and responsive design for a scientific equipment manufacturer.",
+    images: [servoScientific1, servoScientific2, servoScientific3, servoScientific4],
+    tags: ["React.js", "MongoDB", "Node.js", "Tailwind CSS"],
+    articleUrl: "/projects/article/servo-scientific",
+    liveUrl: "https://servo-scientific-dharaneedharansss-projects.vercel.app/",
     featured: false,
     category: "it",
   },
