@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
-import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target } from "lucide-react";
+import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
@@ -407,28 +407,54 @@ const ArticlePage = memo(() => {
                 </div>
               )}
 
-              <div 
-                className="mt-8 sm:mt-12 p-4 sm:p-6 md:p-8 bg-secondary/30 border border-border"
-                style={{
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-                  transition: 'all 0.6s ease-out',
-                  transitionDelay: '850ms'
-                }}
-              >
-                <h3 className="font-display text-xl font-bold mb-3">Download Project Files</h3>
-                <p className="text-muted-foreground mb-6 text-sm">
-                  Get the full case study as PDF or download the SolidWorks/STEP CAD files for this project.
-                </p>
-                <ProjectDownloadDialog
-                  projectId={project?.id || article.id}
-                  projectTitle={project?.title || article.title}
-                  projectDescription={project?.description || article.overview}
-                  tags={project?.tags || article.technologies || []}
-                  downloadCount={projectDownloadCount}
-                  onDownloaded={refreshProjectDownloads}
-                />
-              </div>
+              {project?.category === "engineering" ? (
+                <div 
+                  className="mt-8 sm:mt-12 p-4 sm:p-6 md:p-8 bg-secondary/30 border border-border"
+                  style={{
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 0.6s ease-out',
+                    transitionDelay: '850ms'
+                  }}
+                >
+                  <h3 className="font-display text-xl font-bold mb-3">Download Project Files</h3>
+                  <p className="text-muted-foreground mb-6 text-sm">
+                    Get the full case study as PDF or download the SolidWorks/STEP CAD files for this project.
+                  </p>
+                  <ProjectDownloadDialog
+                    projectId={project?.id || article.id}
+                    projectTitle={project?.title || article.title}
+                    projectDescription={project?.description || article.overview}
+                    tags={project?.tags || article.technologies || []}
+                    downloadCount={projectDownloadCount}
+                    onDownloaded={refreshProjectDownloads}
+                  />
+                </div>
+              ) : project?.liveUrl ? (
+                <div 
+                  className="mt-8 sm:mt-12 p-4 sm:p-6 md:p-8 bg-secondary/30 border border-border"
+                  style={{
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 0.6s ease-out',
+                    transitionDelay: '850ms'
+                  }}
+                >
+                  <h3 className="font-display text-xl font-bold mb-3">Try It Live</h3>
+                  <p className="text-muted-foreground mb-6 text-sm">
+                    Experience the project in action — visit the live site and explore all features.
+                  </p>
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    <ExternalLink size={18} />
+                    View Live Site
+                  </a>
+                </div>
+              ) : null}
 
               {/* CTA */}
               <div 
