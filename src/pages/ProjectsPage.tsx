@@ -173,6 +173,7 @@ const itProjects: Project[] = [
     images: [iotImg, analyticsImg, ecommerceImg, inventoryImg, plmImg],
     tags: ["IoT", "Python", "TensorFlow", "React"],
     liveUrl: "https://smart-agriculture.example.com",
+    articleUrl: "/projects/article/smart-agriculture",
     featured: false,
     category: "it",
   },
