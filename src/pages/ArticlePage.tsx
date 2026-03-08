@@ -12,7 +12,7 @@ import { useDownloadCount } from "@/hooks/useDownloadCount";
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticleBySlug(slug) : undefined;
-  const project = article ? engineeringProjects.find(p => p.id === article.id) : undefined;
+  const project = article ? (engineeringProjects.find(p => p.id === article.id) || itProjects.find(p => p.articleUrl?.includes(slug!))) : undefined;
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
