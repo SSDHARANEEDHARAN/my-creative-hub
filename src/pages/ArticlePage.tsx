@@ -72,7 +72,7 @@ const ArticlePage = memo(() => {
               <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
                 <div>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag) => (
+                    {(project?.tags || article.technologies || []).map((tag) => (
                       <span 
                         key={tag} 
                         className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
