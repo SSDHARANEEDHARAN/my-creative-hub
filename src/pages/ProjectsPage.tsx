@@ -88,6 +88,15 @@ import selfNavRobot1 from "@/assets/projects/self-navigating-robot-1.jpg";
 import effiQue1 from "@/assets/projects/effi-que-ev-car-1.jpg";
 import effiQue1Avif from "@/assets/projects/effi-que-ev-car-1.avif";
 import effiQue2 from "@/assets/projects/effi-que-ev-car-2.avif";
+import conveyorAlu1 from "@/assets/projects/conveyor-alu-1.jpg";
+import conveyorAlu2 from "@/assets/projects/conveyor-alu-2.jpg";
+import conveyorAlu3 from "@/assets/projects/conveyor-alu-3.jpg";
+import conveyorAlu4 from "@/assets/projects/conveyor-alu-4.jpg";
+import conveyorAlu5 from "@/assets/projects/conveyor-alu-5.jpg";
+import conveyorAlu6 from "@/assets/projects/conveyor-alu-6.jpg";
+import conveyorAlu7 from "@/assets/projects/conveyor-alu-7.jpg";
+import conveyorAlu8 from "@/assets/projects/conveyor-alu-8.jpg";
+import conveyorAlu9 from "@/assets/projects/conveyor-alu-9.jpg";
 
 interface Project {
   id: number;
