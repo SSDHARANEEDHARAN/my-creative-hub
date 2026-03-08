@@ -50,6 +50,16 @@ import extruder2 from "@/assets/projects/extruder-2.jpg";
 import extruder3 from "@/assets/projects/extruder-3.jpg";
 import extruder4 from "@/assets/projects/extruder-4.jpg";
 import extruder5 from "@/assets/projects/extruder-5.jpg";
+import extruder6 from "@/assets/projects/extruder-6.jpg";
+import extruder7 from "@/assets/projects/extruder-7.jpg";
+import extruder8 from "@/assets/projects/extruder-8.jpg";
+import extruder9 from "@/assets/projects/extruder-9.jpg";
+import extruder10 from "@/assets/projects/extruder-10.jpg";
+import extruder11 from "@/assets/projects/extruder-11.jpg";
+import extruder12 from "@/assets/projects/extruder-12.jpg";
+import extruder13 from "@/assets/projects/extruder-13.jpg";
+import extruder14 from "@/assets/projects/extruder-14.jpg";
+import extruder15 from "@/assets/projects/extruder-15.jpg";
 import bottleFilling1 from "@/assets/projects/bottle-filling-1.jpg";
 import bottleFilling2 from "@/assets/projects/bottle-filling-2.jpg";
 import bottleFilling3 from "@/assets/projects/bottle-filling-3.jpg";
@@ -366,7 +376,7 @@ const engineeringProjects: Project[] = [
     id: 27,
     title: "3D Extruder Machine",
     description: "Precision plastic extrusion system for 3D printing with temperature-controlled heating chamber and multi-filament support.",
-    images: [extruder1, extruder2, extruder3, extruder4, extruder5],
+    images: [extruder15, extruder14, extruder9, extruder6, extruder7, extruder8, extruder10, extruder11, extruder12, extruder13, extruder1, extruder2, extruder3, extruder4, extruder5],
     tags: ["Additive Manufacturing", "Mechanical Design", "Thermal Control"],
     articleUrl: "/projects/article/3d-extruder-machine",
     featured: false,
