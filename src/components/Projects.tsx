@@ -45,29 +45,40 @@ const ProjectLinks = memo(({ project }: { project: Project }) => {
 ProjectLinks.displayName = 'ProjectLinks';
 
 const SmallProjectLinks = memo(({ project }: { project: Project }) => {
-  if (project.category === "it") {
-    return (
-      <a 
-        href={project.githubUrl} 
-        target="_blank"
-        rel="noopener noreferrer"
-        className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-        title="View on GitHub"
-      >
-        <Github size={14} />
-      </a>
-    );
-  }
   return (
-    <a 
-      href={project.articleUrl} 
-      target="_blank"
-      rel="noopener noreferrer"
-      className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-      title="Read Article"
-    >
-      <FileText size={14} />
-    </a>
+    <div className="flex gap-2">
+      {project.liveUrl && (
+        <a 
+          href={project.liveUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+          title="View Live"
+        >
+          <ExternalLink size={14} />
+        </a>
+      )}
+      {project.articleUrl && (
+        <a 
+          href={project.articleUrl} 
+          className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+          title="Read Case Study"
+        >
+          <FileText size={14} />
+        </a>
+      )}
+      {project.githubUrl && (
+        <a 
+          href={project.githubUrl} 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2 bg-secondary text-secondary-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+          title="View on GitHub"
+        >
+          <Github size={14} />
+        </a>
+      )}
+    </div>
   );
 });
 SmallProjectLinks.displayName = 'SmallProjectLinks';
