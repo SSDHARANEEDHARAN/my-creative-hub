@@ -1,6 +1,16 @@
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
+import mindscape1 from "@/assets/projects/mindscape-1.png";
+import mindscape2 from "@/assets/projects/mindscape-2.png";
+import mindscape3 from "@/assets/projects/mindscape-3.png";
+import mindscape4 from "@/assets/projects/mindscape-4.png";
+import mindscape5 from "@/assets/projects/mindscape-5.png";
+import mindscape6 from "@/assets/projects/mindscape-6.png";
+import mindscape7 from "@/assets/projects/mindscape-7.png";
+import mindscape8 from "@/assets/projects/mindscape-8.png";
+import mindscape9 from "@/assets/projects/mindscape-9.png";
+import mindscape10 from "@/assets/projects/mindscape-10.png";
 import smarthome1 from "@/assets/projects/smarthome-1.jpg";
 import smarthome2 from "@/assets/projects/smarthome-2.jpg";
 import smarthome3 from "@/assets/projects/smarthome-3.jpg";
@@ -98,13 +108,12 @@ export interface Project {
 export const itProjects: Project[] = [
   {
     id: 1,
-    title: "E-Commerce Web Platform",
-    description: "Full-stack e-commerce website with React frontend, Node.js backend, payment integration, and admin dashboard. Features include product catalog, shopping cart, user authentication, and order management.",
-    images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
-    tags: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
-    articleUrl: "/projects/article/ecommerce-platform",
-    githubUrl: "https://github.com",
-    liveUrl: "https://ecommerce-demo.example.com",
+    title: "MindScape AI – Mental Health Analysis",
+    description: "AI-powered mental health analysis platform integrating facial emotion recognition, social media sentiment analysis, AI chatbot assistant, and ESP32 wearable device synchronization for personalized wellness insights.",
+    images: [mindscape1, mindscape2, mindscape3, mindscape4, mindscape5, mindscape6, mindscape7, mindscape8, mindscape9, mindscape10],
+    tags: ["React.js", "AI/ML", "ESP32", "Emotion Detection", "IoT"],
+    articleUrl: "/projects/article/mindscape-ai",
+    liveUrl: "https://mindscape-ai-orcin.vercel.app/",
     featured: true,
     category: "it",
   },

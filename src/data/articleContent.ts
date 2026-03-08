@@ -34,42 +34,46 @@ export const articleContents: ArticleContent[] = [
   // ==================== IT PROJECTS ====================
   {
     id: 1,
-    slug: "ecommerce-platform",
-    title: "E-Commerce Web Platform",
-    subtitle: "Full-stack e-commerce solution with modern technologies",
-    duration: "12 weeks",
-    client: "Retail Startup - ShopEase India",
-    role: "Full Stack Developer",
-    industry: "E-commerce Retail",
-    teamSize: "4 Developers",
-    overview: "Developed a comprehensive e-commerce platform from scratch using React for the frontend and Node.js with Express for the backend. The platform includes a complete product catalog, shopping cart functionality, secure payment integration with Stripe and Razorpay, user authentication, order tracking, and an admin dashboard for inventory management.",
-    challenge: "The client needed a scalable e-commerce solution that could handle 10,000+ concurrent users during flash sales. The system required integration with multiple payment gateways for Indian and international customers. Real-time inventory updates were critical to prevent overselling, and the admin dashboard needed to support multiple vendor management.",
-    solution: "Built a microservices architecture with React frontend, Node.js/Express backend, and MongoDB for flexible product schema. Implemented Redis for session management and cart caching. Used Socket.io for real-time inventory updates. Integrated Stripe and Razorpay payment gateways with webhook handling for payment confirmations.",
+    slug: "mindscape-ai",
+    title: "MindScape AI – Intelligent Mental State Analysis & Health Assistant",
+    subtitle: "AI-powered mental health analysis integrating facial recognition, social media sentiment, and wearable IoT devices",
+    duration: "Ongoing",
+    client: "Personal / Academic Project",
+    role: "Full-Stack AI & IoT Developer",
+    industry: "AI Healthcare / Mental Wellness",
+    teamSize: "Solo Developer",
+    overview: "MindScape AI is an intelligent AI-driven platform designed to analyze a user's mental and emotional state using multiple data sources, including facial expressions, social media activity, and conversational input. The system integrates artificial intelligence, web technologies, medical advisory algorithms, and embedded hardware communication to provide personalized insights related to emotional well-being, stress levels, and lifestyle improvements. The platform processes selfie-based facial analysis, Instagram profile activity patterns, and user interaction with an AI chatbot to estimate whether the user is experiencing states such as stress, happiness, anxiety, or neutral emotional conditions. Based on this analysis, the system provides AI-generated suggestions including diet plans, wellness recommendations, and medical guidance. Additionally, the platform supports real-time wearable device synchronization using embedded hardware to track health-related data.",
+    challenge: "Building a unified mental health analysis platform that combines multiple AI models for facial emotion recognition, social media behavioral analysis, and conversational AI posed significant engineering challenges. The system needed to process selfie-based facial analysis with accurate emotion detection, analyze Instagram activity patterns for behavioral signals, and integrate a responsive AI chatbot for health guidance — all while maintaining real-time communication with ESP32-based wearable devices for health data synchronization. Ensuring data privacy, model accuracy across diverse user inputs, and seamless hardware-software integration added further complexity.",
+    solution: "Implemented a three-layer architecture: a Frontend Application Layer (React.js dashboard for facial image upload, AI chatbot interaction, mental state results visualization, and health recommendations), an AI Processing Layer (emotion recognition AI models, sentiment analysis algorithms, medical recommendation models, and conversational AI chatbot), and an Embedded Device Communication Layer (ESP32 microcontroller with IoT messaging for wearable device data synchronization). The platform was deployed on Vercel with cloud API communication and real-time web application architecture.",
     process: [
-      { title: "Requirements & Planning", content: "Conducted 5 stakeholder workshops to document 78 user stories. Created wireframes for 25 screens and finalized tech stack selection based on scalability requirements." },
-      { title: "Database Design", content: "Designed MongoDB schema for products, users, orders, and vendors. Implemented indexing strategy for fast product search and filtering." },
-      { title: "Frontend Development", content: "Built responsive React components with Redux state management. Implemented lazy loading, code splitting, and PWA features for mobile users." },
-      { title: "Backend API Development", content: "Developed RESTful APIs with Express.js. Implemented JWT authentication, rate limiting, and comprehensive error handling." },
-      { title: "Payment Integration", content: "Integrated Stripe and Razorpay with webhook handlers for payment confirmation. Implemented retry logic for failed transactions." },
-      { title: "Testing & Deployment", content: "Wrote 250+ unit tests and integration tests. Set up CI/CD pipeline with GitHub Actions and deployed to AWS with auto-scaling." }
+      { title: "System Architecture Design", content: "Designed a three-layer system: Frontend Application Layer for user interaction (facial image upload, chatbot, results dashboard), AI Processing Layer for emotion detection, sentiment analysis, and medical recommendations, and Embedded Device Communication Layer using ESP32 for wearable health data sync." },
+      { title: "Emotional State Detection", content: "Implemented AI models analyzing user inputs through multiple channels to determine emotional and psychological conditions including stress level detection, mood estimation (happy, neutral, stressed), behavioral pattern recognition, and social activity-based emotional insights." },
+      { title: "Selfie-Based Facial Emotion Recognition", content: "Developed facial analysis pipeline where users upload or capture selfies analyzed using AI facial recognition models to detect emotional cues including facial expression patterns, eye and muscle movement signals, and mood classification based on facial features." },
+      { title: "Social Media Behavior Analysis", content: "Built Instagram profile activity analysis system examining posting frequency, caption sentiment analysis, image emotion patterns, and activity engagement trends to identify potential emotional indicators linked to the user's mental state." },
+      { title: "AI Medical Assistant Integration", content: "Integrated an AI chatbot functioning as a digital mental wellness assistant capable of answering health-related questions, suggesting mental wellness practices, providing AI-generated lifestyle recommendations, and offering diet and nutrition suggestions based on user condition." },
+      { title: "Smart Wearable Device Integration", content: "Developed real-time synchronization with wearable devices using ESP32 microcontroller enabling real-time health data transmission, device-to-cloud communication, and message passing between wearable sensors and the platform for future smart watch integration." }
     ],
     results: [
-      "Successfully launched platform handling 15,000+ concurrent users during first flash sale",
-      "99.9% uptime achieved in first 6 months of operation",
-      "Average page load time of 1.2 seconds with Lighthouse score of 95+",
-      "₹2.5 Cr in transactions processed in first quarter",
-      "50% reduction in cart abandonment through optimized checkout flow",
-      "4.8/5 customer satisfaction rating"
+      "AI-based emotional state detection with multi-source data analysis",
+      "Facial expression mood analysis using AI recognition models",
+      "Instagram activity sentiment evaluation for behavioral insights",
+      "AI chatbot providing health, diet, and wellness suggestions",
+      "Real-time wearable device data synchronization via ESP32",
+      "Comprehensive web dashboard with mood charts, health metrics, and AI predictions"
     ],
-    technologies: ["React", "Node.js", "Express", "MongoDB", "Redux", "Stripe", "Razorpay", "Redis", "Socket.io", "AWS"],
-    toolsUsed: ["VS Code", "Postman", "MongoDB Compass", "AWS Console", "GitHub Actions", "Figma"],
+    technologies: ["React.js", "JavaScript", "HTML5", "CSS/Tailwind", "Emotion Detection AI", "Sentiment Analysis", "Conversational AI", "ESP32", "IoT Messaging", "Vercel"],
+    toolsUsed: ["VS Code", "Vercel Cloud Hosting", "AI Model APIs", "ESP32 Development Tools", "IoT Communication Protocols"],
     keyMetrics: [
-      { value: "15K+", label: "Concurrent Users" },
-      { value: "99.9%", label: "Uptime" },
-      { value: "1.2s", label: "Page Load" },
-      { value: "₹2.5Cr", label: "Q1 Transactions" }
+      { value: "Multi-AI", label: "Model Integration" },
+      { value: "Real-time", label: "IoT Sync" },
+      { value: "3-Layer", label: "Architecture" },
+      { value: "ESP32", label: "Hardware Link" }
     ],
-    lessons: ["Microservices architecture enables independent scaling of critical components", "Real-time inventory sync prevents customer frustration during high-traffic events", "Payment webhook handling must be idempotent to prevent duplicate charges"]
+    lessons: [
+      "Combining multiple AI data sources (facial, social, conversational) provides more accurate emotional state estimation than any single source alone",
+      "Real-time wearable device synchronization requires robust IoT messaging protocols for reliable health data transmission",
+      "AI medical assistants should provide general wellness guidance rather than direct medical diagnosis to ensure responsible AI use"
+    ]
   },
   {
     id: 2,
