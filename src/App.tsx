@@ -112,7 +112,6 @@ const App = () => (
                   <ScrollToTopButton />
                   <AnimatedRoutes />
                 </BrowserRouter>
-                </BrowserRouter>
               </TooltipProvider>
             </GuestProvider>
           </AuthProvider>
