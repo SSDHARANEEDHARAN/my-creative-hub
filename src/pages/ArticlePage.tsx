@@ -5,14 +5,14 @@ import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, User
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
-import { engineeringProjects } from "@/data/projectsData";
+import { engineeringProjects, itProjects } from "@/data/projectsData";
 import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
 
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticleBySlug(slug) : undefined;
-  const project = article ? engineeringProjects.find(p => p.id === article.id) : undefined;
+  const project = article ? (engineeringProjects.find(p => p.id === article.id) || itProjects.find(p => p.articleUrl?.includes(slug!))) : undefined;
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
@@ -22,7 +22,7 @@ const ArticlePage = memo(() => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!article || !project) {
+  if (!article) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
@@ -72,7 +72,7 @@ const ArticlePage = memo(() => {
               <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
                 <div>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag) => (
+                    {(project?.tags || article.technologies || []).map((tag) => (
                       <span 
                         key={tag} 
                         className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium"
@@ -133,11 +133,17 @@ const ArticlePage = memo(() => {
                 </div>
                 
                 <div className="relative">
-                  <img 
-                    src={project.images[0]} 
-                    alt={article.title}
-                    className="rounded-2xl shadow-2xl w-full aspect-video object-cover"
-                  />
+                  {project?.images?.[0] ? (
+                    <img 
+                      src={project.images[0]} 
+                      alt={article.title}
+                      className="rounded-2xl shadow-2xl w-full aspect-video object-cover"
+                    />
+                  ) : (
+                    <div className="rounded-2xl shadow-2xl w-full aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                      <h3 className="text-2xl font-bold text-primary">{article.title}</h3>
+                    </div>
+                  )}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-background/50 to-transparent" />
                 </div>
               </div>
@@ -364,7 +370,7 @@ const ArticlePage = memo(() => {
               >
                 <h2 className="font-display text-2xl font-bold mb-6">Project Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {project.images.slice(1).map((image, index) => (
+                  {(project?.images || []).slice(1).map((image, index) => (
                     <img 
                       key={index}
                       src={image} 
@@ -415,10 +421,10 @@ const ArticlePage = memo(() => {
                   Get the full case study as PDF or download the SolidWorks/STEP CAD files for this project.
                 </p>
                 <ProjectDownloadDialog
-                  projectId={project.id}
-                  projectTitle={project.title}
-                  projectDescription={project.description}
-                  tags={project.tags}
+                  projectId={project?.id || article.id}
+                  projectTitle={project?.title || article.title}
+                  projectDescription={project?.description || article.overview}
+                  tags={project?.tags || article.technologies || []}
                   downloadCount={projectDownloadCount}
                   onDownloaded={refreshProjectDownloads}
                 />
