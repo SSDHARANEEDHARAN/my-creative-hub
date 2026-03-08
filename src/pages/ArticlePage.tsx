@@ -212,6 +212,27 @@ const ArticlePage = memo(() => {
                   ))}
                 </div>
               )}
+
+              {/* Views, Likes, Comments Stats */}
+              {project && (
+                <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Eye size={16} />
+                    {viewCount} views
+                  </span>
+                  <button 
+                    onClick={handleLike}
+                    className={`flex items-center gap-1.5 transition-colors ${hasLiked ? 'text-primary' : 'hover:text-primary'}`}
+                  >
+                    <Heart size={16} className={hasLiked ? 'fill-primary' : ''} />
+                    {likeCount} likes
+                  </button>
+                  <span className="flex items-center gap-1.5">
+                    <MessageSquare size={16} />
+                    {commentCount} Comments
+                  </span>
+                </div>
+              )}
             </div>
           </section>
 
