@@ -13,6 +13,11 @@ import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
 import mazeRobot4 from "@/assets/projects/maze-robot-4.jpg";
 import mazeRobot5 from "@/assets/projects/maze-robot-5.jpg";
 import rocketStoveImg from "@/assets/projects/rocket-stove.png";
+import iotHome1 from "@/assets/projects/iot-home-1.jpg";
+import iotHome2 from "@/assets/projects/iot-home-2.jpg";
+import iotHome3 from "@/assets/projects/iot-home-3.jpg";
+import iotHome4 from "@/assets/projects/iot-home-4.jpg";
+import iotHome5 from "@/assets/projects/iot-home-5.jpg";
 
 export interface Project {
   id: number;
