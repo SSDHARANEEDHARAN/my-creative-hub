@@ -120,7 +120,7 @@ const itProjects: Project[] = [
     description: "Open-source IoT home automation platform with centralized web dashboard for smart device control, real-time sensor monitoring, automation rules, and energy consumption tracking. Built with React.js, Firebase, MQTT, ESP32, and custom IoT PCB.",
     images: [smarthome9, smarthome1, smarthome7, smarthome3, smarthome4, smarthome5, smarthome6, smarthome2, smarthome8, smarthome10],
     tags: ["React.js", "Firebase", "MQTT", "ESP32", "IoT"],
-    liveUrl: "https://iot-dashboard.example.com",
+    liveUrl: "https://smart-home-harmony.vercel.app/",
     articleUrl: "/projects/article/iot-smart-home",
     featured: true,
     category: "it",
