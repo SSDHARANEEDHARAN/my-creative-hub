@@ -160,42 +160,47 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 4,
-    slug: "analytics-dashboard",
-    title: "Data Analytics Dashboard",
-    subtitle: "Real-time business intelligence with interactive visualizations",
-    duration: "10 weeks",
-    client: "Manufacturing Company - Coimbatore Industries",
-    role: "Data Engineer",
-    industry: "Manufacturing Analytics",
-    teamSize: "3 Engineers",
-    overview: "Developed a comprehensive analytics dashboard providing real-time insights into production, quality, and equipment performance. The system aggregates data from multiple sources including PLCs, quality management systems, and ERP, presenting actionable insights through interactive visualizations.",
-    challenge: "Data was scattered across 8 different systems with no unified view. Real-time production data needed to be captured from shop floor PLCs. The client needed both high-level KPI views and drill-down capabilities. Historical data spanning 5 years needed to be migrated and analyzed.",
-    solution: "Built data pipeline using Python with Pandas for ETL processing. Implemented PostgreSQL data warehouse with optimized schema for analytics queries. Created React frontend with D3.js for custom visualizations. Set up automated reporting with email scheduling.",
+    slug: "perfect-homes",
+    title: "SS Perfect Homes – Smart Home Interior, Exterior & IoT Solutions Platform",
+    subtitle: "Digital platform combining architecture, interior design, and smart home IoT technology",
+    duration: "Ongoing",
+    client: "SS Perfect Homes – Interiors & Solutions",
+    role: "Full-Stack Web & IoT Developer",
+    industry: "Interior Design / Smart Home / IoT",
+    teamSize: "Solo Developer",
+    overview: "SS Perfect Homes is a digital platform designed to showcase and manage home interior design, exterior architecture, and smart home IoT solutions. The website functions as a complete service platform for residential design and smart home technology integration, allowing users to explore modern home designs, automation solutions, and architectural services. The project combines web-based portfolio presentation, service management, and IoT technology integration, creating a platform where customers can discover home design concepts, smart automation solutions, and technology-enabled living environments.",
+    challenge: "The client needed a unified digital platform that presents interior design portfolios (living rooms, modular kitchens, bedrooms, workspaces), exterior architectural concepts (house elevations, landscape designs), and smart home IoT solutions (smart lighting, automated appliance control, security systems, energy monitoring) — all within a responsive, modern web experience with client inquiry capabilities.",
+    solution: "Built a three-layer architecture: a Web Application Layer (React.js with Tailwind CSS for design gallery browsing, service information display, client contact forms, and smart home solution presentation), a Service & Content Management Layer (interior design project data, exterior architecture portfolios, IoT solution descriptions, customer inquiries), and a Smart Home Technology Layer (ESP32 microcontroller-based devices, smart sensors, IoT communication protocols, remote device monitoring). Deployed on Vercel with Git-based workflow.",
     process: [
-      { title: "Data Source Mapping", content: "Documented data sources, formats, and refresh frequencies for 8 systems. Identified data quality issues and created cleansing rules." },
-      { title: "ETL Development", content: "Built Python ETL pipelines using Pandas and Apache Airflow for orchestration. Processed 10GB+ of historical data." },
-      { title: "Data Warehouse Design", content: "Designed star schema with 12 fact tables and 25 dimension tables. Optimized indexes for common query patterns." },
-      { title: "Visualization Development", content: "Created 15 dashboard views with React and D3.js. Implemented responsive design for both desktop and tablet use." },
-      { title: "Alerting System", content: "Built real-time alerting for KPI threshold breaches. Integrated with SMS and email for critical alerts." },
-      { title: "User Training", content: "Conducted training for 20 managers on dashboard usage and data interpretation." }
+      { title: "Platform Architecture Design", content: "Designed a three-layer system: Web Application Layer for user interface and design portfolio experience, Service & Content Management Layer for managing design and IoT content, and Smart Home Technology Layer for IoT device integration and automation." },
+      { title: "Interior Design Showcase", content: "Built visual portfolio sections for living room designs, modular kitchen concepts, bedroom interiors, office workspace layouts, and decorative lighting and furniture concepts with image carousels and product detail cards." },
+      { title: "Exterior & Architectural Design", content: "Developed exterior house elevation design showcases, structural layout concepts, garden and landscape designs, and exterior lighting and outdoor architecture presentations." },
+      { title: "Smart Home IoT Integration", content: "Integrated IoT-enabled features including smart lighting control systems, automated appliance control, security monitoring systems, remote device management, and energy consumption monitoring using ESP32 microcontrollers and IoT communication protocols." },
+      { title: "Client Inquiry System", content: "Built contact and inquiry forms with service selection dropdowns, project description fields, and contact information collection for business communications." },
+      { title: "Deployment & Optimization", content: "Deployed on Vercel Cloud with responsive design optimized for desktop and mobile. Implemented dark/light theme toggle and modern UI patterns." }
     ],
     results: [
-      "Unified view of operations saving 10+ hours weekly in manual report compilation",
-      "Real-time OEE monitoring improved equipment efficiency by 8%",
-      "Quality defect early detection reduced scrap rate by 12%",
-      "Management decisions now backed by data with drill-down capability",
-      "Automated daily/weekly reports sent to 50+ stakeholders",
-      "Dashboard load time under 3 seconds for any query"
+      "Complete interior design portfolio with multiple room categories",
+      "Exterior architecture showcase with modern house elevation concepts",
+      "Smart home IoT integration supporting ESP32-based automation devices",
+      "Responsive modern web interface with dark/light theme support",
+      "Client inquiry system for business communication and lead generation",
+      "IoT product catalog with specifications, dimensions, and feature listings"
     ],
-    technologies: ["Python", "React", "PostgreSQL", "D3.js", "Pandas", "Apache Airflow", "REST API"],
-    toolsUsed: ["VS Code", "DBeaver", "Apache Airflow", "Grafana", "Jupyter Notebook"],
+    technologies: ["React.js", "JavaScript", "HTML5", "CSS/Tailwind CSS", "ESP32", "IoT Protocols", "Smart Sensors", "Vercel"],
+    toolsUsed: ["VS Code", "Vercel Dashboard", "Git", "ESP32 Development Tools", "IoT Communication Tools"],
     keyMetrics: [
-      { value: "8%", label: "OEE Improvement" },
-      { value: "12%", label: "Scrap Reduction" },
-      { value: "10+hrs", label: "Weekly Time Saved" },
-      { value: "3s", label: "Dashboard Load Time" }
+      { value: "3-Layer", label: "Architecture" },
+      { value: "IoT", label: "Smart Home" },
+      { value: "Full-Stack", label: "Web Platform" },
+      { value: "Responsive", label: "Multi-Device" }
     ],
-    lessons: ["Data quality at source is critical - garbage in, garbage out", "Interactive drill-down capability is more valuable than static reports", "Scheduled automated reports ensure consistent stakeholder communication"]
+    conclusionVideoUrl: "/videos/perfect-homes-demo.mp4",
+    lessons: [
+      "Combining interior design presentation with IoT technology creates a compelling unified platform for modern home solutions",
+      "Smart home IoT integration requires clear product categorization and specification presentation for customer understanding",
+      "A three-layer architecture effectively separates presentation, content management, and technology integration concerns"
+    ]
   },
   {
     id: 5,

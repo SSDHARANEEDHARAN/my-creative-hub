@@ -27,6 +27,11 @@ import servoScientific2 from "@/assets/projects/servo-scientific-2.png";
 import servoScientific3 from "@/assets/projects/servo-scientific-3.png";
 import servoScientific4 from "@/assets/projects/servo-scientific-4.png";
 import analyticsImg from "@/assets/project-analytics.jpg";
+import perfectHomes1 from "@/assets/projects/perfect-homes-1.png";
+import perfectHomes2 from "@/assets/projects/perfect-homes-2.png";
+import perfectHomes3 from "@/assets/projects/perfect-homes-3.png";
+import perfectHomes4 from "@/assets/projects/perfect-homes-4.png";
+import perfectHomes5 from "@/assets/projects/perfect-homes-5.png";
 import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
 import flexsimImg from "@/assets/project-flexsim.jpg";
 import creoImg from "@/assets/project-creo.jpg";
@@ -146,13 +151,12 @@ export const itProjects: Project[] = [
   },
   {
     id: 4,
-    title: "Data Analytics Dashboard",
-    description: "Real-time analytics dashboard with Python backend, interactive data visualization, and automated reporting for business intelligence.",
-    images: [analyticsImg, inventoryImg, ecommerceImg, iotImg, plmImg],
-    tags: ["Python", "React", "PostgreSQL", "D3.js", "Pandas"],
-    articleUrl: "/projects/article/analytics-dashboard",
-    githubUrl: "https://github.com",
-    liveUrl: "https://analytics-dashboard.example.com",
+    title: "SS Perfect Homes – Interior & IoT Solutions",
+    description: "Digital platform for home interior design, exterior architecture, and smart home IoT solutions with product showcases, service management, and client inquiry system.",
+    images: [perfectHomes1, perfectHomes2, perfectHomes3, perfectHomes4, perfectHomes5],
+    tags: ["React.js", "Tailwind CSS", "IoT", "ESP32", "Smart Home"],
+    articleUrl: "/projects/article/perfect-homes",
+    liveUrl: "https://ss-perfect-homes.vercel.app/",
     featured: false,
     category: "it",
   },
