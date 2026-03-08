@@ -70,6 +70,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
     articleUrl: "/projects/article/ecommerce-platform",
     githubUrl: "https://github.com",
+    liveUrl: "https://ecommerce-demo.example.com",
     featured: true,
     category: "it",
   },
