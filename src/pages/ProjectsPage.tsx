@@ -85,6 +85,7 @@ const itProjects: Project[] = [
     images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
     tags: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
     liveUrl: "https://ecommerce-demo.example.com",
+    articleUrl: "/projects/article/ecommerce-platform",
     featured: true,
     category: "it",
   },
