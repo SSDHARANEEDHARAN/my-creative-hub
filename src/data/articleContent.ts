@@ -74,41 +74,41 @@ export const articleContents: ArticleContent[] = [
   {
     id: 2,
     slug: "iot-smart-home",
-    title: "SmartHome Harmony – IoT Home Automation Platform",
-    subtitle: "Centralized IoT dashboard for smart device control and monitoring",
+    title: "SmartHome Harmony – IoT Home Automation & Embedded Control Platform",
+    subtitle: "Full-stack IoT platform integrating web technologies, cloud services, embedded systems, and custom hardware",
     duration: "Ongoing",
     client: "Open-Source / Personal Project",
-    role: "Full-Stack IoT Developer",
-    industry: "Home Automation / IoT",
+    role: "Full-Stack IoT & Embedded Developer",
+    industry: "Home Automation / IoT / Embedded Systems",
     teamSize: "Solo Developer",
-    overview: "SmartHome Harmony is an open-source IoT-based home automation platform that allows users to monitor and control smart devices through a centralized web dashboard. The system integrates embedded hardware, cloud communication, and web-based control interfaces to create a scalable smart home ecosystem. The platform enables users to manage appliances, track sensor data, automate routines, and monitor energy consumption in real time.",
-    challenge: "Building a unified smart home platform that seamlessly bridges web technologies with embedded IoT hardware posed significant challenges. The system needed to support real-time device communication with minimal latency, handle multiple IoT protocols and ecosystems, and provide a reliable dashboard experience even during intermittent connectivity. Designing a custom IoT PCB board for centralized device management added hardware engineering complexity.",
-    solution: "Implemented a three-layer architecture: a React.js/Next.js web application layer for the dashboard, a Firebase and MQTT-based cloud communication layer for real-time data sync, and an ESP32/Raspberry Pi hardware layer for device control. Designed a custom IoT control PCB board as the central smart home controller. Used Firebase as the free cloud backend with MQTT protocol for reliable real-time device messaging.",
+    overview: "SmartHome Harmony is a full-stack IoT Home Automation Platform that integrates web technologies, cloud services, embedded systems, and custom hardware to provide intelligent control and monitoring of home devices. The system is designed with a hybrid IT and embedded architecture, combining a web-based control dashboard with microcontroller-driven hardware nodes. The platform enables users to remotely control appliances, monitor environmental sensors, and configure automated behaviors through a centralized interface. This project demonstrates the integration of full-stack web development, IoT communication protocols, cloud infrastructure, and embedded hardware systems.",
+    challenge: "Building a unified smart home platform that seamlessly bridges web technologies with embedded IoT hardware posed significant challenges. The system needed real-time device communication with minimal latency, support for multiple IoT protocols (MQTT, Wi-Fi, SPI/I2C/UART), and reliable cloud synchronization. Designing a custom IoT PCB board for centralized device management added hardware engineering complexity. The platform also needed to handle wireless communication reliability, power efficiency for embedded nodes, and sensor data accuracy across diverse environmental conditions.",
+    solution: "Implemented a three-layer architecture: a User Interface Layer (React.js/Next.js dashboard), a Cloud & Communication Layer (Firebase Realtime Database + MQTT broker), and an Embedded Device Layer (ESP32 controllers, Raspberry Pi gateway, smart relays, custom PCB). Deployed on Vercel with Git-based CI/CD. Used Firebase Authentication for secure access and MQTT for low-latency bidirectional device messaging. Developed custom IoT control PCB currently under testing for centralized embedded control.",
     process: [
-      { title: "System Architecture Design", content: "Designed a three-layer architecture comprising the Web Application Layer (dashboard UI), Cloud Communication Layer (Firebase + MQTT), and Hardware Layer (ESP32 controllers, sensor modules, smart relays, custom PCB boards)." },
-      { title: "Web Dashboard Development", content: "Built the SmartHome Harmony dashboard using React.js, Next.js, and Tailwind CSS. Implemented room-based device management, real-time sensor monitoring (temperature, humidity, device status), and energy consumption tracking." },
-      { title: "Cloud Integration", content: "Integrated Firebase as the primary cloud backend for data storage and authentication. Implemented MQTT protocol for real-time bidirectional device communication with low latency." },
-      { title: "Hardware Development", content: "Developed custom IoT control PCB board for centralized device management. Programmed ESP32 microcontrollers for sensor data collection and device actuation. Integrated Raspberry Pi as the gateway controller." },
-      { title: "Automation Engine", content: "Built automation rules engine supporting scheduled device operations, conditional triggers based on sensor data, and voice-assisted automation capabilities." },
-      { title: "Testing & Validation", content: "Conducted real-time hardware testing to ensure reliable communication with the web platform, stable device control, and efficient power management across all connected devices." }
+      { title: "System Architecture Design", content: "Designed three primary engineering layers: User Interface Layer (web dashboard for device control, sensor monitoring, automation rules, energy analytics), Cloud & Communication Layer (Firebase Database, MQTT Broker, IoT Device Authentication, Cloud Data Storage), and Embedded Device Layer (ESP32, Raspberry Pi, smart relays, sensors)." },
+      { title: "Frontend Dashboard Development", content: "Built the SmartHome Harmony dashboard using React.js, Next.js, Tailwind CSS, and TypeScript. Implemented real-time device state monitoring, room-based device management, energy usage tracking and visualization, and automation rule configuration interface." },
+      { title: "Cloud & Backend Integration", content: "Integrated Firebase Realtime Database for cloud data synchronization, Firebase Authentication for user security, MQTT protocol for real-time IoT device communication, and REST API endpoints for device control commands." },
+      { title: "Embedded Hardware Development", content: "Programmed ESP32 microcontrollers for appliance switching using smart relays, environmental sensor monitoring (temperature, humidity, current/energy), real-time device state reporting, and wireless communication with cloud servers. Integrated Raspberry Pi as gateway node." },
+      { title: "Custom PCB Development", content: "Designed and developed a custom IoT smart home controller PCB to serve as the central embedded system. Hardware testing focuses on system stability, reliable cloud communication, power efficiency, and sensor data accuracy." },
+      { title: "Deployment & DevOps", content: "Deployed the web platform on Vercel Cloud Hosting with Git-based CI/CD pipeline. Configured Firebase Console for cloud management. Used Arduino IDE and ESP-IDF for embedded firmware development with serial debugging tools." }
     ],
     results: [
-      "Real-time IoT dashboard with sub-second device response times",
-      "Scalable cloud architecture supporting multiple IoT ecosystems",
-      "Custom PCB board designed and tested for centralized home control",
-      "Multi-device automation system with room-based management",
-      "Energy monitoring capabilities with real-time consumption tracking",
-      "Support for Firebase, MQTT, ThingSpeak, ESP RainMaker, and Amazon IoT integrations"
+      "Full-stack IoT platform with real-time device control and monitoring",
+      "Cloud-connected embedded systems with Firebase and MQTT integration",
+      "Custom IoT control PCB designed and under active testing",
+      "Scalable IoT architecture supporting multiple communication protocols",
+      "Room-based device management with automation and scheduling",
+      "Energy monitoring with real-time consumption visualization"
     ],
-    technologies: ["React.js", "Next.js", "Tailwind CSS", "Firebase", "MQTT Protocol", "ESP32", "Raspberry Pi", "Custom IoT PCB"],
-    toolsUsed: ["VS Code", "Arduino IDE", "Firebase Console", "MQTT Explorer", "PCB Design Tools", "ThingSpeak", "ESP RainMaker"],
+    technologies: ["React.js", "Next.js", "Tailwind CSS", "TypeScript", "Firebase Realtime DB", "Firebase Auth", "MQTT Protocol", "REST API", "ESP32", "Raspberry Pi", "Smart Relays", "Custom IoT PCB", "Vercel", "Git CI/CD"],
+    toolsUsed: ["VS Code", "Git & GitHub", "Vercel", "Firebase Console", "Arduino IDE", "ESP-IDF Framework", "Raspberry Pi OS", "Serial Debugging Tools", "MQTT Explorer"],
     keyMetrics: [
       { value: "Real-time", label: "Device Control" },
-      { value: "8+", label: "IoT Integrations" },
+      { value: "3-Layer", label: "Architecture" },
       { value: "Custom", label: "PCB Board" },
-      { value: "3-Layer", label: "Architecture" }
+      { value: "Full-Stack", label: "IT + Embedded" }
     ],
-    lessons: ["A three-layer architecture (Web + Cloud + Hardware) provides the best separation of concerns for IoT platforms", "Firebase offers a reliable free-tier cloud backend for prototyping IoT systems", "Custom PCB development significantly improves reliability over breadboard-based prototypes"]
+    lessons: ["A hybrid IT and embedded architecture requires careful protocol selection (MQTT for low-latency, REST for configuration)", "Firebase Realtime Database provides excellent free-tier support for IoT prototyping with real-time sync", "Custom PCB development significantly improves reliability and scalability over breadboard prototypes", "Git-based CI/CD with Vercel enables rapid iteration on the web dashboard while hardware development continues independently"]
   },
   {
     id: 3,

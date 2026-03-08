@@ -107,7 +107,7 @@ export const itProjects: Project[] = [
     tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
     articleUrl: "/projects/article/iot-smart-home",
     githubUrl: "https://github.com",
-    liveUrl: "https://iot-dashboard.example.com",
+    liveUrl: "https://smart-home-harmony.vercel.app/",
     featured: true,
     category: "it",
   },
