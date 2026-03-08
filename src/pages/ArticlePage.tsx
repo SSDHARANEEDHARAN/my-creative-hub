@@ -24,9 +24,9 @@ const ArticlePage = memo(() => {
   const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
   
   const { user } = useAuth();
-  const { guestInfo } = useGuest();
-  const currentUserEmail = user?.email || guestInfo?.email || null;
-  const currentUserName = user?.user_metadata?.display_name || guestInfo?.name || null;
+  const { guest } = useGuest();
+  const currentUserEmail = user?.email || guest?.email || null;
+  const currentUserName = user?.user_metadata?.display_name || guest?.name || null;
   
   const { viewCount, likeCount, hasLiked, toggleLike } = useProjectViewLikes(
     project ? String(project.id) : "",
