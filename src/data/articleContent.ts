@@ -1200,7 +1200,7 @@ export const articleContents: ArticleContent[] = [
       { value: "18", label: "Circuit Diagrams" }
     ],
     lessons: ["Sensor positioning plays a critical role in accurate obstacle detection", "Real-time processing of sensor data is essential for smooth robot navigation", "Iterative testing in controlled environments significantly improves robotics performance"],
-    conclusionVideoUrl: "",
+    conclusionVideoUrl: "/videos/maze-robot-demo.mp4",
   },
 ];
 
