@@ -573,24 +573,26 @@ const ProjectsPage = () => {
                               </button>
                             </div>
                             <ProjectComments projectId={String(project.id)} />
-                            {project.liveUrl && (
-                              <a
-                                href={project.liveUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                              >
-                                View Live <ExternalLink size={14} />
-                              </a>
-                            )}
-                            {project.articleUrl && (
-                              <Link
-                                to={project.articleUrl}
-                                className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                              >
-                                Read Case Study <FileText size={14} />
-                              </Link>
-                            )}
+                            <div className="flex items-center gap-4">
+                              {project.liveUrl && (
+                                <a
+                                  href={project.liveUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                                >
+                                  View Live <ExternalLink size={14} />
+                                </a>
+                              )}
+                              {project.articleUrl && (
+                                <Link
+                                  to={project.articleUrl}
+                                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                                >
+                                  Read Case Study <FileText size={14} />
+                                </Link>
+                              )}
+                            </div>
                           </div>
                         </motion.div>
                       ))}
