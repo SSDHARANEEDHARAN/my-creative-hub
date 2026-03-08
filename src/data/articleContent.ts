@@ -884,7 +884,8 @@ export const articleContents: ArticleContent[] = [
       { value: "20%", label: "Faster Cooking" },
       { value: "28", label: "Manufacturing Drawings" }
     ],
-    lessons: ["Thermal optimization in cooking equipment directly impacts energy costs", "Structural reinforcement is critical for high-temperature industrial equipment", "Iterative design testing improves heat distribution uniformity"]
+    lessons: ["Thermal optimization in cooking equipment directly impacts energy costs", "Structural reinforcement is critical for high-temperature industrial equipment", "Iterative design testing improves heat distribution uniformity"],
+    conclusionVideoUrl: "/videos/borbique-demo.mov"
   },
   {
     id: 113,
