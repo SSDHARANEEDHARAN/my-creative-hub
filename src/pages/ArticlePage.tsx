@@ -22,7 +22,7 @@ const ArticlePage = memo(() => {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!article || !project) {
+  if (!article) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
