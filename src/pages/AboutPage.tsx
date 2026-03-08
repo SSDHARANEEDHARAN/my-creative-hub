@@ -20,6 +20,13 @@ import certSeven from "@/assets/certificates/certificate-7.avif";
 import certEight from "@/assets/certificates/certificate-8.avif";
 import certWebinar from "@/assets/certificates/webinar-certificate.avif";
 import certWebinar2 from "@/assets/certificates/webinar-certificate-2.avif";
+import certNss from "@/assets/certificates/nss-certificate.avif";
+import certDiploma from "@/assets/certificates/diploma-course-certificate.avif";
+import certPp1 from "@/assets/certificates/pp-1.avif";
+import certPp2 from "@/assets/certificates/pp-2.avif";
+import certIn2 from "@/assets/certificates/industrial-training-2.avif";
+import certIn1 from "@/assets/certificates/industrial-training-1.avif";
+import certCswa from "@/assets/certificates/cswa-solidworks.jpg";
 
 interface DBCertificate {
   id: string; title: string; issuer: string; date: string;
@@ -40,14 +47,21 @@ const fallbackExperience = [
 ];
 
 const fallbackCertifications = [
+  { name: "CSWA - Mechanical Design", issuer: "Dassault Systèmes", year: "2026", image: certCswa },
   { name: "Industrial Training Certificate", issuer: "Industry", year: "2023", image: certIndustrial },
+  { name: "Industrial Training Certificate 1", issuer: "Industry", year: "2023", image: certIn1 },
+  { name: "Industrial Training Certificate 2", issuer: "Industry", year: "2023", image: certIn2 },
   { name: "Internship Letter", issuer: "Company", year: "2023", image: certInternship },
   { name: "Professional Practice Certificate", issuer: "Institution", year: "2023", image: certProfPractice },
+  { name: "Professional Practice Certificate 1", issuer: "Institution", year: "2023", image: certPp1 },
+  { name: "Professional Practice Certificate 2", issuer: "Institution", year: "2023", image: certPp2 },
   { name: "Certificate of Achievement", issuer: "Organization", year: "2023", image: certFour },
   { name: "Project Certificate", issuer: "Institution", year: "2023", image: certProject },
   { name: "Certificate of Completion", issuer: "Organization", year: "2023", image: certSix },
   { name: "Certificate of Participation", issuer: "Organization", year: "2023", image: certSeven },
   { name: "Certificate of Excellence", issuer: "Organization", year: "2023", image: certEight },
+  { name: "NSS Certificate", issuer: "NSS", year: "2023", image: certNss },
+  { name: "Diploma Course Completed Certificate", issuer: "Institution", year: "2023", image: certDiploma },
   { name: "Webinar Certificate", issuer: "Organizer", year: "2023", image: certWebinar },
   { name: "Webinar Certificate 2", issuer: "Organizer", year: "2023", image: certWebinar2 },
 ];
