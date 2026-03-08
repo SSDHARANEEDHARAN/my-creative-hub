@@ -248,42 +248,43 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 6,
-    slug: "weather-station",
-    title: "Weather Monitoring Station",
-    subtitle: "IoT weather monitoring with web dashboard",
-    duration: "6 weeks",
-    client: "Agricultural Cooperative - Thanjavur Farmers Association",
-    role: "IoT Developer",
-    industry: "Agriculture",
-    teamSize: "2 Engineers",
-    overview: "Designed and deployed IoT-based weather monitoring stations for agricultural applications. The system captures temperature, humidity, soil moisture, rainfall, and wind speed data, presenting insights through a web dashboard that helps farmers make irrigation and planting decisions.",
-    challenge: "Weather stations needed to operate reliably in outdoor agricultural conditions with no power or internet infrastructure. Data accuracy was critical for irrigation decisions. Farmers needed simple, actionable insights rather than raw data. System needed to be affordable for cooperative deployment.",
-    solution: "Built solar-powered weather stations with Arduino controllers and LoRa radio for long-range data transmission. Developed central gateway with Raspberry Pi connecting to cloud. Created Flask web dashboard with farmer-friendly visualizations and SMS alerts for critical conditions.",
+    slug: "sticky-note-pro",
+    title: "Sticky Note Pro – Cloud-Based Smart Notes Platform",
+    subtitle: "Modern productivity tool with cloud sync and AI features",
+    duration: "8 weeks",
+    client: "Personal Project – Productivity Tool",
+    role: "Full Stack Developer",
+    industry: "Productivity / SaaS",
+    teamSize: "1 Developer",
+    overview: "Sticky Note Pro is a modern web-based note management platform that allows users to create, organize, and manage digital sticky notes directly in the browser. The application provides a lightweight and intuitive interface inspired by physical sticky notes, helping users quickly capture ideas, reminders, and tasks. It supports real-time cloud storage, multiple authentication methods (Google, Apple, Magic Link, OTP), and AI-powered productivity features.",
+    challenge: "Building a seamless note-taking experience that feels as natural as physical sticky notes while providing cloud persistence, real-time sync across devices, and secure multi-auth login. The UI needed to support drag-and-drop positioning, color-coded organization, and responsive design for both desktop and mobile users.",
+    solution: "Developed a React.js frontend with Tailwind CSS for a clean, sticky-note-inspired UI. Integrated cloud backend services for real-time note synchronization and secure authentication via Google, Apple, Magic Link, and phone OTP. Added AI integration layer supporting text analysis, content summarization, and chat assistance powered by Large Language Models.",
     process: [
-      { title: "Sensor Selection", content: "Evaluated 15 sensor types for accuracy, durability, and cost. Selected IP65-rated sensors suitable for outdoor agricultural use." },
-      { title: "Power System Design", content: "Designed solar power system with 10W panel and LiFePO4 battery for 3 days autonomy. Implemented power management for extended operation." },
-      { title: "Communication Architecture", content: "Implemented LoRa mesh network for 2km+ range. Designed gateway with 4G fallback for cloud connectivity." },
-      { title: "Dashboard Development", content: "Built Flask application with Chart.js visualizations. Implemented farmer-friendly UI with Tamil language support." },
-      { title: "Alert System", content: "Created SMS alert system for frost warnings, heavy rain predictions, and irrigation recommendations." },
-      { title: "Deployment & Training", content: "Installed 8 stations across cooperative farms. Trained 25 farmers on dashboard and alert interpretation." }
+      { title: "UI/UX Design", content: "Designed a sticky-note-inspired workspace with color-coded notes, pin decorations, and drag-and-drop positioning. Created responsive layouts for desktop and mobile." },
+      { title: "Authentication System", content: "Implemented multiple login methods including Google Sign-In, Apple Sign-In, Magic Link (email-based), and Phone OTP for maximum accessibility and security." },
+      { title: "Cloud Backend", content: "Set up cloud database for real-time note storage and synchronization. Implemented automatic saving so users never lose their work." },
+      { title: "Note Management", content: "Built core features: creating, editing, deleting, and color-coding notes. Added drag-and-drop positioning for spatial organization." },
+      { title: "AI Integration", content: "Integrated LLM-powered features for text analysis, content summarization, and AI chat assistance to boost productivity." },
+      { title: "Deployment", content: "Deployed on Vercel with Git-based CI/CD pipeline for continuous updates and scalable cloud hosting." }
     ],
     results: [
-      "8 weather stations deployed across 500 hectares of farmland",
-      "15% improvement in crop yield through optimized irrigation timing",
-      "Early frost warning prevented ₹20L crop damage in first season",
-      "SMS alerts reached 200+ farmers with relevant weather information",
-      "98% data availability despite challenging outdoor conditions",
-      "System operational cost of ₹500/month per station"
+      "Fully functional cloud-based sticky note platform with real-time sync",
+      "4 authentication methods for flexible and secure user access",
+      "Color-coded note organization with drag-and-drop positioning",
+      "AI-powered productivity features including summarization and chat",
+      "Responsive design working seamlessly across desktop and mobile",
+      "Scalable serverless architecture with zero-downtime deployments"
     ],
-    technologies: ["Arduino", "Python", "Flask", "LoRa", "Chart.js", "SQLite", "Twilio SMS"],
-    toolsUsed: ["Arduino IDE", "VS Code", "Fusion 360 (enclosure)", "KiCad (PCB)", "Grafana"],
+    technologies: ["React.js", "Tailwind CSS", "Cloud Database", "Authentication APIs", "LLM/AI", "Vercel"],
+    toolsUsed: ["VS Code", "Vercel Dashboard", "Git/GitHub", "Cloud Backend Console"],
     keyMetrics: [
-      { value: "8", label: "Stations Deployed" },
-      { value: "15%", label: "Yield Improvement" },
-      { value: "₹20L", label: "Damage Prevented" },
-      { value: "98%", label: "Data Availability" }
+      { value: "4", label: "Auth Methods" },
+      { value: "Real-time", label: "Cloud Sync" },
+      { value: "AI", label: "LLM Integration" },
+      { value: "100%", label: "Responsive" }
     ],
-    lessons: ["Solar power with proper battery sizing enables remote IoT deployments", "LoRa mesh networking provides reliable long-range communication in rural areas", "Farmer-friendly interfaces in local languages dramatically improve adoption"]
+    conclusionVideoUrl: "/videos/sticky-note-pro-demo.mp4",
+    lessons: ["Multiple authentication options dramatically improve user onboarding", "Sticky-note-inspired UI creates an intuitive and familiar user experience", "AI integration adds significant value to simple productivity tools"]
   },
   {
     id: 7,
