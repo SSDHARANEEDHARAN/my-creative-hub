@@ -96,6 +96,7 @@ const itProjects: Project[] = [
     images: [iotImg, ecommerceImg, analyticsImg, inventoryImg, plmImg],
     tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
     liveUrl: "https://iot-dashboard.example.com",
+    articleUrl: "/projects/article/iot-smart-home",
     featured: true,
     category: "it",
   },
