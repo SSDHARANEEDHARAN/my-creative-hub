@@ -292,7 +292,7 @@ const engineeringProjects: Project[] = [
     id: 22,
     title: "Industrial BORBIQUE Cooking Machine",
     description: "High-capacity industrial cooking system with thermally optimized chamber and energy-efficient heat distribution for large-scale food production.",
-    images: [cadAutomotiveImg, creoImg, plmImg, flexsimImg, analyticsImg],
+    images: [borbique1, borbique2, borbique3, borbique4, borbique5, borbique8, borbique9, borbique10],
     tags: ["SolidWorks", "Thermal Analysis", "Industrial Equipment"],
     articleUrl: "/projects/article/borbique-cooking-machine",
     featured: false,
