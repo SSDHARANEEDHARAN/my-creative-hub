@@ -132,7 +132,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-3">
-            <form onSubmit={handleSubmit} className="sharp-card p-8 md:p-10 shadow-lg space-y-6">
+            <form onSubmit={handleSubmit} className="sharp-card p-5 sm:p-8 md:p-10 shadow-lg space-y-4 sm:space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-medium mb-2 block">
