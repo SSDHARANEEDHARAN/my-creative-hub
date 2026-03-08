@@ -88,6 +88,15 @@ import selfNavRobot1 from "@/assets/projects/self-navigating-robot-1.jpg";
 import effiQue1 from "@/assets/projects/effi-que-ev-car-1.jpg";
 import effiQue1Avif from "@/assets/projects/effi-que-ev-car-1.avif";
 import effiQue2 from "@/assets/projects/effi-que-ev-car-2.avif";
+import conveyorAlu1 from "@/assets/projects/conveyor-alu-1.jpg";
+import conveyorAlu2 from "@/assets/projects/conveyor-alu-2.jpg";
+import conveyorAlu3 from "@/assets/projects/conveyor-alu-3.jpg";
+import conveyorAlu4 from "@/assets/projects/conveyor-alu-4.jpg";
+import conveyorAlu5 from "@/assets/projects/conveyor-alu-5.jpg";
+import conveyorAlu6 from "@/assets/projects/conveyor-alu-6.jpg";
+import conveyorAlu7 from "@/assets/projects/conveyor-alu-7.jpg";
+import conveyorAlu8 from "@/assets/projects/conveyor-alu-8.jpg";
+import conveyorAlu9 from "@/assets/projects/conveyor-alu-9.jpg";
 
 interface Project {
   id: number;
@@ -309,11 +318,11 @@ const engineeringProjects: Project[] = [
   },
   {
     id: 20,
-    title: "Hydraulic Press Frame Design",
-    description: "500-ton hydraulic press frame with FEA-optimized structure achieving 0.12mm deflection, meeting automotive body panel stamping requirements.",
-    images: [cadAutomotiveImg, creoImg, flexsimImg, plmImg, analyticsImg],
-    tags: ["SolidWorks", "FEA", "Structural Analysis", "AWS D1.1"],
-    articleUrl: "/projects/article/hydraulic-press",
+    title: "Mini Industrial Conveyor System (Aluminum Structure)",
+    description: "Compact aluminum-framed conveyor system with variable speed motor drive (20–600 RPM), 510mm belt length, and 15kg load capacity for laboratory automation.",
+    images: [conveyorAlu1, conveyorAlu2, conveyorAlu3, conveyorAlu4, conveyorAlu5, conveyorAlu6, conveyorAlu7, conveyorAlu8, conveyorAlu9],
+    tags: ["Mechanical Design", "Industrial Automation", "CAD Modeling", "Fabrication"],
+    articleUrl: "/projects/article/mini-conveyor-aluminum",
     featured: false,
     category: "engineering",
   },
