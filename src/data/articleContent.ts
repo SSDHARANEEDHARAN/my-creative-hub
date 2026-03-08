@@ -1097,72 +1097,39 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 119,
-    slug: "ev-rotator-agriculture",
-    title: "EV Rotator for Agriculture",
-    subtitle: "Motor-driven rotating system for automated crop handling",
-    duration: "6 weeks",
-    client: "Agricultural Engineering Project",
-    role: "Mechanical Systems Engineer",
-    industry: "Agricultural Engineering",
-    overview: "The EV Rotator for Agriculture project involved developing a motor-driven rotating system for automated crop handling in agricultural processing environments. The system enables efficient and gentle crop rotation during processing.",
-    challenge: "The system needed to handle different crop types without causing damage while maintaining smooth rotational motion at adjustable speeds.",
-    solution: "A precision motor control system and rotating platform design were developed to gently rotate agricultural produce with adjustable speed and torque settings.",
+    slug: "ev-rotavator-agriculture",
+    title: "EV Agriculture Rotavator Car",
+    subtitle: "Electric Rotavator Vehicle for Smart Agriculture — Automated soil tilling and farming assistance system",
+    duration: "8 weeks",
+    client: "Agricultural Innovation & Prototype Development Project",
+    role: "Mechanical & Embedded Systems Developer",
+    industry: "Agricultural Engineering & Automation",
+    overview: "The EV Agriculture Rotavator Car project focused on developing a compact electric-powered agricultural machine designed to assist farmers in soil tilling operations. Traditional rotavators typically require fuel-powered engines or manual labor, which increases operational costs and environmental impact. This project aimed to create a battery-powered electric rotavator vehicle capable of performing soil cultivation tasks efficiently while reducing fuel consumption and labor effort.\n\nThe system integrates an electric drive motor, rotating soil tilling mechanism, and a lightweight chassis structure designed for small-scale agricultural environments such as vegetable farms and greenhouses.",
+    challenge: "One of the main challenges was designing a compact yet powerful rotating blade mechanism capable of loosening soil effectively while being powered by a low-voltage electric system. Another challenge involved ensuring stable movement of the vehicle on uneven agricultural terrain while maintaining efficient energy consumption.\n\nThe project also required balancing mechanical durability with lightweight design, ensuring that the machine could operate for extended periods without excessive battery drain.",
+    solution: "A battery-powered electric motor system was implemented to drive both the vehicle wheels and the rotavator blade mechanism. The chassis structure was designed using lightweight materials to improve mobility and reduce power consumption. The rotating blades were optimized to break and mix soil efficiently while minimizing resistance to the motor.\n\nControl circuitry and motor drivers were integrated to regulate speed and ensure safe operation of the rotavator system.",
     process: [
-      { title: "Requirements Analysis", content: "Analyzed crop handling requirements and rotation speed specifications." },
-      { title: "Drive System Design", content: "Designed motor and gearbox assembly for adjustable rotation speed." },
-      { title: "Platform Design", content: "Created rotating platform with crop-safe contact surfaces." },
-      { title: "Control System", content: "Implemented speed control system for different crop types." },
-      { title: "Testing", content: "Tested with various crop types for damage assessment and efficiency." }
+      { title: "Requirement Analysis", content: "Defined system requirements including soil tilling depth, vehicle speed, power consumption limits, and agricultural field operation conditions." },
+      { title: "Concept Design", content: "Developed multiple mechanical layouts for the rotavator blade system and vehicle chassis structure." },
+      { title: "Mechanical Development", content: "Designed the rotating blade assembly, wheel system, and vehicle frame to support agricultural operation." },
+      { title: "Electrical Integration", content: "Integrated electric motors, battery system, and control electronics to power the vehicle and tilling mechanism." },
+      { title: "Prototype Assembly", content: "Constructed the prototype rotavator vehicle and tested its performance on soil surfaces." },
+      { title: "Performance Optimization", content: "Improved blade configuration and motor torque control to enhance soil tilling efficiency." }
     ],
     results: [
-      "Improved crop processing speed by 50%",
-      "Reduced manual labor requirements significantly",
-      "Minimal crop damage during handling operations",
-      "Enhanced overall farm productivity"
+      "Successfully developed battery-powered rotavator vehicle prototype",
+      "Reduced manual farming labor by approximately 50%",
+      "Provided eco-friendly alternative to fuel-powered tilling machines",
+      "Demonstrated efficient soil cultivation for small farming areas"
     ],
-    technologies: ["Agricultural Automation", "Motor Control Systems", "Mechanical Design"],
-    toolsUsed: ["SolidWorks", "Arduino", "Motor Controller"],
+    technologies: ["Electric DC Motors", "Battery Power System", "Mechanical Rotating Blade Mechanism", "Embedded Control Electronics", "Agricultural Machine Design"],
+    toolsUsed: ["SolidWorks", "AutoCAD", "Arduino IDE", "Mechanical Fabrication Tools"],
     keyMetrics: [
       { value: "50%", label: "Labor Reduction" },
-      { value: "Adj.", label: "Rotation Speed" },
-      { value: "High", label: "Crop Capacity" },
-      { value: "22", label: "Design Drawings" }
+      { value: "3–5 km/h", label: "Operating Speed" },
+      { value: "12V", label: "Battery Powered" },
+      { value: "24", label: "Design Drawings" }
     ],
-    lessons: ["Gentle handling mechanisms are essential for agricultural applications", "Variable speed control enables adaptation to different crop types", "Simple robust designs work best in agricultural environments"]
-  },
-  {
-    id: 120,
-    slug: "smart-agriculture-monitoring",
-    title: "Smart Agricultural Monitoring System",
-    subtitle: "IoT-based environmental monitoring for precision farming",
-    duration: "6 weeks",
-    client: "Smart Agriculture Research Project",
-    role: "IoT System Engineer",
-    industry: "Smart Agriculture",
-    overview: "The Smart Agricultural Monitoring System project focused on developing an IoT-based solution for monitoring environmental conditions in agricultural fields. The system collects real-time data such as soil moisture, temperature, and humidity to assist farmers in improving crop management and water efficiency.",
-    challenge: "Ensuring reliable sensor data transmission and accuracy in outdoor environmental conditions was the primary challenge, along with creating a user-friendly monitoring interface.",
-    solution: "A wireless IoT sensor network was implemented to continuously monitor environmental parameters and transmit data to a central dashboard for real-time farm monitoring.",
-    process: [
-      { title: "Sensor Selection", content: "Selected appropriate soil moisture, temperature, and humidity sensors for outdoor use." },
-      { title: "Network Design", content: "Designed wireless communication network for reliable outdoor data transmission." },
-      { title: "Data Dashboard", content: "Created central monitoring dashboard for real-time data visualization." },
-      { title: "Field Testing", content: "Deployed and tested sensor network in actual agricultural field conditions." }
-    ],
-    results: [
-      "Improved irrigation efficiency with real-time soil monitoring",
-      "Reduced water usage by 20% through data-driven irrigation",
-      "Reliable wireless data transmission across field areas",
-      "Enhanced crop productivity through precise monitoring"
-    ],
-    technologies: ["IoT Sensors", "Wireless Communication", "Data Monitoring Systems"],
-    toolsUsed: ["Arduino IDE", "ESP32", "ThingSpeak", "Sensor Modules"],
-    keyMetrics: [
-      { value: "Real-Time", label: "Soil Monitoring" },
-      { value: "20%", label: "Water Savings" },
-      { value: "Wireless", label: "Data Transmission" },
-      { value: "16", label: "Sensor Modules" }
-    ],
-    lessons: ["Weatherproofing sensors is critical for outdoor IoT deployments", "Data visualization helps farmers make better irrigation decisions", "Low-power wireless protocols extend sensor network battery life"]
+    lessons: ["Electric-powered agricultural machines can significantly reduce fuel costs and environmental impact.", "Proper blade geometry is critical for effective soil tilling.", "Lightweight mechanical design improves energy efficiency and vehicle mobility."]
   },
   {
     id: 121,
