@@ -33,6 +33,15 @@ import evRotavator2 from "@/assets/projects/ev-rotavator-2.jpg";
 import evRotavator3 from "@/assets/projects/ev-rotavator-3.jpg";
 import evRotavator4 from "@/assets/projects/ev-rotavator-4.jpg";
 import evRotavator5 from "@/assets/projects/ev-rotavator-5.jpg";
+import borbique1 from "@/assets/projects/borbique-1.jpeg";
+import borbique2 from "@/assets/projects/borbique-2.jpeg";
+import borbique3 from "@/assets/projects/borbique-3.jpeg";
+import borbique4 from "@/assets/projects/borbique-4.jpeg";
+import borbique5 from "@/assets/projects/borbique-5.jpeg";
+import borbique8 from "@/assets/projects/borbique-8.jpeg";
+import borbique9 from "@/assets/projects/borbique-9.jpeg";
+import borbique10 from "@/assets/projects/borbique-10.jpeg";
+import fridge1 from "@/assets/projects/fridge-1.jpg";
 
 export interface Project {
   id: number;
@@ -276,7 +285,7 @@ export const engineeringProjects: Project[] = [
     id: 112,
     title: "Industrial BORBIQUE Cooking Machine",
     description: "High-capacity industrial cooking system design with thermally optimized chamber and energy-efficient heat distribution for large-scale food production.",
-    images: [cadAutomotiveImg, creoImg, plmImg, flexsimImg, analyticsImg],
+    images: [borbique1, borbique2, borbique3, borbique4, borbique5, borbique8, borbique9, borbique10],
     tags: ["SolidWorks", "Thermal Analysis", "Industrial Equipment", "Manufacturing CAD"],
     articleUrl: "/projects/article/borbique-cooking-machine",
     featured: false,
@@ -316,7 +325,7 @@ export const engineeringProjects: Project[] = [
     id: 116,
     title: "Mini Electronic Fridge",
     description: "Compact refrigeration system using thermoelectric cooling technology with energy-efficient design for personal and portable use.",
-    images: [cadAutomotiveImg, creoImg, flexsimImg, plmImg, analyticsImg],
+    images: [fridge1],
     tags: ["Electronic Cooling", "Thermal Design", "Compact Product Engineering"],
     articleUrl: "/projects/article/mini-electronic-fridge",
     featured: false,
