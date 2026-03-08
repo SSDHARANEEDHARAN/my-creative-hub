@@ -7,6 +7,12 @@ import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
 import flexsimImg from "@/assets/project-flexsim.jpg";
 import creoImg from "@/assets/project-creo.jpg";
 import plmImg from "@/assets/project-plm.jpg";
+import mazeRobot1 from "@/assets/projects/maze-robot-1.jpg";
+import mazeRobot2 from "@/assets/projects/maze-robot-2.jpg";
+import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
+import mazeRobot4 from "@/assets/projects/maze-robot-4.jpg";
+import mazeRobot5 from "@/assets/projects/maze-robot-5.jpg";
+import rocketStoveImg from "@/assets/projects/rocket-stove.png";
 
 export interface Project {
   id: number;
@@ -260,7 +266,7 @@ export const engineeringProjects: Project[] = [
     id: 113,
     title: "Efficient & Sustainable Rocket Stove",
     description: "Low-cost, fuel-efficient cooking solution for rural communities with optimized combustion chamber and reduced smoke emissions.",
-    images: [creoImg, cadAutomotiveImg, plmImg, flexsimImg, analyticsImg],
+    images: [rocketStoveImg, cadAutomotiveImg, creoImg, plmImg, flexsimImg],
     tags: ["SolidWorks", "Combustion Optimization", "Thermal Simulation"],
     articleUrl: "/projects/article/rocket-stove",
     featured: false,
@@ -340,7 +346,7 @@ export const engineeringProjects: Project[] = [
     id: 121,
     title: "Autonomous Maze Navigation Robot",
     description: "Compact robotic vehicle with ultrasonic sensors and Arduino control for autonomous obstacle avoidance and maze navigation.",
-    images: [iotImg, cadAutomotiveImg, flexsimImg, creoImg, analyticsImg],
+    images: [mazeRobot1, mazeRobot5, mazeRobot3, mazeRobot4, mazeRobot2],
     tags: ["Arduino", "Embedded Systems", "Ultrasonic Sensor", "Robotics"],
     articleUrl: "/projects/article/maze-navigation-robot",
     featured: false,
