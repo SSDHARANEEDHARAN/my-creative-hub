@@ -118,6 +118,7 @@ const itProjects: Project[] = [
     images: [analyticsImg, inventoryImg, ecommerceImg, iotImg, plmImg],
     tags: ["Python", "React", "PostgreSQL", "D3.js", "Pandas"],
     liveUrl: "https://analytics-dashboard.example.com",
+    articleUrl: "/projects/article/analytics-dashboard",
     featured: false,
     category: "it",
   },
