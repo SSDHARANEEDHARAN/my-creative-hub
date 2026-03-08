@@ -35,6 +35,10 @@ import swiftUpload5 from "@/assets/projects/swift-upload-5.png";
 import learnGrowHub1 from "@/assets/projects/learn-grow-hub-1.png";
 import learnGrowHub2 from "@/assets/projects/learn-grow-hub-2.png";
 import learnGrowHub3 from "@/assets/projects/learn-grow-hub-3.png";
+import stickyNotePro1 from "@/assets/projects/sticky-note-pro-1.png";
+import stickyNotePro2 from "@/assets/projects/sticky-note-pro-2.png";
+import stickyNotePro3 from "@/assets/projects/sticky-note-pro-3.png";
+import stickyNotePro4 from "@/assets/projects/sticky-note-pro-4.png";
 import perfectHomes1 from "@/assets/projects/perfect-homes-1.png";
 import perfectHomes2 from "@/assets/projects/perfect-homes-2.png";
 import perfectHomes3 from "@/assets/projects/perfect-homes-3.png";
@@ -181,13 +185,12 @@ export const itProjects: Project[] = [
   },
   {
     id: 6,
-    title: "Weather Monitoring Station",
-    description: "IoT-based weather station with sensors for temperature, humidity, pressure, and rainfall with web dashboard visualization.",
-    images: [iotImg, analyticsImg, inventoryImg, ecommerceImg, plmImg],
-    tags: ["Arduino", "Python", "Flask", "Chart.js", "IoT"],
-    articleUrl: "/projects/article/weather-station",
-    githubUrl: "https://github.com",
-    liveUrl: "https://weather-station.example.com",
+    title: "Sticky Note Pro – Cloud-Based Smart Notes",
+    description: "Modern cloud-based sticky note platform with real-time synchronization, color-coded notes, drag-and-drop positioning, multi-auth (Google, Apple, Magic Link), and AI-powered productivity features.",
+    images: [stickyNotePro1, stickyNotePro2, stickyNotePro3, stickyNotePro4],
+    tags: ["React.js", "Tailwind CSS", "Cloud DB", "AI/LLM"],
+    articleUrl: "/projects/article/sticky-note-pro",
+    liveUrl: "https://sticky-note-pro.vercel.app/",
     featured: false,
     category: "it",
   },
