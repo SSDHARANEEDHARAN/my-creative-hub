@@ -103,7 +103,7 @@ const itProjects: Project[] = [
     id: 2,
     title: "SmartHome Harmony – IoT Home Automation",
     description: "Open-source IoT home automation platform with centralized web dashboard for smart device control, real-time sensor monitoring, automation rules, and energy consumption tracking. Built with React.js, Firebase, MQTT, ESP32, and custom IoT PCB.",
-    images: [iotImg, ecommerceImg, analyticsImg, inventoryImg, plmImg],
+    images: [smarthome9, smarthome1, smarthome7, smarthome3, smarthome4, smarthome5, smarthome6, smarthome2, smarthome8, smarthome10],
     tags: ["React.js", "Firebase", "MQTT", "ESP32", "IoT"],
     liveUrl: "https://iot-dashboard.example.com",
     articleUrl: "/projects/article/iot-smart-home",
