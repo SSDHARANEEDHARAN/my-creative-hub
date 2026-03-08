@@ -1,6 +1,16 @@
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
+import smarthome1 from "@/assets/projects/smarthome-1.jpg";
+import smarthome2 from "@/assets/projects/smarthome-2.jpg";
+import smarthome3 from "@/assets/projects/smarthome-3.jpg";
+import smarthome4 from "@/assets/projects/smarthome-4.jpg";
+import smarthome5 from "@/assets/projects/smarthome-5.jpg";
+import smarthome6 from "@/assets/projects/smarthome-6.jpg";
+import smarthome7 from "@/assets/projects/smarthome-7.jpg";
+import smarthome8 from "@/assets/projects/smarthome-8.jpg";
+import smarthome9 from "@/assets/projects/smarthome-9.jpg";
+import smarthome10 from "@/assets/projects/smarthome-10.jpg";
 import inventoryImg from "@/assets/project-inventory.jpg";
 import analyticsImg from "@/assets/project-analytics.jpg";
 import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
@@ -78,7 +88,7 @@ export const itProjects: Project[] = [
     id: 2,
     title: "SmartHome Harmony – IoT Home Automation",
     description: "Open-source IoT home automation platform with centralized web dashboard for smart device control, real-time sensor monitoring, automation rules, and energy consumption tracking. Built with React.js, Firebase, MQTT, ESP32, and custom IoT PCB.",
-    images: [iotImg, ecommerceImg, analyticsImg, inventoryImg, plmImg],
+    images: [smarthome9, smarthome1, smarthome7, smarthome3, smarthome4, smarthome5, smarthome6, smarthome2, smarthome8, smarthome10],
     tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
     articleUrl: "/projects/article/iot-smart-home",
     githubUrl: "https://github.com",
