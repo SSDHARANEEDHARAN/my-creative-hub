@@ -35,6 +35,11 @@ import iotHome2 from "@/assets/projects/iot-home-2.jpg";
 import iotHome3 from "@/assets/projects/iot-home-3.jpg";
 import iotHome4 from "@/assets/projects/iot-home-4.jpg";
 import iotHome5 from "@/assets/projects/iot-home-5.jpg";
+import extruder1 from "@/assets/projects/extruder-1.jpg";
+import extruder2 from "@/assets/projects/extruder-2.jpg";
+import extruder3 from "@/assets/projects/extruder-3.jpg";
+import extruder4 from "@/assets/projects/extruder-4.jpg";
+import extruder5 from "@/assets/projects/extruder-5.jpg";
 
 interface Project {
   id: number;
@@ -318,7 +323,7 @@ const engineeringProjects: Project[] = [
     id: 27,
     title: "3D Extruder Machine",
     description: "Precision plastic extrusion system for 3D printing with temperature-controlled heating chamber and multi-filament support.",
-    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
+    images: [extruder1, extruder2, extruder3, extruder4, extruder5],
     tags: ["Additive Manufacturing", "Mechanical Design", "Thermal Control"],
     articleUrl: "/projects/article/3d-extruder-machine",
     featured: false,
