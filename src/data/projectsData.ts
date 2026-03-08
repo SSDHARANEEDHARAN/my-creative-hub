@@ -325,7 +325,7 @@ export const engineeringProjects: Project[] = [
     id: 116,
     title: "Mini Electronic Fridge",
     description: "Compact refrigeration system using thermoelectric cooling technology with energy-efficient design for personal and portable use.",
-    images: [cadAutomotiveImg, creoImg, flexsimImg, plmImg, analyticsImg],
+    images: [fridge1],
     tags: ["Electronic Cooling", "Thermal Design", "Compact Product Engineering"],
     articleUrl: "/projects/article/mini-electronic-fridge",
     featured: false,
