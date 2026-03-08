@@ -32,6 +32,9 @@ import swiftUpload2 from "@/assets/projects/swift-upload-2.png";
 import swiftUpload3 from "@/assets/projects/swift-upload-3.png";
 import swiftUpload4 from "@/assets/projects/swift-upload-4.png";
 import swiftUpload5 from "@/assets/projects/swift-upload-5.png";
+import learnGrowHub1 from "@/assets/projects/learn-grow-hub-1.png";
+import learnGrowHub2 from "@/assets/projects/learn-grow-hub-2.png";
+import learnGrowHub3 from "@/assets/projects/learn-grow-hub-3.png";
 import perfectHomes1 from "@/assets/projects/perfect-homes-1.png";
 import perfectHomes2 from "@/assets/projects/perfect-homes-2.png";
 import perfectHomes3 from "@/assets/projects/perfect-homes-3.png";
@@ -202,13 +205,12 @@ export const itProjects: Project[] = [
   },
   {
     id: 8,
-    title: "Healthcare Appointment App",
-    description: "Mobile application for booking medical appointments with doctor profiles, real-time availability, and notification reminders.",
-    images: [ecommerceImg, iotImg, analyticsImg, inventoryImg, plmImg],
-    tags: ["React Native", "Firebase", "Push Notifications"],
-    articleUrl: "/projects/article/healthcare-app",
-    githubUrl: "https://github.com",
-    liveUrl: "https://healthcare-app.example.com",
+    title: "Learn & Grow Hub – E-Learning Platform",
+    description: "Web-based e-learning platform providing an interactive digital environment for students to access educational content, structured courses, and learning resources online.",
+    images: [learnGrowHub1, learnGrowHub2, learnGrowHub3],
+    tags: ["React.js", "Tailwind CSS", "E-Learning", "Cloud Hosting"],
+    articleUrl: "/projects/article/learn-grow-hub",
+    liveUrl: "https://learn-grow-hub-tan.vercel.app/",
     featured: false,
     category: "it",
   },
