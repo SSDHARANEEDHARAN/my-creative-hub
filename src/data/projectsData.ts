@@ -55,6 +55,7 @@ export interface Project {
   tags: string[];
   articleUrl?: string;
   githubUrl?: string;
+  liveUrl?: string;
   featured: boolean;
   category: "it" | "engineering";
 }
