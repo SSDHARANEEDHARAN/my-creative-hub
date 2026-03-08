@@ -331,7 +331,7 @@ export const engineeringProjects: Project[] = [
     id: 118,
     title: "Automatic Bottle Filling Machine",
     description: "High-speed automated liquid filling system with PLC control, achieving 120 bottles per minute with ±2ml filling accuracy.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
+    images: [bottleFilling1, bottleFilling2, bottleFilling3, bottleFilling4, bottleFilling5],
     tags: ["Industrial Automation", "PLC Systems", "Mechanical Design"],
     articleUrl: "/projects/article/bottle-filling-machine",
     featured: false,
