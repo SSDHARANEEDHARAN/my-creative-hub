@@ -129,6 +129,7 @@ const itProjects: Project[] = [
     images: [ecommerceImg, analyticsImg, inventoryImg, iotImg, plmImg],
     tags: ["React", "Node.js", "Socket.io", "MongoDB"],
     liveUrl: "https://task-manager.example.com",
+    articleUrl: "/projects/article/task-management",
     featured: false,
     category: "it",
   },
