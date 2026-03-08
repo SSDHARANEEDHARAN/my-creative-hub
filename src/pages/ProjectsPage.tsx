@@ -18,6 +18,16 @@ import ProjectComments from "@/components/ProjectComments";
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
+import smarthome1 from "@/assets/projects/smarthome-1.jpg";
+import smarthome2 from "@/assets/projects/smarthome-2.jpg";
+import smarthome3 from "@/assets/projects/smarthome-3.jpg";
+import smarthome4 from "@/assets/projects/smarthome-4.jpg";
+import smarthome5 from "@/assets/projects/smarthome-5.jpg";
+import smarthome6 from "@/assets/projects/smarthome-6.jpg";
+import smarthome7 from "@/assets/projects/smarthome-7.jpg";
+import smarthome8 from "@/assets/projects/smarthome-8.jpg";
+import smarthome9 from "@/assets/projects/smarthome-9.jpg";
+import smarthome10 from "@/assets/projects/smarthome-10.jpg";
 import inventoryImg from "@/assets/project-inventory.jpg";
 import analyticsImg from "@/assets/project-analytics.jpg";
 import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
