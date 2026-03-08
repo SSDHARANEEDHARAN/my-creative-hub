@@ -1,13 +1,19 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
-import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink } from "lucide-react";
+import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
 import { engineeringProjects, itProjects } from "@/data/projectsData";
 import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
+import { useProjectViewLikes } from "@/hooks/useProjectData";
+import { useAuth } from "@/contexts/AuthContext";
+import { useGuest } from "@/contexts/GuestContext";
+import ProjectComments from "@/components/ProjectComments";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
@@ -16,6 +22,37 @@ const ArticlePage = memo(() => {
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
+  
+  const { user } = useAuth();
+  const { guest } = useGuest();
+  const currentUserEmail = user?.email || guest?.email || null;
+  const currentUserName = user?.user_metadata?.display_name || guest?.name || null;
+  
+  const { viewCount, likeCount, hasLiked, toggleLike } = useProjectViewLikes(
+    project ? String(project.id) : "",
+    currentUserEmail,
+    currentUserName
+  );
+  
+  const [commentCount, setCommentCount] = useState(0);
+  
+  useEffect(() => {
+    if (!project) return;
+    supabase
+      .from("project_comments_public")
+      .select("id")
+      .eq("project_id", String(project.id))
+      .eq("is_approved", true)
+      .then(({ data }) => setCommentCount(data?.length || 0));
+  }, [project]);
+
+  const handleLike = () => {
+    if (!currentUserEmail || !currentUserName) {
+      toast({ title: "Please sign in or enter as guest to like", variant: "destructive" });
+      return;
+    }
+    toggleLike(currentUserName, currentUserEmail);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -173,6 +210,27 @@ const ArticlePage = memo(() => {
                       <div className="text-xs md:text-sm text-muted-foreground">{metric.label}</div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Views, Likes, Comments Stats */}
+              {project && (
+                <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <Eye size={16} />
+                    {viewCount} views
+                  </span>
+                  <button 
+                    onClick={handleLike}
+                    className={`flex items-center gap-1.5 transition-colors ${hasLiked ? 'text-primary' : 'hover:text-primary'}`}
+                  >
+                    <Heart size={16} className={hasLiked ? 'fill-primary' : ''} />
+                    {likeCount} likes
+                  </button>
+                  <span className="flex items-center gap-1.5">
+                    <MessageSquare size={16} />
+                    {commentCount} Comments
+                  </span>
                 </div>
               )}
             </div>
@@ -468,6 +526,21 @@ const ArticlePage = memo(() => {
                   </a>
                 </div>
               ) : null}
+
+              {/* Comments Section */}
+              {project && (
+                <div 
+                  className="mt-8 sm:mt-12"
+                  style={{
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 0.6s ease-out',
+                    transitionDelay: '870ms'
+                  }}
+                >
+                  <ProjectComments projectId={String(project.id)} />
+                </div>
+              )}
 
               {/* CTA */}
               <div 
