@@ -23,6 +23,11 @@ import extruder2 from "@/assets/projects/extruder-2.jpg";
 import extruder3 from "@/assets/projects/extruder-3.jpg";
 import extruder4 from "@/assets/projects/extruder-4.jpg";
 import extruder5 from "@/assets/projects/extruder-5.jpg";
+import bottleFilling1 from "@/assets/projects/bottle-filling-1.jpg";
+import bottleFilling2 from "@/assets/projects/bottle-filling-2.jpg";
+import bottleFilling3 from "@/assets/projects/bottle-filling-3.jpg";
+import bottleFilling4 from "@/assets/projects/bottle-filling-4.jpg";
+import bottleFilling5 from "@/assets/projects/bottle-filling-5.jpg";
 
 export interface Project {
   id: number;
@@ -326,7 +331,7 @@ export const engineeringProjects: Project[] = [
     id: 118,
     title: "Automatic Bottle Filling Machine",
     description: "High-speed automated liquid filling system with PLC control, achieving 120 bottles per minute with ±2ml filling accuracy.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
+    images: [bottleFilling1, bottleFilling2, bottleFilling3, bottleFilling4, bottleFilling5],
     tags: ["Industrial Automation", "PLC Systems", "Mechanical Design"],
     articleUrl: "/projects/article/bottle-filling-machine",
     featured: false,
