@@ -154,6 +154,7 @@ export const itProjects: Project[] = [
     tags: ["React Native", "Firebase", "Push Notifications"],
     articleUrl: "/projects/article/healthcare-app",
     githubUrl: "https://github.com",
+    liveUrl: "https://healthcare-app.example.com",
     featured: false,
     category: "it",
   },
