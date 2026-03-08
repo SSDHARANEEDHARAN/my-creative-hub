@@ -107,6 +107,7 @@ const itProjects: Project[] = [
     images: [inventoryImg, ecommerceImg, iotImg, analyticsImg, plmImg],
     tags: ["React Native", "Firebase", "Python", "REST API"],
     liveUrl: "https://inventory-app.example.com",
+    articleUrl: "/projects/article/inventory-management",
     featured: false,
     category: "it",
   },
