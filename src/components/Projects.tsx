@@ -91,27 +91,27 @@ const Projects = () => {
           </p>
 
           {/* Category Tabs - Sharp Design */}
-          <div className="inline-flex items-center gap-2 p-1.5 bg-secondary">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-2 p-1.5 bg-secondary">
             <button
               onClick={() => handleTabChange("it")}
-              className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-200 ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
                 activeTab === "it" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Cpu size={18} />
+              <Cpu size={16} />
               IT Projects ({itProjects.length})
             </button>
             <button
               onClick={() => handleTabChange("engineering")}
-              className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-200 ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
                 activeTab === "engineering" 
                   ? "bg-accent text-accent-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Cog size={18} />
+              <Cog size={16} />
               Engineering ({engineeringProjects.length})
             </button>
           </div>
