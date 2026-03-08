@@ -266,7 +266,7 @@ export const engineeringProjects: Project[] = [
     id: 113,
     title: "Efficient & Sustainable Rocket Stove",
     description: "Low-cost, fuel-efficient cooking solution for rural communities with optimized combustion chamber and reduced smoke emissions.",
-    images: [creoImg, cadAutomotiveImg, plmImg, flexsimImg, analyticsImg],
+    images: [rocketStoveImg, cadAutomotiveImg, creoImg, plmImg, flexsimImg],
     tags: ["SolidWorks", "Combustion Optimization", "Thermal Simulation"],
     articleUrl: "/projects/article/rocket-stove",
     featured: false,
