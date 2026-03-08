@@ -55,6 +55,7 @@ export interface Project {
   tags: string[];
   articleUrl?: string;
   githubUrl?: string;
+  liveUrl?: string;
   featured: boolean;
   category: "it" | "engineering";
 }
@@ -69,6 +70,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
     articleUrl: "/projects/article/ecommerce-platform",
     githubUrl: "https://github.com",
+    liveUrl: "https://ecommerce-demo.example.com",
     featured: true,
     category: "it",
   },
@@ -80,6 +82,7 @@ export const itProjects: Project[] = [
     tags: ["Python", "Arduino", "IoT", "React Native", "MQTT"],
     articleUrl: "/projects/article/iot-smart-home",
     githubUrl: "https://github.com",
+    liveUrl: "https://iot-dashboard.example.com",
     featured: true,
     category: "it",
   },
@@ -91,6 +94,7 @@ export const itProjects: Project[] = [
     tags: ["React Native", "Firebase", "Python", "REST API"],
     articleUrl: "/projects/article/inventory-management",
     githubUrl: "https://github.com",
+    liveUrl: "https://inventory-app.example.com",
     featured: false,
     category: "it",
   },
@@ -102,6 +106,7 @@ export const itProjects: Project[] = [
     tags: ["Python", "React", "PostgreSQL", "D3.js", "Pandas"],
     articleUrl: "/projects/article/analytics-dashboard",
     githubUrl: "https://github.com",
+    liveUrl: "https://analytics-dashboard.example.com",
     featured: false,
     category: "it",
   },
@@ -113,6 +118,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Node.js", "Socket.io", "MongoDB"],
     articleUrl: "/projects/article/task-management",
     githubUrl: "https://github.com",
+    liveUrl: "https://task-manager.example.com",
     featured: false,
     category: "it",
   },
@@ -124,6 +130,7 @@ export const itProjects: Project[] = [
     tags: ["Arduino", "Python", "Flask", "Chart.js", "IoT"],
     articleUrl: "/projects/article/weather-station",
     githubUrl: "https://github.com",
+    liveUrl: "https://weather-station.example.com",
     featured: false,
     category: "it",
   },
@@ -135,6 +142,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Electron", "Node.js", "SQLite"],
     articleUrl: "/projects/article/restaurant-pos",
     githubUrl: "https://github.com",
+    liveUrl: "https://restaurant-pos.example.com",
     featured: false,
     category: "it",
   },
@@ -146,6 +154,7 @@ export const itProjects: Project[] = [
     tags: ["React Native", "Firebase", "Push Notifications"],
     articleUrl: "/projects/article/healthcare-app",
     githubUrl: "https://github.com",
+    liveUrl: "https://healthcare-app.example.com",
     featured: false,
     category: "it",
   },
@@ -157,6 +166,7 @@ export const itProjects: Project[] = [
     tags: ["Python", "Raspberry Pi", "TensorFlow", "React"],
     articleUrl: "/projects/article/smart-agriculture",
     githubUrl: "https://github.com",
+    liveUrl: "https://smart-agriculture.example.com",
     featured: false,
     category: "it",
   },
@@ -168,6 +178,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Node.js", "AWS", "MongoDB", "Redis"],
     articleUrl: "/projects/article/learning-management",
     githubUrl: "https://github.com",
+    liveUrl: "https://lms-platform.example.com",
     featured: false,
     category: "it",
   },
