@@ -12,6 +12,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { GuestProvider } from "./contexts/GuestContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 // Lazy load pages for better performance
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
