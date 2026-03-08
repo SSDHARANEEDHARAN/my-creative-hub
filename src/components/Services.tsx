@@ -103,10 +103,10 @@ const Services = () => {
                 <span className="text-muted-foreground ml-2 text-xs sm:text-sm">{service.period}</span>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                 {service.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-muted-foreground">
-                    <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                  <li key={i} className="flex items-center gap-2 sm:gap-3 text-muted-foreground text-xs sm:text-sm">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}

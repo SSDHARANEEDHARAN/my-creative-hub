@@ -37,25 +37,25 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section id="testimonials" className="py-24 bg-gradient-to-b from-background to-secondary/20">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <span className="text-mint font-medium tracking-widest uppercase text-sm">
+    <section id="testimonials" className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-background to-secondary/20">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 sm:mb-16">
+          <span className="text-accent font-medium tracking-widest uppercase text-xs sm:text-sm">
             Testimonials
           </span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mt-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mt-4">
             Client Reviews
           </h2>
-          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-sm sm:text-base px-4">
             What my clients say about working together
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <div
               key={testimonial.id}
-              className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-sky/30 transition-all duration-500 hover:shadow-glow"
+              className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-5 sm:p-6 md:p-8 hover:border-primary/30 transition-all duration-500 hover:shadow-glow"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <Quote className="absolute top-6 right-6 w-10 h-10 text-sky/20 group-hover:text-sky/40 transition-colors" />

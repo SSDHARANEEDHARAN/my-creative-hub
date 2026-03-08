@@ -167,7 +167,7 @@ const Projects = () => {
         {/* Other Projects - Smaller Cards */}
         <div 
           key={`other-${activeTab}`}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10 animate-fade-in"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 mb-8 sm:mb-10 animate-fade-in"
         >
           {otherProjects.map((project) => (
             <div 
