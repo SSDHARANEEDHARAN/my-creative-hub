@@ -85,7 +85,7 @@ const CertificateModal = ({ certificate, isOpen, onClose }: CertificateModalProp
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-3xl bg-card border-2 border-border sharp-card overflow-hidden"
+          className="relative w-full max-w-3xl max-h-[85vh] bg-card border-2 border-border sharp-card overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
           onContextMenu={(e) => e.preventDefault()}
           style={{ userSelect: "none" }}
@@ -111,7 +111,7 @@ const CertificateModal = ({ certificate, isOpen, onClose }: CertificateModalProp
 
           {/* Certificate Display Area - Protected */}
           <div 
-            className="relative p-8 min-h-[400px] flex items-center justify-center"
+            className="relative p-8 flex-1 overflow-y-auto flex items-start justify-center"
             style={{ 
               userSelect: "none",
               WebkitUserSelect: "none",
