@@ -1,4 +1,4 @@
-import { Github, ArrowUpRight, Cpu, Cog, FileText } from "lucide-react";
+import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState, memo, useCallback } from "react";
 import ProjectImageCarousel from "./ProjectImageCarousel";
