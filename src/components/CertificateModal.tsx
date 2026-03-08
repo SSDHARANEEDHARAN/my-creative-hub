@@ -111,7 +111,7 @@ const CertificateModal = ({ certificate, isOpen, onClose }: CertificateModalProp
 
           {/* Certificate Display Area - Protected */}
           <div 
-            className="relative p-8 min-h-[400px] flex items-center justify-center"
+            className="relative p-8 flex-1 overflow-y-auto flex items-start justify-center"
             style={{ 
               userSelect: "none",
               WebkitUserSelect: "none",
