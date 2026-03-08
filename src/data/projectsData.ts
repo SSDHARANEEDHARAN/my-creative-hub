@@ -346,7 +346,7 @@ export const engineeringProjects: Project[] = [
     id: 121,
     title: "Autonomous Maze Navigation Robot",
     description: "Compact robotic vehicle with ultrasonic sensors and Arduino control for autonomous obstacle avoidance and maze navigation.",
-    images: [iotImg, cadAutomotiveImg, flexsimImg, creoImg, analyticsImg],
+    images: [mazeRobot1, mazeRobot5, mazeRobot3, mazeRobot4, mazeRobot2],
     tags: ["Arduino", "Embedded Systems", "Ultrasonic Sensor", "Robotics"],
     articleUrl: "/projects/article/maze-navigation-robot",
     featured: false,
