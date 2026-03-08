@@ -72,21 +72,21 @@ const Projects = () => {
   }, []);
 
   return (
-    <section id="projects" className="py-24 relative overflow-hidden bg-mesh">
+    <section id="projects" className="py-16 sm:py-20 md:py-24 relative overflow-hidden bg-mesh">
       {/* Background decoration */}
       <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1/3 h-2/3 bg-primary/5 -z-10" />
       
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <div className="section-badge-sharp mb-6 inline-flex">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
             <span className="section-badge-dot-sharp" />
-            <span className="text-secondary-foreground font-medium text-sm">My Work</span>
+            <span className="text-secondary-foreground font-medium text-xs sm:text-sm">My Work</span>
           </div>
           
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Featured <span className="text-gradient">Projects</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-6 sm:mb-10 px-4">
             A curated selection of my best work across IT and Engineering domains.
           </p>
 
