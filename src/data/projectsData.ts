@@ -42,6 +42,10 @@ import borbique8 from "@/assets/projects/borbique-8.jpeg";
 import borbique9 from "@/assets/projects/borbique-9.jpeg";
 import borbique10 from "@/assets/projects/borbique-10.jpeg";
 import fridge1 from "@/assets/projects/fridge-1.jpg";
+import selfNavRobot1 from "@/assets/projects/self-navigating-robot-1.jpg";
+import effiQue1 from "@/assets/projects/effi-que-ev-car-1.jpg";
+import effiQue1Avif from "@/assets/projects/effi-que-ev-car-1.avif";
+import effiQue2 from "@/assets/projects/effi-que-ev-car-2.avif";
 
 export interface Project {
   id: number;
@@ -275,7 +279,7 @@ export const engineeringProjects: Project[] = [
     id: 111,
     title: "EFFI-QUE EV Car",
     description: "Complete 3D CAD design of an electric vehicle platform with structural and battery thermal optimization for sustainable urban transportation.",
-    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
+    images: [effiQue1, effiQue1Avif, effiQue2],
     tags: ["SolidWorks", "FEA", "CAD", "Battery Thermal Analysis", "EV Powertrain"],
     articleUrl: "/projects/article/effi-que-ev-car",
     featured: false,
@@ -305,7 +309,7 @@ export const engineeringProjects: Project[] = [
     id: 114,
     title: "Self-Navigating Robot for Safe Movement",
     description: "Autonomous mobile robot with IoT sensors and real-time navigation for industrial warehouse automation and obstacle avoidance.",
-    images: [iotImg, cadAutomotiveImg, flexsimImg, creoImg, analyticsImg],
+    images: [selfNavRobot1],
     tags: ["IoT", "Autonomous Navigation", "Sensor Integration", "Embedded Systems"],
     articleUrl: "/projects/article/self-navigating-robot",
     featured: false,
