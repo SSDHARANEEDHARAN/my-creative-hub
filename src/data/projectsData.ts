@@ -118,6 +118,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Node.js", "Socket.io", "MongoDB"],
     articleUrl: "/projects/article/task-management",
     githubUrl: "https://github.com",
+    liveUrl: "https://task-manager.example.com",
     featured: false,
     category: "it",
   },
