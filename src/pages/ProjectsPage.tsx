@@ -24,6 +24,12 @@ import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
 import flexsimImg from "@/assets/project-flexsim.jpg";
 import creoImg from "@/assets/project-creo.jpg";
 import plmImg from "@/assets/project-plm.jpg";
+import mazeRobot1 from "@/assets/projects/maze-robot-1.jpg";
+import mazeRobot2 from "@/assets/projects/maze-robot-2.jpg";
+import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
+import mazeRobot4 from "@/assets/projects/maze-robot-4.jpg";
+import mazeRobot5 from "@/assets/projects/maze-robot-5.jpg";
+import rocketStoveImg from "@/assets/projects/rocket-stove.png";
 
 interface Project {
   id: number;
