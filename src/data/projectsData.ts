@@ -178,6 +178,7 @@ export const itProjects: Project[] = [
     tags: ["React", "Node.js", "AWS", "MongoDB", "Redis"],
     articleUrl: "/projects/article/learning-management",
     githubUrl: "https://github.com",
+    liveUrl: "https://lms-platform.example.com",
     featured: false,
     category: "it",
   },
