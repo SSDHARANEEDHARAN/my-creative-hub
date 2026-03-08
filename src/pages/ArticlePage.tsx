@@ -126,13 +126,13 @@ const ArticlePage = memo(() => {
                     {article.subtitle}
                   </p>
                   
-                  {/* View Live Site button for IT projects */}
-                  {project?.liveUrl && project?.category === "it" && (
+                  {/* View Live Site button for any project with a live URL */}
+                  {project?.liveUrl && (
                     <a
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors mb-6 sm:mb-8"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors mb-6 sm:mb-8"
                     >
                       <ExternalLink size={18} />
                       View Live Project
