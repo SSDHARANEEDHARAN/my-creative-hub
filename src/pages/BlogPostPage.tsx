@@ -88,7 +88,7 @@ const BlogPostPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <main className="pt-32 pb-20 text-center container mx-auto px-6">
+        <main className="pt-32 pb-20 text-center container mx-auto px-4 sm:px-6">
           <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
           <Link to="/blog" className="text-primary hover:underline">← Back to Blog</Link>
         </main>

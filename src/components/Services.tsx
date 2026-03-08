@@ -53,22 +53,22 @@ const services = [
 
 const Services = () => {
   return (
-    <section id="services" className="py-24 bg-background">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="section-badge-sharp mb-6 inline-flex">
+    <section id="services" className="py-16 sm:py-20 md:py-24 bg-background">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 sm:mb-16">
+          <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
             <span className="section-badge-dot-sharp" />
-            <span className="text-secondary-foreground font-medium text-sm">Services</span>
+            <span className="text-secondary-foreground font-medium text-xs sm:text-sm">Services</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mt-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mt-4">
             What I Offer
           </h2>
-          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-sm sm:text-base px-4">
             Professional services tailored to bring your vision to life
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-6xl mx-auto">
           {services.map((service, index) => (
             <div
               key={service.id}
@@ -87,26 +87,26 @@ const Services = () => {
                 </div>
               )}
 
-              <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <service.icon className="w-7 h-7 text-primary" />
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform">
+                <service.icon className="w-5 h-5 sm:w-7 sm:h-7 text-primary" />
               </div>
 
-              <h3 className="text-2xl font-bold text-foreground mb-2">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2">
                 {service.title}
               </h3>
-              <p className="text-muted-foreground text-sm mb-6">
+              <p className="text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                 {service.description}
               </p>
 
-              <div className="mb-6">
-                <span className="text-4xl font-bold text-foreground">{service.price}</span>
-                <span className="text-muted-foreground ml-2">{service.period}</span>
+              <div className="mb-4 sm:mb-6">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">{service.price}</span>
+                <span className="text-muted-foreground ml-2 text-xs sm:text-sm">{service.period}</span>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                 {service.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-muted-foreground">
-                    <Check className="w-5 h-5 text-accent flex-shrink-0" />
+                  <li key={i} className="flex items-center gap-2 sm:gap-3 text-muted-foreground text-xs sm:text-sm">
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}

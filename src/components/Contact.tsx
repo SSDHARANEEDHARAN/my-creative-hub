@@ -57,27 +57,27 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-32 relative overflow-hidden">
+    <section id="contact" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
       {/* Background decoration - Sharp edge */}
       <div className="absolute top-0 left-0 w-2/3 h-full bg-secondary/30 -z-10" style={{ clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0 100%)' }} />
       
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="section-badge-sharp mb-6 inline-flex">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 sm:mb-16">
+          <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
             <span className="section-badge-dot-sharp" />
-            <span className="text-secondary-foreground font-medium text-sm">Get In Touch</span>
+            <span className="text-secondary-foreground font-medium text-xs sm:text-sm">Get In Touch</span>
           </div>
           
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 px-4">
             Let's Create Something <span className="text-gradient">Amazing</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
             Have a project in mind or just want to chat? I'd love to hear from you. 
             Drop me a message and let's bring your ideas to life.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-5 gap-12 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-5 gap-8 sm:gap-12 max-w-6xl mx-auto">
           {/* Contact Info */}
           <div className="lg:col-span-2 space-y-8">
             <div className="space-y-6">
@@ -132,7 +132,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-3">
-            <form onSubmit={handleSubmit} className="sharp-card p-8 md:p-10 shadow-lg space-y-6">
+            <form onSubmit={handleSubmit} className="sharp-card p-5 sm:p-8 md:p-10 shadow-lg space-y-4 sm:space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                   <label className="text-sm font-medium mb-2 block">

@@ -42,30 +42,30 @@ const About = () => {
   const titleParts = aboutData.title.split("\n");
 
   return (
-    <section id="about" className="py-32 relative overflow-hidden">
+    <section id="about" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-secondary/50 rounded-bl-[200px] -z-10" />
       
-      <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-20 items-start">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-20 items-start">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary rounded-full mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-secondary rounded-full mb-4 sm:mb-6">
               <span className="w-2 h-2 bg-accent rounded-full animate-pulse" />
-              <span className="text-secondary-foreground font-medium text-sm">About Me</span>
+              <span className="text-secondary-foreground font-medium text-xs sm:text-sm">About Me</span>
             </div>
             
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-8 line-decoration pb-6">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 sm:mb-8 line-decoration pb-6">
               {titleParts[0]}
               {titleParts[1] && <span className="text-gradient block mt-2">{titleParts[1]}</span>}
             </h2>
             
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6">{aboutData.paragraph1}</p>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-8">{aboutData.paragraph2}</p>
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6">{aboutData.paragraph1}</p>
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8">{aboutData.paragraph2}</p>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
               {highlights.map((item) => (
-                <div key={item.text} className="flex items-center gap-3 text-muted-foreground">
+                <div key={item.text} className="flex items-center gap-2 sm:gap-3 text-muted-foreground">
                   <div className="text-primary">{item.icon}</div>
-                  <span className="text-sm">{item.text}</span>
+                  <span className="text-xs sm:text-sm">{item.text}</span>
                 </div>
               ))}
             </div>
@@ -76,12 +76,12 @@ const About = () => {
           </div>
 
           <div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {skills.map((skill) => (
-                <div key={skill.title} className="p-6 bg-card border-glow hover-lift group text-center">
-                  <div className={`w-12 h-12 bg-secondary flex items-center justify-center mb-4 mx-auto ${skill.color} group-hover:scale-110 transition-transform duration-300`}>{skill.icon}</div>
-                  <h3 className="font-display text-lg font-semibold mb-2">{skill.title}</h3>
-                  <p className="text-muted-foreground text-sm">{skill.desc}</p>
+                <div key={skill.title} className="p-4 sm:p-6 bg-card border-glow hover-lift group text-center">
+                  <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-secondary flex items-center justify-center mb-3 sm:mb-4 mx-auto ${skill.color} group-hover:scale-110 transition-transform duration-300`}>{skill.icon}</div>
+                  <h3 className="font-display text-sm sm:text-base md:text-lg font-semibold mb-1 sm:mb-2">{skill.title}</h3>
+                  <p className="text-muted-foreground text-xs sm:text-sm">{skill.desc}</p>
                 </div>
               ))}
             </div>

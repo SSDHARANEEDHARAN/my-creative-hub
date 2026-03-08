@@ -50,26 +50,26 @@ const TestimonialsPage = () => {
       <div className="min-h-screen bg-background transition-colors duration-300">
         <Navigation />
         <main className="pt-20">
-          <section className="py-24 bg-gradient-to-b from-background to-secondary/20">
-            <div className="container mx-auto px-6">
+          <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-b from-background to-secondary/20">
+            <div className="container mx-auto px-4 sm:px-6">
               <ScrollReveal>
-                <div className="text-center mb-16">
-                  <span className="text-accent font-medium tracking-widest uppercase text-sm">
+                <div className="text-center mb-10 sm:mb-16">
+                  <span className="text-accent font-medium tracking-widest uppercase text-xs sm:text-sm">
                     Testimonials
                   </span>
-                  <h1 className="text-4xl md:text-6xl font-display font-bold text-foreground mt-4">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mt-4">
                     Client Reviews
                   </h1>
-                  <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-lg">
+                  <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">
                     What my clients say about working together
                   </p>
                 </div>
               </ScrollReveal>
 
-              <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
                 {testimonials.map((testimonial, index) => (
                   <ScrollReveal key={testimonial.id} delay={index * 100}>
-                    <div className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-8 hover:border-primary/30 transition-all duration-500 hover:shadow-lg">
+                    <div className="group relative bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-5 sm:p-6 md:p-8 hover:border-primary/30 transition-all duration-500 hover:shadow-lg">
                       <Quote className="absolute top-6 right-6 w-10 h-10 text-primary/20 group-hover:text-primary/40 transition-colors" />
                       
                       <div className="flex items-center gap-4 mb-6">

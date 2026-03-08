@@ -41,21 +41,21 @@ const Gallery = () => {
   ];
 
   return (
-    <section id="gallery" className="py-24 bg-muted/30">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16 animate-fade-up">
-          <span className="text-primary font-medium text-sm tracking-widest uppercase mb-4 block">
+    <section id="gallery" className="py-16 sm:py-20 md:py-24 bg-muted/30">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10 sm:mb-16 animate-fade-up">
+          <span className="text-primary font-medium text-xs sm:text-sm tracking-widest uppercase mb-4 block">
             Adventures
           </span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Travel <span className="text-gradient">Gallery</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">
             Moments captured from around the world — each destination inspiring new perspectives and creativity.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {travelPhotos.map((photo, index) => (
             <div
               key={index}

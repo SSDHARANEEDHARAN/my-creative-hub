@@ -72,46 +72,46 @@ const Projects = () => {
   }, []);
 
   return (
-    <section id="projects" className="py-24 relative overflow-hidden bg-mesh">
+    <section id="projects" className="py-16 sm:py-20 md:py-24 relative overflow-hidden bg-mesh">
       {/* Background decoration */}
       <div className="absolute top-1/2 -translate-y-1/2 right-0 w-1/3 h-2/3 bg-primary/5 -z-10" />
       
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <div className="section-badge-sharp mb-6 inline-flex">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-8 sm:mb-12">
+          <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
             <span className="section-badge-dot-sharp" />
-            <span className="text-secondary-foreground font-medium text-sm">My Work</span>
+            <span className="text-secondary-foreground font-medium text-xs sm:text-sm">My Work</span>
           </div>
           
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
             Featured <span className="text-gradient">Projects</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-10">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto mb-6 sm:mb-10 px-4">
             A curated selection of my best work across IT and Engineering domains.
           </p>
 
           {/* Category Tabs - Sharp Design */}
-          <div className="inline-flex items-center gap-2 p-1.5 bg-secondary">
+          <div className="inline-flex flex-col sm:flex-row items-center gap-2 p-1.5 bg-secondary">
             <button
               onClick={() => handleTabChange("it")}
-              className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-200 ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
                 activeTab === "it" 
                   ? "bg-primary text-primary-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Cpu size={18} />
+              <Cpu size={16} />
               IT Projects ({itProjects.length})
             </button>
             <button
               onClick={() => handleTabChange("engineering")}
-              className={`flex items-center gap-2 px-5 py-2.5 font-medium transition-all duration-200 ${
+              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
                 activeTab === "engineering" 
                   ? "bg-accent text-accent-foreground shadow-md" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <Cog size={18} />
+              <Cog size={16} />
               Engineering ({engineeringProjects.length})
             </button>
           </div>
@@ -120,7 +120,7 @@ const Projects = () => {
         {/* Featured Projects - Large Cards */}
         <div 
           key={activeTab}
-          className="grid md:grid-cols-2 gap-6 mb-10 animate-fade-in"
+          className="grid sm:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10 animate-fade-in"
         >
           {featuredProjects.map((project) => (
             <div 
@@ -167,7 +167,7 @@ const Projects = () => {
         {/* Other Projects - Smaller Cards */}
         <div 
           key={`other-${activeTab}`}
-          className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-10 animate-fade-in"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 mb-8 sm:mb-10 animate-fade-in"
         >
           {otherProjects.map((project) => (
             <div 
