@@ -527,6 +527,21 @@ const ArticlePage = memo(() => {
                 </div>
               ) : null}
 
+              {/* Comments Section */}
+              {project && (
+                <div 
+                  className="mt-8 sm:mt-12"
+                  style={{
+                    opacity: isVisible ? 1 : 0,
+                    transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 0.6s ease-out',
+                    transitionDelay: '870ms'
+                  }}
+                >
+                  <ProjectComments projectId={String(project.id)} />
+                </div>
+              )}
+
               {/* CTA */}
               <div 
                 className="mt-10 sm:mt-16 text-center p-4 sm:p-6 md:p-8 bg-card rounded-2xl border border-border"
