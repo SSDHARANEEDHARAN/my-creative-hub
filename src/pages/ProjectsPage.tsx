@@ -140,6 +140,7 @@ const itProjects: Project[] = [
     images: [iotImg, analyticsImg, inventoryImg, ecommerceImg, plmImg],
     tags: ["Arduino", "Python", "Flask", "Chart.js", "IoT"],
     liveUrl: "https://weather-station.example.com",
+    articleUrl: "/projects/article/weather-station",
     featured: false,
     category: "it",
   },
