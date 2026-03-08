@@ -130,6 +130,7 @@ export const itProjects: Project[] = [
     tags: ["Arduino", "Python", "Flask", "Chart.js", "IoT"],
     articleUrl: "/projects/article/weather-station",
     githubUrl: "https://github.com",
+    liveUrl: "https://weather-station.example.com",
     featured: false,
     category: "it",
   },
