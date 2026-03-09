@@ -48,6 +48,12 @@ import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
 import flexsimImg from "@/assets/project-flexsim.jpg";
 import creoImg from "@/assets/project-creo.jpg";
 import plmImg from "@/assets/project-plm.jpg";
+import smartFarmAi1 from "@/assets/projects/smart-farm-ai-1.png";
+import smartFarmAi2 from "@/assets/projects/smart-farm-ai-2.png";
+import smartFarmAi3 from "@/assets/projects/smart-farm-ai-3.png";
+import smartFarmAi4 from "@/assets/projects/smart-farm-ai-4.png";
+import smartFarmAi5 from "@/assets/projects/smart-farm-ai-5.png";
+import smartFarmAi6 from "@/assets/projects/smart-farm-ai-6.png";
 import mazeRobot1 from "@/assets/projects/maze-robot-1.jpg";
 import mazeRobot2 from "@/assets/projects/maze-robot-2.jpg";
 import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
@@ -207,13 +213,12 @@ export const itProjects: Project[] = [
   },
   {
     id: 9,
-    title: "Smart Agriculture System",
-    description: "IoT solution for precision farming with soil moisture sensors, automated irrigation, and crop health monitoring dashboard.",
-    images: [iotImg, analyticsImg, ecommerceImg, inventoryImg, plmImg],
+    title: "Smart Farm AI",
+    description: "AI-powered precision agriculture platform integrating IoT sensors, machine learning crop health analysis, and real-time farm monitoring dashboard.",
+    images: [smartFarmAi5, smartFarmAi6, smartFarmAi1, smartFarmAi2, smartFarmAi3, smartFarmAi4],
     tags: ["Python", "Raspberry Pi", "TensorFlow", "React"],
     articleUrl: "/projects/article/smart-agriculture",
-    githubUrl: "https://github.com",
-    liveUrl: "https://smart-agriculture.example.com",
+    liveUrl: "https://smart-farm-ai-murex.vercel.app/",
     featured: false,
     category: "it",
   },

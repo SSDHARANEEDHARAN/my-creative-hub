@@ -368,40 +368,41 @@ export const articleContents: ArticleContent[] = [
   {
     id: 9,
     slug: "smart-agriculture",
-    title: "Smart Agriculture System",
-    subtitle: "AI-powered precision farming with IoT sensors",
+    title: "Smart Farm AI",
+    subtitle: "AI-powered precision agriculture platform with IoT sensors",
     duration: "14 weeks",
-    client: "Agri-Tech Startup - FarmWise India",
+    client: "FarmWise India",
     role: "IoT & ML Developer",
     industry: "Agriculture Technology",
     teamSize: "5 Engineers",
-    overview: "Developed an integrated smart agriculture system combining IoT sensors for soil and weather monitoring with AI-powered crop health analysis using drone imagery. The system provides automated irrigation control, pest detection, and yield prediction for large-scale farming operations.",
-    challenge: "Large farms (500+ acres) required scalable sensor networks. ML model needed to detect crop diseases from drone imagery with 90%+ accuracy. Automated irrigation decisions required integration with existing pump infrastructure. System needed to work with limited internet connectivity in rural areas.",
-    solution: "Deployed LoRaWAN sensor network with solar-powered nodes. Trained CNN model on crop disease dataset with transfer learning from ResNet. Built edge computing gateway for local ML inference. Created React dashboard with GIS integration for field mapping.",
+    overview: "Smart Farm AI is an intelligent precision agriculture platform designed to improve farm productivity through the integration of Artificial Intelligence, IoT sensors, and real-time data analytics. The system monitors environmental conditions, analyzes crop health, and provides farmers with actionable insights to optimize irrigation, disease prevention, and crop yield. The platform combines machine learning models, sensor-based data collection, and a cloud-based dashboard to enable data-driven agricultural management.",
+    challenge: "500+ acres required scalable sensor networks. ML model needed 90%+ disease detection accuracy. Integration with existing pump infrastructure was essential. System needed to work with limited rural internet connectivity.",
+    solution: "Deployed LoRaWAN sensor network with solar-powered nodes. Trained CNN model with ResNet transfer learning achieving 94% accuracy. Built NVIDIA Jetson edge computing gateway for local ML inference. Created React dashboard with GIS field mapping and real-time IoT sensor visualization.",
     process: [
-      { title: "Sensor Network Design", content: "Designed LoRaWAN network topology for 500+ acre coverage. Selected sensors for soil moisture, temperature, NPK levels, and weather." },
-      { title: "ML Model Development", content: "Collected and labeled 10,000+ crop images. Trained CNN model achieving 94% disease detection accuracy." },
-      { title: "Edge Computing", content: "Deployed NVIDIA Jetson for edge inference of drone imagery. Implemented image stitching for field-wide analysis." },
-      { title: "Irrigation Automation", content: "Integrated with VFD-controlled pumps. Developed rule engine combining sensor data and ET calculations." },
-      { title: "Dashboard Development", content: "Built GIS-enabled dashboard showing field health maps, sensor data, and irrigation status. Implemented farmer-friendly mobile view." },
-      { title: "Pilot Deployment", content: "Deployed on 200-acre pilot farm. Refined system based on agronomist feedback over one crop cycle." }
+      { title: "IoT Device Layer", content: "Deployed soil moisture sensors, temperature/humidity sensors, Raspberry Pi IoT gateway, and embedded sensor controllers across the farm." },
+      { title: "AI & Data Processing", content: "Built plant disease classification using TensorFlow CNN with ResNet transfer learning. Implemented predictive analytics for crop health and environmental data processing pipelines." },
+      { title: "Smart Irrigation", content: "Developed soil moisture monitoring with automated irrigation recommendations and water usage optimization based on environmental condition tracking." },
+      { title: "Web Dashboard", content: "Built real-time farm monitoring dashboard with sensor data visualization, crop health monitoring, farm analytics, and AI-powered decision support tools." },
+      { title: "Edge Computing", content: "Deployed NVIDIA Jetson for edge inference of drone imagery. Implemented image stitching for field-wide crop health analysis." },
+      { title: "Pilot Deployment", content: "Deployed on 200-acre pilot farm. Refined system based on agronomist feedback over one crop cycle. Scaled to 1,500 acres across 3 farms." }
     ],
     results: [
-      "Water usage reduced by 35% through precision irrigation",
-      "Early pest detection prevented ₹45L crop loss in pilot farm",
-      "Yield increased by 18% compared to conventional farming practices",
-      "94% accuracy in crop disease detection from drone imagery",
-      "Farmer decision time reduced from days to hours for interventions",
-      "System scaled to 1,500 acres across 3 farms in first year"
+      "Water usage reduced by 35% through precision irrigation management",
+      "Crop yield increased by 18% compared to conventional farming practices",
+      "94% accuracy in AI-powered crop disease detection",
+      "1,500 acres of farm monitoring capability achieved",
+      "Early pest detection prevented significant crop losses in pilot farm",
+      "Farmer decision time reduced from days to hours for interventions"
     ],
-    technologies: ["Python", "TensorFlow", "Raspberry Pi", "LoRaWAN", "React", "PostgreSQL", "QGIS"],
-    toolsUsed: ["VS Code", "Jupyter Notebook", "QGIS", "DJI drone platform", "Grafana"],
+    technologies: ["Python", "TensorFlow", "Raspberry Pi", "React", "JavaScript", "IoT Sensors", "Edge Computing"],
+    toolsUsed: ["VS Code", "Jupyter Notebook", "QGIS", "DJI drone platform", "Grafana", "Vercel"],
     keyMetrics: [
       { value: "35%", label: "Water Savings" },
       { value: "18%", label: "Yield Increase" },
       { value: "94%", label: "Disease Detection" },
       { value: "1500ac", label: "Area Covered" }
     ],
+    conclusionVideoUrl: "/videos/smart-farm-ai-demo.mp4",
     lessons: ["Edge computing enables ML inference in connectivity-limited rural areas", "Transfer learning dramatically reduces training data requirements for agriculture ML", "Agronomist involvement in system design ensures practical applicability"]
   },
   {
