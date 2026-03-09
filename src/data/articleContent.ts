@@ -288,42 +288,43 @@ export const articleContents: ArticleContent[] = [
   },
   {
     id: 7,
-    slug: "restaurant-pos",
-    title: "Restaurant POS System",
-    subtitle: "Complete point of sale with kitchen display system",
-    duration: "10 weeks",
-    client: "Restaurant Chain - Spice Garden Group",
-    role: "Full Stack Developer",
-    industry: "Food & Beverage",
-    teamSize: "3 Developers",
-    overview: "Developed a comprehensive point of sale system for restaurants with order management, table tracking, kitchen display system (KDS), split billing, and detailed sales reporting. The system operates offline and syncs with cloud for multi-location management.",
-    challenge: "Restaurant operations required fast, reliable ordering during peak hours. Kitchen coordination between multiple preparation areas was complex. System needed to work during internet outages (common in India). Multi-location reporting for management was essential.",
-    solution: "Built Electron desktop application with React for cross-platform compatibility. Implemented local SQLite database for offline operation. Created separate KDS application with sound alerts for new orders. Developed cloud sync mechanism for multi-location aggregation.",
+    slug: "codeflow-learn",
+    title: "CodeFlow Learn – Visual Programming Platform",
+    subtitle: "Interactive programming education through node-based visual coding",
+    duration: "8 weeks",
+    client: "Personal / Academic Project",
+    role: "Full-Stack Web Developer",
+    industry: "Education Technology",
+    teamSize: "Solo Developer",
+    overview: "CodeFlow Learn is a modern interactive programming learning platform designed to teach coding concepts through visual node-based programming and hands-on coding exercises. The system allows learners to build program logic using Node Flow visual programming blocks while also providing a JavaScript code playground for direct coding practice. The platform focuses on improving programming education by combining visual logic building, coding challenges, and real-time execution environments.",
+    challenge: "Traditional programming education often overwhelms beginners with syntax before they understand core logic concepts. Creating an engaging platform that bridges visual programming with real coding required building a node-based editor, code execution environment, and structured lesson system that progressively transitions learners from graphical workflows to traditional code.",
+    solution: "Built a React.js application with React Flow for the node-based programming editor, featuring drag-and-drop Input/Process/Output nodes with visual data flow connections. Implemented a browser-based JavaScript code playground with syntax highlighting and real-time execution. Created 14 structured coding challenges covering JavaScript fundamentals through advanced async programming, with localStorage-based progress tracking.",
+    conclusionVideoUrl: "/videos/codeflow-learn-demo.mp4",
     process: [
-      { title: "Workflow Analysis", content: "Spent 2 weeks observing restaurant operations during peak hours. Documented order flow from entry to payment." },
-      { title: "UI/UX Design", content: "Designed touch-optimized interface for fast order entry. Created kitchen display with large fonts and color coding." },
-      { title: "POS Application", content: "Built Electron app with React. Implemented table management, split billing, discounts, and multiple payment methods." },
-      { title: "Kitchen Display", content: "Developed KDS showing orders by preparation area. Added sound alerts, order timing, and bump functionality." },
-      { title: "Reporting System", content: "Created comprehensive reports including sales analysis, item performance, and staff productivity." },
-      { title: "Deployment", content: "Installed across 5 restaurant locations. Provided on-site training for 40+ staff members." }
+      { title: "Platform Architecture", content: "Designed a three-layer system: User Interface Layer for node flow and code editors, Logic Execution Layer for program execution and challenge validation, and Data Persistence Layer using localStorage for progress tracking." },
+      { title: "Node Flow Editor", content: "Built a visual node-based programming interface using React Flow with custom Input, Process, and Output node types. Implemented drag-and-drop functionality and real-time data flow connections between nodes." },
+      { title: "Code Playground", content: "Developed a browser-based JavaScript code editor with syntax highlighting, real-time code execution, error feedback, and support for variables, loops, and functions." },
+      { title: "Challenges & Lessons", content: "Created 14 structured coding challenges covering JavaScript fundamentals, closures, async/await, promise chaining, DOM manipulation, and event-driven programming with step-by-step instructions and difficulty levels." },
+      { title: "Progress Tracking", content: "Implemented challenge completion tracking with visual progress bar, mark-as-complete functionality, and persistent progress using localStorage." },
+      { title: "Theme & Deployment", content: "Added dark/light theme toggle system. Deployed on Vercel Cloud Platform with responsive design for desktop and mobile learning." }
     ],
     results: [
-      "Order entry time reduced by 40% compared to previous system",
-      "Kitchen order accuracy improved to 99.5% with KDS",
-      "Table turnover increased by 15% through faster billing",
-      "₹0 revenue loss during internet outages (offline mode)",
-      "Management visibility across 5 locations through cloud dashboard",
-      "Staff training time reduced to 30 minutes for new employees"
+      "14 structured coding challenges across multiple difficulty levels",
+      "Node Flow visual programming editor with drag-and-drop node creation",
+      "Real-time JavaScript code execution in browser-based playground",
+      "Progress tracking system with visual completion indicators",
+      "Dark and light theme support for different user preferences",
+      "Responsive design supporting desktop and mobile learning"
     ],
-    technologies: ["React", "Electron", "Node.js", "SQLite", "PostgreSQL", "Socket.io"],
-    toolsUsed: ["VS Code", "Electron Forge", "DBeaver", "Figma", "TestFlight"],
+    technologies: ["React.js", "JavaScript", "React Flow", "HTML5", "CSS", "Tailwind CSS", "Vercel"],
+    toolsUsed: ["VS Code", "Git", "Vercel Dashboard", "Chrome DevTools", "Figma"],
     keyMetrics: [
-      { value: "40%", label: "Faster Orders" },
-      { value: "99.5%", label: "Order Accuracy" },
-      { value: "15%", label: "Faster Turnover" },
-      { value: "5", label: "Locations Live" }
+      { value: "14", label: "Challenges" },
+      { value: "2", label: "Code Editors" },
+      { value: "100%", label: "Responsive" },
+      { value: "Fast", label: "Execution" }
     ],
-    lessons: ["Touch-optimized UI is essential for fast-paced restaurant environments", "Offline capability is non-negotiable for business-critical POS systems", "Kitchen display systems dramatically improve order accuracy and speed"]
+    lessons: ["Visual programming dramatically lowers the barrier to understanding core logic concepts", "Combining node-based and text-based coding creates an effective learning progression", "Structured challenges with clear objectives keep learners engaged and motivated"]
   },
   {
     id: 8,

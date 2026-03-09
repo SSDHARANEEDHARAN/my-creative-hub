@@ -201,6 +201,17 @@ export const itProjects: Project[] = [
     category: "it",
   },
   {
+    id: 7,
+    title: "CodeFlow Learn – Visual Programming Platform",
+    description: "Interactive programming learning platform with node-based visual programming, JavaScript code playground, structured coding challenges, and progress tracking for beginners.",
+    images: [codeflowLearn4, codeflowLearn1, codeflowLearn2, codeflowLearn3],
+    tags: ["React.js", "React Flow", "JavaScript", "Tailwind CSS"],
+    articleUrl: "/projects/article/codeflow-learn",
+    liveUrl: "https://codeflow-learn.vercel.app/",
+    featured: false,
+    category: "it",
+  },
+  {
     id: 8,
     title: "Learn & Grow Hub – E-Learning Platform",
     description: "Web-based e-learning platform providing an interactive digital environment for students to access educational content, structured courses, and learning resources online.",
