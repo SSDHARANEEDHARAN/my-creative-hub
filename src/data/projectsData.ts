@@ -125,7 +125,7 @@ export interface Project {
   category: "it" | "engineering";
 }
 
-// IT Projects (10 projects)
+// IT Projects (8 projects)
 export const itProjects: Project[] = [
   {
     id: 1,
