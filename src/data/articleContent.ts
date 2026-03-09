@@ -402,6 +402,7 @@ export const articleContents: ArticleContent[] = [
       { value: "94%", label: "Disease Detection" },
       { value: "1500ac", label: "Area Covered" }
     ],
+    conclusionVideoUrl: "/videos/smart-farm-ai-demo.mp4",
     lessons: ["Edge computing enables ML inference in connectivity-limited rural areas", "Transfer learning dramatically reduces training data requirements for agriculture ML", "Agronomist involvement in system design ensures practical applicability"]
   },
   {
