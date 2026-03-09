@@ -195,18 +195,6 @@ export const itProjects: Project[] = [
     category: "it",
   },
   {
-    id: 7,
-    title: "Restaurant POS System",
-    description: "Point of sale system for restaurants with order management, table tracking, kitchen display system, and payment processing.",
-    images: [inventoryImg, ecommerceImg, analyticsImg, iotImg, plmImg],
-    tags: ["React", "Electron", "Node.js", "SQLite"],
-    articleUrl: "/projects/article/restaurant-pos",
-    githubUrl: "https://github.com",
-    liveUrl: "https://restaurant-pos.example.com",
-    featured: false,
-    category: "it",
-  },
-  {
     id: 8,
     title: "Learn & Grow Hub – E-Learning Platform",
     description: "Web-based e-learning platform providing an interactive digital environment for students to access educational content, structured courses, and learning resources online.",
