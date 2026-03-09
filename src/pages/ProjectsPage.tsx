@@ -71,6 +71,10 @@ import smartFarmAi3 from "@/assets/projects/smart-farm-ai-3.png";
 import smartFarmAi4 from "@/assets/projects/smart-farm-ai-4.png";
 import smartFarmAi5 from "@/assets/projects/smart-farm-ai-5.png";
 import smartFarmAi6 from "@/assets/projects/smart-farm-ai-6.png";
+import codeflowLearn1 from "@/assets/projects/codeflow-learn-1.png";
+import codeflowLearn2 from "@/assets/projects/codeflow-learn-2.png";
+import codeflowLearn3 from "@/assets/projects/codeflow-learn-3.png";
+import codeflowLearn4 from "@/assets/projects/codeflow-learn-4.png";
 import mazeRobot1 from "@/assets/projects/maze-robot-1.jpg";
 import mazeRobot2 from "@/assets/projects/maze-robot-2.jpg";
 import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
@@ -217,12 +221,12 @@ const itProjects: Project[] = [
   },
   {
     id: 7,
-    title: "Restaurant POS System",
-    description: "Point of sale system for restaurants with order management, table tracking, kitchen display system, and payment processing.",
-    images: [inventoryImg, ecommerceImg, analyticsImg, iotImg, plmImg],
-    tags: ["React", "Electron", "Node.js", "SQLite"],
-    liveUrl: "https://restaurant-pos.example.com",
-    articleUrl: "/projects/article/restaurant-pos",
+    title: "CodeFlow Learn – Visual Programming Platform",
+    description: "Interactive programming learning platform with node-based visual programming, JavaScript code playground, structured coding challenges, and progress tracking for beginners.",
+    images: [codeflowLearn4, codeflowLearn1, codeflowLearn2, codeflowLearn3],
+    tags: ["React.js", "React Flow", "JavaScript", "Tailwind CSS"],
+    liveUrl: "https://codeflow-learn.vercel.app/",
+    articleUrl: "/projects/article/codeflow-learn",
     featured: false,
     category: "it",
   },

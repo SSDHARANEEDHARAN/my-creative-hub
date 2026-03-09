@@ -54,6 +54,10 @@ import smartFarmAi3 from "@/assets/projects/smart-farm-ai-3.png";
 import smartFarmAi4 from "@/assets/projects/smart-farm-ai-4.png";
 import smartFarmAi5 from "@/assets/projects/smart-farm-ai-5.png";
 import smartFarmAi6 from "@/assets/projects/smart-farm-ai-6.png";
+import codeflowLearn1 from "@/assets/projects/codeflow-learn-1.png";
+import codeflowLearn2 from "@/assets/projects/codeflow-learn-2.png";
+import codeflowLearn3 from "@/assets/projects/codeflow-learn-3.png";
+import codeflowLearn4 from "@/assets/projects/codeflow-learn-4.png";
 import mazeRobot1 from "@/assets/projects/maze-robot-1.jpg";
 import mazeRobot2 from "@/assets/projects/maze-robot-2.jpg";
 import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
@@ -131,7 +135,7 @@ export interface Project {
   category: "it" | "engineering";
 }
 
-// IT Projects (8 projects)
+// IT Projects (9 projects)
 export const itProjects: Project[] = [
   {
     id: 1,
@@ -197,6 +201,17 @@ export const itProjects: Project[] = [
     tags: ["React.js", "Tailwind CSS", "Cloud DB", "AI/LLM"],
     articleUrl: "/projects/article/sticky-note-pro",
     liveUrl: "https://sticky-note-pro.vercel.app/",
+    featured: false,
+    category: "it",
+  },
+  {
+    id: 7,
+    title: "CodeFlow Learn – Visual Programming Platform",
+    description: "Interactive programming learning platform with node-based visual programming, JavaScript code playground, structured coding challenges, and progress tracking for beginners.",
+    images: [codeflowLearn4, codeflowLearn1, codeflowLearn2, codeflowLearn3],
+    tags: ["React.js", "React Flow", "JavaScript", "Tailwind CSS"],
+    articleUrl: "/projects/article/codeflow-learn",
+    liveUrl: "https://codeflow-learn.vercel.app/",
     featured: false,
     category: "it",
   },
