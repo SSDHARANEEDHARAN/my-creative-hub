@@ -217,18 +217,6 @@ export const itProjects: Project[] = [
     featured: false,
     category: "it",
   },
-  {
-    id: 10,
-    title: "Learning Management System",
-    description: "Educational platform with course creation, video streaming, quiz system, progress tracking, and certificate generation.",
-    images: [analyticsImg, ecommerceImg, inventoryImg, iotImg, plmImg],
-    tags: ["React", "Node.js", "AWS", "MongoDB", "Redis"],
-    articleUrl: "/projects/article/learning-management",
-    githubUrl: "https://github.com",
-    liveUrl: "https://lms-platform.example.com",
-    featured: false,
-    category: "it",
-  },
 ];
 
 // Engineering Projects (20 projects)
