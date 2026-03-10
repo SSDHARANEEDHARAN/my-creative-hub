@@ -40,10 +40,9 @@ interface DBWorkExperience {
 }
 
 const fallbackExperience = [
-  { company: "Mahindra & Mahindra", role: "CAD Engineer Intern", duration: "Jun 2023 - Aug 2023", location: "Chennai, India", description: "Worked on automotive component design using SolidWorks and Siemens NX.", skills: ["SolidWorks", "Siemens NX", "GD&T", "DFMEA"] },
-  { company: "L&T Technology Services", role: "PLM Intern", duration: "Jan 2023 - Mar 2023", location: "Chennai, India", description: "Managed product lifecycle using PTC Windchill.", skills: ["PTC Windchill", "PLM", "ECM", "BOM Management"] },
-  { company: "Flipkart (Contract)", role: "Warehouse Simulation Analyst", duration: "Sep 2022 - Dec 2022", location: "Bangalore, India", description: "Developed FlexSim simulation models for warehouse optimization.", skills: ["FlexSim", "Simulation", "Lean Manufacturing", "Data Analysis"] },
-  { company: "Freelance", role: "Full Stack Developer", duration: "2021 - Present", location: "Remote", description: "Building web applications using React, Python, and IoT solutions.", skills: ["React", "Python", "Node.js", "IoT", "Arduino"] },
+  { company: "Janatics India Pvt Ltd", role: "Mechatronics Design Engineer", duration: "Sep 2023 – Present", location: "Coimbatore, India", description: "Designed Industry 4.0 based mechatronics systems. Developed robotics systems and cobot trainer kits.", skills: ["Industry 4.0", "Robotics", "PLC", "HMI", "IIoT"] },
+  { company: "TV Sundram Iyengar & Sons Pvt Ltd", role: "Engine & ECU Diagnostics", duration: "2020 – 2021", location: "Namakkal, India", description: "Worked on engine and ECU diagnostics for automotive systems.", skills: ["Engine Diagnostics", "ECU", "Automotive"] },
+  { company: "Rinex Technology Pvt Ltd", role: "Inline Sales Executive", duration: "2023 – 2023", location: "Mangalore, India", description: "Worked as an inline sales executive for technology products.", skills: ["Sales", "Technology", "Client Relations"] },
 ];
 
 const fallbackCertifications = [
@@ -115,7 +114,7 @@ const AboutPage = () => {
   return (
     <>
       <Helmet>
-        <title>About | Dharaneedharan SS - Full Stack Developer & CAD Engineer</title>
+        <title>About | Dharaneedharan SS - Mechatronics Design Engineer & Full Stack Developer</title>
         <meta name="description" content="Learn more about Dharaneedharan SS, a versatile professional with expertise in IT development and CAD engineering." />
       </Helmet>
       
@@ -142,7 +141,7 @@ const AboutPage = () => {
                     
                     <div className="flex-1">
                        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Dharaneedharan SS</h1>
-                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Full Stack Developer & CAD Engineer</p>
+                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Mechatronics Design Engineer & Full Stack Developer</p>
                       
                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                         <span className="flex items-center gap-1"><MapPin size={14} className="text-primary" />Namakkal, India</span>

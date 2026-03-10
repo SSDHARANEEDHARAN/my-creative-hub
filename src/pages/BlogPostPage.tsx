@@ -136,7 +136,7 @@ const BlogPostPage = () => {
                       </div>
                       <div>
                         <p className="font-medium text-sm">{post.author.name}</p>
-                        <p className="text-xs text-muted-foreground">Full Stack Developer & CAD Engineer</p>
+                        <p className="text-xs text-muted-foreground">Mechatronics Design Engineer & Full Stack Developer</p>
                       </div>
                     </div>
                     {/* Social Share */}
