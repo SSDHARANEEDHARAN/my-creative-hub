@@ -115,7 +115,7 @@ const AboutPage = () => {
   return (
     <>
       <Helmet>
-        <title>About | Dharaneedharan SS - Full Stack Developer & CAD Engineer</title>
+        <title>About | Dharaneedharan SS - Mechatronics Design Engineer & Full Stack Developer</title>
         <meta name="description" content="Learn more about Dharaneedharan SS, a versatile professional with expertise in IT development and CAD engineering." />
       </Helmet>
       
