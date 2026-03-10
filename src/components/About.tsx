@@ -6,8 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 const About = () => {
   const [aboutData, setAboutData] = useState({
     title: "Turning Vision Into\nDigital Reality",
-    paragraph1: "Hello! I'm Dharaneedharan SS, a passionate Full Stack Developer and CAD Engineer based in Namakkal, India. With over 3+ years of experience in web development and engineering design, I've had the privilege of working with innovative companies across IT and manufacturing domains.",
-    paragraph2: "My approach combines technical excellence with creative thinking, ensuring every project not only functions flawlessly but also delivers an exceptional user experience that drives business results.",
+    paragraph1: "Hello! I'm Dharaneedharan SS, a passionate Mechatronics Design Engineer & Full Stack Developer based in Namakkal, India. With over 3+ years of experience in mechatronics design, robotics, automation, and web development, I've had the privilege of working with innovative companies across manufacturing and IT domains.",
+    paragraph2: "My approach combines mechanical design expertise with software development skills, enabling me to build Industry 4.0 solutions, robotics systems, and full stack web applications that deliver real-world impact.",
   });
 
   useEffect(() => {
