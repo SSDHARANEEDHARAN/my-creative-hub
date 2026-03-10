@@ -93,7 +93,7 @@ const Hero = () => {
           >
             <Zap className="text-muted-foreground" size={18} />
             <p className="text-lg sm:text-2xl md:text-3xl font-display font-semibold text-foreground">
-              Full Stack Developer & CAD Engineer
+              Mechatronics Design Engineer & Full Stack Developer
             </p>
           </motion.div>
           
