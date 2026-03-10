@@ -142,7 +142,7 @@ const AboutPage = () => {
                     
                     <div className="flex-1">
                        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Dharaneedharan SS</h1>
-                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Full Stack Developer & CAD Engineer</p>
+                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Mechatronics Design Engineer & Full Stack Developer</p>
                       
                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                         <span className="flex items-center gap-1"><MapPin size={14} className="text-primary" />Namakkal, India</span>
