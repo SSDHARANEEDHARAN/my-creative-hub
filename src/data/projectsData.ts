@@ -121,6 +121,16 @@ import conveyorAlu6 from "@/assets/projects/conveyor-alu-6.jpg";
 import conveyorAlu7 from "@/assets/projects/conveyor-alu-7.jpg";
 import conveyorAlu8 from "@/assets/projects/conveyor-alu-8.jpg";
 import conveyorAlu9 from "@/assets/projects/conveyor-alu-9.jpg";
+import cobotTrainer1 from "@/assets/projects/cobot-trainer-1.jpg";
+import cobotTrainer2 from "@/assets/projects/cobot-trainer-2.jpg";
+import cobotTrainer3 from "@/assets/projects/cobot-trainer-3.jpg";
+import cobotTrainer4 from "@/assets/projects/cobot-trainer-4.jpg";
+import cobotTrainer5 from "@/assets/projects/cobot-trainer-5.jpg";
+import cobotTrainer6 from "@/assets/projects/cobot-trainer-6.jpg";
+import cobotTrainer7 from "@/assets/projects/cobot-trainer-7.jpg";
+import cobotTrainer8 from "@/assets/projects/cobot-trainer-8.jpg";
+import cobotTrainer9 from "@/assets/projects/cobot-trainer-9.jpg";
+import cobotTrainer10 from "@/assets/projects/cobot-trainer-10.jpg";
 
 export interface Project {
   id: number;
