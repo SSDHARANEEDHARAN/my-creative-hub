@@ -1194,6 +1194,53 @@ export const articleContents: ArticleContent[] = [
     lessons: ["Sensor positioning plays a critical role in accurate obstacle detection", "Real-time processing of sensor data is essential for smooth robot navigation", "Iterative testing in controlled environments significantly improves robotics performance"],
     conclusionVideoUrl: "/videos/maze-robot-demo.mp4",
   },
+  {
+    id: 122,
+    slug: "cobot-trainer-kit-atc",
+    title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics Training System",
+    subtitle: "Hands-on collaborative robot training platform with Automatic Tool Changer and multi-gripper system",
+    duration: "Ongoing",
+    client: "Janatics India Pvt Ltd",
+    role: "Mechatronics Design Engineer",
+    industry: "Industrial Robotics / Manufacturing Automation / Technical Education",
+    teamSize: "Engineering Team",
+    overview: "The Cobot Trainer Kit with ATC (Farinoo) is a didactic industrial robotics training platform designed to provide hands-on learning in collaborative robot programming, industrial automation, and robotic material handling systems. The system simulates real manufacturing environments where students and engineers can practice robot control, gripper selection, tool changing operations, and automated workpiece handling. The trainer kit integrates a collaborative robot arm, Automatic Tool Changer (ATC), multiple industrial grippers, pneumatic systems, and modular workpiece stations.",
+    challenge: "Developing a comprehensive training platform that accurately simulates real industrial robotic workflows while remaining safe and accessible for educational environments. The system needed to support multiple gripper technologies (mechanical, pneumatic, vacuum), automatic tool changing, and diverse workpiece geometries — all within a compact, modular, and precision-engineered framework suitable for didactic use.",
+    solution: "Designed and built a modular cobot trainer kit integrating a collaborative robot arm with an Automatic Tool Changer system, three industrial gripper types (DH Mechanical, Pneumatic, and Vacuum with Compact Ejector), pneumatic circuit systems, and multiple workpiece stations with varied geometries. The platform enables complete industrial robotics training workflows including gripper selection, robotic path programming, and precision material handling.",
+    process: [
+      { title: "System Architecture Design", content: "Designed the overall trainer kit architecture including collaborative robot arm mounting, ATC integration, gripper station layout, workpiece placement zones, and pneumatic circuit routing for a compact industrial training environment." },
+      { title: "Multi-Workpiece Handling System", content: "Developed multiple industrial workpieces including triangle, ball, square block, rectangular block, bush components, and industrial profile materials — each requiring different gripping methods and robotic handling strategies." },
+      { title: "Industrial Gripper Systems Integration", content: "Integrated three end-effector technologies: DH Mechanical Gripper for rigid components with precise force control, Pneumatic Gripper for high-speed pick-and-place operations, and Vacuum Gripper with Compact Ejector for lightweight flat surface handling." },
+      { title: "Automatic Tool Changer (ATC) Implementation", content: "Implemented the ATC system enabling the robot to automatically switch between different grippers, demonstrating flexible manufacturing systems used in Industry 4.0 environments with multi-tool operation programming." },
+      { title: "Pneumatic Circuit Design", content: "Designed and built industrial pneumatic circuits with properly insulated tubing, industrial air supply connections, compact ejector vacuum generation, and safe circuit layout for operating the pneumatic gripper and vacuum ejector." },
+      { title: "Precision Mechanical Engineering", content: "Engineered the trainer kit structure with rigid aluminum frame, precision-machined workpiece stations, accurate gripper mounting interfaces, and stable robotic workspace alignment ensuring high positional accuracy during robot teaching." },
+      { title: "Gripper Selection Training Module", content: "Developed training curriculum for gripper selection based on workpiece shape, material type, surface texture, weight, size, and handling precision requirements — simulating real industrial robotic engineering decision-making." }
+    ],
+    results: [
+      "Complete industrial robotics training platform with collaborative robot programming",
+      "Multi-gripper automation training with DH Mechanical, Pneumatic, and Vacuum systems",
+      "Automatic Tool Changer enabling flexible multi-tool robotic operations",
+      "Workpiece handling training based on material properties and geometry",
+      "Pneumatic and vacuum system integration for industrial automation education",
+      "Industrial-level mechanical precision design with aluminum frame structure",
+      "Gripper selection decision-making training for real-world industrial applications"
+    ],
+    technologies: ["Collaborative Robot Arm", "Automatic Tool Changer (ATC)", "DH Mechanical Gripper", "Pneumatic Gripper", "Vacuum Gripper with Compact Ejector", "Pneumatic Valves & Circuits", "Precision Aluminum Frame", "Industrial Workpiece Stations"],
+    toolsUsed: ["SolidWorks", "Pneumatic Circuit Design Tools", "Robot Programming Software", "Mechanical Fabrication Tools", "Industrial Assembly Equipment"],
+    keyMetrics: [
+      { value: "3", label: "Gripper Types" },
+      { value: "6+", label: "Workpiece Types" },
+      { value: "ATC", label: "Auto Tool Change" },
+      { value: "Industry 4.0", label: "Standard" }
+    ],
+    lessons: [
+      "Modular gripper systems enable flexible robotic operations across diverse manufacturing tasks",
+      "Automatic Tool Changers are essential for modern flexible manufacturing systems",
+      "Proper pneumatic circuit design is critical for reliable industrial automation",
+      "Precision mechanical alignment directly impacts robot teaching accuracy and repeatability",
+      "Gripper selection based on workpiece characteristics is a fundamental industrial robotics skill"
+    ]
+  },
 ];
 
 export const getArticleBySlug = (slug: string): ArticleContent | undefined => {
