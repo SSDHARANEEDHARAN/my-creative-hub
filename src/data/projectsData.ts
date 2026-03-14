@@ -131,6 +131,12 @@ import cobotTrainer7 from "@/assets/projects/cobot-trainer-7.jpg";
 import cobotTrainer8 from "@/assets/projects/cobot-trainer-8.jpg";
 import cobotTrainer9 from "@/assets/projects/cobot-trainer-9.jpg";
 import cobotTrainer10 from "@/assets/projects/cobot-trainer-10.jpg";
+import cobotTrainer11 from "@/assets/projects/cobot-trainer-11.jpg";
+import cobotTrainer12 from "@/assets/projects/cobot-trainer-12.jpg";
+import cobotTrainer13 from "@/assets/projects/cobot-trainer-13.jpg";
+import cobotTrainer14 from "@/assets/projects/cobot-trainer-14.jpg";
+import cobotTrainer15 from "@/assets/projects/cobot-trainer-15.jpg";
+import cobotTrainer16 from "@/assets/projects/cobot-trainer-16.jpg";
 
 export interface Project {
   id: number;
