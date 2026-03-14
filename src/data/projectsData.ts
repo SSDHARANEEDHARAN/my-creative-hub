@@ -451,6 +451,16 @@ export const engineeringProjects: Project[] = [
     featured: false,
     category: "engineering",
   },
+  {
+    id: 122,
+    title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
+    description: "Industrial robotics training platform with collaborative robot arm, Automatic Tool Changer, multi-gripper system (DH Mechanical, Pneumatic, Vacuum), and modular workpiece stations for Industry 4.0 education.",
+    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7],
+    tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
+    articleUrl: "/projects/article/cobot-trainer-kit-atc",
+    featured: true,
+    category: "engineering",
+  },
 ];
 
 export const getAllProjects = () => [...itProjects, ...engineeringProjects];
