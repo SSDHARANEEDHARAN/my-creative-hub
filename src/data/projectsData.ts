@@ -131,6 +131,12 @@ import cobotTrainer7 from "@/assets/projects/cobot-trainer-7.jpg";
 import cobotTrainer8 from "@/assets/projects/cobot-trainer-8.jpg";
 import cobotTrainer9 from "@/assets/projects/cobot-trainer-9.jpg";
 import cobotTrainer10 from "@/assets/projects/cobot-trainer-10.jpg";
+import cobotTrainer11 from "@/assets/projects/cobot-trainer-11.jpg";
+import cobotTrainer12 from "@/assets/projects/cobot-trainer-12.jpg";
+import cobotTrainer13 from "@/assets/projects/cobot-trainer-13.jpg";
+import cobotTrainer14 from "@/assets/projects/cobot-trainer-14.jpg";
+import cobotTrainer15 from "@/assets/projects/cobot-trainer-15.jpg";
+import cobotTrainer16 from "@/assets/projects/cobot-trainer-16.jpg";
 
 export interface Project {
   id: number;
@@ -455,7 +461,7 @@ export const engineeringProjects: Project[] = [
     id: 122,
     title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
     description: "Industrial robotics training platform with collaborative robot arm, Automatic Tool Changer, multi-gripper system (DH Mechanical, Pneumatic, Vacuum), and modular workpiece stations for Industry 4.0 education.",
-    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7],
+    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7, cobotTrainer11, cobotTrainer12, cobotTrainer13, cobotTrainer14, cobotTrainer15, cobotTrainer16],
     tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
     articleUrl: "/projects/article/cobot-trainer-kit-atc",
     featured: true,
