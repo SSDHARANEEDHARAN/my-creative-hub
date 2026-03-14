@@ -497,7 +497,7 @@ const engineeringProjects: Project[] = [
     id: 32,
     title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
     description: "Industrial robotics training platform with collaborative robot arm, Automatic Tool Changer, multi-gripper system (DH Mechanical, Pneumatic, Vacuum), and modular workpiece stations for Industry 4.0 education.",
-    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7],
+    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7, cobotTrainer11, cobotTrainer12, cobotTrainer13, cobotTrainer14, cobotTrainer15, cobotTrainer16],
     tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
     articleUrl: "/projects/article/cobot-trainer-kit-atc",
     featured: true,
