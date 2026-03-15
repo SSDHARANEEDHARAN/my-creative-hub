@@ -344,16 +344,6 @@ const engineeringProjects: Project[] = [
     category: "engineering",
   },
   {
-    id: 15,
-    title: "Robotic Welding Cell Design",
-    description: "FANUC robotic welding cell layout design with cycle time optimization achieving 52-second target, safety system integration, and TÜV certification.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
-    tags: ["Robcad", "Robot Simulation", "Safety Systems", "FANUC"],
-    articleUrl: "/projects/article/robotic-welding-cell",
-    featured: false,
-    category: "engineering",
-  },
-  {
     id: 16,
     title: "Injection Mold Tool Design",
     description: "Two-cavity injection mold for automotive interior trim with conformal cooling, achieving 32-second cycle time and Class A surface quality.",

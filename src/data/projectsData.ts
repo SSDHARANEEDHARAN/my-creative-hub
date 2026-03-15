@@ -318,16 +318,6 @@ export const engineeringProjects: Project[] = [
     category: "engineering",
   },
   {
-    id: 105,
-    title: "Industrial Robot Cell Design",
-    description: "Complete robotic welding cell design using Siemens NX with robot path simulation, cycle time analysis, and safety zone planning.",
-    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
-    tags: ["Siemens NX", "Robotics", "Simulation", "Automation"],
-    articleUrl: "/projects/article/robot-cell-design",
-    featured: false,
-    category: "engineering",
-  },
-  {
     id: 106,
     title: "Injection Mold Tool Design",
     description: "Plastic injection mold design for automotive components with cooling channel optimization, flow analysis, and mold filling simulation.",
