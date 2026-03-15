@@ -2721,4 +2721,67 @@ Edge AI on microcontrollers is production-ready in 2026. The key is the optimiza
     category: "Technology",
     author,
   },
+  {
+    id: "cobot-trainer-atc-specs-2026",
+    title: "Cobot Trainer with ATC: 5kg Payload, 900mm Reach Industrial Training Platform",
+    excerpt: "A complete engineering breakdown of a didactic cobot trainer featuring 5kg payload, 900mm reach, 125kg system mass, 250V input supply, 24V operating voltage, and universal wiring connections.",
+    content: `## Introduction
+
+The **Cobot Trainer Kit with ATC** is a hands-on industrial robotics education platform designed to simulate real production workflows while staying safe and modular for technical training labs.
+
+## Core Mechanical & Electrical Specifications
+
+| Parameter | Value |
+|-----------|-------|
+| **Payload Capacity** | **5 kg** |
+| **Robot Reach** | **900 mm** |
+| **Total Product Weight** | **125 kg** |
+| **Input Supply** | **250V AC** |
+| **Operating Voltage** | **24V DC** |
+| **Wiring Interface** | **Universal wiring connections** |
+
+## System Architecture
+
+The platform combines a collaborative robot arm, an Automatic Tool Changer (ATC), and multi-gripper tooling stations for practical robotics learning.
+
+### Included Training Modules
+- **Automatic Tool Change sequencing** between end-effectors
+- **Workpiece handling** for varied geometry and material types
+- **Pneumatic + vacuum integration** for industrial automation practice
+- **Safety-first controls** with emergency stop and structured lab operation
+
+## Why These Specs Matter in Training
+
+### 1. 5kg Payload
+A 5kg payload gives enough capacity for realistic parts and fixtures while keeping motion safe for educational environments.
+
+### 2. 900mm Reach
+A 900mm reach provides practical workspace coverage for pick-place, transfer, and multi-station tool-change demonstrations.
+
+### 3. 125kg Platform Mass
+The 125kg structural mass improves rigidity and vibration stability, which helps repeatability during teaching and validation cycles.
+
+### 4. 250V Input + 24V Operating Voltage
+This split power architecture mirrors industrial practice: higher-voltage input for cabinet-level distribution and 24V control circuits for actuators, sensors, and IO.
+
+### 5. Universal Wiring Connections
+Universal wiring interfaces make the trainer extensible for future add-ons such as PLC integration, HMI panels, and Industry 4.0 monitoring modules.
+
+## Applications in Technical Education
+
+- Collaborative robot programming practice
+- End-effector selection and changeover logic
+- Industrial wiring and panel understanding
+- Pneumatic circuit and vacuum handling fundamentals
+- Flexible manufacturing cell simulation
+
+## Conclusion
+
+With its **5kg payload, 900mm reach, 125kg mechanical base, 250V input supply, 24V operating system, and universal wiring connectivity**, this Cobot Trainer Kit serves as a high-value bridge between classroom learning and real factory automation engineering.`,
+    image: "/images/cobot-blog-hero.jpg",
+    date: "Mar 15, 2026",
+    readTime: "8 min read",
+    category: "Engineering",
+    author,
+  },
 ];

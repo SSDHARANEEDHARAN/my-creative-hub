@@ -1239,7 +1239,8 @@ export const articleContents: ArticleContent[] = [
       "Proper pneumatic circuit design is critical for reliable industrial automation",
       "Precision mechanical alignment directly impacts robot teaching accuracy and repeatability",
       "Gripper selection based on workpiece characteristics is a fundamental industrial robotics skill"
-    ]
+    ],
+    conclusionVideoUrl: "/videos/cobot-trainer-demo.mp4"
   },
 ];
 
