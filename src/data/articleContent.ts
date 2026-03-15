@@ -603,45 +603,6 @@ export const articleContents: ArticleContent[] = [
     lessons: ["User adoption is critical - invest heavily in training and change management", "Start with core functionality before adding advanced features", "Executive sponsorship is essential for enterprise system implementation"]
   },
   {
-    id: 105,
-    slug: "robot-cell-design",
-    title: "Industrial Robot Cell Design",
-    subtitle: "Robotic welding cell with path simulation and safety planning",
-    duration: "10 weeks",
-    client: "Automotive Body Shop - Hyundai MOBIS",
-    role: "Automation Engineer",
-    industry: "Automotive Assembly",
-    teamSize: "5 Engineers",
-    overview: "Designed a complete robotic welding cell using Siemens NX including robot selection, fixture design, weld gun specification, and safety system layout. The project included robot path programming and cycle time validation through offline simulation. This cell was part of a new model launch requiring 47 JPH (jobs per hour) production rate.",
-    challenge: "The cell needed to perform 45 spot welds on an automotive body-in-white panel within 55-second cycle time. Limited floor space of 6m x 4m required compact layout while maintaining operator access for part loading. Safety systems had to comply with ISO 10218 and RIA standards. Integration with existing PLC architecture using Siemens S7-1500 was required.",
-    solution: "Used Siemens NX for 3D cell layout with integrated Robcad simulation module. Optimized robot paths for minimum cycle time while avoiding collisions with 50mm safety margin. Designed custom weld fixtures with quick-change capability for model variants. Specified safety scanners and light curtains for compliant human-robot collaboration zones.",
-    process: [
-      { title: "Cell Layout", content: "Created 8 layout concepts exploring different robot positions and fixture orientations. Evaluated each for reach, cycle time, and operator ergonomics. Selected optimal configuration achieving 52s cycle time." },
-      { title: "Robot Selection", content: "Evaluated 5 robot models from ABB, FANUC, and KUKA based on reach envelope, payload capacity (weld gun weight: 85kg), and weld gun compatibility. Selected FANUC R-2000iC/165F." },
-      { title: "Fixture Design", content: "Designed pneumatic fixtures with 12 locating pins and 8 clamps. Included sensors for part presence detection and clamp confirmation." },
-      { title: "Path Programming", content: "Developed robot programs for all 45 weld points with optimized travel paths. Programmed 3 weld schedules for different material stackups." },
-      { title: "Simulation", content: "Validated cycle time of 52 seconds through Robcad simulation. Verified collision-free operation with dynamic interference checking." },
-      { title: "Safety Planning", content: "Designed safety system layout with 2 SICK microScan3 scanners, light curtains, and safety PLC integration. Conducted risk assessment per ISO 12100." }
-    ],
-    results: [
-      "Achieved 52-second cycle time, 5% better than 55s target",
-      "Compact cell layout within 6m x 4m footprint as required",
-      "Zero collision paths verified through 100 hours of simulation testing",
-      "Safety system design approved by TÜV third-party auditor",
-      "Cell commissioned on schedule for new model launch",
-      "Production achieved 98% uptime in first month"
-    ],
-    technologies: ["Siemens NX 2206", "Robcad", "Robot Simulation", "Path Planning", "Safety Systems", "FANUC Welding"],
-    toolsUsed: ["NX Mechatronics Concept Designer", "Robcad", "FANUC Roboguide", "SICK Safety Designer", "TIA Portal"],
-    keyMetrics: [
-      { value: "52s", label: "Cycle Time" },
-      { value: "45", label: "Weld Points" },
-      { value: "24m²", label: "Cell Footprint" },
-      { value: "98%", label: "Uptime Achieved" }
-    ],
-    lessons: ["Simulation-first approach prevents costly field modifications estimated at $50K savings", "Early safety planning avoids compliance issues and project delays", "Fixture design should be developed in parallel with robot programming"]
-  },
-  {
     id: 106,
     slug: "injection-mold-design",
     title: "Injection Mold Tool Design",
