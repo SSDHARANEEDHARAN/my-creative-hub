@@ -519,7 +519,7 @@ const ArticlePage = memo(() => {
                     onDownloaded={refreshProjectDownloads}
                   />
                 </div>
-              ) : project?.liveUrl ? (
+              ) : project ? (
                 <div 
                   className="mt-8 sm:mt-12 p-4 sm:p-6 md:p-8 bg-secondary/30 border border-border"
                   style={{
@@ -529,21 +529,37 @@ const ArticlePage = memo(() => {
                     transitionDelay: '850ms'
                   }}
                 >
-                  <h3 className="font-display text-xl font-bold mb-3">Try It Live</h3>
-                  <p className="text-muted-foreground mb-6 text-sm">
-                    Experience the project in action — visit the live site and explore all features.
-                  </p>
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-                  >
-                    <ExternalLink size={18} />
-                    View Live Site
-                  </a>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                      <h3 className="font-display text-xl font-bold mb-3">Download Project Files</h3>
+                      <p className="text-muted-foreground mb-4 sm:mb-0 text-sm">
+                        Get the full case study as PDF with all project images included.
+                      </p>
+                    </div>
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors shrink-0"
+                      >
+                        <ExternalLink size={18} />
+                        View Live Site
+                      </a>
+                    )}
+                  </div>
+                  <div className="mt-4">
+                    <ProjectDownloadDialog
+                      projectId={project.id}
+                      projectTitle={project.title}
+                      projectDescription={project.description}
+                      tags={project.tags}
+                      images={project.images}
+                      downloadCount={projectDownloadCount}
+                      onDownloaded={refreshProjectDownloads}
+                    />
+                  </div>
                 </div>
-              ) : null}
 
               {/* Comments Section */}
               {project && (
