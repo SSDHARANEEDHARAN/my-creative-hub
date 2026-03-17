@@ -11,11 +11,35 @@ interface ProjectDownloadDialogProps {
   projectTitle: string;
   projectDescription: string;
   tags: string[];
+  images?: string[];
   downloadCount: number;
   onDownloaded?: () => void;
 }
 
-const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, downloadCount, onDownloaded }: ProjectDownloadDialogProps) => {
+const loadImageAsBase64 = (src: string): Promise<{ data: string; width: number; height: number } | null> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const maxW = 800;
+      const scale = Math.min(1, maxW / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) { resolve(null); return; }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      try {
+        const data = canvas.toDataURL("image/jpeg", 0.75);
+        resolve({ data, width: canvas.width, height: canvas.height });
+      } catch { resolve(null); }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+};
+
+const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, onDownloaded }: ProjectDownloadDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -29,7 +53,6 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         const margin = 22;
         const contentWidth = pageWidth - margin * 2;
 
-        // ─── Watermark ───
         const addWatermark = (d: jsPDF) => {
           d.saveGraphicsState();
           const cx = pageWidth / 2;
@@ -66,7 +89,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         // ═══ COVER PAGE ═══
         doc.setFillColor(18, 18, 18);
         doc.rect(0, 0, pageWidth, 95, "F");
-        doc.setFillColor(34, 197, 94); // Green accent for engineering
+        doc.setFillColor(34, 197, 94);
         doc.rect(0, 95, pageWidth, 3, "F");
 
         doc.setTextColor(255, 255, 255);
@@ -92,7 +115,6 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
 
         addWatermark(doc);
 
-        // Tech stack badges area
         let y = 110;
         doc.setFontSize(10);
         doc.setFont("helvetica", "normal");
@@ -122,7 +144,6 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
           }
 
           y += 4;
-          // Section number badge (green for engineering)
           doc.setFillColor(34, 197, 94);
           doc.roundedRect(margin, y - 5, 10, 7, 1, 1, "F");
           doc.setFontSize(8);
@@ -142,7 +163,6 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
           doc.setLineWidth(0.2);
           y += 6;
 
-          // Content with bullet support
           const cLines = section.content.split("\n");
           for (const cl of cLines) {
             const trimmed = cl.trim();
@@ -183,6 +203,74 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         }
 
         addFooter(doc, doc.getNumberOfPages());
+
+        // ═══ IMAGE GALLERY PAGES ═══
+        if (images && images.length > 0) {
+          doc.addPage();
+          addWatermark(doc);
+          
+          // Gallery title
+          doc.setFillColor(18, 18, 18);
+          doc.rect(0, 0, pageWidth, 30, "F");
+          doc.setFillColor(34, 197, 94);
+          doc.rect(0, 30, pageWidth, 2, "F");
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(18);
+          doc.setFont("helvetica", "bold");
+          doc.text("Project Gallery", margin, 20);
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(180, 180, 180);
+          doc.text(`${images.length} images`, pageWidth - margin, 20, { align: "right" });
+
+          let imgY = 40;
+          const imgWidth = (contentWidth - 6) / 2; // 2 images per row
+          const imgHeight = imgWidth * 0.65; // aspect ratio
+          let col = 0;
+
+          // Load all images
+          const loadedImages: ({ data: string; width: number; height: number } | null)[] = [];
+          for (const imgSrc of images.slice(0, 20)) { // Max 20 images
+            const loaded = await loadImageAsBase64(imgSrc);
+            loadedImages.push(loaded);
+          }
+
+          for (let i = 0; i < loadedImages.length; i++) {
+            const loaded = loadedImages[i];
+            if (!loaded) continue;
+
+            const xPos = margin + col * (imgWidth + 6);
+
+            if (imgY + imgHeight > pageHeight - 25) {
+              addFooter(doc, doc.getNumberOfPages());
+              doc.addPage();
+              addWatermark(doc);
+              imgY = 25;
+              col = 0;
+            }
+
+            // Image border
+            doc.setDrawColor(220, 220, 220);
+            doc.setLineWidth(0.3);
+            doc.roundedRect(xPos - 1, imgY - 1, imgWidth + 2, imgHeight + 2, 2, 2, "S");
+
+            doc.addImage(loaded.data, "JPEG", xPos, imgY, imgWidth, imgHeight);
+
+            // Caption
+            doc.setFontSize(7);
+            doc.setFont("helvetica", "normal");
+            doc.setTextColor(140, 140, 140);
+            doc.text(`Image ${i + 1}`, xPos + imgWidth / 2, imgY + imgHeight + 5, { align: "center" });
+
+            col++;
+            if (col >= 2) {
+              col = 0;
+              imgY += imgHeight + 12;
+            }
+          }
+
+          addFooter(doc, doc.getNumberOfPages());
+        }
 
         // ─── End page ───
         doc.addPage();
@@ -296,7 +384,7 @@ END-ISO-10303-21;`;
               </div>
               <div>
                 <p className="font-semibold text-foreground group-hover:text-primary transition-colors">PDF Document</p>
-                <p className="text-sm text-muted-foreground">Case study with drawings & specifications</p>
+                <p className="text-sm text-muted-foreground">Case study with images, drawings & specifications</p>
               </div>
             </button>
 
@@ -316,7 +404,7 @@ END-ISO-10303-21;`;
           </div>
 
           {isDownloading && (
-            <p className="text-sm text-muted-foreground text-center mt-2">Preparing download...</p>
+            <p className="text-sm text-muted-foreground text-center mt-2">Preparing download with images...</p>
           )}
         </DialogContent>
       </Dialog>

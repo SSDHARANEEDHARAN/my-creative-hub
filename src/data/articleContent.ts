@@ -28,6 +28,7 @@ export interface ArticleContent {
   teamSize?: string;
   industry?: string;
   conclusionVideoUrl?: string;
+  conclusionVideoUrls?: string[];
 }
 
 export const articleContents: ArticleContent[] = [
