@@ -560,6 +560,7 @@ const ArticlePage = memo(() => {
                     />
                   </div>
                 </div>
+              ) : null}
 
               {/* Comments Section */}
               {project && (
