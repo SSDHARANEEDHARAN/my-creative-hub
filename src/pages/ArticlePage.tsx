@@ -514,6 +514,7 @@ const ArticlePage = memo(() => {
                     projectTitle={project?.title || article.title}
                     projectDescription={project?.description || article.overview}
                     tags={project?.tags || article.technologies || []}
+                    images={project?.images}
                     downloadCount={projectDownloadCount}
                     onDownloaded={refreshProjectDownloads}
                   />
