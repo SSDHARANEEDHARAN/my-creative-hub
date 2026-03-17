@@ -314,16 +314,6 @@ const engineeringProjects: Project[] = [
     category: "engineering",
   },
   {
-    id: 12,
-    title: "Production Line Simulation",
-    description: "FlexSim simulation of automotive assembly line for bottleneck identification, throughput optimization achieving 22% improvement, and resource utilization analysis.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
-    tags: ["FlexSim", "Simulation", "Lean Manufacturing", "Six Sigma"],
-    articleUrl: "/projects/article/production-line-simulation",
-    featured: true,
-    category: "engineering",
-  },
-  {
     id: 13,
     title: "PTC Windchill PLM Implementation",
     description: "Enterprise PLM deployment for 500+ users across 8 sites with CAD integration, workflow automation, and engineering change management for L&T.",
