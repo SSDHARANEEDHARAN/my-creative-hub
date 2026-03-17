@@ -453,8 +453,8 @@ const ArticlePage = memo(() => {
                 </div>
               </div>
 
-              {/* Conclusion Video */}
-              {article.conclusionVideoUrl && (
+              {/* Conclusion Videos */}
+              {(article.conclusionVideoUrls?.length || article.conclusionVideoUrl) && (
                 <div 
                   className="mt-12"
                   style={{
@@ -465,16 +465,33 @@ const ArticlePage = memo(() => {
                   }}
                 >
                   <h2 className="font-display text-2xl font-bold mb-6">Project Demo Video</h2>
-                  <div className="rounded-xl overflow-hidden border border-border">
-                    <video
-                      src={article.conclusionVideoUrl}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full aspect-video object-cover"
-                    />
-                  </div>
+                  {article.conclusionVideoUrls && article.conclusionVideoUrls.length > 0 ? (
+                    <div className={`grid gap-4 ${article.conclusionVideoUrls.length >= 2 ? 'md:grid-cols-2' : ''}`}>
+                      {article.conclusionVideoUrls.map((videoUrl, idx) => (
+                        <div key={idx} className="rounded-xl overflow-hidden border border-border">
+                          <video
+                            src={videoUrl}
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="w-full aspect-video object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : article.conclusionVideoUrl ? (
+                    <div className="rounded-xl overflow-hidden border border-border">
+                      <video
+                        src={article.conclusionVideoUrl}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full aspect-video object-cover"
+                      />
+                    </div>
+                  ) : null}
                 </div>
               )}
 
