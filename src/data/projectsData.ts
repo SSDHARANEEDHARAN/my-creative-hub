@@ -45,6 +45,7 @@ import perfectHomes3 from "@/assets/projects/perfect-homes-3.png";
 import perfectHomes4 from "@/assets/projects/perfect-homes-4.png";
 import perfectHomes5 from "@/assets/projects/perfect-homes-5.png";
 import cadAutomotiveImg from "@/assets/project-cad-automotive.jpg";
+import cadAutomotiveAiImg from "@/assets/project-cad-automotive-ai.png";
 import flexsimImg from "@/assets/project-flexsim.jpg";
 import creoImg from "@/assets/project-creo.jpg";
 import plmImg from "@/assets/project-plm.jpg";
@@ -157,6 +158,12 @@ import cobotTrainer42 from "@/assets/projects/cobot-trainer-42.jpg";
 import cobotTrainer43 from "@/assets/projects/cobot-trainer-43.jpg";
 import cobotTrainer44 from "@/assets/projects/cobot-trainer-44.jpg";
 import cobotTrainer45 from "@/assets/projects/cobot-trainer-45.jpg";
+import knifeEdge1 from "@/assets/projects/knife-edge-conveyor-1.png";
+import knifeEdge2 from "@/assets/projects/knife-edge-conveyor-2.png";
+import knifeEdge3 from "@/assets/projects/knife-edge-conveyor-3.png";
+import knifeEdge4 from "@/assets/projects/knife-edge-conveyor-4.png";
+import knifeEdge5 from "@/assets/projects/knife-edge-conveyor-5.png";
+import knifeEdge6 from "@/assets/projects/knife-edge-conveyor-6.png";
 
 export interface Project {
   id: number;
@@ -275,16 +282,36 @@ export const itProjects: Project[] = [
   },
 ];
 
-// Engineering Projects (20 projects)
+// Engineering Projects
 export const engineeringProjects: Project[] = [
   {
-    id: 101,
-    title: "Automotive Engine Block Design",
-    description: "Complete 3D CAD design of a 4-cylinder engine block using SolidWorks with FEA thermal analysis, stress simulation, and manufacturing-ready drawings.",
-    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
-    tags: ["SolidWorks", "FEA", "CAD", "Thermal Analysis"],
-    articleUrl: "/projects/article/automotive-engine-block",
+    id: 122,
+    title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
+    description: "Industrial robotics training platform with collaborative robot arm, Automatic Tool Changer, multi-gripper system (DH Mechanical, Pneumatic, Vacuum), and modular workpiece stations for Industry 4.0 education.",
+    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7, cobotTrainer11, cobotTrainer12, cobotTrainer13, cobotTrainer14, cobotTrainer15, cobotTrainer16, cobotTrainer26, cobotTrainer27, cobotTrainer28, cobotTrainer29, cobotTrainer30, cobotTrainer31, cobotTrainer32, cobotTrainer33, cobotTrainer34, cobotTrainer35, cobotTrainer36, cobotTrainer37, cobotTrainer38, cobotTrainer39, cobotTrainer40, cobotTrainer41, cobotTrainer42, cobotTrainer43, cobotTrainer44, cobotTrainer45],
+    tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
+    articleUrl: "/projects/article/cobot-trainer-kit-atc",
     featured: true,
+    category: "engineering",
+  },
+  {
+    id: 123,
+    title: "Compact Knife Edge Belt Conveyor",
+    description: "Precision knife-edge belt conveyor system for small product transfer with minimal gap, featuring adjustable speed control and compact aluminum frame design.",
+    images: [knifeEdge1, knifeEdge2, knifeEdge3, knifeEdge4, knifeEdge5, knifeEdge6],
+    tags: ["Mechanical Design", "Conveyor Systems", "Belt Drive", "Industrial Automation"],
+    articleUrl: "/projects/article/knife-edge-belt-conveyor",
+    featured: true,
+    category: "engineering",
+  },
+  {
+    id: 101,
+    title: "Coming Soon",
+    description: "Projects are updating coming soon new project stay tuned to watch",
+    images: [],
+    tags: ["Upcoming"],
+    articleUrl: "/projects/article/automotive-engine-block",
+    featured: false,
     category: "engineering",
   },
   {
@@ -294,66 +321,6 @@ export const engineeringProjects: Project[] = [
     images: [flexsimImg, cadAutomotiveImg, plmImg, creoImg, analyticsImg],
     tags: ["FlexSim", "Simulation", "Lean Manufacturing", "Analysis"],
     articleUrl: "/projects/article/manufacturing-line-simulation",
-    featured: true,
-    category: "engineering",
-  },
-  {
-    id: 103,
-    title: "Gearbox Assembly Design",
-    description: "Complex 6-speed gearbox assembly design using PTC Creo with motion analysis, interference checks, and exploded view documentation.",
-    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
-    tags: ["PTC Creo", "Assembly", "Motion Analysis", "GD&T"],
-    articleUrl: "/projects/article/gearbox-assembly",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 104,
-    title: "PLM Implementation Project",
-    description: "PTC Windchill implementation for enterprise product lifecycle management including document control, workflow automation, and BOM management.",
-    images: [plmImg, creoImg, cadAutomotiveImg, flexsimImg, analyticsImg],
-    tags: ["Windchill", "PLM", "Workflow", "BOM Management"],
-    articleUrl: "/projects/article/plm-implementation",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 106,
-    title: "Injection Mold Tool Design",
-    description: "Plastic injection mold design for automotive components with cooling channel optimization, flow analysis, and mold filling simulation.",
-    images: [creoImg, cadAutomotiveImg, plmImg, flexsimImg, analyticsImg],
-    tags: ["SolidWorks", "Mold Design", "CFD", "Plastics"],
-    articleUrl: "/projects/article/injection-mold-design",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 107,
-    title: "Warehouse Layout Optimization",
-    description: "FlexSim-based warehouse simulation for layout optimization, pick path analysis, and material handling equipment selection.",
-    images: [flexsimImg, plmImg, cadAutomotiveImg, creoImg, analyticsImg],
-    tags: ["FlexSim", "Warehouse", "Logistics", "Optimization"],
-    articleUrl: "/projects/article/warehouse-optimization",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 108,
-    title: "Sheet Metal Enclosure Design",
-    description: "Industrial equipment enclosure design with sheet metal features, bend allowance calculations, and flat pattern development.",
-    images: [cadAutomotiveImg, creoImg, plmImg, flexsimImg, analyticsImg],
-    tags: ["SolidWorks", "Sheet Metal", "DFM", "Manufacturing"],
-    articleUrl: "/projects/article/sheet-metal-enclosure",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 109,
-    title: "Conveyor System Design",
-    description: "Modular conveyor system design for packaging line with motor sizing, structure analysis, and integration documentation.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
-    tags: ["Siemens NX", "Conveyors", "Mechanical Design"],
-    articleUrl: "/projects/article/conveyor-system",
     featured: false,
     category: "engineering",
   },
@@ -465,16 +432,6 @@ export const engineeringProjects: Project[] = [
     tags: ["Arduino", "Embedded Systems", "Ultrasonic Sensor", "Robotics"],
     articleUrl: "/projects/article/maze-navigation-robot",
     featured: false,
-    category: "engineering",
-  },
-  {
-    id: 122,
-    title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
-    description: "Industrial robotics training platform with collaborative robot arm, Automatic Tool Changer, multi-gripper system (DH Mechanical, Pneumatic, Vacuum), and modular workpiece stations for Industry 4.0 education.",
-    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7, cobotTrainer11, cobotTrainer12, cobotTrainer13, cobotTrainer14, cobotTrainer15, cobotTrainer16, cobotTrainer26, cobotTrainer27, cobotTrainer28, cobotTrainer29, cobotTrainer30, cobotTrainer31, cobotTrainer32, cobotTrainer33, cobotTrainer34, cobotTrainer35, cobotTrainer36, cobotTrainer37, cobotTrainer38, cobotTrainer39, cobotTrainer40, cobotTrainer41, cobotTrainer42, cobotTrainer43, cobotTrainer44, cobotTrainer45],
-    tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
-    articleUrl: "/projects/article/cobot-trainer-kit-atc",
-    featured: true,
     category: "engineering",
   },
 ];

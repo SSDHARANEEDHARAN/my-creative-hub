@@ -9,14 +9,13 @@ const itSkills = [
   { name: "Python", level: 85 },
   { name: "Embedded Systems", level: 80 },
   { name: "Web Development", level: 88 },
-  { name: "App Development", level: 82 },
   { name: "ROS 2", level: 75 },
 ];
 
 const nonItSkills = [
   { name: "SolidWorks", level: 92 },
   { name: "FlexSim", level: 88 },
-  { name: "Siemens NX", level: 85 },
+  { name: "Siemens NX (Learning in)", level: 85 },
   { name: "PTC Creo", level: 87 },
   { name: "PTC Windchill", level: 83 },
 ];
@@ -144,18 +143,18 @@ const SkillsPage = () => {
                 </p>
               </div>
 
-              {/* IT Skills Section */}
+              {/* Non-IT Skills Section */}
               <div className="mb-12 sm:mb-20 max-w-5xl mx-auto">
                 <div className="flex items-center justify-center gap-3 mb-6 sm:mb-10">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-foreground flex items-center justify-center">
-                    <Cpu className="text-background" size={20} />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted-foreground flex items-center justify-center">
+                    <Cog className="text-background" size={20} />
                   </div>
-                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">IT & Software Development</h2>
+                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">Engineering & CAD Tools</h2>
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
                   <div className="space-y-5 sm:space-y-6 w-full">
-                    {itSkills.map((skill, index) => (
+                    {nonItSkills.map((skill, index) => (
                       <SkillBar key={skill.name} skill={skill} index={index} isVisible={isVisible} delayOffset={100} />
                     ))}
                   </div>
@@ -163,7 +162,7 @@ const SkillsPage = () => {
                   <div className="w-full">
                     <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground text-center md:text-left">Related Technologies</h4>
                     <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
-                      {itTechnologies.map((tech, index) => (
+                      {nonItTechnologies.map((tech, index) => (
                         <TechTag 
                           key={tech} 
                           tech={tech} 
@@ -177,18 +176,18 @@ const SkillsPage = () => {
                 </div>
               </div>
 
-              {/* Non-IT Skills Section */}
+              {/* IT Skills Section */}
               <div className="max-w-5xl mx-auto">
                 <div className="flex items-center justify-center gap-3 mb-6 sm:mb-10">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted-foreground flex items-center justify-center">
-                    <Cog className="text-background" size={20} />
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-foreground flex items-center justify-center">
+                    <Cpu className="text-background" size={20} />
                   </div>
-                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">Engineering & CAD Tools</h2>
+                  <h2 className="font-display text-lg sm:text-xl md:text-2xl font-bold">IT & Software Development</h2>
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
                   <div className="space-y-5 sm:space-y-6 w-full">
-                    {nonItSkills.map((skill, index) => (
+                    {itSkills.map((skill, index) => (
                       <SkillBar key={skill.name} skill={skill} index={index} isVisible={isVisible} delayOffset={500} />
                     ))}
                   </div>
@@ -196,7 +195,7 @@ const SkillsPage = () => {
                   <div className="w-full">
                     <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground text-center md:text-left">Related Technologies</h4>
                     <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start">
-                      {nonItTechnologies.map((tech, index) => (
+                      {itTechnologies.map((tech, index) => (
                         <TechTag 
                           key={tech} 
                           tech={tech} 

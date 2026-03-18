@@ -4,8 +4,8 @@ export interface ArticleSection {
 }
 
 export interface KeyMetric {
-  value: string;
-  label: string;
+  value: string | number;
+  label: string | number;
 }
 
 export interface ArticleContent {
@@ -450,41 +450,28 @@ export const articleContents: ArticleContent[] = [
   {
     id: 101,
     slug: "automotive-engine-block",
-    title: "Automotive Engine Block Design",
-    subtitle: "Complete 3D CAD design with thermal and structural analysis",
-    duration: "8 weeks",
-    client: "Automotive OEM - Mahindra & Mahindra",
-    role: "Lead CAD Designer",
-    industry: "Automotive Manufacturing",
-    teamSize: "4 Engineers",
-    overview: "This comprehensive project involved the complete 3D CAD design of a 4-cylinder inline engine block for a mid-size sedan application. The design process included extensive FEA thermal analysis to optimize cooling jacket geometry and stress simulation to ensure structural integrity under extreme operating conditions. Working closely with the powertrain team, we developed a next-generation engine block that reduced weight by 18% while improving thermal efficiency.",
-    challenge: "The main challenge was designing an engine block that could withstand thermal stresses up to 150°C while maintaining precise cylinder bore geometry within 0.02mm tolerance. Additionally, weight reduction targets of 15% compared to the previous generation required innovative ribbing patterns and material optimization. The project also faced tight timeline constraints as the new platform launch was scheduled for Q4 2024. Integration with existing manufacturing processes was crucial, requiring careful consideration of casting and machining capabilities at the Pune plant.",
-    solution: "Utilized SolidWorks for parametric 3D modeling with integrated simulation tools. Implemented topology optimization for weight reduction while maintaining structural requirements. Created comprehensive manufacturing drawings with GD&T specifications for casting and machining processes. Collaborated with the foundry team to optimize casting ribs and ensure proper molten metal flow during the die-casting process. Developed multiple design iterations using DOE (Design of Experiments) methodology to find the optimal configuration.",
+    title: "Coming Soon",
+    subtitle: "Projects are updating coming soon new project stay tuned to watch",
+    duration: "Coming Soon",
+    client: "Coming Soon",
+    role: "Coming Soon",
+    industry: "Coming Soon",
+    teamSize: "Coming Soon",
+    overview: "Projects are updating coming soon new project stay tuned to watch. Please stay tuned for our upcoming engineering designs and technical case studies.",
+    challenge: "This section will be updated soon with new project details.",
+    solution: "New and innovative engineering solutions will be showcased here in the near future.",
     process: [
-      { title: "Requirements Analysis", content: "Gathered performance specifications including 120kW power output, 240Nm torque, packaging constraints from the chassis team, and manufacturing requirements from the production engineering department. Documented 47 critical requirements in the PRD document." },
-      { title: "Concept Development", content: "Created 5 concept designs exploring different cooling jacket configurations and structural ribbing patterns. Evaluated each concept against the requirements matrix using QFD methodology. Selected the most promising concept based on weighted scoring." },
-      { title: "Detailed Design", content: "Developed the final 3D model with all 126 features including bolt bosses, oil galleries, water jackets, main bearing housings, and mounting interfaces. Created parametric relationships for easy design optimization." },
-      { title: "FEA Validation", content: "Performed thermal FEA simulations under 15 different operating conditions. Conducted structural analysis for main bearing cap loads, cylinder pressure loads, and bolt pretension. Validated fatigue life prediction for 500,000 km target." },
-      { title: "Design Review", content: "Conducted DFMEA with cross-functional team identifying 23 potential failure modes. Implemented design changes for 8 high-risk items. Achieved sign-off from quality and manufacturing teams." },
-      { title: "Drawing Package", content: "Created 45 manufacturing drawings with GD&T specifications compliant with ASME Y14.5-2018 standard. Included casting drawings, machining drawings, and assembly drawings with torque specifications." }
+      { title: "Update in Progress", content: "We are currently preparing new technical content for this section." }
     ],
     results: [
-      "Achieved 18% weight reduction compared to previous design (from 28kg to 23kg)",
-      "Thermal analysis confirmed maximum temperature of 142°C within safe limits with 8°C margin",
-      "Stress analysis showed factor of safety >2.5 for all operating conditions",
-      "Reduced number of machining operations by 15% through DFM optimization",
-      "Design approved for prototype casting and testing - prototype delivered on schedule",
-      "Zero design changes required during prototype validation phase"
+      "New results and achievements will be posted soon."
     ],
-    technologies: ["SolidWorks 2023", "ANSYS Mechanical", "Thermal Analysis", "GD&T", "Technical Drawing", "DFMEA"],
-    toolsUsed: ["SolidWorks Premium", "ANSYS Workbench 2023", "Teamcenter PLM", "CATIA V5 (for legacy data)", "Minitab"],
+    technologies: ["Engineering", "Design", "Innovation"],
+    toolsUsed: ["CAD", "Analysis", "Simulation"],
     keyMetrics: [
-      { value: "18%", label: "Weight Reduction" },
-      { value: "142°C", label: "Max Temperature" },
-      { value: "2.5+", label: "Safety Factor" },
-      { value: "45", label: "Drawings Created" }
+      { value: "0", label: "Progress" }
     ],
-    lessons: ["Early integration of manufacturing constraints significantly reduces design iterations", "Parametric modeling enables rapid design optimization cycles", "Cross-functional DFMEA sessions catch issues early in design phase"]
+    lessons: ["Stay tuned for more updates!"]
   },
   {
     id: 102,
@@ -526,239 +513,6 @@ export const articleContents: ArticleContent[] = [
     lessons: ["Accurate input data is crucial for reliable simulation results - garbage in, garbage out", "Involving operators in data collection improves model accuracy and acceptance", "Simple buffer optimization often delivers better ROI than new equipment"]
   },
   {
-    id: 103,
-    slug: "gearbox-assembly",
-    title: "Gearbox Assembly Design",
-    subtitle: "6-speed manual transmission with complete motion analysis",
-    duration: "12 weeks",
-    client: "Transmission Manufacturer - Aisin India",
-    role: "Design Engineer",
-    industry: "Automotive Drivetrain",
-    teamSize: "6 Engineers",
-    overview: "Designed a complete 6-speed manual gearbox assembly using PTC Creo, including all gears, shafts, bearings, and housing components. The project included motion analysis to validate gear engagement and interference checking for assembly feasibility. This transmission was developed for a compact SUV platform requiring high torque capacity in a compact package.",
-    challenge: "The gearbox needed to handle 400 Nm torque while fitting within a tight packaging envelope of 420mm x 280mm x 350mm. Synchronizer design required precise motion analysis to ensure smooth shifting feel under cold start conditions (-20°C). Assembly sequence had to accommodate automated production line constraints with robot handling limitations. NVH targets were aggressive, requiring gear micro-geometry optimization.",
-    solution: "Used PTC Creo's advanced assembly capabilities with motion analysis module for gear engagement simulation. Implemented GD&T stack-up analysis for critical tolerances using VSA software. Created detailed assembly instructions with exploded views for manufacturing. Collaborated with gear specialists to optimize micro-geometry for NVH performance.",
-    process: [
-      { title: "Gear Design", content: "Designed all 18 gears with proper involute profiles optimized using KISSsoft. Specified face widths, pressure angles, and surface hardness (58-62 HRC). Applied crowning and lead modifications for optimal load distribution." },
-      { title: "Shaft Design", content: "Created input, output, and countershaft designs with bearing journal specifications. Performed torsional vibration analysis and verified spline strength for 1.5x torque overload condition." },
-      { title: "Synchronizer Design", content: "Designed synchronizer cones, sleeves, and detent mechanisms. Analyzed shift effort and synchronization time across temperature range." },
-      { title: "Housing Design", content: "Designed split-line aluminum housing with mounting features, oil gallery routing, and breather provisions. Performed thermal analysis for oil temperature distribution." },
-      { title: "Motion Analysis", content: "Simulated synchronizer engagement and verified interference-free operation throughout shift sequence. Analyzed gear clash conditions and validated shift feel parameters." },
-      { title: "Documentation", content: "Created complete drawing package with 78 detail drawings and 12 assembly drawings. Included quality inspection criteria and assembly instructions with torque specifications." }
-    ],
-    results: [
-      "Assembly passed all interference checks in motion analysis with 0.5mm minimum clearance",
-      "Synchronizer engagement time optimized to 0.3 seconds (target: 0.4s)",
-      "Weight target achieved at 42kg complete assembly (2kg under target)",
-      "NVH performance exceeded targets by 3dB margin",
-      "Design released for prototype manufacturing",
-      "Zero design changes required during prototype testing"
-    ],
-    technologies: ["PTC Creo 9.0", "Motion Analysis", "GD&T", "Tolerance Stack-up", "Assembly Design", "KISSsoft"],
-    toolsUsed: ["PTC Creo Parametric", "PTC Creo Mechanism", "VSA-3D", "KISSsoft", "Windchill PDM"],
-    keyMetrics: [
-      { value: "400Nm", label: "Torque Capacity" },
-      { value: "42kg", label: "Assembly Weight" },
-      { value: "0.3s", label: "Shift Time" },
-      { value: "78", label: "Detail Drawings" }
-    ],
-    lessons: ["Motion analysis early in design prevents costly prototype failures", "Clear assembly documentation reduces manufacturing issues", "Cross-functional collaboration with gear specialists is essential for NVH optimization"]
-  },
-  {
-    id: 104,
-    slug: "plm-implementation",
-    title: "PLM Implementation Project",
-    subtitle: "Enterprise Windchill deployment for document and workflow management",
-    duration: "16 weeks",
-    client: "Manufacturing Enterprise - TVS Srichakra",
-    role: "PLM Consultant",
-    industry: "Tire Manufacturing",
-    teamSize: "8 Members",
-    overview: "Led the implementation of PTC Windchill PLM system for a mid-size manufacturing company. The project covered document control, engineering change management workflows, BOM management, and CAD data integration with PTC Creo. This digital transformation initiative was crucial for the company's quality management system upgrade and customer audit compliance.",
-    challenge: "The client had engineering data scattered across 15 file servers with no version control - over 50,000 files with duplicate and obsolete versions. Engineering changes were tracked manually in Excel spreadsheets leading to errors and delays averaging 15 days per ECO. Integration with SAP ERP system was required for BOM synchronization. The company had failed a customer audit due to document control deficiencies.",
-    solution: "Deployed Windchill PDMLink 12.0 with customized workflows for ECR/ECO process matching company procedures. Configured CAD workstation integration for seamless check-in/check-out with automatic revision control. Developed custom reports using Windchill Info*Engine for management visibility. Created comprehensive training program covering 5 user roles across 50+ users.",
-    process: [
-      { title: "Requirements Gathering", content: "Conducted 12 workshops with engineering, manufacturing, quality, and purchasing teams to document 156 functional requirements. Created process flow diagrams for all document types and change processes." },
-      { title: "System Configuration", content: "Configured Windchill organization structure with 3 contexts, 8 lifecycles, 12 workflows, and role-based access controls for 50+ users across 6 departments." },
-      { title: "Data Migration", content: "Migrated 50,000+ CAD files and documents with proper metadata mapping. Cleaned up duplicates, established folder structure, and assigned ownership for all legacy data." },
-      { title: "Integration Setup", content: "Configured Creo integration for 25 designer workstations. Developed custom SAP integration for BOM synchronization using TIBCO middleware." },
-      { title: "Customization", content: "Developed 8 custom reports, 3 dashboard widgets, and email notification templates for workflow events." },
-      { title: "Training & Go-Live", content: "Delivered role-based training over 10 sessions. Supported 4-week hypercare period after go-live with dedicated helpdesk." }
-    ],
-    results: [
-      "100% of engineering documents (50,000+) under version control",
-      "ECO cycle time reduced from 15 days to 5 days (67% reduction)",
-      "Eliminated 95% of BOM errors through automated sync with SAP",
-      "Successfully passed customer audit 6 weeks after go-live",
-      "50+ users trained and actively using system with 95% adoption rate",
-      "Document search time reduced from 30 minutes to 2 minutes average"
-    ],
-    technologies: ["PTC Windchill 12.0", "PLM", "Workflow Design", "Data Migration", "SAP Integration", "Info*Engine"],
-    toolsUsed: ["Windchill PDMLink", "PTC Creo", "SAP ECC", "TIBCO", "MS Project", "Jira"],
-    keyMetrics: [
-      { value: "50K+", label: "Documents Migrated" },
-      { value: "67%", label: "ECO Time Reduction" },
-      { value: "95%", label: "User Adoption" },
-      { value: "5 days", label: "Avg ECO Cycle" }
-    ],
-    lessons: ["User adoption is critical - invest heavily in training and change management", "Start with core functionality before adding advanced features", "Executive sponsorship is essential for enterprise system implementation"]
-  },
-  {
-    id: 106,
-    slug: "injection-mold-design",
-    title: "Injection Mold Tool Design",
-    subtitle: "Automotive interior component mold with optimized cooling",
-    duration: "8 weeks",
-    client: "Plastics Molder - Motherson Sumi Systems",
-    role: "Mold Designer",
-    industry: "Automotive Plastics",
-    teamSize: "3 Engineers",
-    overview: "Designed a two-cavity injection mold for an automotive interior trim component (instrument panel air vent bezel). The project included conformal cooling channel design, gate location optimization using flow analysis, and complete tool design with ejection system. The component had Class A visible surface requirements.",
-    challenge: "The part had complex geometry with wall thicknesses varying from 1.8mm to 3.5mm leading to potential warpage issues up to 2mm. Cycle time target of 35 seconds required efficient cooling. Part visible surface had Class A requirements with no witness marks, sink marks, or flow lines allowed in the customer-visible area.",
-    solution: "Used SolidWorks with Moldflow analysis for gate optimization and warpage prediction through 15 iterations. Designed conformal cooling channels using DMLS (Direct Metal Laser Sintering) inserts for hot spots. Specified appropriate steel grades (H13 for core, S136 for cavity) and surface finishes (SPI A-1) for Class A quality.",
-    process: [
-      { title: "Part Analysis", content: "Analyzed part geometry for moldability, draft angles (minimum 1.5°), and undercut features requiring 2 lifters. Identified 8 potential sink mark locations and 3 weld line concerns." },
-      { title: "Flow Analysis", content: "Performed 15 Moldflow iterations to optimize gate location (2 valve gates selected) and predict fill pattern. Achieved balanced fill within 0.2 seconds between cavities." },
-      { title: "Cooling Design", content: "Designed conformal cooling channels in cavity inserts achieving 15% faster cooling. Standard cooling for core side with baffles and bubblers." },
-      { title: "Tool Design", content: "Created complete mold design including P20 core and cavity blocks, ejection system with 24 pins, 2 hydraulic lifters, and DME mold base." },
-      { title: "Documentation", content: "Prepared 35 manufacturing drawings with machining tolerances and BOM for tool build. Included assembly sequence for mold shop." }
-    ],
-    results: [
-      "Achieved 32-second cycle time, 9% better than 35s target",
-      "Warpage reduced to 0.3mm within 0.5mm specification",
-      "Class A surface quality approved by OEM customer on first submission",
-      "Tool approved for production release with zero modifications",
-      "First article inspection passed all 45 dimensional checks",
-      "Tool life expected to exceed 500,000 shots"
-    ],
-    technologies: ["SolidWorks 2023", "Moldflow Insight", "Conformal Cooling", "Tool Design", "Plastics Engineering"],
-    toolsUsed: ["SolidWorks Premium", "Autodesk Moldflow Insight", "CATIA V5 (OEM data)", "GOM Inspect"],
-    keyMetrics: [
-      { value: "32s", label: "Cycle Time" },
-      { value: "0.3mm", label: "Max Warpage" },
-      { value: "2-cavity", label: "Mold Config" },
-      { value: "500K+", label: "Tool Life (shots)" }
-    ],
-    lessons: ["Conformal cooling significantly improves cycle time and quality - worth the extra cost for high-volume tools", "Flow analysis prevents costly mold modifications estimated at ₹25L savings", "Gate location is critical for Class A surface quality"]
-  },
-  {
-    id: 107,
-    slug: "warehouse-optimization",
-    title: "Warehouse Layout Optimization",
-    subtitle: "Distribution center simulation for 40% pick efficiency improvement",
-    duration: "5 weeks",
-    client: "E-commerce Fulfillment - Flipkart Logistics",
-    role: "Simulation Consultant",
-    industry: "E-commerce Logistics",
-    teamSize: "4 Engineers",
-    overview: "Developed FlexSim simulation of a 50,000 sq ft distribution center warehouse to optimize layout, slotting strategy, and pick path routing. The project analyzed current operations and proposed improvements for throughput increase to meet growing e-commerce demand during festive season peaks.",
-    challenge: "The warehouse was experiencing increasing order volumes (15,000 orders/day peak) with declining pick productivity (120 picks/hour vs. 180 target). Travel time accounted for 65% of picker time. SKU velocity analysis showed suboptimal slotting with fast movers scattered throughout the facility. Peak season was 8 weeks away requiring fast implementation.",
-    solution: "Built detailed FlexSim model of warehouse including all 12,000 rack locations, 6 pick zones, 4 pack stations, and conveyor system. Analyzed 90 days of order data (450,000 orders) to determine SKU velocity and order profiles. Simulated multiple layout configurations and slotting strategies to identify optimal design.",
-    process: [
-      { title: "Current State Mapping", content: "Documented existing layout with 3D scanning, pick paths, and operational procedures. Conducted time studies on 200 pick transactions." },
-      { title: "Data Analysis", content: "Analyzed 90 days of order data, SKU velocity patterns, and order characteristics. Identified that 20% of SKUs represented 80% of picks." },
-      { title: "Model Development", content: "Created FlexSim model with accurate rack locations, picker behavior algorithms, and order batching logic. Validated against 3 days of actual operations." },
-      { title: "Slotting Optimization", content: "Developed velocity-based slotting strategy placing A-movers in golden zone. Created zone-based picking strategy for wave planning." },
-      { title: "Layout Testing", content: "Tested 12 layout modifications and 8 slotting configurations through simulation." },
-      { title: "Implementation Plan", content: "Developed phased implementation plan executable over 3 weekends with minimal disruption." }
-    ],
-    results: [
-      "Pick productivity improved 40% from 120 to 168 picks per hour",
-      "Travel time reduced from 65% to 45% of picker time",
-      "Order throughput increased 35% with same headcount (25 pickers)",
-      "ROI achieved within 4 months of implementation (₹45L annual savings)",
-      "Peak season capacity increased to 22,000 orders/day",
-      "Customer complaints reduced 25% due to faster order processing"
-    ],
-    technologies: ["FlexSim 2023", "Warehouse Simulation", "Slotting Optimization", "Data Analysis", "WMS Integration"],
-    toolsUsed: ["FlexSim Professional", "Python (pandas, numpy)", "Power BI", "Excel Advanced Analytics", "WMS data exports"],
-    keyMetrics: [
-      { value: "40%", label: "Pick Rate Improvement" },
-      { value: "35%", label: "Throughput Increase" },
-      { value: "4mo", label: "ROI Period" },
-      { value: "₹45L", label: "Annual Savings" }
-    ],
-    lessons: ["SKU velocity analysis is foundational for warehouse optimization - Pareto principle applies strongly", "Simulation enables risk-free testing of layout changes before physical rearrangement", "Picker input during validation improves model accuracy and solution acceptance"]
-  },
-  {
-    id: 108,
-    slug: "sheet-metal-enclosure",
-    title: "Sheet Metal Enclosure Design",
-    subtitle: "IP65 industrial enclosure with optimized manufacturing",
-    duration: "4 weeks",
-    client: "Industrial Equipment OEM - Siemens India",
-    role: "Product Designer",
-    industry: "Industrial Electronics",
-    teamSize: "2 Engineers",
-    overview: "Designed an IP65-rated sheet metal enclosure for industrial VFD (Variable Frequency Drive) control equipment. The design included proper bend allowance calculations, sealing features, and DFM optimization for laser cutting and press brake forming. The enclosure houses 15kW drive electronics with significant heat dissipation requirements.",
-    challenge: "The enclosure needed IP65 protection while dissipating 450W of heat from internal electronics. Field serviceability required easy access to components without breaking IP sealing. Cost targets required design for single-setup fabrication on standard laser/brake equipment. EMC shielding was required to meet EN 61800-3 standards.",
-    solution: "Used SolidWorks sheet metal tools with accurate K-factor calculations for 2mm 304 stainless steel. Designed modular panels with captive hardware (PEM studs) for easy assembly. Specified appropriate sealing gaskets and IP68 cable glands for IP65 rating. Integrated forced air cooling with filtered intake and exhaust.",
-    process: [
-      { title: "Requirements", content: "Documented dimensional constraints (600x400x200mm), IP65 rating per IEC 60529, thermal requirements (450W dissipation at 45°C ambient), EMC requirements, and access needs for 4 service points." },
-      { title: "Concept Design", content: "Developed 3 enclosure concepts including welded construction, folded construction, and modular panel approach. Selected modular panel design for serviceability." },
-      { title: "Detailed Design", content: "Created detailed sheet metal models with 28 bend features, 45 hardware cutouts, and sealing provisions. Optimized bend sequence for manufacturing." },
-      { title: "Thermal Design", content: "Selected axial fans with 180 CFM capacity. Designed filtered intake louvers and exhaust provisions maintaining IP65 with IP68 filters." },
-      { title: "DFM Review", content: "Reviewed design with 3 fabrication vendors. Incorporated feedback on bend radii, cutout spacing, and welding access." },
-      { title: "Documentation", content: "Prepared flat patterns with bend sequence, assembly drawings with hardware BOM, and painting specifications for powder coating." }
-    ],
-    results: [
-      "IP65 rating verified through third-party testing (TÜV SÜD) first attempt",
-      "Fabrication cost 20% below target (₹4,200 vs ₹5,250 target) through DFM optimization",
-      "Assembly time reduced 40% with snap-fit features and captive hardware",
-      "Thermal testing confirmed electronics temperature 8°C below limit at 45°C ambient",
-      "EMC testing passed EN 61800-3 Category C2 limits",
-      "Design approved for production release - initial order 500 units"
-    ],
-    technologies: ["SolidWorks 2023", "Sheet Metal Design", "DFM", "IP Rating", "Thermal Management", "EMC Design"],
-    toolsUsed: ["SolidWorks Premium", "FloEFD (thermal)", "DraftSight (flat patterns)", "KeyShot (renders)"],
-    keyMetrics: [
-      { value: "IP65", label: "Protection Rating" },
-      { value: "450W", label: "Heat Dissipation" },
-      { value: "20%", label: "Cost Under Target" },
-      { value: "40%", label: "Assembly Time Reduction" }
-    ],
-    lessons: ["Early vendor engagement improves manufacturability and catches issues before tooling", "Modular design enables easier field service reducing total cost of ownership", "Thermal design must be considered from concept stage"]
-  },
-  {
-    id: 109,
-    slug: "conveyor-system",
-    title: "Conveyor System Design",
-    subtitle: "Modular packaging line conveyor with integrated controls",
-    duration: "7 weeks",
-    client: "Consumer Goods Manufacturer - Hindustan Unilever",
-    role: "Mechanical Designer",
-    industry: "FMCG Packaging",
-    teamSize: "4 Engineers",
-    overview: "Designed a modular conveyor system for a packaging line application handling personal care products. The project included structural analysis, motor sizing calculations, and integration documentation for controls and safety systems. The system spans 45 meters with 6 zones and handles 200 cartons per minute.",
-    challenge: "The conveyor system needed to handle product sizes ranging from 100mm to 500mm with quick changeover capability under 10 minutes. Variable speed requirements from 10 to 40 m/min demanded proper motor sizing with VFD control. Integration with existing MES system required precise zone tracking. The system had to meet hygiene standards for personal care products (stainless steel contact surfaces).",
-    solution: "Designed modular conveyor sections in Siemens NX for flexible configuration with 3 standard lengths. Performed motor and gearbox sizing calculations for all operating conditions including acceleration and product accumulation. Created detailed integration specifications for controls and safety interlocks compatible with existing Allen-Bradley PLC architecture.",
-    process: [
-      { title: "Layout Planning", content: "Developed conveyor routing to integrate with 4 packaging machines and 2 palletizers. Created 3D layout model showing all interfaces and clearances." },
-      { title: "Component Selection", content: "Selected modular belt type (Intralox S1600), drives (SEW-Eurodrive), and 304SS support structure for hygiene requirements." },
-      { title: "Structural Analysis", content: "Verified frame structure for product loading (max 50kg/m), conveyor tension, and seismic Zone III requirements using NX Nastran." },
-      { title: "Motor Sizing", content: "Calculated motor power (6 motors ranging 0.75kW to 2.2kW) and gearbox ratios for speed range. Included accumulation load calculations." },
-      { title: "Controls Design", content: "Developed electrical schematics, I/O list, and controls integration specifications for Allen-Bradley CompactLogix PLC." },
-      { title: "Integration Docs", content: "Created wiring diagrams, communication protocol specifications, and commissioning procedures." }
-    ],
-    results: [
-      "Modular design reduced installation time by 50% (3 days vs. 6 days estimated)",
-      "Quick changeover achieved in 8 minutes (target: 10 minutes)",
-      "Energy consumption 15% lower than specification through proper motor sizing",
-      "System commissioned on schedule with zero punch list items",
-      "Achieved 99.5% uptime in first 3 months of operation",
-      "Hygiene audit passed with zero observations"
-    ],
-    technologies: ["Siemens NX 2206", "Mechanical Design", "Motor Sizing", "Conveyor Systems", "Controls Integration"],
-    toolsUsed: ["Siemens NX", "NX Nastran", "AutoCAD Electrical", "SEW Workbench", "Intralox Layout Tool"],
-    keyMetrics: [
-      { value: "200", label: "Cartons/Minute" },
-      { value: "45m", label: "Total Length" },
-      { value: "50%", label: "Faster Install" },
-      { value: "99.5%", label: "Uptime" }
-    ],
-    lessons: ["Modular design enables faster installation and maintenance reducing project risk", "Proper motor sizing prevents reliability issues and energy waste", "Early controls integration planning prevents commissioning delays"]
-  },
-  {
     id: 110,
     slug: "mini-conveyor-aluminum",
     title: "Mini Industrial Conveyor System (Aluminum Structure)",
@@ -796,7 +550,11 @@ export const articleContents: ArticleContent[] = [
       { value: "600RPM", label: "Max Motor Speed" }
     ],
     lessons: ["Aluminum structures provide an excellent balance between strength and lightweight design", "Accurate belt tension adjustment is essential for stable conveyor operation", "Variable motor speed control significantly improves conveyor system flexibility"],
-    conclusionVideoUrl: "/videos/conveyor-alu-demo.mp4"
+    conclusionVideoUrls: [
+      "https://drive.google.com/file/d/1xyVySJJYCdwR7pT3ld6M1NrRxB1KxLdG/preview",
+      "https://drive.google.com/file/d/1DYu3mUbH-bb8zQpqjJnyXnutJoPkQkZj/preview",
+      "https://drive.google.com/file/d/1hm771YktGBoU73WJvE3zrPyaZrzeSaWN/preview"
+    ]
   },
   {
     id: 111,
@@ -1116,7 +874,8 @@ export const articleContents: ArticleContent[] = [
       { value: "12V", label: "Battery Powered" },
       { value: "24", label: "Design Drawings" }
     ],
-    lessons: ["Electric-powered agricultural machines can significantly reduce fuel costs and environmental impact.", "Proper blade geometry is critical for effective soil tilling.", "Lightweight mechanical design improves energy efficiency and vehicle mobility."]
+    lessons: ["Electric-powered agricultural machines can significantly reduce fuel costs and environmental impact.", "Proper blade geometry is critical for effective soil tilling.", "Lightweight mechanical design improves energy efficiency and vehicle mobility."],
+    conclusionVideoUrl: "/videos/ev-agriculture-rotavator-car.mp4"
   },
   {
     id: 121,
@@ -1155,6 +914,46 @@ export const articleContents: ArticleContent[] = [
     ],
     lessons: ["Sensor positioning plays a critical role in accurate obstacle detection", "Real-time processing of sensor data is essential for smooth robot navigation", "Iterative testing in controlled environments significantly improves robotics performance"],
     conclusionVideoUrl: "/videos/maze-robot-demo.mp4",
+  },
+  {
+    id: 123,
+    slug: "knife-edge-belt-conveyor",
+    title: "Compact Knife Edge Belt Conveyor System",
+    subtitle: "Precision small-product transfer conveyor with minimal dead zone",
+    duration: "6 weeks",
+    client: "Industrial Automation Lab",
+    role: "Mechatronics Design Engineer",
+    industry: "Industrial Automation",
+    teamSize: "2 Engineers",
+    overview: "Designed and fabricated a compact knife-edge belt conveyor system for precision small-product transfer applications. The conveyor features a minimal nose-bar radius enabling near-zero dead zone transfers between conveyors or to packaging stations. Built with an aluminum frame structure and variable speed DC motor drive for flexible speed control.",
+    challenge: "Small product handling requires extremely tight transfer gaps to prevent product jamming or falling. The conveyor needed to maintain belt tracking accuracy within ±1mm while achieving a nose-bar radius under 10mm. Speed synchronization with upstream and downstream equipment was critical for seamless integration.",
+    solution: "Engineered a knife-edge nose bar with 6mm effective radius using precision-machined stainless steel. Implemented crowned pulleys and adjustable tracking guides for belt stability. Used a PWM-controlled DC motor with encoder feedback for precise speed regulation from 5 to 30 m/min.",
+    process: [
+      { title: "Concept Design", content: "Developed the knife-edge concept with CAD modeling to achieve minimum transfer gap. Selected belt material (PU flat belt) for flexibility around the small nose radius." },
+      { title: "Frame Design", content: "Designed lightweight aluminum extrusion frame with adjustable height legs and side guides. Ensured easy belt replacement and tensioning." },
+      { title: "Drive System", content: "Selected and integrated DC motor with planetary gearbox. Implemented PWM speed controller with potentiometer adjustment." },
+      { title: "Belt Tracking", content: "Designed crowned drive pulley and adjustable tail pulley for reliable belt tracking. Added guide strips to prevent lateral belt drift." },
+      { title: "Fabrication & Assembly", content: "Fabricated frame components, assembled drive system, and installed belt with proper tension. Performed alignment checks and speed calibration." },
+      { title: "Testing & Validation", content: "Tested with various small products to validate transfer performance. Verified speed accuracy and belt tracking stability over extended runs." }
+    ],
+    results: [
+      "Achieved 6mm knife-edge nose radius for minimal transfer gap",
+      "Belt tracking accuracy maintained within ±0.5mm",
+      "Speed range of 5-30 m/min with ±2% accuracy",
+      "Successful transfer of products as small as 20mm x 20mm",
+      "Compact footprint of 800mm x 200mm conveying surface",
+      "Quick belt change capability under 10 minutes"
+    ],
+    technologies: ["Mechanical Design", "Belt Conveyor Engineering", "DC Motor Control", "Aluminum Fabrication"],
+    toolsUsed: ["SolidWorks", "AutoCAD", "Arduino (speed control)", "3D Printing (prototyping)"],
+    keyMetrics: [
+      { value: "6mm", label: "Nose Radius" },
+      { value: "30m/min", label: "Max Speed" },
+      { value: "±0.5mm", label: "Tracking Accuracy" },
+      { value: "20mm", label: "Min Product Size" }
+    ],
+    conclusionVideoUrls: ["/videos/knife-edge-conveyor-demo-1.mp4", "/videos/knife-edge-conveyor-demo-2.mp4"],
+    lessons: ["Knife-edge design requires precise machining and material selection for durability", "Belt tracking is critical for small product handling reliability", "Variable speed control adds significant flexibility for integration with different line speeds"]
   },
   {
     id: 122,
@@ -1202,7 +1001,11 @@ export const articleContents: ArticleContent[] = [
       "Precision mechanical alignment directly impacts robot teaching accuracy and repeatability",
       "Gripper selection based on workpiece characteristics is a fundamental industrial robotics skill"
     ],
-    conclusionVideoUrl: "/videos/cobot-trainer-demo.mp4"
+    conclusionVideoUrls: [
+      "https://drive.google.com/file/d/1lTsPFAYp2PoOxxLcJk6DLxPuQNmxHFkg/preview",
+      "https://drive.google.com/file/d/12QDwaOUijznHN1FKZ65F0UcxmkFb0TcV/preview",
+      "https://drive.google.com/file/d/1hNPM0j3W6wjViHlUHUWoA_AOLxQhBv6B/preview"
+    ]
   },
 ];
 

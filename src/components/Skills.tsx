@@ -30,12 +30,11 @@ const fallbackItSkills = [
   { name: "Python", level: 85, color: "hsl(var(--accent))" },
   { name: "Embedded Systems", level: 80, color: "hsl(var(--primary))" },
   { name: "Web Development", level: 88, color: "hsl(var(--accent))" },
-  { name: "App Development", level: 82, color: "hsl(var(--primary))" },
 ];
 const fallbackEngSkills = [
   { name: "SolidWorks", level: 92, color: "hsl(var(--secondary))" },
   { name: "FlexSim", level: 88, color: "hsl(var(--orange))" },
-  { name: "Siemens NX", level: 85, color: "hsl(var(--secondary))" },
+  { name: "Siemens NX (Learning in)", level: 85, color: "hsl(var(--secondary))" },
   { name: "PTC Creo", level: 87, color: "hsl(var(--orange))" },
   { name: "PTC Windchill", level: 83, color: "hsl(var(--secondary))" },
 ];
@@ -111,49 +110,49 @@ const Skills = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">A comprehensive toolkit spanning both IT and Engineering domains, refined through years of hands-on experience.</p>
         </div>
 
-        {/* IT Skills */}
-        <div className="mb-12 sm:mb-20">
-          <div className="flex items-center gap-3 mb-6 sm:mb-10">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"><Cpu className="text-primary-foreground" size={20} /></div>
-            <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold">IT & Software Development</h3>
-          </div>
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start mb-8 sm:mb-12">
-            <div className="space-y-4 sm:space-y-6">{renderItSkills.map((skill, i) => <SkillBar key={skill.name} skill={skill} index={i} />)}</div>
-            <div>
-              <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground">Related Technologies</h4>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {itTechnologies.map((tech, i) => (
-                  <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={isVisible ? { opacity: 1, scale: 1 } : {}} transition={{ delay: i * 0.05 }} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-card text-foreground rounded-xl font-medium text-xs sm:text-sm border-2 border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 cursor-default">{tech}</motion.span>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="mt-6 sm:mt-10">
-            <div className="flex items-center gap-2 mb-4 sm:mb-6"><Briefcase className="text-primary" size={18} /><h4 className="font-display text-base sm:text-lg font-semibold text-muted-foreground">Work Experience</h4></div>
-            <div className="grid md:grid-cols-2 gap-3 sm:gap-4">{itExperiences.map((exp, i) => <ExpCard key={exp.id} exp={exp} index={i} delay={0.5} />)}</div>
-          </div>
-        </div>
-
         {/* Engineering Skills */}
-        <div>
+        <div className="mb-12 sm:mb-20">
           <div className="flex items-center gap-3 mb-6 sm:mb-10">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-secondary to-orange flex items-center justify-center"><Cog className="text-secondary-foreground" size={20} /></div>
             <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold">Engineering & CAD Tools</h3>
           </div>
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start mb-8 sm:mb-12">
-            <div className="space-y-4 sm:space-y-6">{renderEngSkills.map((skill, i) => <SkillBar key={skill.name} skill={skill} index={i} delay={0.5} />)}</div>
+            <div className="space-y-4 sm:space-y-6">{renderEngSkills.map((skill, i) => <SkillBar key={skill.name} skill={skill} index={i} />)}</div>
             <div>
               <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground">Related Technologies</h4>
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {nonItTechnologies.map((tech, i) => (
-                  <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={isVisible ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.5 + i * 0.05 }} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-card text-foreground rounded-xl font-medium text-xs sm:text-sm border-2 border-border hover:border-secondary hover:bg-secondary/10 transition-all duration-300 cursor-default">{tech}</motion.span>
+                  <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={isVisible ? { opacity: 1, scale: 1 } : {}} transition={{ delay: i * 0.05 }} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-card text-foreground rounded-xl font-medium text-xs sm:text-sm border-2 border-border hover:border-secondary hover:bg-secondary/10 transition-all duration-300 cursor-default">{tech}</motion.span>
                 ))}
               </div>
             </div>
           </div>
           <div className="mt-6 sm:mt-10">
             <div className="flex items-center gap-2 mb-4 sm:mb-6"><Briefcase className="text-accent" size={18} /><h4 className="font-display text-base sm:text-lg font-semibold text-muted-foreground">Work Experience</h4></div>
-            <div className="grid md:grid-cols-2 gap-3 sm:gap-4">{engExperiences.map((exp, i) => <ExpCard key={exp.id} exp={exp} index={i} delay={1} accentClass="text-accent" />)}</div>
+            <div className="grid md:grid-cols-2 gap-3 sm:gap-4">{engExperiences.map((exp, i) => <ExpCard key={exp.id} exp={exp} index={i} delay={0.5} accentClass="text-accent" />)}</div>
+          </div>
+        </div>
+
+        {/* IT Skills */}
+        <div>
+          <div className="flex items-center gap-3 mb-6 sm:mb-10">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center"><Cpu className="text-primary-foreground" size={20} /></div>
+            <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold">IT & Software Development</h3>
+          </div>
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start mb-8 sm:mb-12">
+            <div className="space-y-4 sm:space-y-6">{renderItSkills.map((skill, i) => <SkillBar key={skill.name} skill={skill} index={i} delay={0.5} />)}</div>
+            <div>
+              <h4 className="font-display text-base sm:text-lg font-semibold mb-4 sm:mb-6 text-muted-foreground">Related Technologies</h4>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {itTechnologies.map((tech, i) => (
+                  <motion.span key={i} initial={{ opacity: 0, scale: 0.8 }} animate={isVisible ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 0.5 + i * 0.05 }} className="px-3 py-1.5 sm:px-4 sm:py-2 bg-card text-foreground rounded-xl font-medium text-xs sm:text-sm border-2 border-border hover:border-primary hover:bg-primary/10 transition-all duration-300 cursor-default">{tech}</motion.span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="mt-6 sm:mt-10">
+            <div className="flex items-center gap-2 mb-4 sm:mb-6"><Briefcase className="text-primary" size={18} /><h4 className="font-display text-base sm:text-lg font-semibold text-muted-foreground">Work Experience</h4></div>
+            <div className="grid md:grid-cols-2 gap-3 sm:gap-4">{itExperiences.map((exp, i) => <ExpCard key={exp.id} exp={exp} index={i} delay={1} />)}</div>
           </div>
         </div>
 

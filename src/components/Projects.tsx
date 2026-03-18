@@ -150,8 +150,16 @@ const Projects = () => {
               className="group sharp-card overflow-hidden hover:border-primary/30 transition-all duration-200 hover-lift"
             >
               <div className="relative overflow-hidden aspect-[16/10]">
-                <ProjectImageCarousel images={project.images} title={project.title} />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent pointer-events-none" />
+                {project.images && project.images.length > 0 ? (
+                  <>
+                    <ProjectImageCarousel images={project.images} title={project.title} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent pointer-events-none" />
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center p-6 text-center">
+                    <span className="font-display font-bold text-xl sm:text-2xl text-primary animate-pulse">Update in Progress</span>
+                  </div>
+                )}
                 <div className="absolute top-4 left-4 z-20">
                   <span className={`px-3 py-1 text-xs font-medium ${
                     activeTab === "it" 
@@ -197,7 +205,13 @@ const Projects = () => {
               className="group sharp-card overflow-hidden hover:border-primary/30 transition-all duration-200 hover-lift p-4"
             >
               <div className="relative overflow-hidden aspect-video mb-4">
-                <ProjectImageCarousel images={project.images} title={project.title} />
+                {project.images && project.images.length > 0 ? (
+                  <ProjectImageCarousel images={project.images} title={project.title} />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center p-4 text-center">
+                    <span className="font-display font-bold text-lg text-primary animate-pulse">Update in Progress</span>
+                  </div>
+                )}
               </div>
               <h3 className="font-display text-base font-semibold mb-2 group-hover:text-primary transition-colors">
                 {project.title}

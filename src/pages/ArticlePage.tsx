@@ -191,7 +191,7 @@ const ArticlePage = memo(() => {
                     />
                   ) : (
                     <div className="rounded-2xl shadow-2xl w-full aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-                      <h3 className="text-2xl font-bold text-primary">{article.title}</h3>
+                      <h3 className="text-3xl md:text-5xl font-display font-bold text-primary animate-pulse px-4 text-center">Update in Progress</h3>
                     </div>
                   )}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-background/50 to-transparent" />
@@ -466,30 +466,75 @@ const ArticlePage = memo(() => {
                 >
                   <h2 className="font-display text-2xl font-bold mb-6">Project Demo Video</h2>
                   {article.conclusionVideoUrls && article.conclusionVideoUrls.length > 0 ? (
-                    <div className={`grid gap-4 ${article.conclusionVideoUrls.length >= 2 ? 'md:grid-cols-2' : ''}`}>
+                    <div className="flex flex-wrap gap-[20px] justify-center">
                       {article.conclusionVideoUrls.map((videoUrl, idx) => (
-                        <div key={idx} className="rounded-xl overflow-hidden border border-border">
-                          <video
-                            src={videoUrl}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="w-full aspect-video object-cover"
-                          />
+                        <div key={idx} className="flex flex-col gap-3 max-w-[600px] w-full items-center">
+                          <div className="rounded-[10px] overflow-hidden border border-border bg-black relative group/video shadow-lg w-full" style={{ height: '400px' }}>
+                            {videoUrl.includes('drive.google.com') ? (
+                              <iframe
+                                src={videoUrl}
+                                className="w-full h-full border-none"
+                                allow="encrypted-media; fullscreen"
+                                style={{ borderRadius: '10px' }}
+                              />
+                            ) : (
+                              <video
+                                src={videoUrl}
+                                controls
+                                playsInline
+                                preload="metadata"
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                          
+                          <div className="flex flex-col gap-1 text-center w-full px-2">
+                            {videoUrl.includes('drive.google.com') && (
+                              <a 
+                                href={videoUrl.replace('/preview', '/view')} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-xs text-primary hover:underline mb-1"
+                              >
+                                Trouble loading? View on Google Drive
+                              </a>
+                            )}
+                            <p 
+                              className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed italic opacity-80 transition-all duration-300 group-hover/video:text-red-600 group-hover/video:not-italic group-hover/video:opacity-100"
+                              style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                            >
+                              Disclaimer: This video is presented exclusively for portfolio self-achievement purposes. 
+                              The product and content are officially for Janatics India Pvt Ltd client use.
+                            </p>
+                          </div>
                         </div>
                       ))}
                     </div>
                   ) : article.conclusionVideoUrl ? (
-                    <div className="rounded-xl overflow-hidden border border-border">
-                      <video
-                        src={article.conclusionVideoUrl}
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full aspect-video object-cover"
-                      />
+                    <div className="rounded-xl overflow-hidden border border-border bg-muted animate-pulse relative">
+                      {article.conclusionVideoUrl.includes('drive.google.com') ? (
+                        <iframe
+                          src={article.conclusionVideoUrl}
+                          className="w-full aspect-video border-0"
+                          allow="autoplay"
+                          onLoad={(e) => {
+                            (e.currentTarget.parentElement as HTMLElement)?.classList.remove('animate-pulse');
+                          }}
+                        />
+                      ) : (
+                        <video
+                          src={article.conclusionVideoUrl}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          preload="auto"
+                          className="w-full aspect-video object-cover"
+                          onPlaying={(e) => {
+                            e.currentTarget.parentElement?.classList.remove('animate-pulse');
+                          }}
+                        />
+                      )}
                     </div>
                   ) : null}
                 </div>

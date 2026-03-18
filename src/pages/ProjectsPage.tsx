@@ -305,72 +305,12 @@ const itProjects: Project[] = [
 const engineeringProjects: Project[] = [
   {
     id: 11,
-    title: "Automotive Engine Block Design",
-    description: "Complete 3D CAD design of a 4-cylinder engine block with thermal and structural FEA analysis, cooling jacket optimization, and manufacturing drawings for Mahindra & Mahindra.",
-    images: [cadAutomotiveImg, flexsimImg, creoImg, plmImg, analyticsImg],
-    tags: ["SolidWorks", "FEA", "Thermal Analysis", "GD&T", "DFMA"],
+    title: "Coming Soon",
+    description: "Projects are updating coming soon new project stay tuned to watch",
+    images: [],
+    tags: ["Upcoming"],
     articleUrl: "/projects/article/automotive-engine-block",
     featured: true,
-    category: "engineering",
-  },
-  {
-    id: 13,
-    title: "PTC Windchill PLM Implementation",
-    description: "Enterprise PLM deployment for 500+ users across 8 sites with CAD integration, workflow automation, and engineering change management for L&T.",
-    images: [plmImg, cadAutomotiveImg, flexsimImg, creoImg, analyticsImg],
-    tags: ["Windchill", "PLM", "Workflow", "CAD Integration"],
-    articleUrl: "/projects/article/plm-implementation",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 14,
-    title: "Gearbox Housing Design",
-    description: "Aluminum die-cast gearbox housing for EV application with NVH optimization, thermal management, and structural validation achieving 15% weight reduction.",
-    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
-    tags: ["NX", "Die Casting", "NVH", "FEA", "EV Components"],
-    articleUrl: "/projects/article/gearbox-housing",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 16,
-    title: "Injection Mold Tool Design",
-    description: "Two-cavity injection mold for automotive interior trim with conformal cooling, achieving 32-second cycle time and Class A surface quality.",
-    images: [creoImg, cadAutomotiveImg, flexsimImg, plmImg, analyticsImg],
-    tags: ["SolidWorks", "Moldflow", "Conformal Cooling", "Tooling"],
-    articleUrl: "/projects/article/injection-mold-design",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 17,
-    title: "Warehouse Layout Optimization",
-    description: "FlexSim simulation of 50,000 sq ft distribution center achieving 40% pick efficiency improvement and ₹45L annual savings for Flipkart Logistics.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
-    tags: ["FlexSim", "Warehouse", "Slotting Optimization", "WMS"],
-    articleUrl: "/projects/article/warehouse-optimization",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 18,
-    title: "Sheet Metal Enclosure Design",
-    description: "IP65-rated industrial VFD enclosure with 450W heat dissipation, EMC shielding, and 20% cost reduction through DFM optimization for Siemens India.",
-    images: [cadAutomotiveImg, creoImg, flexsimImg, plmImg, analyticsImg],
-    tags: ["SolidWorks", "Sheet Metal", "IP Rating", "Thermal", "DFM"],
-    articleUrl: "/projects/article/sheet-metal-enclosure",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 19,
-    title: "Conveyor System Design",
-    description: "45-meter modular conveyor system for FMCG packaging handling 200 cartons/minute with VFD control and MES integration for Hindustan Unilever.",
-    images: [flexsimImg, cadAutomotiveImg, creoImg, plmImg, analyticsImg],
-    tags: ["NX", "Conveyor Systems", "Motor Sizing", "Controls"],
-    articleUrl: "/projects/article/conveyor-system",
-    featured: false,
     category: "engineering",
   },
   {
@@ -480,16 +420,6 @@ const engineeringProjects: Project[] = [
     images: [mazeRobot1, mazeRobot5, mazeRobot3, mazeRobot4, mazeRobot2],
     tags: ["Arduino", "Embedded Systems", "Ultrasonic Sensor", "Robotics"],
     articleUrl: "/projects/article/maze-navigation-robot",
-    featured: false,
-    category: "engineering",
-  },
-  {
-    id: 30,
-    title: "Heat Exchanger Design",
-    description: "2MW shell and tube heat exchanger with ASME Section VIII compliance, HTRI thermal-hydraulic design, and third-party certification for Thermax.",
-    images: [analyticsImg, cadAutomotiveImg, creoImg, flexsimImg, plmImg],
-    tags: ["HTRI", "ASME", "Thermal Design", "Pressure Vessel"],
-    articleUrl: "/projects/article/heat-exchanger-design",
     featured: false,
     category: "engineering",
   },
@@ -643,7 +573,13 @@ const ProjectsPage = () => {
                           className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
                         >
                           <div className="relative aspect-video overflow-hidden">
-                            <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
+                            {project.images && project.images.length > 0 ? (
+                              <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-6 text-center">
+                                <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
+                              </div>
+                            )}
                             <div className="absolute top-4 left-4 z-10">
                               <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold">
                                 Featured
@@ -717,7 +653,13 @@ const ProjectsPage = () => {
                         className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
                       >
                         <div className="relative aspect-video overflow-hidden">
-                          <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
+                          {project.images && project.images.length > 0 ? (
+                            <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-4 text-center rounded-t-xl">
+                              <span className="font-display font-bold text-lg text-primary animate-pulse">Update in Progress</span>
+                            </div>
+                          )}
                         </div>
                         <div className="p-4">
                           <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
