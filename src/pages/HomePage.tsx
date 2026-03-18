@@ -8,8 +8,8 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>Dharaneedharan SS | Mechatronics Design Engineer & Full Stack Developer</title>
-        <meta name="description" content="Mechatronics Design Engineer & Full Stack Developer skilled in React, Python, Embedded Systems, SolidWorks, FlexSim, NX, Creo, and PTC Windchill." />
+        <title>Dharaneedharan SS | Mechatronics Design Engineer</title>
+        <meta name="description" content="Mechatronics Design Engineer skilled in Robotics, Automation, Embedded Systems, SolidWorks, FlexSim, NX, siemens nx, and PTC Windchill." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">

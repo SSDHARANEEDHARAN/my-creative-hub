@@ -8,7 +8,7 @@ import ParticleField from "./ParticleField";
 
 const Hero = () => {
   const highlights = [
-    { icon: <Cpu size={16} />, text: "Full Stack Developer" },
+    { icon: <Cpu size={16} />, text: "Mechatronics Engineer" },
     { icon: <MapPin size={16} />, text: "CAD & PLM Expert" },
     { icon: <Calendar size={16} />, text: "3+ Years Experience" },
   ];
@@ -92,8 +92,8 @@ const Hero = () => {
             className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6"
           >
             <Zap className="text-muted-foreground" size={18} />
-            <p className="text-lg sm:text-2xl md:text-3xl font-display font-semibold text-foreground">
-              Mechatronics Design Engineer & Full Stack Developer
+            <p className="text-lg sm:text-2xl md:text-3xl font-display font-semibold text-foreground uppercase tracking-widest">
+              Mechatronics Design Engineer
             </p>
           </motion.div>
           
@@ -103,8 +103,8 @@ const Hero = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="text-muted-foreground text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4 sm:px-0"
           >
-            I build modern web applications and design engineering solutions. 
-            Passionate about React, Python, embedded systems, and CAD tools like SolidWorks and Creo.
+            I design advanced mechatronics systems and engineering solutions. 
+            Passionate about Automation, Robotics, embedded systems, and CAD tools like SolidWorks and siemesn nx
           </motion.p>
 
           {/* Quick Highlights */}

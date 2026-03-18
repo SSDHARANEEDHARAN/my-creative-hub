@@ -27,6 +27,7 @@ import certPp2 from "@/assets/certificates/pp-2.avif";
 import certIn2 from "@/assets/certificates/industrial-training-2.avif";
 import certIn1 from "@/assets/certificates/industrial-training-1.avif";
 import certCswa from "@/assets/certificates/cswa-solidworks.jpg";
+import certFullStack from "@/assets/certificates/Full Stack Certificate.jpg";
 
 interface DBCertificate {
   id: string; title: string; issuer: string; date: string;
@@ -46,6 +47,7 @@ const fallbackExperience = [
 ];
 
 const fallbackCertifications = [
+  { name: "Full Stack Developer", issuer: "Certification", year: "2024", image: certFullStack },
   { name: "CSWA - Mechanical Design", issuer: "Dassault Systèmes", year: "2026", image: certCswa },
   { name: "Industrial Training Certificate", issuer: "T V Sundram Iyengar & Sons Pvt Ltd", year: "2018", image: certIndustrial },
   { name: "ICETS'21 - Conference Paper Presentation", issuer: "Muthayammal College of Engineering", year: "2021", image: certIn1 },
@@ -102,9 +104,12 @@ const AboutPage = () => {
     ? dbExperiences.map(e => ({ company: e.company, role: e.title, duration: e.duration, location: e.location, description: e.description, skills: e.skills || [] }))
     : fallbackExperience;
 
-  const certifications = dbCertificates.length > 0
-    ? dbCertificates.map(c => ({ name: c.title, issuer: c.issuer, year: c.date, image: c.image_url || undefined }))
-    : fallbackCertifications;
+  const certifications = [
+    { name: "Full Stack Developer", issuer: "Certification", year: "2024", image: certFullStack },
+    ...(dbCertificates.length > 0
+      ? dbCertificates.map(c => ({ name: c.title, issuer: c.issuer, year: c.date, image: c.image_url || undefined }))
+      : fallbackCertifications.filter(c => c.name !== "Full Stack Developer"))
+  ];
 
   const handleCertificateClick = (cert: { name: string; issuer: string; year: string; image?: string }) => {
     setSelectedCertificate(cert);

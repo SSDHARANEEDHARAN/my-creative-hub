@@ -33,7 +33,7 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed mb-4 sm:mb-6 max-w-sm text-sm sm:text-base">
-              Creating innovative solutions in both IT and Engineering domains - from web applications to CAD designs.
+              Creating innovative mechatronics solutions and advanced engineering designs - from robotics to automation systems.
             </p>
             <a 
               href="mailto:tharaneetharanss@gmail.com"

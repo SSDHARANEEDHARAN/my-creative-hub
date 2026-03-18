@@ -14,9 +14,9 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Dharaneedharan SS | Mechatronics Design Engineer & Full Stack Developer</title>
-        <meta name="description" content="Mechatronics Design Engineer & Full Stack Developer skilled in Industry 4.0, Robotics, PLC, React, Python, and Embedded Systems." />
-        <meta name="keywords" content="web developer, CAD engineer, portfolio, react, python, SolidWorks, FlexSim, full stack developer" />
+        <title>Dharaneedharan SS | Mechatronics Design Engineer</title>
+        <meta name="description" content="Mechatronics Design Engineer skilled in Industry 4.0, Robotics, PLC, Automation, and Embedded Systems." />
+        <meta name="keywords" content="Mechatronics Engineer, CAD engineer, robotics portfolio, automation, SolidWorks, FlexSim, siemens nx, Industry 4.0" />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">
