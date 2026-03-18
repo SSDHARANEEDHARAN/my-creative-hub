@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
-import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare } from "lucide-react";
+import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare, BookOpen } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
@@ -28,7 +28,7 @@ const ArticlePage = memo(() => {
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.user_metadata?.display_name || guest?.name || null;
   
-  const { viewCount, likeCount, hasLiked, toggleLike } = useProjectViewLikes(
+  const { viewCount, likeCount, readCount, hasLiked, hasRead, toggleLike, trackRead } = useProjectViewLikes(
     project ? String(project.id) : "",
     currentUserEmail,
     currentUserName
@@ -58,6 +58,25 @@ const ArticlePage = memo(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Track completion (read) when reaching the bottom
+  useEffect(() => {
+    if (!project || hasRead) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          trackRead();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    const footer = document.querySelector('footer');
+    if (footer) observer.observe(footer);
+
+    return () => observer.disconnect();
+  }, [project, hasRead, trackRead]);
 
   if (!article) {
     return (
@@ -126,6 +145,28 @@ const ArticlePage = memo(() => {
                     {article.subtitle}
                   </p>
                   
+                  <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-8 text-sm sm:text-base">
+                    <div className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                      <Eye size={16} className="text-primary" />
+                      <span className="font-medium text-foreground">{viewCount}</span> Views
+                    </div>
+                    <button 
+                      onClick={handleLike}
+                      className={`flex items-center gap-1.5 transition-colors whitespace-nowrap ${hasLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                    >
+                      <Heart size={16} fill={hasLiked ? "currentColor" : "none"} />
+                      <span className="font-medium text-foreground">{likeCount}</span> Likes
+                    </button>
+                    <div className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                      <BookOpen size={16} className="text-primary" />
+                      <span className="font-medium text-foreground">{readCount}</span> Reads
+                    </div>
+                    <div className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                      <MessageSquare size={16} className="text-primary" />
+                      <span className="font-medium text-foreground">{commentCount}</span> Comments
+                    </div>
+                  </div>
+
                   {/* View Live Site button for any project with a live URL */}
                   {project?.liveUrl && (
                     <a
@@ -469,7 +510,7 @@ const ArticlePage = memo(() => {
                     <div className="flex flex-wrap gap-[20px] justify-center">
                       {article.conclusionVideoUrls.map((videoUrl, idx) => (
                         <div key={idx} className="flex flex-col gap-3 max-w-[600px] w-full items-center">
-                          <div className="rounded-[10px] overflow-hidden border border-border bg-black relative group/video shadow-lg w-full" style={{ height: '400px' }}>
+                          <div className="rounded-[10px] overflow-hidden border border-border bg-black relative group/video shadow-lg w-full aspect-video">
                             {videoUrl.includes('drive.google.com') ? (
                               <iframe
                                 src={videoUrl}

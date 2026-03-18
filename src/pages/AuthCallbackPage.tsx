@@ -8,8 +8,12 @@ const AuthCallbackPage = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const returnTo = params.get("returnTo") || "/services";
+    const localReturnTo = localStorage.getItem("authReturnTo");
+    const returnTo = params.get("returnTo") || localReturnTo || "/services";
     const error = params.get("error");
+
+    // Clean up
+    localStorage.removeItem("authReturnTo");
 
     if (error) {
       navigate(`/login?error=auth&returnTo=${encodeURIComponent(returnTo)}`, { replace: true });

@@ -1,8 +1,9 @@
-import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink } from "lucide-react";
+import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState, memo, useCallback } from "react";
+import { useState, memo, useCallback, useMemo } from "react";
 import ProjectImageCarousel from "./ProjectImageCarousel";
 import { itProjects, engineeringProjects, Project } from "@/data/projectsData";
+import { useProjectListCounts } from "@/hooks/useProjectData";
 
 // Memoized project card components for better performance
 const ProjectLinks = memo(({ project }: { project: Project }) => {
@@ -88,6 +89,9 @@ const Projects = () => {
   const projects = activeTab === "it" ? itProjects : engineeringProjects;
   const featuredProjects = projects.filter(p => p.featured);
   const otherProjects = projects.filter(p => !p.featured);
+
+  const projectIds = useMemo(() => projects.map(p => String(p.id)), [projects]);
+  const { viewCounts, likeCounts, readCounts, commentCounts } = useProjectListCounts(projectIds);
 
   const handleTabChange = useCallback((tab: "it" | "engineering") => {
     setActiveTab(tab);
@@ -182,12 +186,31 @@ const Projects = () => {
                 <p className="text-muted-foreground mb-4 leading-relaxed text-sm">
                   {project.description}
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {project.tags.map((tag) => (
                     <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium text-secondary-foreground">
                       {tag}
                     </span>
                   ))}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground pt-4 border-t border-border/50">
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <Eye size={14} className="text-primary/70" />
+                    <span>{viewCounts[project.id] || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <Heart size={14} className="text-primary/70" />
+                    <span>{likeCounts[project.id] || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <BookOpen size={14} className="text-primary/70" />
+                    <span>{readCounts[project.id] || 0}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <MessageSquare size={14} className="text-primary/70" />
+                    <span>{commentCounts[project.id] || 0}</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -219,6 +242,26 @@ const Projects = () => {
               <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                 {project.description}
               </p>
+              
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] text-muted-foreground mb-4">
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <Eye size={12} />
+                  <span>{viewCounts[project.id] || 0}</span>
+                </div>
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <Heart size={12} />
+                  <span>{likeCounts[project.id] || 0}</span>
+                </div>
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <BookOpen size={12} />
+                  <span>{readCounts[project.id] || 0}</span>
+                </div>
+                <div className="flex items-center gap-1 whitespace-nowrap">
+                  <MessageSquare size={12} />
+                  <span>{commentCounts[project.id] || 0}</span>
+                </div>
+              </div>
+
               <div className="flex gap-2">
                 <SmallProjectLinks project={project} />
               </div>

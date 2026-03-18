@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 
 interface AuthContextType {
   user: User | null;
@@ -9,6 +10,8 @@ interface AuthContextType {
   isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithGoogle: (returnPath?: string) => Promise<void>;
+  signInWithApple: (returnPath?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -114,6 +117,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error: error as Error | null };
   };
 
+  const signInWithGoogle = async (returnPath: string = "/services") => {
+    localStorage.setItem("authReturnTo", returnPath);
+    const oauthRedirectUri = `${window.location.origin}/auth/callback`;
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: oauthRedirectUri,
+      });
+      if (result?.error) throw result.error;
+    } catch (error) {
+      console.error("Google login failed:", error);
+      throw error;
+    }
+  };
+
+  const signInWithApple = async (returnPath: string = "/services") => {
+    localStorage.setItem("authReturnTo", returnPath);
+    const oauthRedirectUri = `${window.location.origin}/auth/callback`;
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: oauthRedirectUri,
+      });
+      if (result?.error) throw result.error;
+    } catch (error) {
+      console.error("Apple login failed:", error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
@@ -128,6 +159,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin,
         signIn,
         signUp,
+        signInWithGoogle,
+        signInWithApple,
         signOut,
       }}
     >

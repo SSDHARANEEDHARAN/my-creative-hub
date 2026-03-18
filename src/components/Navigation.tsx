@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Settings, Shield } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -100,14 +109,41 @@ const Navigation = () => {
             <div className="w-px h-6 bg-border" />
             <ThemeToggle />
             {user ? (
-              <Button variant="outline" size="default" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-1.5" />
-                Logout
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 border-2 border-border hover:border-primary/50 transition-colors overflow-hidden">
+                    <Avatar className="h-full w-full">
+                      <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
+                      <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                        {(user.email?.[0] || "U").toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.user_metadata?.display_name || "User"}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/services" className="cursor-pointer">
+                      <Shield className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <Link to="/contact">
+              <Link to="/login">
                 <Button variant="hero" size="default">
-                  Hire Me
+                  Sign In
                 </Button>
               </Link>
             )}
@@ -160,14 +196,28 @@ const Navigation = () => {
                 <div className="pt-4 border-t-2 border-border mt-4 space-y-4 px-4">
                   <SocialLinks className="justify-start" />
                   {user ? (
-                    <Button variant="outline" className="w-full" onClick={() => { handleLogout(); setIsOpen(false); }}>
-                      <LogOut className="w-4 h-4 mr-1.5" />
-                      Logout
-                    </Button>
+                    <div className="space-y-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-3 px-4 py-2 bg-secondary/50 rounded-lg">
+                        <Avatar className="h-10 w-10 border border-border">
+                          <AvatarImage src={user.user_metadata?.avatar_url} />
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {(user.email?.[0] || "U").toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <p className="text-sm font-bold">{user.user_metadata?.display_name || "User"}</p>
+                          <p className="text-xs text-muted-foreground truncate max-w-[180px]">{user.email}</p>
+                        </div>
+                      </div>
+                      <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => { handleLogout(); setIsOpen(false); }}>
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Log out
+                      </Button>
+                    </div>
                   ) : (
-                    <Link to="/contact" onClick={() => setIsOpen(false)}>
+                    <Link to="/login" onClick={() => setIsOpen(false)}>
                       <Button variant="hero" className="w-full">
-                        Hire Me
+                        Sign In
                       </Button>
                     </Link>
                   )}

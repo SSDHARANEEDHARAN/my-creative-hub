@@ -29,7 +29,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
-  const { signIn, user, isLoading: isAuthLoading } = useAuth();
+  const { signIn, signInWithGoogle, signInWithApple, user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -93,14 +93,13 @@ const LoginPage = () => {
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: oauthRedirectUri,
+      await signInWithGoogle(returnPath);
+    } catch (error) {
+      toast({ 
+        title: "Login Failed", 
+        description: error instanceof Error ? error.message : "Failed to sign in with Google", 
+        variant: "destructive" 
       });
-      if (error) {
-        toast({ title: "Login Failed", description: error.message, variant: "destructive" });
-      }
-    } catch {
-      toast({ title: "Error", description: "Failed to sign in with Google", variant: "destructive" });
     } finally {
       setIsGoogleLoading(false);
     }
@@ -109,14 +108,13 @@ const LoginPage = () => {
   const handleAppleLogin = async () => {
     setIsAppleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: oauthRedirectUri,
+      await signInWithApple(returnPath);
+    } catch (error) {
+      toast({ 
+        title: "Login Failed", 
+        description: error instanceof Error ? error.message : "Failed to sign in with Apple", 
+        variant: "destructive" 
       });
-      if (error) {
-        toast({ title: "Login Failed", description: error.message, variant: "destructive" });
-      }
-    } catch {
-      toast({ title: "Error", description: "Failed to sign in with Apple", variant: "destructive" });
     } finally {
       setIsAppleLoading(false);
     }
