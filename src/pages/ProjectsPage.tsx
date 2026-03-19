@@ -14,6 +14,10 @@ import GuestAccessModal from "@/components/GuestAccessModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import ProjectComments from "@/components/ProjectComments";
+import {
+  itProjects as sharedItProjects,
+  engineeringProjects as sharedEngineeringProjects,
+} from "@/data/projectsData";
 
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
