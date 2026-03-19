@@ -32,6 +32,38 @@ export interface ArticleContent {
 }
 
 export const articleContents: ArticleContent[] = [
+  {
+    id: 99,
+    slug: "it-project-updates",
+    title: "Project Portfolio Update",
+    subtitle: "New IT projects are in development",
+    duration: "Ongoing",
+    client: "Coming Soon",
+    role: "Full Stack Developer / AI Engineer",
+    industry: "Various",
+    teamSize: "1 Engineer",
+    overview: "I am constantly working on new and innovative IT projects. This section is currently being updated with my latest work in AI, web development, and IoT. Stay tuned for detailed case studies and live demos of my upcoming projects!",
+    challenge: "The field of IT is rapidly evolving, and I am currently integrating the latest AI and cloud technologies into my new projects to provide cutting-edge solutions.",
+    solution: "I am developing several new applications that leverage Google's Gemini API, advanced React patterns, and robust backend architectures to solve real-world problems.",
+    process: [
+      { title: "Research & Development", content: "Exploring new frameworks and APIs to enhance application performance and user experience." },
+      { title: "Prototyping", content: "Building MVPs for various ideas to test feasibility and gather feedback." },
+      { title: "Modernization", content: "Upgrading existing project structures to the latest industry standards." }
+    ],
+    results: [
+      "New AI-powered applications in the pipeline",
+      "Enhanced focus on performance and scalability",
+      "Upcoming integrations with major cloud platforms"
+    ],
+    technologies: ["React.js", "Node.js", "AI/ML (Gemini)", "Cloud Computing"],
+    toolsUsed: ["VS Code", "Vite", "Tailwind CSS", "Supabase"],
+    keyMetrics: [
+      { value: "3+", label: "Projects in Dev" },
+      { value: "Weekly", label: "Updates" },
+      { value: "Latest", label: "Tech Stack" }
+    ],
+    lessons: ["Continuous learning and adaptation are key to staying relevant in the tech industry", "Focusing on user-centric design creates more impactful solutions"]
+  },
   // ==================== IT PROJECTS ====================
   {
     id: 1,
@@ -473,45 +505,7 @@ export const articleContents: ArticleContent[] = [
     ],
     lessons: ["Stay tuned for more updates!"]
   },
-  {
-    id: 102,
-    slug: "manufacturing-line-simulation",
-    title: "Manufacturing Line Simulation",
-    subtitle: "FlexSim optimization achieving 25% efficiency improvement",
-    duration: "6 weeks",
-    client: "Automotive Tier-1 Supplier - Sundram Fasteners",
-    role: "Simulation Engineer",
-    industry: "Automotive Components",
-    teamSize: "3 Engineers",
-    overview: "Developed a comprehensive discrete event simulation of an automotive component production line using FlexSim. The simulation identified bottlenecks, optimized buffer sizes, and validated proposed layout changes before implementation. This project was critical for expanding capacity to meet new OEM orders without significant capital investment.",
-    challenge: "The existing production line was experiencing throughput issues with only 72% OEE. The client needed to increase production capacity by 20% without significant capital investment. Understanding the complex interactions between 12 workstations with varying cycle times was critical. The line produced 6 different part variants with different routings, adding complexity to the analysis. Machine breakdowns averaged 8% downtime, and changeover times between variants were consuming 12% of available time.",
-    solution: "Built a detailed FlexSim simulation model capturing all workstations, material handling, operator assignments, and downtime patterns based on 3 months of historical data. Ran multiple scenarios to identify optimal buffer sizes and workstation sequencing. Validated results with actual production data achieving 97% accuracy. Recommended specific changes that could be implemented during a planned 2-week shutdown.",
-    process: [
-      { title: "Data Collection", content: "Gathered cycle times from 2,400 time studies, downtime data from MES system, shift patterns, and material flow information from the production floor. Analyzed 6 months of historical data to establish statistical distributions." },
-      { title: "Model Building", content: "Created accurate 3D simulation model in FlexSim with all 12 workstations, 8 conveyors, 3 AGVs, and 15 operators. Programmed variant-specific routings and changeover logic." },
-      { title: "Validation", content: "Validated model output against actual production data achieving 97% accuracy on throughput and 95% accuracy on WIP levels. Obtained sign-off from production manager." },
-      { title: "Bottleneck Analysis", content: "Used FlexSim's statistical tools to identify primary and secondary bottlenecks. Created utilization heat maps and throughput sensitivity analysis." },
-      { title: "Scenario Analysis", content: "Tested 23 scenarios including buffer changes, workstation resequencing, shift modifications, and maintenance scheduling optimization." },
-      { title: "Recommendations", content: "Presented optimized configuration with implementation roadmap to senior management. Included ROI analysis and risk assessment for each recommendation." }
-    ],
-    results: [
-      "Identified primary bottleneck at Station 7 (CNC machining) limiting throughput to 340 parts/shift",
-      "Recommended buffer size changes reduced WIP inventory by 30% saving ₹15L in working capital",
-      "Optimized configuration increased OEE from 72% to 89%",
-      "25% throughput improvement achieved with minimal investment of ₹8L (vs. ₹1.2Cr for new equipment)",
-      "Changeover time reduced 40% through sequencing optimization",
-      "ROI achieved within 4 months of implementation"
-    ],
-    technologies: ["FlexSim 2023", "Discrete Event Simulation", "Statistical Analysis", "Lean Manufacturing", "Six Sigma"],
-    toolsUsed: ["FlexSim Professional", "Minitab", "MS Excel Advanced Analytics", "Power BI"],
-    keyMetrics: [
-      { value: "25%", label: "Throughput Increase" },
-      { value: "30%", label: "WIP Reduction" },
-      { value: "89%", label: "Final OEE" },
-      { value: "4mo", label: "ROI Period" }
-    ],
-    lessons: ["Accurate input data is crucial for reliable simulation results - garbage in, garbage out", "Involving operators in data collection improves model accuracy and acceptance", "Simple buffer optimization often delivers better ROI than new equipment"]
-  },
+
   {
     id: 110,
     slug: "mini-conveyor-aluminum",
@@ -915,46 +909,7 @@ export const articleContents: ArticleContent[] = [
     lessons: ["Sensor positioning plays a critical role in accurate obstacle detection", "Real-time processing of sensor data is essential for smooth robot navigation", "Iterative testing in controlled environments significantly improves robotics performance"],
     conclusionVideoUrl: "/videos/maze-robot-demo.mp4",
   },
-  {
-    id: 123,
-    slug: "knife-edge-belt-conveyor",
-    title: "Compact Knife Edge Belt Conveyor System",
-    subtitle: "Precision small-product transfer conveyor with minimal dead zone",
-    duration: "6 weeks",
-    client: "Industrial Automation Lab",
-    role: "Mechatronics Design Engineer",
-    industry: "Industrial Automation",
-    teamSize: "2 Engineers",
-    overview: "Designed and fabricated a compact knife-edge belt conveyor system for precision small-product transfer applications. The conveyor features a minimal nose-bar radius enabling near-zero dead zone transfers between conveyors or to packaging stations. Built with an aluminum frame structure and variable speed DC motor drive for flexible speed control.",
-    challenge: "Small product handling requires extremely tight transfer gaps to prevent product jamming or falling. The conveyor needed to maintain belt tracking accuracy within ±1mm while achieving a nose-bar radius under 10mm. Speed synchronization with upstream and downstream equipment was critical for seamless integration.",
-    solution: "Engineered a knife-edge nose bar with 6mm effective radius using precision-machined stainless steel. Implemented crowned pulleys and adjustable tracking guides for belt stability. Used a PWM-controlled DC motor with encoder feedback for precise speed regulation from 5 to 30 m/min.",
-    process: [
-      { title: "Concept Design", content: "Developed the knife-edge concept with CAD modeling to achieve minimum transfer gap. Selected belt material (PU flat belt) for flexibility around the small nose radius." },
-      { title: "Frame Design", content: "Designed lightweight aluminum extrusion frame with adjustable height legs and side guides. Ensured easy belt replacement and tensioning." },
-      { title: "Drive System", content: "Selected and integrated DC motor with planetary gearbox. Implemented PWM speed controller with potentiometer adjustment." },
-      { title: "Belt Tracking", content: "Designed crowned drive pulley and adjustable tail pulley for reliable belt tracking. Added guide strips to prevent lateral belt drift." },
-      { title: "Fabrication & Assembly", content: "Fabricated frame components, assembled drive system, and installed belt with proper tension. Performed alignment checks and speed calibration." },
-      { title: "Testing & Validation", content: "Tested with various small products to validate transfer performance. Verified speed accuracy and belt tracking stability over extended runs." }
-    ],
-    results: [
-      "Achieved 6mm knife-edge nose radius for minimal transfer gap",
-      "Belt tracking accuracy maintained within ±0.5mm",
-      "Speed range of 5-30 m/min with ±2% accuracy",
-      "Successful transfer of products as small as 20mm x 20mm",
-      "Compact footprint of 800mm x 200mm conveying surface",
-      "Quick belt change capability under 10 minutes"
-    ],
-    technologies: ["Mechanical Design", "Belt Conveyor Engineering", "DC Motor Control", "Aluminum Fabrication"],
-    toolsUsed: ["SolidWorks", "AutoCAD", "Arduino (speed control)", "3D Printing (prototyping)"],
-    keyMetrics: [
-      { value: "6mm", label: "Nose Radius" },
-      { value: "30m/min", label: "Max Speed" },
-      { value: "±0.5mm", label: "Tracking Accuracy" },
-      { value: "20mm", label: "Min Product Size" }
-    ],
-    conclusionVideoUrls: ["/videos/knife-edge-conveyor-demo-1.mp4", "/videos/knife-edge-conveyor-demo-2.mp4"],
-    lessons: ["Knife-edge design requires precise machining and material selection for durability", "Belt tracking is critical for small product handling reliability", "Variable speed control adds significant flexibility for integration with different line speeds"]
-  },
+
   {
     id: 122,
     slug: "cobot-trainer-kit-atc",

@@ -26,7 +26,7 @@ import servoScientific1 from "@/assets/projects/servo-scientific-1.png";
 import servoScientific2 from "@/assets/projects/servo-scientific-2.png";
 import servoScientific3 from "@/assets/projects/servo-scientific-3.png";
 import servoScientific4 from "@/assets/projects/servo-scientific-4.png";
-import analyticsImg from "@/assets/project-analytics.jpg";
+
 import swiftUpload1 from "@/assets/projects/swift-upload-1.png";
 import swiftUpload2 from "@/assets/projects/swift-upload-2.png";
 import swiftUpload3 from "@/assets/projects/swift-upload-3.png";
@@ -158,12 +158,7 @@ import cobotTrainer42 from "@/assets/projects/cobot-trainer-42.jpg";
 import cobotTrainer43 from "@/assets/projects/cobot-trainer-43.jpg";
 import cobotTrainer44 from "@/assets/projects/cobot-trainer-44.jpg";
 import cobotTrainer45 from "@/assets/projects/cobot-trainer-45.jpg";
-import knifeEdge1 from "@/assets/projects/knife-edge-conveyor-1.png";
-import knifeEdge2 from "@/assets/projects/knife-edge-conveyor-2.png";
-import knifeEdge3 from "@/assets/projects/knife-edge-conveyor-3.png";
-import knifeEdge4 from "@/assets/projects/knife-edge-conveyor-4.png";
-import knifeEdge5 from "@/assets/projects/knife-edge-conveyor-5.png";
-import knifeEdge6 from "@/assets/projects/knife-edge-conveyor-6.png";
+
 
 export interface Project {
   id: number;
@@ -180,6 +175,16 @@ export interface Project {
 
 // IT Projects (9 projects)
 export const itProjects: Project[] = [
+  {
+    id: 99,
+    title: "Coming Soon",
+    description: "More IT projects are being added soon. Stay tuned for exciting updates on new web and mobile applications!",
+    images: [],
+    tags: ["Upcoming"],
+    articleUrl: "/projects/article/it-project-updates",
+    featured: true,
+    category: "it",
+  },
   {
     id: 1,
     title: "MindScape AI – Mental Health Analysis",
@@ -294,16 +299,7 @@ export const engineeringProjects: Project[] = [
     featured: true,
     category: "engineering",
   },
-  {
-    id: 123,
-    title: "Compact Knife Edge Belt Conveyor",
-    description: "Precision knife-edge belt conveyor system for small product transfer with minimal gap, featuring adjustable speed control and compact aluminum frame design.",
-    images: [knifeEdge1, knifeEdge2, knifeEdge3, knifeEdge4, knifeEdge5, knifeEdge6],
-    tags: ["Mechanical Design", "Conveyor Systems", "Belt Drive", "Industrial Automation"],
-    articleUrl: "/projects/article/knife-edge-belt-conveyor",
-    featured: true,
-    category: "engineering",
-  },
+
   {
     id: 101,
     title: "Coming Soon",
@@ -314,16 +310,7 @@ export const engineeringProjects: Project[] = [
     featured: false,
     category: "engineering",
   },
-  {
-    id: 102,
-    title: "Manufacturing Line Simulation",
-    description: "FlexSim simulation of automotive production line for cycle time optimization, bottleneck identification, and throughput improvement achieving 25% efficiency gain.",
-    images: [flexsimImg, cadAutomotiveImg, plmImg, creoImg, analyticsImg],
-    tags: ["FlexSim", "Simulation", "Lean Manufacturing", "Analysis"],
-    articleUrl: "/projects/article/manufacturing-line-simulation",
-    featured: false,
-    category: "engineering",
-  },
+
   {
     id: 110,
     title: "Mini Industrial Conveyor System (Aluminum Structure)",
