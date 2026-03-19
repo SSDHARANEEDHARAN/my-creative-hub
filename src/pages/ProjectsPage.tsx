@@ -14,6 +14,10 @@ import GuestAccessModal from "@/components/GuestAccessModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import ProjectComments from "@/components/ProjectComments";
+import {
+  itProjects as sharedItProjects,
+  engineeringProjects as sharedEngineeringProjects,
+} from "@/data/projectsData";
 
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
@@ -445,15 +449,17 @@ const ProjectsPage = () => {
   const { user } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
-  const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
+  const currentUserName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || guest?.name || null;
 
-  const projects = activeTab === "it" ? itProjects : engineeringProjects;
+  const projects = activeTab === "it" ? sharedItProjects : sharedEngineeringProjects;
   const featuredProjects = projects.filter((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);
 
-  const allProjects = [...itProjects, ...engineeringProjects];
-  const projectIds = useMemo(() => allProjects.map((p) => String(p.id)), []);
-  const { viewCounts, likeCounts } = useProjectListCounts(projectIds);
+  const projectIds = useMemo(
+    () => [...sharedItProjects, ...sharedEngineeringProjects].map((project) => String(project.id)),
+    []
+  );
+  const { viewCounts, likeCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
 
   const openLightbox = (images: string[], title: string, index: number) => {
     setLightboxImages(images.map((src, i) => ({ src, alt: `${title} - Image ${i + 1}` })));
@@ -466,16 +472,26 @@ const ProjectsPage = () => {
       setShowAccessModal(true);
       return;
     }
+
     const { error } = await supabase.from("project_likes").insert({
       project_id: String(projectId),
       name: currentUserName,
       email: currentUserEmail,
     });
+
     if (!error) {
       toast({ description: "Project liked!" });
-    } else if (error.code === "23505") {
-      toast({ description: "You already liked this project." });
+      refreshCounts();
+      return;
     }
+
+    if (error.code === "23505") {
+      toast({ description: "You already liked this project." });
+      refreshCounts();
+      return;
+    }
+
+    toast({ title: "Error", description: "Failed to update like count.", variant: "destructive" });
   };
 
   return (
@@ -528,7 +544,7 @@ const ProjectsPage = () => {
                 }`}
               >
                 <Code2 size={18} />
-                IT Projects ({itProjects.length})
+                IT Projects ({sharedItProjects.length})
               </button>
               <button
                 onClick={() => setActiveTab("engineering")}
@@ -539,7 +555,7 @@ const ProjectsPage = () => {
                 }`}
               >
                 <Cog size={18} />
-                Engineering ({engineeringProjects.length})
+                Engineering ({sharedEngineeringProjects.length})
               </button>
             </motion.div>
           </div>
