@@ -659,7 +659,10 @@ const ArticlePage = memo(() => {
                     transitionDelay: '870ms'
                   }}
                 >
-                  <ProjectComments projectId={String(project.id)} />
+                  <ProjectComments
+                    projectId={String(project.id)}
+                    onCountChange={setCommentCount}
+                  />
                 </div>
               )}
 

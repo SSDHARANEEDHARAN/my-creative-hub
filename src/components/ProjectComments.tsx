@@ -30,9 +30,10 @@ interface Comment {
 interface ProjectCommentsProps {
   projectId: string;
   compact?: boolean;
+  onCountChange?: (count: number) => void;
 }
 
-const ProjectComments = ({ projectId, compact = false }: ProjectCommentsProps) => {
+const ProjectComments = ({ projectId, compact = false, onCountChange }: ProjectCommentsProps) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentCount, setCommentCount] = useState(0);
   const [customComment, setCustomComment] = useState("");
@@ -55,8 +56,9 @@ const ProjectComments = ({ projectId, compact = false }: ProjectCommentsProps) =
     if (data) {
       setComments(data as Comment[]);
       setCommentCount(data.length);
+      onCountChange?.(data.length);
     }
-  }, [projectId]);
+  }, [projectId, onCountChange]);
 
   useEffect(() => {
     loadComments();
