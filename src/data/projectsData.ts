@@ -164,6 +164,16 @@ import knifeEdge3 from "@/assets/projects/knife-edge-conveyor-3.png";
 import knifeEdge4 from "@/assets/projects/knife-edge-conveyor-4.png";
 import knifeEdge5 from "@/assets/projects/knife-edge-conveyor-5.png";
 import knifeEdge6 from "@/assets/projects/knife-edge-conveyor-6.png";
+import mms1 from "@/assets/projects/mms-1.jpg";
+import mms2 from "@/assets/projects/mms-2.jpg";
+import mms3 from "@/assets/projects/mms-3.jpg";
+import mms4 from "@/assets/projects/mms-4.jpg";
+import mms5 from "@/assets/projects/mms-5.jpg";
+import mms6 from "@/assets/projects/mms-6.jpg";
+import mms7 from "@/assets/projects/mms-7.jpg";
+import mms8 from "@/assets/projects/mms-8.jpg";
+import mms9 from "@/assets/projects/mms-9.jpg";
+import mms10 from "@/assets/projects/mms-10.jpg";
 
 export interface Project {
   id: number;
