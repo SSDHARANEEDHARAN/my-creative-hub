@@ -309,16 +309,6 @@ export const engineeringProjects: Project[] = [
     category: "engineering",
   },
   {
-    id: 123,
-    title: "Compact Knife Edge Belt Conveyor",
-    description: "Precision knife-edge belt conveyor system for small product transfer with minimal gap, featuring adjustable speed control and compact aluminum frame design.",
-    images: [knifeEdge1, knifeEdge2, knifeEdge3, knifeEdge4, knifeEdge5, knifeEdge6],
-    tags: ["Mechanical Design", "Conveyor Systems", "Belt Drive", "Industrial Automation"],
-    articleUrl: "/projects/article/knife-edge-belt-conveyor",
-    featured: true,
-    category: "engineering",
-  },
-  {
     id: 124,
     title: "Modular Manufacturing System (MMS) – 5 Station Didactic Setup",
     description: "Industry 4.0 didactic automation training platform with 5 modular stations (Feeder, Inspection, Buffer, Process, Sorting) integrating PLC, HMI, pneumatics, and MES connectivity.",
