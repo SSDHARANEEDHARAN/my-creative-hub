@@ -158,12 +158,6 @@ import cobotTrainer42 from "@/assets/projects/cobot-trainer-42.jpg";
 import cobotTrainer43 from "@/assets/projects/cobot-trainer-43.jpg";
 import cobotTrainer44 from "@/assets/projects/cobot-trainer-44.jpg";
 import cobotTrainer45 from "@/assets/projects/cobot-trainer-45.jpg";
-import knifeEdge1 from "@/assets/projects/knife-edge-conveyor-1.png";
-import knifeEdge2 from "@/assets/projects/knife-edge-conveyor-2.png";
-import knifeEdge3 from "@/assets/projects/knife-edge-conveyor-3.png";
-import knifeEdge4 from "@/assets/projects/knife-edge-conveyor-4.png";
-import knifeEdge5 from "@/assets/projects/knife-edge-conveyor-5.png";
-import knifeEdge6 from "@/assets/projects/knife-edge-conveyor-6.png";
 import mms1 from "@/assets/projects/mms-1.jpg";
 import mms2 from "@/assets/projects/mms-2.jpg";
 import mms3 from "@/assets/projects/mms-3.jpg";
@@ -311,16 +305,6 @@ export const engineeringProjects: Project[] = [
     images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7, cobotTrainer11, cobotTrainer12, cobotTrainer13, cobotTrainer14, cobotTrainer15, cobotTrainer16, cobotTrainer26, cobotTrainer27, cobotTrainer28, cobotTrainer29, cobotTrainer30, cobotTrainer31, cobotTrainer32, cobotTrainer33, cobotTrainer34, cobotTrainer35, cobotTrainer36, cobotTrainer37, cobotTrainer38, cobotTrainer39, cobotTrainer40, cobotTrainer41, cobotTrainer42, cobotTrainer43, cobotTrainer44, cobotTrainer45],
     tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
     articleUrl: "/projects/article/cobot-trainer-kit-atc",
-    featured: true,
-    category: "engineering",
-  },
-  {
-    id: 123,
-    title: "Compact Knife Edge Belt Conveyor",
-    description: "Precision knife-edge belt conveyor system for small product transfer with minimal gap, featuring adjustable speed control and compact aluminum frame design.",
-    images: [knifeEdge1, knifeEdge2, knifeEdge3, knifeEdge4, knifeEdge5, knifeEdge6],
-    tags: ["Mechanical Design", "Conveyor Systems", "Belt Drive", "Industrial Automation"],
-    articleUrl: "/projects/article/knife-edge-belt-conveyor",
     featured: true,
     category: "engineering",
   },

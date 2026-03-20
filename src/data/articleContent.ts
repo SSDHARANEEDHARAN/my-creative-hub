@@ -916,46 +916,6 @@ export const articleContents: ArticleContent[] = [
     conclusionVideoUrl: "/videos/maze-robot-demo.mp4",
   },
   {
-    id: 123,
-    slug: "knife-edge-belt-conveyor",
-    title: "Compact Knife Edge Belt Conveyor System",
-    subtitle: "Precision small-product transfer conveyor with minimal dead zone",
-    duration: "6 weeks",
-    client: "Industrial Automation Lab",
-    role: "Mechatronics Design Engineer",
-    industry: "Industrial Automation",
-    teamSize: "2 Engineers",
-    overview: "Designed and fabricated a compact knife-edge belt conveyor system for precision small-product transfer applications. The conveyor features a minimal nose-bar radius enabling near-zero dead zone transfers between conveyors or to packaging stations. Built with an aluminum frame structure and variable speed DC motor drive for flexible speed control.",
-    challenge: "Small product handling requires extremely tight transfer gaps to prevent product jamming or falling. The conveyor needed to maintain belt tracking accuracy within ±1mm while achieving a nose-bar radius under 10mm. Speed synchronization with upstream and downstream equipment was critical for seamless integration.",
-    solution: "Engineered a knife-edge nose bar with 6mm effective radius using precision-machined stainless steel. Implemented crowned pulleys and adjustable tracking guides for belt stability. Used a PWM-controlled DC motor with encoder feedback for precise speed regulation from 5 to 30 m/min.",
-    process: [
-      { title: "Concept Design", content: "Developed the knife-edge concept with CAD modeling to achieve minimum transfer gap. Selected belt material (PU flat belt) for flexibility around the small nose radius." },
-      { title: "Frame Design", content: "Designed lightweight aluminum extrusion frame with adjustable height legs and side guides. Ensured easy belt replacement and tensioning." },
-      { title: "Drive System", content: "Selected and integrated DC motor with planetary gearbox. Implemented PWM speed controller with potentiometer adjustment." },
-      { title: "Belt Tracking", content: "Designed crowned drive pulley and adjustable tail pulley for reliable belt tracking. Added guide strips to prevent lateral belt drift." },
-      { title: "Fabrication & Assembly", content: "Fabricated frame components, assembled drive system, and installed belt with proper tension. Performed alignment checks and speed calibration." },
-      { title: "Testing & Validation", content: "Tested with various small products to validate transfer performance. Verified speed accuracy and belt tracking stability over extended runs." }
-    ],
-    results: [
-      "Achieved 6mm knife-edge nose radius for minimal transfer gap",
-      "Belt tracking accuracy maintained within ±0.5mm",
-      "Speed range of 5-30 m/min with ±2% accuracy",
-      "Successful transfer of products as small as 20mm x 20mm",
-      "Compact footprint of 800mm x 200mm conveying surface",
-      "Quick belt change capability under 10 minutes"
-    ],
-    technologies: ["Mechanical Design", "Belt Conveyor Engineering", "DC Motor Control", "Aluminum Fabrication"],
-    toolsUsed: ["SolidWorks", "AutoCAD", "Arduino (speed control)", "3D Printing (prototyping)"],
-    keyMetrics: [
-      { value: "6mm", label: "Nose Radius" },
-      { value: "30m/min", label: "Max Speed" },
-      { value: "±0.5mm", label: "Tracking Accuracy" },
-      { value: "20mm", label: "Min Product Size" }
-    ],
-    conclusionVideoUrls: ["/videos/knife-edge-conveyor-demo-1.mp4", "/videos/knife-edge-conveyor-demo-2.mp4"],
-    lessons: ["Knife-edge design requires precise machining and material selection for durability", "Belt tracking is critical for small product handling reliability", "Variable speed control adds significant flexibility for integration with different line speeds"]
-  },
-  {
     id: 122,
     slug: "cobot-trainer-kit-atc",
     title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics Training System",
