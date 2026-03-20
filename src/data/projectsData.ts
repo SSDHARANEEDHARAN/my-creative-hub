@@ -174,6 +174,16 @@ import mms7 from "@/assets/projects/mms-7.jpg";
 import mms8 from "@/assets/projects/mms-8.jpg";
 import mms9 from "@/assets/projects/mms-9.jpg";
 import mms10 from "@/assets/projects/mms-10.jpg";
+import mms11 from "@/assets/projects/mms-11.jpg";
+import mms12 from "@/assets/projects/mms-12.jpg";
+import mms13 from "@/assets/projects/mms-13.jpg";
+import mms14 from "@/assets/projects/mms-14.jpg";
+import mms15 from "@/assets/projects/mms-15.jpg";
+import mms16 from "@/assets/projects/mms-16.jpg";
+import mms17 from "@/assets/projects/mms-17.jpg";
+import mms18 from "@/assets/projects/mms-18.jpg";
+import mms19 from "@/assets/projects/mms-19.jpg";
+import mms20 from "@/assets/projects/mms-20.jpg";
 
 export interface Project {
   id: number;
