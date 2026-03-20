@@ -305,6 +305,16 @@ export const engineeringProjects: Project[] = [
     category: "engineering",
   },
   {
+    id: 124,
+    title: "Modular Manufacturing System (MMS) – 5 Station Didactic Setup",
+    description: "Industry 4.0 didactic automation training platform with 5 modular stations (Feeder, Inspection, Buffer, Process, Sorting) integrating PLC, HMI, pneumatics, and MES connectivity.",
+    images: [mms1, mms10, mms9, mms2, mms3, mms4, mms5, mms6, mms7, mms8],
+    tags: ["PLC", "HMI", "Pneumatics", "Industry 4.0", "MES", "Mechatronics"],
+    articleUrl: "/projects/article/modular-manufacturing-system",
+    featured: true,
+    category: "engineering",
+  },
+  {
     id: 101,
     title: "Coming Soon",
     description: "Projects are updating coming soon new project stay tuned to watch",
