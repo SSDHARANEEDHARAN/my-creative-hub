@@ -1007,6 +1007,53 @@ export const articleContents: ArticleContent[] = [
       "https://drive.google.com/file/d/1hNPM0j3W6wjViHlUHUWoA_AOLxQhBv6B/preview"
     ]
   },
+  {
+    id: 124,
+    slug: "modular-manufacturing-system",
+    title: "Modular Manufacturing System (MMS) – 5 Station Didactic Setup",
+    subtitle: "Industry 4.0 didactic automation training platform simulating real-world hybrid manufacturing environments",
+    duration: "Ongoing",
+    client: "Janatics India Pvt Ltd",
+    role: "Mechatronics Design Engineer",
+    industry: "Industrial Automation / Technical Education",
+    teamSize: "Engineering Team",
+    overview: "The Modular Manufacturing System (MMS) is a didactic industrial automation training platform designed to simulate real-world hybrid manufacturing environments. This system integrates mechanical, electrical, pneumatic, and control technologies to provide hands-on learning in modern automation and Industry 4.0 concepts. It replicates actual production workflows including feeding, inspection, buffering, processing, conveying, and sorting, enabling students and engineers to understand complete manufacturing cycles.",
+    challenge: "Designing a comprehensive training platform that accurately replicates multi-station manufacturing workflows while remaining modular, safe, and accessible for educational environments. Each station needed independent PLC and HMI control with seamless inter-station I/O communication, pneumatic systems integration, and MES connectivity — all within a compact footprint suitable for training labs.",
+    solution: "Developed a 5-station modular manufacturing system with independent PLC-HMI control consoles per station, industrial pneumatic circuits, sensor arrays, and real-time inter-station communication. Each station simulates a specific manufacturing process (feeding, inspection, buffering, processing, sorting) with MES integration for Industry 4.0 smart factory training.",
+    process: [
+      { title: "Feeder Station Design", content: "Designed the feeder station with stack magazine, pneumatic separation cylinder, rotary pick & place module (180° transfer), suction cup handling system, and optical sensors for job detection. Components are separated using pneumatic actuators and transferred via rotary arm." },
+      { title: "Inspection Station Integration", content: "Implemented quality inspection station with analog height sensor (~25mm detection), optical presence sensors, and sorting slide mechanism. Measures workpiece height, accepts correct parts to next station, and rejects faulty parts to rejection bin." },
+      { title: "Buffer Station Development", content: "Built buffer station capable of storing up to 5 workpieces using retro-reflective sensors, light barrier sensors, and separator modules. Controls transfer flow, stops upstream process if buffer limit exceeded, and communicates with downstream stations." },
+      { title: "Process Station with Vision", content: "Integrated process station with vision system for inspection, alignment, and smart processing. Features automated handling and operation execution for workpiece processing operations." },
+      { title: "Sorting Station Implementation", content: "Designed final sorting station for workpiece classification based on size, shape, and quality. Uses sensor arrays and pneumatic actuators for precise routing of workpieces to correct output bins." },
+      { title: "PLC & HMI Programming", content: "Programmed Omron PLC controllers and HMI touchscreen interfaces for each station with real-time I/O communication, emergency stop circuits, start/stop/reset controls, and manual/auto mode selection." },
+      { title: "System Integration & MES", content: "Integrated all 5 stations with inter-station I/O networking, MES connectivity for smart production flow control, data-driven decision making, and real-time monitoring across the entire manufacturing line." }
+    ],
+    results: [
+      "Complete 5-station modular manufacturing training platform operational",
+      "Real-time inter-station I/O communication with PLC networking",
+      "Independent HMI control consoles per station with Omron touchscreens",
+      "Industry 4.0 MES integration for smart factory training",
+      "Pneumatic, sensor, and actuator systems fully integrated across all stations",
+      "Modular design enabling flexible station configuration and expansion",
+      "Comprehensive training platform for PLC programming, pneumatics, and automation"
+    ],
+    technologies: ["Omron PLC", "HMI Touchscreen", "Pneumatic Actuators", "Optical Sensors", "Analog Sensors", "Magnetic Sensors", "Vision System", "MES Integration", "I/O Networking"],
+    toolsUsed: ["SolidWorks", "Omron CX-Programmer", "HMI Design Software", "Pneumatic Circuit Design Tools", "Industrial Assembly Equipment"],
+    keyMetrics: [
+      { value: "5", label: "Stations" },
+      { value: "5", label: "HMI Panels" },
+      { value: "5", label: "PLC Units" },
+      { value: "Industry 4.0", label: "Standard" }
+    ],
+    lessons: [
+      "Modular station design enables flexible manufacturing training configurations",
+      "Inter-station I/O communication is critical for synchronized production flow",
+      "PLC and HMI integration provides intuitive operator control interfaces",
+      "MES connectivity transforms standalone stations into a smart factory ecosystem",
+      "Pneumatic system reliability depends on proper FRCLM unit maintenance"
+    ]
+  },
 ];
 
 export const getArticleBySlug = (slug: string): ArticleContent | undefined => {
