@@ -178,6 +178,10 @@ import mms17 from "@/assets/projects/mms-17.jpg";
 import mms18 from "@/assets/projects/mms-18.jpg";
 import mms19 from "@/assets/projects/mms-19.jpg";
 import mms20 from "@/assets/projects/mms-20.jpg";
+import mms21 from "@/assets/projects/mms-21.jpg";
+import mms22 from "@/assets/projects/mms-22.jpg";
+import mms23 from "@/assets/projects/mms-23.jpg";
+import mms24 from "@/assets/projects/mms-24.jpg";
 
 export interface Project {
   id: number;
@@ -312,7 +316,7 @@ export const engineeringProjects: Project[] = [
     id: 124,
     title: "Modular Manufacturing System (MMS) – 5 Station Didactic Setup",
     description: "Industry 4.0 didactic automation training platform with 5 modular stations (Feeder, Inspection, Buffer, Process, Sorting) integrating PLC, HMI, pneumatics, and MES connectivity.",
-    images: [mms1, mms10, mms9, mms2, mms3, mms4, mms5, mms6, mms7, mms8, mms11, mms12, mms13, mms14, mms15, mms16, mms17, mms18, mms19, mms20],
+    images: [mms1, mms10, mms9, mms2, mms3, mms4, mms5, mms6, mms7, mms8, mms11, mms12, mms13, mms14, mms15, mms16, mms17, mms18, mms19, mms20, mms21, mms22, mms23, mms24],
     tags: ["PLC", "HMI", "Pneumatics", "Industry 4.0", "MES", "Mechatronics"],
     articleUrl: "/projects/article/modular-manufacturing-system",
     featured: true,
