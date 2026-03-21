@@ -178,6 +178,10 @@ import mms17 from "@/assets/projects/mms-17.jpg";
 import mms18 from "@/assets/projects/mms-18.jpg";
 import mms19 from "@/assets/projects/mms-19.jpg";
 import mms20 from "@/assets/projects/mms-20.jpg";
+import mms21 from "@/assets/projects/mms-21.jpg";
+import mms22 from "@/assets/projects/mms-22.jpg";
+import mms23 from "@/assets/projects/mms-23.jpg";
+import mms24 from "@/assets/projects/mms-24.jpg";
 
 export interface Project {
   id: number;
