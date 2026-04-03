@@ -308,16 +308,6 @@ export const itProjects: Project[] = [
     featured: false,
     category: "it",
   },
-  {
-    id: 11,
-    title: "Update in Progress",
-    description: "Exciting new IT projects are being prepared and will be available soon. Stay tuned!",
-    images: [],
-    tags: ["Upcoming"],
-    articleUrl: "",
-    featured: false,
-    category: "it",
-  },
 ];
 
 // Engineering Projects
