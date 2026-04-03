@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
 import Hero3DBackground from "./Hero3DBackground";
+import AnimatedCanvasBackground from "./AnimatedCanvasBackground";
 
 const Hero = () => {
   const highlights = [
