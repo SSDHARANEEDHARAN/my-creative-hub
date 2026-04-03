@@ -138,9 +138,7 @@ const DataLines = ({ count = 6 }: { count?: number }) => {
       {linesData.map((data, i) => {
         const geometry = new THREE.BufferGeometry().setFromPoints(data.points);
         return (
-          <line key={i} geometry={geometry}>
-            <lineBasicMaterial color="#4a90d9" transparent opacity={0.06} />
-          </line>
+          <primitive key={i} object={new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: "#4a90d9", transparent: true, opacity: 0.06 }))} />
         );
       })}
     </group>
