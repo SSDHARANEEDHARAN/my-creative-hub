@@ -4,7 +4,7 @@ import { Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
-import ParticleField from "./ParticleField";
+import Hero3DBackground from "./Hero3DBackground";
 
 const Hero = () => {
   const highlights = [
