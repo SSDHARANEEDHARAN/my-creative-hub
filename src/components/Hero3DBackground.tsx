@@ -174,7 +174,7 @@ const MobileScene = () => (
 );
 
 const Hero3DBackground = () => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   return (
     <div className="absolute inset-0 w-full h-full" style={{ pointerEvents: "none" }}>
