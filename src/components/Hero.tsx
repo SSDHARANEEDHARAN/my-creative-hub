@@ -4,7 +4,7 @@ import { Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
-import ParticleField from "./ParticleField";
+import Hero3DBackground from "./Hero3DBackground";
 
 const Hero = () => {
   const highlights = [
@@ -15,8 +15,8 @@ const Hero = () => {
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-16">
-      {/* Particle Background */}
-      <ParticleField />
+      {/* 3D Background */}
+      <Hero3DBackground />
       {/* Overlay for depth - lighter to let particles show */}
       <div className="absolute inset-0 bg-background/20 dark:bg-background/30" />
       {/* Animated Background Elements */}
