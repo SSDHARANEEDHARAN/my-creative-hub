@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
 import Hero3DBackground from "./Hero3DBackground";
+import AnimatedCanvasBackground from "./AnimatedCanvasBackground";
 
 const Hero = () => {
   const highlights = [
@@ -15,37 +16,45 @@ const Hero = () => {
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-16">
-      {/* 3D Background */}
-      <Hero3DBackground />
-      {/* Overlay for depth - lighter to let particles show */}
-      <div className="absolute inset-0 bg-background/20 dark:bg-background/30" />
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Gradient orbs */}
+      {/* Layer 0: Canvas animated background */}
+      <div className="absolute inset-0 z-0">
+        <AnimatedCanvasBackground />
+      </div>
+      
+      {/* Layer 1: 3D Background */}
+      <div className="absolute inset-0 z-[1]">
+        <Hero3DBackground />
+      </div>
+
+      {/* Layer 2: CRT Scanline overlay */}
+      <div
+        className="absolute inset-0 z-[2] pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px)",
+          backgroundSize: "100% 4px",
+        }}
+      />
+      {/* CRT vignette */}
+      <div className="absolute inset-0 z-[2] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,hsl(var(--background)/0.6)_100%)]" />
+
+      {/* Layer 3: Readability overlay */}
+      <div className="absolute inset-0 z-[3] bg-background/30 dark:bg-background/40 backdrop-blur-[1px]" />
+
+      {/* Animated gradient orbs */}
+      <div className="absolute inset-0 z-[4] overflow-hidden pointer-events-none">
         <motion.div
-          animate={{ 
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-          }}
+          animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 -left-40 w-[600px] h-[600px] rounded-full bg-gradient-to-r from-primary/20 to-violet-light/10 blur-3xl"
+          className="absolute top-0 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl"
         />
         <motion.div
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            rotate: [0, -90, 0],
-          }}
+          animate={{ scale: [1.2, 1, 1.2], rotate: [0, -90, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-0 -right-40 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-secondary/15 to-orange-light/10 blur-3xl"
+          className="absolute bottom-0 -right-40 w-[500px] h-[500px] rounded-full bg-accent/8 blur-3xl"
         />
-        <motion.div
-          animate={{ y: [-20, 20, -20] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/3 right-1/4 w-[300px] h-[300px] rounded-full bg-accent/10 blur-3xl"
-        />
-        
         {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--border)/0.3)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--border)/0.3)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--border)/0.15)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--border)/0.15)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
