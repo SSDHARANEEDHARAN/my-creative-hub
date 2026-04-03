@@ -18,257 +18,194 @@ const MouseTracker = () => {
   return null;
 };
 
-/* ── DNA Double Helix ── */
-const DNAHelix = () => {
-  const groupRef = useRef<THREE.Group>(null);
-  const strandCount = 60;
-
-  const { spheres1, spheres2, connectors } = useMemo(() => {
-    const s1: { pos: THREE.Vector3; phase: number }[] = [];
-    const s2: { pos: THREE.Vector3; phase: number }[] = [];
-    const conn: { start: THREE.Vector3; end: THREE.Vector3; idx: number }[] = [];
-
-    for (let i = 0; i < strandCount; i++) {
-      const t = (i / strandCount) * Math.PI * 4;
-      const y = (i / strandCount - 0.5) * 6;
-      const r = 0.8;
-      const x1 = Math.cos(t) * r;
-      const z1 = Math.sin(t) * r;
-      const x2 = Math.cos(t + Math.PI) * r;
-      const z2 = Math.sin(t + Math.PI) * r;
-
-      s1.push({ pos: new THREE.Vector3(x1, y, z1), phase: t });
-      s2.push({ pos: new THREE.Vector3(x2, y, z2), phase: t + Math.PI });
-
-      if (i % 4 === 0) {
-        conn.push({
-          start: new THREE.Vector3(x1, y, z1),
-          end: new THREE.Vector3(x2, y, z2),
-          idx: i,
-        });
-      }
-    }
-    return { spheres1: s1, spheres2: s2, connectors: conn };
-  }, []);
+/* ── Geodesic Sphere Shell ── */
+const GeodesicShell = () => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const innerRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (!groupRef.current) return;
     const t = state.clock.elapsedTime;
-    groupRef.current.rotation.y = t * 0.08;
-
-    groupRef.current.children.forEach((child, i) => {
-      if ((child as THREE.Mesh).isMesh) {
-        const mat = (child as THREE.Mesh).material as THREE.MeshPhysicalMaterial;
-        if (mat.emissiveIntensity !== undefined) {
-          mat.emissiveIntensity = 0.08 + Math.sin(t * 0.8 + i * 0.2) * 0.04;
-        }
-      }
-    });
+    if (meshRef.current) {
+      meshRef.current.rotation.x = t * 0.03;
+      meshRef.current.rotation.y = t * 0.05;
+      meshRef.current.rotation.z = t * 0.02;
+    }
+    if (innerRef.current) {
+      innerRef.current.rotation.x = -t * 0.04;
+      innerRef.current.rotation.y = -t * 0.06;
+      const scale = 1 + Math.sin(t * 0.5) * 0.05;
+      innerRef.current.scale.setScalar(scale);
+    }
   });
 
   return (
-    <group ref={groupRef} position={[0, 0.2, 0]}>
-      {/* Strand 1 spheres */}
-      {spheres1.map((s, i) => (
-        <mesh key={`s1-${i}`} position={s.pos}>
-          <sphereGeometry args={[0.06, 8, 8]} />
-          <meshPhysicalMaterial
-            color="#0a1628"
-            emissive="#4a90d9"
-            emissiveIntensity={0.1}
-            metalness={0.9}
-            roughness={0.2}
-            transparent
-            opacity={0.7}
-          />
-        </mesh>
-      ))}
-
-      {/* Strand 2 spheres */}
-      {spheres2.map((s, i) => (
-        <mesh key={`s2-${i}`} position={s.pos}>
-          <sphereGeometry args={[0.06, 8, 8]} />
-          <meshPhysicalMaterial
-            color="#0a1628"
-            emissive="#7c6bc4"
-            emissiveIntensity={0.1}
-            metalness={0.9}
-            roughness={0.2}
-            transparent
-            opacity={0.7}
-          />
-        </mesh>
-      ))}
-
-      {/* Base pair connectors */}
-      {connectors.map((c, i) => {
-        const mid = new THREE.Vector3().lerpVectors(c.start, c.end, 0.5);
-        const dir = new THREE.Vector3().subVectors(c.end, c.start);
-        const len = dir.length();
-        const quaternion = new THREE.Quaternion();
-        quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.normalize());
-
-        return (
-          <mesh key={`conn-${i}`} position={mid} quaternion={quaternion}>
-            <cylinderGeometry args={[0.012, 0.012, len, 4]} />
-            <meshPhysicalMaterial
-              color="#0d1117"
-              emissive="#5ba3e6"
-              emissiveIntensity={0.12}
-              transparent
-              opacity={0.35}
-              metalness={1}
-              roughness={0.1}
-            />
-          </mesh>
-        );
-      })}
-
-      {/* Strand curves */}
-      {[spheres1, spheres2].map((strand, si) => {
-        const curve = new THREE.CatmullRomCurve3(strand.map((s) => s.pos));
-        const points = curve.getPoints(80);
-        const geo = new THREE.BufferGeometry().setFromPoints(points);
-        return (
-          <primitive
-            key={`strand-${si}`}
-            object={
-              new THREE.Line(
-                geo,
-                new THREE.LineBasicMaterial({
-                  color: si === 0 ? "#4a90d9" : "#7c6bc4",
-                  transparent: true,
-                  opacity: 0.2,
-                })
-              )
-            }
-          />
-        );
-      })}
+    <group position={[0, 0.2, 0]}>
+      {/* Outer wireframe icosahedron */}
+      <mesh ref={meshRef}>
+        <icosahedronGeometry args={[1.8, 1]} />
+        <meshPhysicalMaterial
+          wireframe
+          color="#0d1117"
+          emissive="#4a90d9"
+          emissiveIntensity={0.15}
+          transparent
+          opacity={0.2}
+          metalness={1}
+          roughness={0.1}
+        />
+      </mesh>
+      {/* Inner rotating dodecahedron */}
+      <mesh ref={innerRef}>
+        <dodecahedronGeometry args={[0.9, 0]} />
+        <meshPhysicalMaterial
+          wireframe
+          color="#0d1117"
+          emissive="#7c6bc4"
+          emissiveIntensity={0.2}
+          transparent
+          opacity={0.25}
+          metalness={1}
+          roughness={0.1}
+        />
+      </mesh>
+      {/* Core glow sphere */}
+      <mesh>
+        <sphereGeometry args={[0.15, 16, 16]} />
+        <meshPhysicalMaterial
+          color="#4a90d9"
+          emissive="#4a90d9"
+          emissiveIntensity={0.6}
+          transparent
+          opacity={0.4}
+          metalness={0}
+          roughness={1}
+        />
+      </mesh>
     </group>
   );
 };
 
-/* ── Circuit Board Traces ── */
-const CircuitTraces = ({ count = 8 }: { count?: number }) => {
+/* ── Orbiting Rings ── */
+const OrbitalRings = () => {
+  const ring1 = useRef<THREE.Mesh>(null);
+  const ring2 = useRef<THREE.Mesh>(null);
+  const ring3 = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    if (ring1.current) {
+      ring1.current.rotation.x = Math.PI / 3;
+      ring1.current.rotation.z = t * 0.12;
+    }
+    if (ring2.current) {
+      ring2.current.rotation.x = Math.PI / 1.8;
+      ring2.current.rotation.y = t * 0.1;
+    }
+    if (ring3.current) {
+      ring3.current.rotation.y = Math.PI / 4;
+      ring3.current.rotation.z = -t * 0.08;
+    }
+  });
+
+  return (
+    <group position={[0, 0.2, 0]}>
+      <mesh ref={ring1}>
+        <torusGeometry args={[2.5, 0.008, 8, 100]} />
+        <meshPhysicalMaterial emissive="#4a90d9" emissiveIntensity={0.3} transparent opacity={0.2} />
+      </mesh>
+      <mesh ref={ring2}>
+        <torusGeometry args={[2.8, 0.006, 8, 100]} />
+        <meshPhysicalMaterial emissive="#7c6bc4" emissiveIntensity={0.25} transparent opacity={0.15} />
+      </mesh>
+      <mesh ref={ring3}>
+        <torusGeometry args={[3.2, 0.005, 8, 100]} />
+        <meshPhysicalMaterial emissive="#3a6b9f" emissiveIntensity={0.2} transparent opacity={0.1} />
+      </mesh>
+    </group>
+  );
+};
+
+/* ── Floating Vertices ── */
+const FloatingVertices = ({ count = 40 }: { count?: number }) => {
+  const ref = useRef<THREE.Points>(null);
+  const { positions, speeds } = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const spd = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 3 + Math.random() * 4;
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi) - 2;
+      spd[i] = 0.2 + Math.random() * 0.5;
+    }
+    return { positions: pos, speeds: spd };
+  }, [count]);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const t = state.clock.elapsedTime;
+    const posAttr = ref.current.geometry.attributes.position;
+    const arr = posAttr.array as Float32Array;
+    for (let i = 0; i < count; i++) {
+      arr[i * 3 + 1] += Math.sin(t * speeds[i] + i) * 0.001;
+    }
+    posAttr.needsUpdate = true;
+    ref.current.rotation.y = t * 0.008;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
+      </bufferGeometry>
+      <pointsMaterial size={0.025} color="#5ba3e6" transparent opacity={0.3} sizeAttenuation />
+    </points>
+  );
+};
+
+/* ── Connection Lines between random points ── */
+const ConnectionWeb = ({ count = 12 }: { count?: number }) => {
   const groupRef = useRef<THREE.Group>(null);
 
-  const traces = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => {
-      const points: THREE.Vector3[] = [];
-      let x = (Math.random() - 0.5) * 14;
-      let y = (Math.random() - 0.5) * 8;
-      const z = -2 - Math.random() * 5;
-
-      points.push(new THREE.Vector3(x, y, z));
-
-      for (let j = 0; j < 6; j++) {
-        // Circuit-style right-angle paths
-        if (Math.random() > 0.5) {
-          x += (Math.random() - 0.3) * 2;
-        } else {
-          y += (Math.random() - 0.3) * 2;
-        }
-        points.push(new THREE.Vector3(x, y, z));
-      }
-
-      return { points, color: i % 3 === 0 ? "#4a90d9" : i % 3 === 1 ? "#7c6bc4" : "#3a6b9f" };
+  const lines = useMemo(() => {
+    return Array.from({ length: count }, () => {
+      const theta1 = Math.random() * Math.PI * 2;
+      const phi1 = Math.acos(2 * Math.random() - 1);
+      const r1 = 2 + Math.random() * 2;
+      const theta2 = Math.random() * Math.PI * 2;
+      const phi2 = Math.acos(2 * Math.random() - 1);
+      const r2 = 2 + Math.random() * 2;
+      return [
+        new THREE.Vector3(r1 * Math.sin(phi1) * Math.cos(theta1), r1 * Math.sin(phi1) * Math.sin(theta1), r1 * Math.cos(phi1)),
+        new THREE.Vector3(r2 * Math.sin(phi2) * Math.cos(theta2), r2 * Math.sin(phi2) * Math.sin(theta2), r2 * Math.cos(phi2)),
+      ];
     });
   }, [count]);
 
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.elapsedTime;
+    groupRef.current.rotation.y = t * 0.006;
     groupRef.current.children.forEach((child, i) => {
-      const line = child as THREE.Line;
-      if (line.material) {
-        const mat = line.material as THREE.LineBasicMaterial;
-        mat.opacity = 0.04 + Math.sin(t * 0.4 + i * 1.2) * 0.025;
-      }
+      const mat = (child as THREE.Line).material as THREE.LineBasicMaterial;
+      if (mat) mat.opacity = 0.03 + Math.sin(t * 0.3 + i * 0.8) * 0.02;
     });
   });
 
   return (
     <group ref={groupRef}>
-      {traces.map((trace, i) => {
-        const geo = new THREE.BufferGeometry().setFromPoints(trace.points);
+      {lines.map((pts, i) => {
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
         return (
           <primitive
             key={i}
-            object={
-              new THREE.Line(
-                geo,
-                new THREE.LineBasicMaterial({
-                  color: trace.color,
-                  transparent: true,
-                  opacity: 0.05,
-                })
-              )
-            }
+            object={new THREE.Line(geo, new THREE.LineBasicMaterial({ color: "#4a90d9", transparent: true, opacity: 0.04 }))}
           />
         );
       })}
     </group>
-  );
-};
-
-/* ── Circuit Nodes (junction points) ── */
-const CircuitNodes = ({ count = 20 }: { count?: number }) => {
-  const ref = useRef<THREE.Points>(null);
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 16;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 10;
-      arr[i * 3 + 2] = -2 - Math.random() * 5;
-    }
-    return arr;
-  }, [count]);
-
-  useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.003;
-    }
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
-      </bufferGeometry>
-      <pointsMaterial size={0.04} color="#5ba3e6" transparent opacity={0.3} sizeAttenuation />
-    </points>
-  );
-};
-
-/* ── Floating data particles ── */
-const DataParticles = ({ count = 30 }: { count?: number }) => {
-  const ref = useRef<THREE.Points>(null);
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 20;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 14;
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 10 - 2;
-    }
-    return arr;
-  }, [count]);
-
-  useFrame((state) => {
-    if (ref.current) {
-      const t = state.clock.elapsedTime;
-      ref.current.rotation.y = t * 0.005;
-      ref.current.rotation.x = Math.sin(t * 0.008) * 0.015;
-    }
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
-      </bufferGeometry>
-      <pointsMaterial size={0.02} color="#8b9dc3" transparent opacity={0.2} sizeAttenuation />
-    </points>
   );
 };
 
@@ -277,8 +214,8 @@ const ParallaxGroup = ({ children }: { children: React.ReactNode }) => {
   const ref = useRef<THREE.Group>(null);
   useFrame(() => {
     if (!ref.current) return;
-    ref.current.rotation.y += (mousePos.x * 0.06 - ref.current.rotation.y) * 0.01;
-    ref.current.rotation.x += (mousePos.y * 0.03 - ref.current.rotation.x) * 0.01;
+    ref.current.rotation.y += (mousePos.x * 0.08 - ref.current.rotation.y) * 0.012;
+    ref.current.rotation.x += (mousePos.y * 0.04 - ref.current.rotation.x) * 0.012;
   });
   return <group ref={ref}>{children}</group>;
 };
@@ -287,20 +224,20 @@ const ParallaxGroup = ({ children }: { children: React.ReactNode }) => {
 const FullScene = () => (
   <>
     <MouseTracker />
-    <ambientLight intensity={0.025} />
-    <directionalLight position={[5, 4, 6]} intensity={0.08} color="#b8c6db" />
-    <directionalLight position={[-4, 2, -5]} intensity={0.04} color="#7c6bc4" />
-    <pointLight position={[0, 3, 3]} intensity={0.08} color="#4a90d9" distance={12} decay={2} />
-    <pointLight position={[0, -2, 2]} intensity={0.04} color="#7c6bc4" distance={10} decay={2} />
-    <fog attach="fog" args={["#08080f", 6, 20]} />
+    <ambientLight intensity={0.02} />
+    <directionalLight position={[5, 4, 6]} intensity={0.06} color="#b8c6db" />
+    <directionalLight position={[-4, 2, -5]} intensity={0.03} color="#7c6bc4" />
+    <pointLight position={[0, 0, 4]} intensity={0.1} color="#4a90d9" distance={12} decay={2} />
+    <pointLight position={[2, -2, 2]} intensity={0.05} color="#7c6bc4" distance={10} decay={2} />
+    <fog attach="fog" args={["#08080f", 6, 22]} />
 
     <ParallaxGroup>
-      <DNAHelix />
-      <CircuitTraces count={8} />
+      <GeodesicShell />
+      <OrbitalRings />
+      <ConnectionWeb count={12} />
     </ParallaxGroup>
 
-    <CircuitNodes count={20} />
-    <DataParticles count={30} />
+    <FloatingVertices count={40} />
   </>
 );
 
@@ -309,10 +246,10 @@ const MobileScene = () => (
   <>
     <ambientLight intensity={0.03} />
     <directionalLight position={[4, 3, 5]} intensity={0.06} color="#b8c6db" />
-    <pointLight position={[0, 2, 3]} intensity={0.06} color="#4a90d9" distance={10} decay={2} />
+    <pointLight position={[0, 0, 4]} intensity={0.08} color="#4a90d9" distance={10} decay={2} />
     <fog attach="fog" args={["#08080f", 5, 16]} />
-    <DNAHelix />
-    <DataParticles count={12} />
+    <GeodesicShell />
+    <FloatingVertices count={15} />
   </>
 );
 
@@ -321,7 +258,7 @@ const Hero3DBackground = () => {
   return (
     <div className="absolute inset-0 w-full h-full" style={{ pointerEvents: "none" }}>
       <Canvas
-        camera={{ position: [0, 0.5, 5.5], fov: 50, near: 0.1, far: 30 }}
+        camera={{ position: [0, 0.5, 6], fov: 48, near: 0.1, far: 30 }}
         dpr={isMobile ? [1, 1] : [1, 1.5]}
         gl={{ antialias: !isMobile, alpha: true, powerPreference: isMobile ? "low-power" : "default" }}
         style={{ background: "transparent" }}
