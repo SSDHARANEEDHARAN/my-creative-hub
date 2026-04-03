@@ -3,7 +3,6 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-/* ── Mouse tracker ── */
 const mousePos = { x: 0, y: 0 };
 
 const MouseTracker = () => {
@@ -19,163 +18,208 @@ const MouseTracker = () => {
   return null;
 };
 
-/* ── Connected node network ── */
-const NetworkNodes = ({ count = 50 }: { count?: number }) => {
-  const pointsRef = useRef<THREE.Points>(null);
-  const linesRef = useRef<THREE.LineSegments>(null);
+/* ── DNA-style double helix ── */
+const DoubleHelix = ({ count = 40 }: { count?: number }) => {
   const groupRef = useRef<THREE.Group>(null);
+  const spheresA = useRef<THREE.InstancedMesh>(null);
+  const spheresB = useRef<THREE.InstancedMesh>(null);
+  const linesRef = useRef<THREE.LineSegments>(null);
 
-  const { nodes, velocities } = useMemo(() => {
-    const n: number[] = [];
-    const v: number[] = [];
-    for (let i = 0; i < count; i++) {
-      n.push(
-        (Math.random() - 0.5) * 18,
-        (Math.random() - 0.5) * 12,
-        (Math.random() - 0.5) * 8 - 3
-      );
-      v.push(
-        (Math.random() - 0.5) * 0.006,
-        (Math.random() - 0.5) * 0.006,
-        (Math.random() - 0.5) * 0.003
-      );
-    }
-    return { nodes: new Float32Array(n), velocities: v };
-  }, [count]);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const linePos = useMemo(() => new Float32Array(count * 6), [count]);
 
-  const linePositions = useMemo(() => new Float32Array(count * count * 6), [count]);
-  const lineColors = useMemo(() => new Float32Array(count * count * 6), [count]);
+  useFrame((state) => {
+    if (!groupRef.current || !spheresA.current || !spheresB.current || !linesRef.current) return;
 
-  useFrame(() => {
-    if (!pointsRef.current || !linesRef.current || !groupRef.current) return;
+    const t = state.clock.elapsedTime;
+    groupRef.current.rotation.y += (mousePos.x * 0.1 - groupRef.current.rotation.y) * 0.02;
+    groupRef.current.rotation.x += (mousePos.y * 0.05 - groupRef.current.rotation.x) * 0.02;
 
-    groupRef.current.rotation.y += (mousePos.x * 0.12 - groupRef.current.rotation.y) * 0.015;
-    groupRef.current.rotation.x += (mousePos.y * 0.08 - groupRef.current.rotation.x) * 0.015;
-
-    const positions = pointsRef.current.geometry.attributes.position.array as Float32Array;
+    const radius = 2.5;
+    const spacing = 0.5;
+    const offset = count * spacing * 0.5;
 
     for (let i = 0; i < count; i++) {
-      positions[i * 3] += velocities[i * 3];
-      positions[i * 3 + 1] += velocities[i * 3 + 1];
-      positions[i * 3 + 2] += velocities[i * 3 + 2];
-      if (Math.abs(positions[i * 3]) > 9) velocities[i * 3] *= -1;
-      if (Math.abs(positions[i * 3 + 1]) > 6) velocities[i * 3 + 1] *= -1;
-      if (Math.abs(positions[i * 3 + 2] + 3) > 4) velocities[i * 3 + 2] *= -1;
-    }
-    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+      const y = i * spacing - offset;
+      const angle = i * 0.3 + t * 0.2;
 
-    let lineIdx = 0;
-    const maxDist = 3.5;
-    for (let i = 0; i < count; i++) {
-      for (let j = i + 1; j < count; j++) {
-        const dx = positions[i * 3] - positions[j * 3];
-        const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
-        const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
-        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (dist < maxDist) {
-          const alpha = (1 - dist / maxDist) * 0.2;
-          linePositions[lineIdx * 6] = positions[i * 3];
-          linePositions[lineIdx * 6 + 1] = positions[i * 3 + 1];
-          linePositions[lineIdx * 6 + 2] = positions[i * 3 + 2];
-          linePositions[lineIdx * 6 + 3] = positions[j * 3];
-          linePositions[lineIdx * 6 + 4] = positions[j * 3 + 1];
-          linePositions[lineIdx * 6 + 5] = positions[j * 3 + 2];
-          const c = 0.4 + alpha;
-          for (let k = 0; k < 6; k++) lineColors[lineIdx * 6 + k] = c;
-          lineIdx++;
-        }
-      }
+      const ax = Math.cos(angle) * radius;
+      const az = Math.sin(angle) * radius - 5;
+      const bx = Math.cos(angle + Math.PI) * radius;
+      const bz = Math.sin(angle + Math.PI) * radius - 5;
+
+      const scale = 0.08 + Math.sin(t * 0.8 + i * 0.2) * 0.03;
+
+      dummy.position.set(ax, y, az);
+      dummy.scale.setScalar(scale);
+      dummy.updateMatrix();
+      spheresA.current.setMatrixAt(i, dummy.matrix);
+
+      dummy.position.set(bx, y, bz);
+      dummy.updateMatrix();
+      spheresB.current.setMatrixAt(i, dummy.matrix);
+
+      // Connection lines
+      linePos[i * 6] = ax;
+      linePos[i * 6 + 1] = y;
+      linePos[i * 6 + 2] = az;
+      linePos[i * 6 + 3] = bx;
+      linePos[i * 6 + 4] = y;
+      linePos[i * 6 + 5] = bz;
     }
 
-    const lineGeo = linesRef.current.geometry;
-    lineGeo.setDrawRange(0, lineIdx * 2);
-    lineGeo.attributes.position.needsUpdate = true;
-    lineGeo.attributes.color.needsUpdate = true;
+    spheresA.current.instanceMatrix.needsUpdate = true;
+    spheresB.current.instanceMatrix.needsUpdate = true;
+    linesRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
-    <group ref={groupRef}>
-      <points ref={pointsRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={count} array={nodes} itemSize={3} />
-        </bufferGeometry>
-        <pointsMaterial size={0.07} color="#ffffff" transparent opacity={0.5} sizeAttenuation />
-      </points>
+    <group ref={groupRef} rotation={[0.3, 0, 0.1]}>
+      <instancedMesh ref={spheresA} args={[undefined, undefined, count]}>
+        <sphereGeometry args={[1, 12, 12]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.5} metalness={0.9} roughness={0.1} />
+      </instancedMesh>
+      <instancedMesh ref={spheresB} args={[undefined, undefined, count]}>
+        <sphereGeometry args={[1, 12, 12]} />
+        <meshStandardMaterial color="#aaaaaa" transparent opacity={0.4} metalness={0.9} roughness={0.1} />
+      </instancedMesh>
       <lineSegments ref={linesRef}>
         <bufferGeometry>
-          <bufferAttribute attach="attributes-position" count={linePositions.length / 3} array={linePositions} itemSize={3} />
-          <bufferAttribute attach="attributes-color" count={lineColors.length / 3} array={lineColors} itemSize={3} />
+          <bufferAttribute attach="attributes-position" count={count * 2} array={linePos} itemSize={3} />
         </bufferGeometry>
-        <lineBasicMaterial vertexColors transparent opacity={0.12} />
+        <lineBasicMaterial color="#ffffff" transparent opacity={0.06} />
       </lineSegments>
     </group>
   );
 };
 
-/* ── Floating ring ── */
-const FloatingRing = ({ position, scale, speed, axis }: {
-  position: [number, number, number]; scale: number; speed: number; axis: "x" | "y" | "z";
+/* ── Floating geometric shapes ── */
+const GeoShape = ({ position, geoType, scale, rotSpeed }: {
+  position: [number, number, number]; geoType: "octa" | "tetra" | "dodeca"; scale: number; rotSpeed: number;
 }) => {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((state) => {
     if (!ref.current) return;
-    ref.current.rotation[axis] = state.clock.elapsedTime * speed;
-    ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.4) * 0.3;
+    ref.current.rotation.x = state.clock.elapsedTime * rotSpeed;
+    ref.current.rotation.y = state.clock.elapsedTime * rotSpeed * 0.7;
+    ref.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5 + position[0]) * 0.4;
   });
+
+  const geo = geoType === "octa"
+    ? <octahedronGeometry args={[1, 0]} />
+    : geoType === "tetra"
+    ? <tetrahedronGeometry args={[1, 0]} />
+    : <dodecahedronGeometry args={[1, 0]} />;
+
   return (
     <mesh ref={ref} position={position} scale={scale}>
-      <torusGeometry args={[1, 0.02, 16, 64]} />
-      <meshStandardMaterial color="#ffffff" transparent opacity={0.1} metalness={1} roughness={0} />
+      {geo}
+      <meshStandardMaterial color="#ffffff" wireframe transparent opacity={0.08} metalness={0.8} roughness={0.2} />
     </mesh>
   );
 };
 
-/* ── Orbiting dot ── */
-const OrbitDot = ({ radius, speed, offset, y }: { radius: number; speed: number; offset: number; y: number }) => {
+/* ── Sweeping light beam ── */
+const LightBeam = () => {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((state) => {
     if (!ref.current) return;
-    const t = state.clock.elapsedTime * speed + offset;
-    ref.current.position.x = Math.cos(t) * radius;
-    ref.current.position.z = Math.sin(t) * radius - 4;
-    ref.current.position.y = y + Math.sin(t * 2) * 0.2;
+    ref.current.rotation.z = state.clock.elapsedTime * 0.08;
+    const mat = ref.current.material as THREE.MeshBasicMaterial;
+    mat.opacity = 0.025 + Math.sin(state.clock.elapsedTime * 0.3) * 0.01;
   });
   return (
-    <mesh ref={ref}>
-      <sphereGeometry args={[0.04, 8, 8]} />
-      <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.4} transparent opacity={0.7} />
+    <mesh ref={ref} position={[0, 0, -8]}>
+      <planeGeometry args={[0.3, 30]} />
+      <meshBasicMaterial color="#ffffff" transparent opacity={0.03} side={THREE.DoubleSide} />
     </mesh>
   );
 };
 
-/* ── Scene ── */
+/* ── Concentric pulse rings ── */
+const PulseRings = ({ count = 3 }: { count?: number }) => {
+  const refs = useRef<THREE.Mesh[]>([]);
+  useFrame((state) => {
+    refs.current.forEach((mesh, i) => {
+      if (!mesh) return;
+      const t = (state.clock.elapsedTime * 0.3 + i * 1.5) % 4;
+      const s = 0.5 + t * 1.2;
+      mesh.scale.set(s, s, s);
+      const mat = mesh.material as THREE.MeshBasicMaterial;
+      mat.opacity = Math.max(0, 0.08 * (1 - t / 4));
+    });
+  });
+  return (
+    <group position={[0, 0, -6]}>
+      {Array.from({ length: count }).map((_, i) => (
+        <mesh key={i} ref={(el) => { if (el) refs.current[i] = el; }} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[1, 0.01, 16, 64]} />
+          <meshBasicMaterial color="#ffffff" transparent opacity={0.06} />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+/* ── Subtle dust particles ── */
+const Dust = ({ count = 50 }: { count?: number }) => {
+  const ref = useRef<THREE.Points>(null);
+  const positions = useMemo(() => {
+    const arr = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      arr[i * 3] = (Math.random() - 0.5) * 20;
+      arr[i * 3 + 1] = (Math.random() - 0.5) * 14;
+      arr[i * 3 + 2] = (Math.random() - 0.5) * 10 - 4;
+    }
+    return arr;
+  }, [count]);
+
+  useFrame((state) => {
+    if (ref.current) ref.current.rotation.y = state.clock.elapsedTime * 0.005;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
+      </bufferGeometry>
+      <pointsMaterial size={0.035} color="#999999" transparent opacity={0.4} sizeAttenuation />
+    </points>
+  );
+};
+
+/* ── Scenes ── */
 const FullScene = () => (
   <>
     <MouseTracker />
-    <ambientLight intensity={0.12} />
-    <directionalLight position={[5, 5, 5]} intensity={0.18} />
-    <NetworkNodes count={45} />
-    <FloatingRing position={[-3, 1, -5]} scale={1.5} speed={0.15} axis="y" />
-    <FloatingRing position={[4, -1, -6]} scale={1} speed={-0.12} axis="x" />
-    <FloatingRing position={[0, 2, -7]} scale={2} speed={0.08} axis="z" />
-    <OrbitDot radius={3} speed={0.3} offset={0} y={0.5} />
-    <OrbitDot radius={4} speed={0.2} offset={2} y={-0.5} />
-    <OrbitDot radius={2.5} speed={0.4} offset={4} y={1.5} />
+    <ambientLight intensity={0.1} />
+    <directionalLight position={[3, 5, 4]} intensity={0.15} />
+    <pointLight position={[-5, 2, -3]} intensity={0.08} color="#ffffff" />
+
+    <DoubleHelix count={40} />
+
+    <GeoShape position={[-6, 2, -4]} geoType="octa" scale={0.8} rotSpeed={0.15} />
+    <GeoShape position={[6, -2, -5]} geoType="tetra" scale={0.6} rotSpeed={-0.2} />
+    <GeoShape position={[-4, -3, -6]} geoType="dodeca" scale={0.5} rotSpeed={0.12} />
+    <GeoShape position={[5, 3, -7]} geoType="octa" scale={0.4} rotSpeed={-0.18} />
+
+    <LightBeam />
+    <PulseRings count={3} />
+    <Dust count={60} />
   </>
 );
 
 const MobileScene = () => (
   <>
     <ambientLight intensity={0.1} />
-    <directionalLight position={[5, 5, 5]} intensity={0.15} />
-    <NetworkNodes count={18} />
-    <FloatingRing position={[0, 1, -5]} scale={1.2} speed={0.1} axis="y" />
+    <directionalLight position={[3, 5, 4]} intensity={0.12} />
+    <DoubleHelix count={20} />
+    <Dust count={20} />
   </>
 );
 
 const Hero3DBackground = () => {
   const isMobile = useIsMobile();
-
   return (
     <div className="absolute inset-0 w-full h-full" style={{ pointerEvents: "none" }}>
       <Canvas
@@ -183,7 +227,6 @@ const Hero3DBackground = () => {
         dpr={isMobile ? [1, 1] : [1, 1.5]}
         gl={{ antialias: !isMobile, alpha: true, powerPreference: isMobile ? "low-power" : "default" }}
         style={{ background: "transparent" }}
-        frameloop={isMobile ? "demand" : "always"}
       >
         {isMobile ? <MobileScene /> : <FullScene />}
       </Canvas>
