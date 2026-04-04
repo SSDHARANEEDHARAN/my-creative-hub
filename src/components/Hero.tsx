@@ -4,8 +4,7 @@ import { Sparkles, Cpu, MapPin, Calendar, Zap } from "lucide-react";
 import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
-import Hero3DBackground from "./Hero3DBackground";
-import AnimatedCanvasBackground from "./AnimatedCanvasBackground";
+import OrbBackground from "./OrbBackground";
 
 const Hero = () => {
   const highlights = [
@@ -16,14 +15,9 @@ const Hero = () => {
 
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-16">
-      {/* Layer 0: Canvas animated background */}
+      {/* Layer 0: Orb WebGL Background */}
       <div className="absolute inset-0 z-0">
-        <AnimatedCanvasBackground />
-      </div>
-      
-      {/* Layer 1: 3D Background */}
-      <div className="absolute inset-0 z-[1]">
-        <Hero3DBackground />
+        <OrbBackground hue={220} hoverIntensity={0.3} rotateOnHover />
       </div>
 
       {/* Layer 2: CRT Scanline overlay */}
