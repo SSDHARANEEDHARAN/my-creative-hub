@@ -89,7 +89,7 @@ const Orb = ({
     const vec3 blueColor1 = vec3(0.7, 0.85, 1.0);
     const vec3 blueColor2 = vec3(0.3, 0.5, 0.9);
     const vec3 blueColor3 = vec3(0.08, 0.12, 0.28);
-    const float baseInnerRadius = 0.6;
+    const float baseInnerRadius = 0.85;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
@@ -104,8 +104,8 @@ const Orb = ({
 
     vec4 draw(vec2 uv, float hoverVal, float burstVal, float breathVal) {
       float ang = atan(uv.y, uv.x);
-      // Superellipse: blend between circle (p=2) and square (p=high)
-      float p = 2.0 + squareness * 8.0;
+      // Always square base (p=20), hover makes it even sharper
+      float p = 20.0 + squareness * 30.0;
       float len = pow(pow(abs(uv.x), p) + pow(abs(uv.y), p), 1.0 / p);
       float circleLen = length(uv);
       float invLen = circleLen > 0.0 ? 1.0 / circleLen : 0.0;
