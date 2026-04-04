@@ -86,6 +86,7 @@ const SmallProjectLinks = memo(({ project }: { project: Project }) => {
 SmallProjectLinks.displayName = 'SmallProjectLinks';
 
 const Projects = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const projects = activeTab === "it" ? itProjects : engineeringProjects;
   const featuredProjects = projects.filter(p => p.featured);
