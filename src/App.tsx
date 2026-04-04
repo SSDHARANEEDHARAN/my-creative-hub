@@ -30,6 +30,8 @@ const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const SubscribersPage = lazy(() => import("./pages/SubscribersPage"));
 const BlogCommentsPage = lazy(() => import("./pages/BlogCommentsPage"));
 const AdminModerationPage = lazy(() => import("./pages/AdminModerationPage"));
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
+const IndustrialProjectsPage = lazy(() => import("./pages/IndustrialProjectsPage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
