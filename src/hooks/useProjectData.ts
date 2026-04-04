@@ -86,6 +86,7 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
       .on('postgres_changes', { event: '*', schema: 'public', table: 'project_views', filter: `project_id=eq.${projectId}` }, () => loadCounts())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'project_likes', filter: `project_id=eq.${projectId}` }, () => loadCounts())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'project_comments', filter: `project_id=eq.${projectId}` }, () => loadCounts())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_reads', filter: `project_id=eq.${projectId}` }, () => loadCounts())
       .subscribe();
 
     return () => {
