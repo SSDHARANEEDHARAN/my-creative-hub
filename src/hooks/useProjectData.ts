@@ -1,12 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const getProjectLikeStorageKey = (projectId: string, email: string | null) =>
-  `project_like_${projectId}_${email ?? "anonymous"}`;
-
-const getProjectReadStorageKey = (projectId: string, email: string | null) =>
-  `project_read_${projectId}_${email ?? "anonymous"}`;
-
 export const useProjectViewLikes = (projectId: string, userEmail: string | null, userName: string | null) => {
   const [viewCount, setViewCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
@@ -19,24 +13,41 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
   const loadCounts = useCallback(async () => {
     if (!projectId) return;
 
-    const [{ data: viewData }, { data: likeData }] = await Promise.all([
-      supabase
-        .from("project_view_counts")
-        .select("view_count")
-        .eq("project_id", projectId)
-        .maybeSingle(),
-      supabase
-        .from("project_likes_public")
-        .select("id")
-        .eq("project_id", projectId),
+    const viewPromise = supabase
+      .from("project_view_counts")
+      .select("view_count")
+      .eq("project_id", projectId)
+      .maybeSingle();
+
+    const likePromise = supabase
+      .from("project_likes_public")
+      .select("id")
+      .eq("project_id", projectId);
+
+    const readPromise = supabase
+      .from("project_read_counts")
+      .select("read_count")
+      .eq("project_id", projectId)
+      .maybeSingle();
+
+    const userLikePromise = userEmail
+      ? supabase
+          .from("project_likes")
+          .select("id")
+          .eq("project_id", projectId)
+          .eq("email", userEmail)
+          .maybeSingle()
+      : Promise.resolve({ data: null });
+
+    const [viewResult, likeResult, readResult, userLikeResult] = await Promise.all([
+      viewPromise, likePromise, readPromise, userLikePromise
     ]);
 
-    const nextViewCount = Number(viewData?.view_count) || 0;
-    setViewCount(nextViewCount);
-    setReadCount(nextViewCount);
-    setLikeCount(likeData?.length || 0);
-    setHasLiked(Boolean(userEmail && localStorage.getItem(getProjectLikeStorageKey(projectId, userEmail)) === "1"));
-    setHasRead(sessionStorage.getItem(getProjectReadStorageKey(projectId, userEmail)) === "1");
+    setViewCount(Number(viewResult.data?.view_count) || 0);
+    setLikeCount(likeResult.data?.length || 0);
+    setReadCount(Number(readResult.data?.read_count) || 0);
+    setHasLiked(Boolean(userLikeResult.data));
+    setHasRead(false);
   }, [projectId, userEmail]);
 
   useEffect(() => {
@@ -97,17 +108,14 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
   const toggleLike = useCallback(async (name: string, email: string) => {
     if (!projectId) return;
 
-    const likeStorageKey = getProjectLikeStorageKey(projectId, email);
-    if (hasLiked || localStorage.getItem(likeStorageKey) === "1") {
-      setHasLiked(true);
-      await loadCounts();
+    // Check from DB state, not localStorage
+    if (hasLiked) {
       return;
     }
 
     const previousLikeCount = likeCount;
     setHasLiked(true);
     setLikeCount((count) => count + 1);
-    localStorage.setItem(likeStorageKey, "1");
 
     const { error } = await supabase.from("project_likes").insert({
       project_id: projectId,
@@ -117,14 +125,13 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
 
     if (error) {
       if (error.code === "23505") {
+        // Already liked in DB
         setHasLiked(true);
-        localStorage.setItem(likeStorageKey, "1");
         await loadCounts();
         return;
       }
 
       console.error("Failed to like project:", error);
-      localStorage.removeItem(likeStorageKey);
       setHasLiked(false);
       setLikeCount(previousLikeCount);
       return;
@@ -135,19 +142,18 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
 
   const trackRead = useCallback(async () => {
     if (!projectId || readTracked.current) return;
-
-    const readStorageKey = getProjectReadStorageKey(projectId, userEmail);
-    if (sessionStorage.getItem(readStorageKey)) {
-      readTracked.current = true;
-      setHasRead(true);
-      return;
-    }
-
-    sessionStorage.setItem(readStorageKey, "1");
     readTracked.current = true;
     setHasRead(true);
-    setReadCount((current) => Math.max(current, viewCount));
-  }, [projectId, userEmail, viewCount]);
+
+    // Always insert read into DB
+    await supabase.from("project_reads").insert({
+      project_id: projectId,
+      reader_email: userEmail,
+      reader_name: null,
+    });
+
+    await loadCounts();
+  }, [projectId, userEmail, loadCounts]);
 
   return { viewCount, likeCount, readCount, hasLiked, hasRead, toggleLike, trackRead, refresh: loadCounts };
 };
