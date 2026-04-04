@@ -310,8 +310,8 @@ export const itProjects: Project[] = [
   },
 ];
 
-// Engineering Projects
-export const engineeringProjects: Project[] = [
+// Industrial Projects (restricted access)
+export const industrialProjects: Project[] = [
   {
     id: 122,
     title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
@@ -332,6 +332,10 @@ export const engineeringProjects: Project[] = [
     featured: true,
     category: "engineering",
   },
+];
+
+// Engineering Projects
+export const engineeringProjects: Project[] = [
   {
     id: 101,
     title: "Coming Soon",
