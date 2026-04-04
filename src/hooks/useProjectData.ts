@@ -48,7 +48,6 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
     if (!projectId || viewTracked.current) return;
 
     const trackView = async () => {
-      // Use sessionStorage to prevent duplicate view tracking
       const key = `project_viewed_${projectId}`;
       if (sessionStorage.getItem(key)) {
         viewTracked.current = true;
@@ -56,7 +55,6 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
         return;
       }
       sessionStorage.setItem(key, "1");
-
       viewTracked.current = true;
 
       const { error } = await supabase.from("project_views").insert({
@@ -78,6 +76,22 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
   useEffect(() => {
     loadCounts();
   }, [loadCounts]);
+
+  // Realtime subscription for live count updates
+  useEffect(() => {
+    if (!projectId) return;
+
+    const channel = supabase
+      .channel(`project-counts-${projectId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_views', filter: `project_id=eq.${projectId}` }, () => loadCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_likes', filter: `project_id=eq.${projectId}` }, () => loadCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_comments', filter: `project_id=eq.${projectId}` }, () => loadCounts())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [projectId, loadCounts]);
 
   const toggleLike = useCallback(async (name: string, email: string) => {
     if (!projectId) return;
@@ -194,6 +208,22 @@ export const useProjectListCounts = (projectIds: string[]) => {
   useEffect(() => {
     fetchAllCounts();
   }, [fetchAllCounts]);
+
+  // Realtime subscription for list-level count updates
+  useEffect(() => {
+    if (projectIds.length === 0) return;
+
+    const channel = supabase
+      .channel('project-list-counts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_views' }, () => fetchAllCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_likes' }, () => fetchAllCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'project_comments' }, () => fetchAllCounts())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [projectIds, fetchAllCounts]);
 
   return { viewCounts, likeCounts, readCounts, commentCounts, refresh: fetchAllCounts };
 };
