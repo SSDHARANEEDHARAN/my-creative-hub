@@ -5,7 +5,6 @@ import { Button } from "./ui/button";
 import SocialLinks from "./SocialLinks";
 import ResumeButton from "./ResumeButton";
 import OrbBackground from "./OrbBackground";
-import SpotlightOverlay from "./SpotlightOverlay";
 
 const Hero = () => {
   const highlights = [
@@ -34,23 +33,22 @@ const Hero = () => {
       <div className="absolute inset-0 z-[2] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,hsl(var(--background)/0.6)_100%)]" />
 
       {/* Layer 3: Readability overlay */}
-      <div className="absolute inset-0 z-[3] bg-background/20 dark:bg-background/30 backdrop-blur-[0.5px] pointer-events-none" />
-
-      {/* Layer 5: Mouse-following spotlight reveal */}
-      <SpotlightOverlay />
+      <div className="absolute inset-0 z-[3] bg-background/30 dark:bg-background/40 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Animated gradient orbs */}
-      <div className="absolute inset-0 z-[6] overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 z-[4] overflow-hidden pointer-events-none">
         <motion.div
           animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 -left-40 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl"
+          className="absolute top-0 -left-40 w-[600px] h-[600px] rounded-full bg-primary/10 blur-3xl"
         />
         <motion.div
           animate={{ scale: [1.2, 1, 1.2], rotate: [0, -90, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-0 -right-40 w-[500px] h-[500px] rounded-full bg-accent/5 blur-3xl"
+          className="absolute bottom-0 -right-40 w-[500px] h-[500px] rounded-full bg-accent/8 blur-3xl"
         />
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--border)/0.15)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--border)/0.15)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10 pointer-events-auto">
