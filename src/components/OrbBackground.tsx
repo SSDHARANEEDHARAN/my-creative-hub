@@ -108,7 +108,7 @@ const Orb = ({
     const vec3 baseColor2 = vec3(0.298039, 0.760784, 0.913725);
     const vec3 baseColor3 = vec3(0.062745, 0.078431, 0.600000);
     const float innerRadius = 0.6;
-    const float baseNoiseScale = 0.65;
+    const float noiseScale = 0.65;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
@@ -118,43 +118,34 @@ const Orb = ({
       return intensity / (1.0 + dist * dist * attenuation);
     }
 
-    vec4 draw(vec2 uv, float hoverVal) {
+    vec4 draw(vec2 uv) {
       vec3 color1 = adjustHue(baseColor1, hue);
       vec3 color2 = adjustHue(baseColor2, hue);
       vec3 color3 = adjustHue(baseColor3, hue);
-
-      float noiseScale = baseNoiseScale + hoverVal * 1.2;
-      float morphedRadius = innerRadius + hoverVal * 0.15;
 
       float ang = atan(uv.y, uv.x);
       float len = length(uv);
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
 
-      float n0 = snoise3(vec3(uv * noiseScale, iTime * (0.5 + hoverVal * 1.5))) * 0.5 + 0.5;
-      float n1 = snoise3(vec3(uv * noiseScale * 2.0, iTime * 0.8 + 100.0)) * 0.5 + 0.5;
-      float morphNoise = mix(n0, n0 * n1, hoverVal);
-
-      float r0 = mix(mix(morphedRadius, 1.0, 0.4), mix(morphedRadius, 1.0, 0.6), morphNoise);
-      r0 += hoverVal * 0.1 * sin(ang * (3.0 + hoverVal * 4.0) + iTime * 3.0);
-
+      float n0 = snoise3(vec3(uv * noiseScale, iTime * 0.5)) * 0.5 + 0.5;
+      float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
       float d0 = distance(uv, (r0 * invLen) * uv);
-      float v0 = light1(1.0, 10.0 - hoverVal * 5.0, d0);
+      float v0 = light1(1.0, 10.0, d0);
       v0 *= smoothstep(r0 * 1.05, r0, len);
-      float cl = cos(ang + iTime * (2.0 + hoverVal * 3.0)) * 0.5 + 0.5;
+      float cl = cos(ang + iTime * 2.0) * 0.5 + 0.5;
 
-      float a = iTime * (-1.0 - hoverVal * 2.0);
+      float a = iTime * -1.0;
       vec2 pos = vec2(cos(a), sin(a)) * r0;
       float d = distance(uv, pos);
-      float v1 = light2(1.5 + hoverVal * 1.0, 5.0, d);
+      float v1 = light2(1.5, 5.0, d);
       v1 *= light1(1.0, 50.0, d0);
 
-      float v2 = smoothstep(1.0, mix(morphedRadius, 1.0, morphNoise * 0.5), len);
-      float v3 = smoothstep(morphedRadius, mix(morphedRadius, 1.0, 0.5), len);
+      float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
+      float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
 
       vec3 col = mix(color1, color2, cl);
       col = mix(color3, col, v0);
       col = (col + v1) * v2 * v3;
-      col += hoverVal * 0.08 * vec3(sin(ang * 5.0 + iTime), sin(ang * 7.0 - iTime), sin(ang * 3.0 + iTime * 0.5));
       col = clamp(col, 0.0, 1.0);
 
       return extractAlpha(col);
@@ -170,12 +161,10 @@ const Orb = ({
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
 
-      float distortAmt = hover * hoverIntensity;
-      uv.x += distortAmt * 0.15 * sin(uv.y * (10.0 + hover * 15.0) + iTime * 2.0);
-      uv.y += distortAmt * 0.15 * cos(uv.x * (10.0 + hover * 15.0) + iTime * 2.0);
-      uv += distortAmt * 0.05 * vec2(snoise3(vec3(uv * 3.0, iTime)), snoise3(vec3(uv * 3.0 + 50.0, iTime)));
+      uv.x += hover * hoverIntensity * 0.1 * sin(uv.y * 10.0 + iTime);
+      uv.y += hover * hoverIntensity * 0.1 * sin(uv.x * 10.0 + iTime);
 
-      return draw(uv, hover);
+      return draw(uv);
     }
 
     void main() {
