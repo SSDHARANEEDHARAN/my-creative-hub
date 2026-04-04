@@ -1,4 +1,5 @@
-import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
+import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink, Eye, Heart, BookOpen, MessageSquare, Factory } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useState, memo, useCallback, useMemo } from "react";
 import ProjectImageCarousel from "./ProjectImageCarousel";
