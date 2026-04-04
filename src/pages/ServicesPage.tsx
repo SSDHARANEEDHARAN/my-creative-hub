@@ -348,8 +348,8 @@ const ServicesPage = () => {
       <LoginPopupModal
         isOpen={showLoginPopup && !user}
         onClose={() => setShowLoginPopup(false)}
-        title="Sign In Required"
-        description="Please sign in to access our services"
+        title="Sign In to Access"
+        description="Sign in to access exclusive special services for IT, Engineering, and Industrial"
       />
     </>
   );
