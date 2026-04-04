@@ -181,8 +181,8 @@ const Orb = ({
 
     vec4 mainImage(vec2 fragCoord) {
       vec2 center = iResolution.xy * 0.5;
-      float size = min(iResolution.x, iResolution.y);
-      vec2 uv = (fragCoord - center) / size * 2.0;
+      // Use separate scaling per axis so square reaches all edges
+      vec2 uv = (fragCoord - center) / iResolution.xy * 2.0;
 
       uv.x += shake * 0.015 * sin(iTime * 60.0);
       uv.y += shake * 0.015 * cos(iTime * 73.0);
