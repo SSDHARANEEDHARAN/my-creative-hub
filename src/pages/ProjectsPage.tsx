@@ -440,6 +440,7 @@ const engineeringProjects: Project[] = [
 ];
 
 const ProjectsPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
