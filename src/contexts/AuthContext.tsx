@@ -98,16 +98,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(nextSession?.user ?? null);
 
         if (nextSession?.user) {
-          await syncUserRole(nextSession.user);
+          // Set loading false immediately so UI is responsive
+          // then do async role checks in background
           const adminStatus = await checkAdminRole(nextSession.user.id);
           setIsAdmin(adminStatus);
           const status = await checkUserStatus(nextSession.user.id);
-          setUserStatus(status);
+          setUserStatus(adminStatus ? "approved" : status);
 
-          // Auto-approve admin
-          if (adminStatus && status !== "approved") {
-            setUserStatus("approved");
-          }
+          // Sync role in background (don't block UI)
+          syncUserRole(nextSession.user).catch(console.error);
         } else {
           setIsAdmin(false);
           setUserStatus(null);
@@ -121,15 +120,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(existingSession);
       setUser(existingSession?.user ?? null);
 
-      if (existingSession?.user) {
-        await syncUserRole(existingSession.user);
-        const adminStatus = await checkAdminRole(existingSession.user.id);
-        setIsAdmin(adminStatus);
-        const status = await checkUserStatus(existingSession.user.id);
-        setUserStatus(adminStatus ? "approved" : status);
+      if (!existingSession?.user) {
+        // No session — stop loading immediately
+        setIsLoading(false);
+        return;
       }
 
+      // For logged-in users, check roles then stop loading
+      const adminStatus = await checkAdminRole(existingSession.user.id);
+      setIsAdmin(adminStatus);
+      const status = await checkUserStatus(existingSession.user.id);
+      setUserStatus(adminStatus ? "approved" : status);
       setIsLoading(false);
+
+      // Sync role in background
+      syncUserRole(existingSession.user).catch(console.error);
     });
 
     return () => subscription.unsubscribe();
