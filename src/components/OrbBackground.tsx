@@ -108,7 +108,7 @@ const Orb = ({
     const vec3 baseColor2 = vec3(0.298039, 0.760784, 0.913725);
     const vec3 baseColor3 = vec3(0.062745, 0.078431, 0.600000);
     const float innerRadius = 0.6;
-    const float noiseScale = 0.65;
+    const float baseNoiseScale = 0.65;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
