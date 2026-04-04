@@ -151,6 +151,12 @@ const Orb = ({
       col = mix(c3, col, v0);
       col = (col + v1) * v2 * v3;
 
+      // Bloom glow — intensifies with hover (blue shift)
+      vec3 bloomColor = mix(vec3(0.6, 0.65, 0.7), vec3(0.3, 0.5, 1.0), hoverVal);
+      float bloomBase = exp(-len * len * 2.5) * (0.08 + hoverVal * 0.35);
+      float bloomOuter = exp(-len * len * 0.8) * hoverVal * 0.15;
+      col += bloomColor * (bloomBase + bloomOuter);
+
       col += burstVal * 0.6 * exp(-len * 3.0);
       col += vec3(ringGlow);
 
