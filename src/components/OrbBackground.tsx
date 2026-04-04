@@ -254,6 +254,8 @@ const Orb = ({
         breath: { value: 0 },
         shake: { value: 0 },
         scrollSquash: { value: 0 },
+        squareness: { value: 0 },
+        mouseDir: { value: [0, 0] },
         ...trailPosUniforms,
         ...trailAlphaUniforms,
       },
