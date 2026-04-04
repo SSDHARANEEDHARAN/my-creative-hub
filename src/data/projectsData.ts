@@ -468,4 +468,4 @@ export const engineeringProjects: Project[] = [
   },
 ];
 
-export const getAllProjects = () => [...itProjects, ...engineeringProjects];
+export const getAllProjects = () => [...itProjects, ...engineeringProjects, ...industrialProjects];
