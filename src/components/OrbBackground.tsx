@@ -393,8 +393,8 @@ const Orb = ({
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", handleScroll);
-      container.removeEventListener("mousemove", handleMouseMove);
-      container.removeEventListener("mouseleave", handleMouseLeave);
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
       container.removeEventListener("click", handleClick);
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
