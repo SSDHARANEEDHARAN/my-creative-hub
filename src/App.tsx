@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ContentProtection from "./components/ContentProtection";
+import EdgeGlow from "./components/EdgeGlow";
 // Lazy load pages for better performance
 const HomePage = lazy(() => import("./pages/HomePage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -112,6 +113,7 @@ const App = () => (
                 <BrowserRouter>
                   <ContentProtection />
                   <ScrollToTopButton />
+                  <EdgeGlow />
                   <AnimatedRoutes />
                 </BrowserRouter>
               </TooltipProvider>
