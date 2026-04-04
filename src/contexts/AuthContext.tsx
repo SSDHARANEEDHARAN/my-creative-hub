@@ -98,15 +98,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(nextSession?.user ?? null);
 
         if (nextSession?.user) {
-          // Set loading false immediately so UI is responsive
-          // then do async role checks in background
+          // Sync role first (ensures admin role exists in DB), then check
+          await syncUserRole(nextSession.user).catch(console.error);
           const adminStatus = await checkAdminRole(nextSession.user.id);
           setIsAdmin(adminStatus);
           const status = await checkUserStatus(nextSession.user.id);
           setUserStatus(adminStatus ? "approved" : status);
-
-          // Sync role in background (don't block UI)
-          syncUserRole(nextSession.user).catch(console.error);
         } else {
           setIsAdmin(false);
           setUserStatus(null);
@@ -121,20 +118,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(existingSession?.user ?? null);
 
       if (!existingSession?.user) {
-        // No session — stop loading immediately
         setIsLoading(false);
         return;
       }
 
-      // For logged-in users, check roles then stop loading
+      // Sync role first, then check
+      await syncUserRole(existingSession.user).catch(console.error);
       const adminStatus = await checkAdminRole(existingSession.user.id);
       setIsAdmin(adminStatus);
       const status = await checkUserStatus(existingSession.user.id);
       setUserStatus(adminStatus ? "approved" : status);
       setIsLoading(false);
-
-      // Sync role in background
-      syncUserRole(existingSession.user).catch(console.error);
     });
 
     return () => subscription.unsubscribe();
