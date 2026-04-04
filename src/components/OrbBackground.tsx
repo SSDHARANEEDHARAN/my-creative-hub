@@ -104,8 +104,11 @@ const Orb = ({
 
     vec4 draw(vec2 uv, float hoverVal, float burstVal, float breathVal) {
       float ang = atan(uv.y, uv.x);
-      float len = length(uv);
-      float invLen = len > 0.0 ? 1.0 / len : 0.0;
+      // Superellipse: blend between circle (p=2) and square (p=high)
+      float p = 2.0 + squareness * 8.0;
+      float len = pow(pow(abs(uv.x), p) + pow(abs(uv.y), p), 1.0 / p);
+      float circleLen = length(uv);
+      float invLen = circleLen > 0.0 ? 1.0 / circleLen : 0.0;
 
       float breathPulse = breathVal * 0.04;
       float noiseScale = 0.65 + hoverVal * 1.8;
