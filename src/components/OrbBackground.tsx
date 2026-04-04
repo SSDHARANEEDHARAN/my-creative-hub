@@ -89,7 +89,7 @@ const Orb = ({
     const vec3 blueColor1 = vec3(0.7, 0.85, 1.0);
     const vec3 blueColor2 = vec3(0.3, 0.5, 0.9);
     const vec3 blueColor3 = vec3(0.08, 0.12, 0.28);
-    const float baseInnerRadius = 0.85;
+    const float baseInnerRadius = 1.0;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
