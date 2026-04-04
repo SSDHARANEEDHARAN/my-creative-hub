@@ -77,35 +77,6 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true);
-    try {
-      await signInWithGoogle(returnPath);
-    } catch (error) {
-      toast({ 
-        title: "Login Failed", 
-        description: error instanceof Error ? error.message : "Failed to sign in with Google", 
-        variant: "destructive" 
-      });
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  };
-
-  const handleAppleLogin = async () => {
-    setIsAppleLoading(true);
-    try {
-      await signInWithApple(returnPath);
-    } catch (error) {
-      toast({ 
-        title: "Login Failed", 
-        description: error instanceof Error ? error.message : "Failed to sign in with Apple", 
-        variant: "destructive" 
-      });
-    } finally {
-      setIsAppleLoading(false);
-    }
-  };
 
   const handleSendOtp = async () => {
     if (!z.string().email().safeParse(forgotEmail).success) {
