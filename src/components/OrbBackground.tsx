@@ -41,6 +41,7 @@ const Orb = ({
     uniform float breath;
     uniform float shake;
     uniform float scrollSquash;
+    uniform vec2 mouseUV;
     uniform vec2 trailPos[${MAX_TRAIL}];
     uniform float trailAlpha[${MAX_TRAIL}];
     varying vec2 vUv;
@@ -81,9 +82,10 @@ const Orb = ({
       return vec4(colorIn.rgb / (a + 1e-5), a);
     }
 
-    const vec3 baseColor1 = vec3(0.95, 0.95, 1.0);
-    const vec3 baseColor2 = vec3(0.75, 0.78, 0.85);
-    const vec3 baseColor3 = vec3(0.15, 0.16, 0.22);
+    // Rich purple/blue/cyan palette like the reference
+    const vec3 baseColor1 = vec3(0.65, 0.25, 1.0);    // vivid purple
+    const vec3 baseColor2 = vec3(0.3, 0.75, 0.95);    // cyan-blue
+    const vec3 baseColor3 = vec3(0.08, 0.06, 0.18);   // deep dark purple
     const float baseInnerRadius = 0.6;
 
     float light1(float intensity, float attenuation, float dist) {
@@ -103,19 +105,30 @@ const Orb = ({
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
 
       float breathPulse = breathVal * 0.04;
-      float noiseScale = 0.65 + hoverVal * 1.8;
-      float innerRadius = baseInnerRadius + hoverVal * 0.15 + burstVal * 0.3 + breathPulse;
+      // Much more dramatic noise on hover
+      float noiseScale = 0.65 + hoverVal * 2.5;
+      float innerRadius = baseInnerRadius + hoverVal * 0.2 + burstVal * 0.3 + breathPulse;
 
-      float timeSpeed = 0.5 + hoverVal * 2.0;
+      float timeSpeed = 0.5 + hoverVal * 3.0;
       float n0 = snoise3(vec3(uv * noiseScale, iTime * timeSpeed)) * 0.5 + 0.5;
-      float n1 = snoise3(vec3(uv * noiseScale * 2.0, iTime * 0.8 + 10.0)) * 0.5 + 0.5;
-      n0 = mix(n0, n0 * n1, hoverVal * 0.7);
+      float n1 = snoise3(vec3(uv * noiseScale * 1.7, iTime * 1.2 + 10.0)) * 0.5 + 0.5;
+      float n2 = snoise3(vec3(uv * noiseScale * 3.0, iTime * 0.6 + 20.0)) * 0.5 + 0.5;
+      // Triple noise blend for wild morphing
+      n0 = mix(n0, n0 * n1 * (0.5 + n2), hoverVal * 0.85);
 
       float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
 
-      r0 += hoverVal * 0.15 * sin(ang * (3.0 + hoverVal * 6.0) + iTime * 3.0);
-      r0 += hoverVal * 0.08 * cos(ang * 7.0 - iTime * 2.0);
+      // Dramatic tentacle-like angular distortion
+      r0 += hoverVal * 0.18 * sin(ang * (3.0 + hoverVal * 8.0) + iTime * 4.0);
+      r0 += hoverVal * 0.12 * cos(ang * 5.0 - iTime * 3.0);
+      r0 += hoverVal * 0.06 * sin(ang * 11.0 + iTime * 2.5);
 
+      // Mouse proximity influence — warp toward cursor
+      float mouseDist = distance(uv, mouseUV);
+      float mouseInfluence = hoverVal * 0.15 * exp(-mouseDist * 3.0);
+      r0 += mouseInfluence * sin(ang * 4.0 + iTime * 5.0);
+
+      // Burst rings
       float ringGlow = 0.0;
       if (burstVal > 0.01) {
         float expansion = (1.0 - burstVal) * 2.5;
@@ -130,12 +143,12 @@ const Orb = ({
       v0 *= smoothstep(r0 * 1.05, r0, len);
       v0 += breathVal * 0.08 * smoothstep(r0 + 0.1, r0, len);
 
-      float cl = cos(ang + iTime * (2.0 + hoverVal * 3.0)) * 0.5 + 0.5;
+      float cl = cos(ang + iTime * (2.0 + hoverVal * 4.0)) * 0.5 + 0.5;
 
-      float a = iTime * (-1.0 - hoverVal * 2.0);
+      float a = iTime * (-1.0 - hoverVal * 3.0);
       vec2 pos = vec2(cos(a), sin(a)) * r0;
       float d = distance(uv, pos);
-      float v1 = light2(1.5 + hoverVal * 1.0, 5.0, d);
+      float v1 = light2(1.5 + hoverVal * 1.5, 5.0, d);
       v1 *= light1(1.0, 50.0, d0);
 
       float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
@@ -145,16 +158,19 @@ const Orb = ({
       col = mix(baseColor3, col, v0);
       col = (col + v1) * v2 * v3;
 
-      col += burstVal * 0.6 * exp(-len * 3.0);
-      col += vec3(ringGlow);
+      // Extra glow near edges on hover
+      col += hoverVal * 0.15 * baseColor1 * smoothstep(r0 + 0.05, r0 - 0.05, len);
 
-      // Particle trail dots
+      col += burstVal * 0.6 * exp(-len * 3.0);
+      col += vec3(ringGlow) * vec3(0.7, 0.5, 1.0);
+
+      // Particle trail
       for (int idx = 0; idx < ${MAX_TRAIL}; idx++) {
         float ta = trailAlpha[idx];
         if (ta > 0.01) {
           float pd = distance(uv, trailPos[idx]);
           float ps = 0.012 + float(idx) * 0.002;
-          col += vec3(ta * 0.6 * exp(-pd * pd / (ps * ps)));
+          col += vec3(0.7, 0.5, 1.0) * ta * 0.5 * exp(-pd * pd / (ps * ps));
         }
       }
 
@@ -170,7 +186,6 @@ const Orb = ({
       uv.x += shake * 0.015 * sin(iTime * 60.0);
       uv.y += shake * 0.015 * cos(iTime * 73.0);
 
-      // Scroll squash/stretch
       uv.y *= 1.0 + scrollSquash * 0.3;
       uv.x *= 1.0 - scrollSquash * 0.1;
 
@@ -179,11 +194,14 @@ const Orb = ({
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
 
+      // More dramatic UV distortion
       float distAmt = hover * hoverIntensity;
-      uv.x += distAmt * 0.3 * sin(uv.y * 12.0 + iTime * 2.0);
-      uv.y += distAmt * 0.3 * cos(uv.x * 12.0 + iTime * 2.0);
-      uv.x += distAmt * 0.15 * snoise3(vec3(uv * 3.0, iTime * 1.5));
-      uv.y += distAmt * 0.15 * snoise3(vec3(uv * 3.0 + 50.0, iTime * 1.5));
+      uv.x += distAmt * 0.4 * sin(uv.y * 8.0 + iTime * 2.5);
+      uv.y += distAmt * 0.4 * cos(uv.x * 8.0 + iTime * 2.5);
+      uv += distAmt * 0.2 * vec2(
+        snoise3(vec3(uv * 2.5, iTime * 1.5)),
+        snoise3(vec3(uv * 2.5 + 50.0, iTime * 1.5))
+      );
 
       return draw(uv, hover, burst, breath);
     }
@@ -204,12 +222,11 @@ const Orb = ({
     gl.clearColor(0, 0, 0, 0);
     container.appendChild(gl.canvas);
 
-    // Trail data
     const trailPositions = new Float32Array(MAX_TRAIL * 2);
     const trailAlphas = new Float32Array(MAX_TRAIL);
     let trailIndex = 0;
     let trailTimer = 0;
-    let mouseUV = { x: 0, y: 0 };
+    let mouseUVPos = { x: 0, y: 0 };
     let mouseInOrb = false;
 
     const geometry = new Triangle(gl);
@@ -237,6 +254,7 @@ const Orb = ({
         breath: { value: 0 },
         shake: { value: 0 },
         scrollSquash: { value: 0 },
+        mouseUV: { value: [0, 0] },
         ...trailPosUniforms,
         ...trailAlphaUniforms,
       },
@@ -274,7 +292,7 @@ const Orb = ({
       const uvX = ((x - rect.width / 2) / size) * 2.0;
       const uvY = ((y - rect.height / 2) / size) * 2.0;
       const dist = Math.sqrt(uvX * uvX + uvY * uvY);
-      mouseUV = { x: uvX, y: -uvY };
+      mouseUVPos = { x: uvX, y: -uvY };
       mouseInOrb = dist < 0.8;
       targetHover = mouseInOrb ? 1 : 0;
     };
@@ -293,8 +311,7 @@ const Orb = ({
       const section = container.closest("section");
       if (!section) return;
       const rect = section.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
-      scrollProgress = progress;
+      scrollProgress = Math.max(0, Math.min(1, -rect.top / rect.height));
     };
 
     container.addEventListener("mousemove", handleMouseMove);
@@ -324,22 +341,22 @@ const Orb = ({
 
       program.uniforms.breath.value = Math.sin(time * 1.6) * 0.5 + 0.5;
 
-      // Smooth scroll squash
       const currentSquash = program.uniforms.scrollSquash.value as number;
       program.uniforms.scrollSquash.value = currentSquash + (scrollProgress - currentSquash) * 0.05;
 
-      // Particle trail — spawn every ~50ms when mouse is inside orb
+      program.uniforms.mouseUV.value = [mouseUVPos.x, mouseUVPos.y];
+
+      // Particle trail
       trailTimer += dt;
       if (mouseInOrb && trailTimer > 0.05) {
         trailTimer = 0;
         const idx = trailIndex % MAX_TRAIL;
-        trailPositions[idx * 2] = mouseUV.x;
-        trailPositions[idx * 2 + 1] = mouseUV.y;
+        trailPositions[idx * 2] = mouseUVPos.x;
+        trailPositions[idx * 2 + 1] = mouseUVPos.y;
         trailAlphas[idx] = 1.0;
         trailIndex++;
       }
 
-      // Decay trail alphas and update uniforms
       for (let i = 0; i < MAX_TRAIL; i++) {
         trailAlphas[i] *= 0.94;
         if (trailAlphas[i] < 0.01) trailAlphas[i] = 0;
