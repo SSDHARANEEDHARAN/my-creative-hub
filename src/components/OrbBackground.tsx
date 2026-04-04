@@ -311,6 +311,8 @@ const Orb = ({
     const handleMouseLeave = () => {
       targetHover = 0;
       mouseInOrb = false;
+      targetSquareness = 0;
+      mouseDirTarget = { x: 0, y: 0 };
     };
 
     const handleClick = () => {
