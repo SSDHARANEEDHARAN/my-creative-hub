@@ -143,42 +143,6 @@ import conveyorAlu6 from "@/assets/projects/conveyor-alu-6.jpg";
 import conveyorAlu7 from "@/assets/projects/conveyor-alu-7.jpg";
 import conveyorAlu8 from "@/assets/projects/conveyor-alu-8.jpg";
 import conveyorAlu9 from "@/assets/projects/conveyor-alu-9.jpg";
-import cobotTrainer1 from "@/assets/projects/cobot-trainer-1.jpg";
-import cobotTrainer2 from "@/assets/projects/cobot-trainer-2.jpg";
-import cobotTrainer3 from "@/assets/projects/cobot-trainer-3.jpg";
-import cobotTrainer4 from "@/assets/projects/cobot-trainer-4.jpg";
-import cobotTrainer5 from "@/assets/projects/cobot-trainer-5.jpg";
-import cobotTrainer6 from "@/assets/projects/cobot-trainer-6.jpg";
-import cobotTrainer7 from "@/assets/projects/cobot-trainer-7.jpg";
-import cobotTrainer8 from "@/assets/projects/cobot-trainer-8.jpg";
-import cobotTrainer9 from "@/assets/projects/cobot-trainer-9.jpg";
-import cobotTrainer10 from "@/assets/projects/cobot-trainer-10.jpg";
-import cobotTrainer11 from "@/assets/projects/cobot-trainer-11.jpg";
-import cobotTrainer12 from "@/assets/projects/cobot-trainer-12.jpg";
-import cobotTrainer13 from "@/assets/projects/cobot-trainer-13.jpg";
-import cobotTrainer14 from "@/assets/projects/cobot-trainer-14.jpg";
-import cobotTrainer15 from "@/assets/projects/cobot-trainer-15.jpg";
-import cobotTrainer16 from "@/assets/projects/cobot-trainer-16.jpg";
-import cobotTrainer26 from "@/assets/projects/cobot-trainer-26.jpg";
-import cobotTrainer27 from "@/assets/projects/cobot-trainer-27.jpg";
-import cobotTrainer28 from "@/assets/projects/cobot-trainer-28.jpg";
-import cobotTrainer29 from "@/assets/projects/cobot-trainer-29.jpg";
-import cobotTrainer30 from "@/assets/projects/cobot-trainer-30.jpg";
-import cobotTrainer31 from "@/assets/projects/cobot-trainer-31.jpg";
-import cobotTrainer32 from "@/assets/projects/cobot-trainer-32.jpg";
-import cobotTrainer33 from "@/assets/projects/cobot-trainer-33.jpg";
-import cobotTrainer34 from "@/assets/projects/cobot-trainer-34.jpg";
-import cobotTrainer35 from "@/assets/projects/cobot-trainer-35.jpg";
-import cobotTrainer36 from "@/assets/projects/cobot-trainer-36.jpg";
-import cobotTrainer37 from "@/assets/projects/cobot-trainer-37.jpg";
-import cobotTrainer38 from "@/assets/projects/cobot-trainer-38.jpg";
-import cobotTrainer39 from "@/assets/projects/cobot-trainer-39.jpg";
-import cobotTrainer40 from "@/assets/projects/cobot-trainer-40.jpg";
-import cobotTrainer41 from "@/assets/projects/cobot-trainer-41.jpg";
-import cobotTrainer42 from "@/assets/projects/cobot-trainer-42.jpg";
-import cobotTrainer43 from "@/assets/projects/cobot-trainer-43.jpg";
-import cobotTrainer44 from "@/assets/projects/cobot-trainer-44.jpg";
-import cobotTrainer45 from "@/assets/projects/cobot-trainer-45.jpg";
 
 interface Project {
   id: number;
@@ -426,16 +390,6 @@ const engineeringProjects: Project[] = [
     tags: ["Arduino", "Embedded Systems", "Ultrasonic Sensor", "Robotics"],
     articleUrl: "/projects/article/maze-navigation-robot",
     featured: false,
-    category: "engineering",
-  },
-  {
-    id: 32,
-    title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
-    description: "Industrial robotics training platform with collaborative robot arm, Automatic Tool Changer, multi-gripper system (DH Mechanical, Pneumatic, Vacuum), and modular workpiece stations for Industry 4.0 education.",
-    images: [cobotTrainer1, cobotTrainer4, cobotTrainer8, cobotTrainer10, cobotTrainer9, cobotTrainer2, cobotTrainer3, cobotTrainer5, cobotTrainer6, cobotTrainer7, cobotTrainer11, cobotTrainer12, cobotTrainer13, cobotTrainer14, cobotTrainer15, cobotTrainer16, cobotTrainer26, cobotTrainer27, cobotTrainer28, cobotTrainer29, cobotTrainer30, cobotTrainer31, cobotTrainer32, cobotTrainer33, cobotTrainer34, cobotTrainer35, cobotTrainer36, cobotTrainer37, cobotTrainer38, cobotTrainer39, cobotTrainer40, cobotTrainer41, cobotTrainer42, cobotTrainer43, cobotTrainer44, cobotTrainer45],
-    tags: ["Collaborative Robotics", "ATC", "Pneumatics", "Industry 4.0", "Mechatronics"],
-    articleUrl: "/projects/article/cobot-trainer-kit-atc",
-    featured: true,
     category: "engineering",
   },
 ];
