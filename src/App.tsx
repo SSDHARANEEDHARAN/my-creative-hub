@@ -103,14 +103,7 @@ const AnimatedRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/industrial-projects"
-            element={
-              <ProtectedRoute requireApproved>
-                <IndustrialProjectsPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/industrial-projects" element={<IndustrialProjectsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
