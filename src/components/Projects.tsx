@@ -141,6 +141,13 @@ const Projects = () => {
               <Cog size={16} />
               Engineering ({engineeringProjects.length})
             </button>
+            <button
+              onClick={() => navigate("/industrial-projects")}
+              className="flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base text-muted-foreground hover:text-foreground"
+            >
+              <Factory size={16} />
+              Industrial Projects
+            </button>
           </div>
         </div>
 
