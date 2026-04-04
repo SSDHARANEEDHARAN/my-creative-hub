@@ -35,33 +35,8 @@ const Orb = ({
     uniform float hover;
     uniform float rot;
     uniform float hoverIntensity;
+    uniform float burst;
     varying vec2 vUv;
-
-    vec3 rgb2yiq(vec3 c) {
-      float y = dot(c, vec3(0.299, 0.587, 0.114));
-      float i = dot(c, vec3(0.596, -0.274, -0.322));
-      float q = dot(c, vec3(0.211, -0.523, 0.312));
-      return vec3(y, i, q);
-    }
-
-    vec3 yiq2rgb(vec3 c) {
-      float r = c.x + 0.956 * c.y + 0.621 * c.z;
-      float g = c.x - 0.272 * c.y - 0.647 * c.z;
-      float b = c.x - 1.106 * c.y + 1.703 * c.z;
-      return vec3(r, g, b);
-    }
-
-    vec3 adjustHue(vec3 color, float hueDeg) {
-      float hueRad = hueDeg * 3.14159265 / 180.0;
-      vec3 yiq = rgb2yiq(color);
-      float cosA = cos(hueRad);
-      float sinA = sin(hueRad);
-      float i = yiq.y * cosA - yiq.z * sinA;
-      float q = yiq.y * sinA + yiq.z * cosA;
-      yiq.y = i;
-      yiq.z = q;
-      return yiq2rgb(yiq);
-    }
 
     vec3 hash33(vec3 p3) {
       p3 = fract(p3 * vec3(0.1031, 0.11369, 0.13787));
@@ -104,11 +79,11 @@ const Orb = ({
       return vec4(colorIn.rgb / (a + 1e-5), a);
     }
 
-    const vec3 baseColor1 = vec3(0.611765, 0.262745, 0.996078);
-    const vec3 baseColor2 = vec3(0.298039, 0.760784, 0.913725);
-    const vec3 baseColor3 = vec3(0.062745, 0.078431, 0.600000);
-    const float innerRadius = 0.6;
-    const float noiseScale = 0.65;
+    // Pure white/silver/platinum tones
+    const vec3 baseColor1 = vec3(0.95, 0.95, 1.0);    // cool white
+    const vec3 baseColor2 = vec3(0.75, 0.78, 0.85);   // silver
+    const vec3 baseColor3 = vec3(0.15, 0.16, 0.22);   // dark steel
+    const float baseInnerRadius = 0.6;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
@@ -118,26 +93,48 @@ const Orb = ({
       return intensity / (1.0 + dist * dist * attenuation);
     }
 
-    vec4 draw(vec2 uv) {
-      vec3 color1 = adjustHue(baseColor1, hue);
-      vec3 color2 = adjustHue(baseColor2, hue);
-      vec3 color3 = adjustHue(baseColor3, hue);
+    vec4 draw(vec2 uv, float hoverVal, float burstVal) {
+      vec3 color1 = baseColor1;
+      vec3 color2 = baseColor2;
+      vec3 color3 = baseColor3;
 
       float ang = atan(uv.y, uv.x);
       float len = length(uv);
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
 
-      float n0 = snoise3(vec3(uv * noiseScale, iTime * 0.5)) * 0.5 + 0.5;
+      // Dynamic noise scale — increases dramatically on hover
+      float noiseScale = 0.65 + hoverVal * 1.8;
+      float innerRadius = baseInnerRadius + hoverVal * 0.15 + burstVal * 0.3;
+
+      // Primary noise with hover-boosted time
+      float timeSpeed = 0.5 + hoverVal * 2.0;
+      float n0 = snoise3(vec3(uv * noiseScale, iTime * timeSpeed)) * 0.5 + 0.5;
+
+      // Secondary noise layer on hover for complex morphing
+      float n1 = snoise3(vec3(uv * noiseScale * 2.0, iTime * 0.8 + 10.0)) * 0.5 + 0.5;
+      n0 = mix(n0, n0 * n1, hoverVal * 0.7);
+
       float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
+
+      // Dramatic angular distortion on hover — spiky morphing
+      r0 += hoverVal * 0.15 * sin(ang * (3.0 + hoverVal * 6.0) + iTime * 3.0);
+      r0 += hoverVal * 0.08 * cos(ang * 7.0 - iTime * 2.0);
+
+      // Burst ripple ring
+      if (burstVal > 0.01) {
+        float ripple = sin((len - burstVal * 2.0) * 30.0) * burstVal * 0.15;
+        r0 += ripple;
+      }
+
       float d0 = distance(uv, (r0 * invLen) * uv);
       float v0 = light1(1.0, 10.0, d0);
       v0 *= smoothstep(r0 * 1.05, r0, len);
-      float cl = cos(ang + iTime * 2.0) * 0.5 + 0.5;
+      float cl = cos(ang + iTime * (2.0 + hoverVal * 3.0)) * 0.5 + 0.5;
 
-      float a = iTime * -1.0;
+      float a = iTime * (-1.0 - hoverVal * 2.0);
       vec2 pos = vec2(cos(a), sin(a)) * r0;
       float d = distance(uv, pos);
-      float v1 = light2(1.5, 5.0, d);
+      float v1 = light2(1.5 + hoverVal * 1.0, 5.0, d);
       v1 *= light1(1.0, 50.0, d0);
 
       float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
@@ -146,6 +143,10 @@ const Orb = ({
       vec3 col = mix(color1, color2, cl);
       col = mix(color3, col, v0);
       col = (col + v1) * v2 * v3;
+
+      // Burst flash — bright white pulse
+      col += burstVal * 0.5 * exp(-len * 3.0);
+
       col = clamp(col, 0.0, 1.0);
 
       return extractAlpha(col);
@@ -161,10 +162,14 @@ const Orb = ({
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
 
-      uv.x += hover * hoverIntensity * 0.1 * sin(uv.y * 10.0 + iTime);
-      uv.y += hover * hoverIntensity * 0.1 * sin(uv.x * 10.0 + iTime);
+      // Dramatic UV distortion on hover
+      float distAmt = hover * hoverIntensity;
+      uv.x += distAmt * 0.3 * sin(uv.y * 12.0 + iTime * 2.0);
+      uv.y += distAmt * 0.3 * cos(uv.x * 12.0 + iTime * 2.0);
+      uv.x += distAmt * 0.15 * snoise3(vec3(uv * 3.0, iTime * 1.5));
+      uv.y += distAmt * 0.15 * snoise3(vec3(uv * 3.0 + 50.0, iTime * 1.5));
 
-      return draw(uv);
+      return draw(uv, hover, burst);
     }
 
     void main() {
@@ -200,6 +205,7 @@ const Orb = ({
         hover: { value: 0 },
         rot: { value: 0 },
         hoverIntensity: { value: hoverIntensity },
+        burst: { value: 0 },
       },
     });
 
@@ -226,6 +232,7 @@ const Orb = ({
     let targetHover = 0;
     let lastTime = 0;
     let currentRot = 0;
+    let burstValue = 0;
     const rotationSpeed = 0.3;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -246,8 +253,13 @@ const Orb = ({
       targetHover = 0;
     };
 
+    const handleClick = () => {
+      burstValue = 1.0;
+    };
+
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("mouseleave", handleMouseLeave);
+    container.addEventListener("click", handleClick);
 
     let rafId: number;
     const update = (t: number) => {
@@ -260,7 +272,12 @@ const Orb = ({
 
       const effectiveHover = forceHoverState ? 1 : targetHover;
       program.uniforms.hover.value +=
-        (effectiveHover - program.uniforms.hover.value) * 0.1;
+        (effectiveHover - program.uniforms.hover.value) * 0.08;
+
+      // Burst decay
+      burstValue *= 0.95;
+      if (burstValue < 0.005) burstValue = 0;
+      program.uniforms.burst.value = burstValue;
 
       if (rotateOnHover && effectiveHover > 0.5) {
         currentRot += dt * rotationSpeed;
@@ -276,6 +293,7 @@ const Orb = ({
       window.removeEventListener("resize", resize);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
+      container.removeEventListener("click", handleClick);
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
       }
