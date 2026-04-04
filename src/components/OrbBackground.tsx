@@ -273,10 +273,11 @@ const Orb = ({
       const size = Math.min(rect.width, rect.height);
       const uvX = ((x - rect.width / 2) / size) * 2.0;
       const uvY = ((y - rect.height / 2) / size) * 2.0;
-      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
       mouseUV = { x: uvX, y: -uvY };
-      mouseInOrb = dist < 0.8;
-      targetHover = mouseInOrb ? 1 : 0;
+      // Entire container is hover area — intensity based on distance from center
+      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
+      mouseInOrb = true;
+      targetHover = Math.max(0.15, 1.0 - dist * 0.35);
     };
 
     const handleMouseLeave = () => {
