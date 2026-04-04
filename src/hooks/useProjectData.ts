@@ -161,7 +161,7 @@ export const useProjectListCounts = (projectIds: string[]) => {
     if (projectIds.length === 0) return;
 
     const ids = projectIds.map(String);
-    const [viewsResult, likesResult, commentsResult] = await Promise.all([
+    const [viewsResult, likesResult, commentsResult, readsResult] = await Promise.all([
       supabase
         .from("project_view_counts")
         .select("project_id, view_count")
@@ -175,11 +175,16 @@ export const useProjectListCounts = (projectIds: string[]) => {
         .select("project_id")
         .eq("is_approved", true)
         .in("project_id", ids),
+      supabase
+        .from("project_read_counts")
+        .select("project_id, read_count")
+        .in("project_id", ids),
     ]);
 
     const nextViewCounts: Record<string, number> = {};
     const nextLikeCounts: Record<string, number> = {};
     const nextCommentCounts: Record<string, number> = {};
+    const nextReadCounts: Record<string, number> = {};
 
     viewsResult.data?.forEach((item) => {
       if (item.project_id) {
@@ -199,8 +204,14 @@ export const useProjectListCounts = (projectIds: string[]) => {
       }
     });
 
+    readsResult.data?.forEach((item) => {
+      if (item.project_id) {
+        nextReadCounts[item.project_id] = Number(item.read_count) || 0;
+      }
+    });
+
     setViewCounts(nextViewCounts);
-    setReadCounts(nextViewCounts);
+    setReadCounts(nextReadCounts);
     setLikeCounts(nextLikeCounts);
     setCommentCounts(nextCommentCounts);
   }, [projectIds]);
@@ -218,6 +229,7 @@ export const useProjectListCounts = (projectIds: string[]) => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_views' }, () => fetchAllCounts())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'project_likes' }, () => fetchAllCounts())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'project_comments' }, () => fetchAllCounts())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'project_reads' }, () => fetchAllCounts())
       .subscribe();
 
     return () => {
