@@ -81,9 +81,12 @@ const Orb = ({
       return vec4(colorIn.rgb / (a + 1e-5), a);
     }
 
-    const vec3 baseColor1 = vec3(0.95, 0.95, 1.0);
-    const vec3 baseColor2 = vec3(0.75, 0.78, 0.85);
-    const vec3 baseColor3 = vec3(0.15, 0.16, 0.22);
+    const vec3 silverColor1 = vec3(0.95, 0.95, 1.0);
+    const vec3 silverColor2 = vec3(0.75, 0.78, 0.85);
+    const vec3 silverColor3 = vec3(0.15, 0.16, 0.22);
+    const vec3 blueColor1 = vec3(0.7, 0.85, 1.0);
+    const vec3 blueColor2 = vec3(0.3, 0.5, 0.9);
+    const vec3 blueColor3 = vec3(0.08, 0.12, 0.28);
     const float baseInnerRadius = 0.6;
 
     float light1(float intensity, float attenuation, float dist) {
@@ -141,8 +144,11 @@ const Orb = ({
       float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
       float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
 
-      vec3 col = mix(baseColor1, baseColor2, cl);
-      col = mix(baseColor3, col, v0);
+      vec3 c1 = mix(silverColor1, blueColor1, hoverVal);
+      vec3 c2 = mix(silverColor2, blueColor2, hoverVal);
+      vec3 c3 = mix(silverColor3, blueColor3, hoverVal);
+      vec3 col = mix(c1, c2, cl);
+      col = mix(c3, col, v0);
       col = (col + v1) * v2 * v3;
 
       col += burstVal * 0.6 * exp(-len * 3.0);
@@ -273,10 +279,11 @@ const Orb = ({
       const size = Math.min(rect.width, rect.height);
       const uvX = ((x - rect.width / 2) / size) * 2.0;
       const uvY = ((y - rect.height / 2) / size) * 2.0;
-      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
       mouseUV = { x: uvX, y: -uvY };
-      mouseInOrb = dist < 0.8;
-      targetHover = mouseInOrb ? 1 : 0;
+      // Entire container is hover area — intensity based on distance from center
+      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
+      mouseInOrb = true;
+      targetHover = Math.max(0.15, 1.0 - dist * 0.35);
     };
 
     const handleMouseLeave = () => {
