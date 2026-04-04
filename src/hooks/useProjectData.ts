@@ -1,12 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const getProjectLikeStorageKey = (projectId: string, email: string | null) =>
-  `project_like_${projectId}_${email ?? "anonymous"}`;
-
-const getProjectReadStorageKey = (projectId: string, email: string | null) =>
-  `project_read_${projectId}_${email ?? "anonymous"}`;
-
 export const useProjectViewLikes = (projectId: string, userEmail: string | null, userName: string | null) => {
   const [viewCount, setViewCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
