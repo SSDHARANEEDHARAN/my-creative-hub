@@ -165,6 +165,16 @@ const ServicesPage = () => {
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const { user, isLoading: authLoading } = useAuth();
+
+  // Show login popup if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      const timer = setTimeout(() => setShowLoginPopup(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [authLoading, user]);
   
   const services = activeTab === "it" ? itServices : engineeringServices;
 
