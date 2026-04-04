@@ -357,6 +357,15 @@ const Orb = ({
       const currentSquash = program.uniforms.scrollSquash.value as number;
       program.uniforms.scrollSquash.value = currentSquash + (scrollProgress - currentSquash) * 0.05;
 
+      // Smooth squareness transition
+      const currentSq = program.uniforms.squareness.value as number;
+      program.uniforms.squareness.value = currentSq + (targetSquareness - currentSq) * 0.06;
+      const currentDir = program.uniforms.mouseDir.value as number[];
+      program.uniforms.mouseDir.value = [
+        currentDir[0] + (mouseDirTarget.x - currentDir[0]) * 0.06,
+        currentDir[1] + (mouseDirTarget.y - currentDir[1]) * 0.06,
+      ];
+
       // Particle trail — spawn every ~50ms when mouse is inside orb
       trailTimer += dt;
       if (mouseInOrb && trailTimer > 0.05) {
