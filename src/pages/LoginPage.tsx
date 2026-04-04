@@ -34,9 +34,7 @@ const LoginPage = () => {
 
   const stateReturnPath = (location.state as { returnPath?: string } | null)?.returnPath;
   const queryReturnPath = new URLSearchParams(location.search).get("returnTo");
-  const oauthError = new URLSearchParams(location.search).get("error");
   const returnPath = stateReturnPath || queryReturnPath || "/services";
-  const oauthRedirectUri = `${window.location.origin}/login?returnTo=${encodeURIComponent(returnPath)}`;
 
   useEffect(() => {
     if (!isAuthLoading && user) {
