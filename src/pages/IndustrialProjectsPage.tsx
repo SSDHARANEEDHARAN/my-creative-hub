@@ -1,24 +1,91 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Factory, Clock, CheckCircle, AlertCircle, Loader2, ShieldX, Clock3, Mail, FileText } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useGuest } from "@/contexts/GuestContext";
 import { industrialProjects } from "@/data/projectsData";
+import { useProjectListCounts } from "@/hooks/useProjectData";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import ProjectComments from "@/components/ProjectComments";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import GuestAccessModal from "@/components/GuestAccessModal";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const IndustrialProjectsPage = () => {
   const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
+  const { guest } = useGuest();
   const navigate = useNavigate();
+  const [showAccessModal, setShowAccessModal] = useState(false);
 
   const isApproved = isAdmin || userStatus === "approved";
   const isRejected = userStatus === "restricted";
   const isPending = userStatus === "pending";
+
+  const currentUserEmail = user?.email || guest?.email || null;
+  const currentUserName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || guest?.name || null;
+
+  const projectIds = useMemo(() => industrialProjects.map(p => String(p.id)), []);
+  const { viewCounts, likeCounts, readCounts, commentCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
+
+  // Track view for each industrial project when page loads (approved users only)
+  useEffect(() => {
+    if (!isApproved) return;
+    const trackViews = async () => {
+      for (const project of industrialProjects) {
+        const key = `project_viewed_${project.id}`;
+        if (sessionStorage.getItem(key)) continue;
+        sessionStorage.setItem(key, "1");
+        await supabase.from("project_views").insert({
+          project_id: String(project.id),
+          viewer_email: currentUserEmail,
+          viewer_name: currentUserName,
+        });
+      }
+      refreshCounts();
+    };
+    trackViews();
+  }, [isApproved, currentUserEmail, currentUserName, refreshCounts]);
+
+  const handleLikeProject = async (projectId: number) => {
+    if (!currentUserEmail || !currentUserName) {
+      setShowAccessModal(true);
+      return;
+    }
+
+    const likeKey = `project_like_${projectId}_${currentUserEmail}`;
+    if (localStorage.getItem(likeKey) === "1") {
+      toast({ description: "You already liked this project." });
+      return;
+    }
+
+    const { error } = await supabase.from("project_likes").insert({
+      project_id: String(projectId),
+      name: currentUserName,
+      email: currentUserEmail,
+    });
+
+    if (!error) {
+      localStorage.setItem(likeKey, "1");
+      toast({ description: "Project liked!" });
+      refreshCounts();
+      return;
+    }
+
+    if (error.code === "23505") {
+      localStorage.setItem(likeKey, "1");
+      toast({ description: "You already liked this project." });
+      refreshCounts();
+      return;
+    }
+
+    toast({ title: "Error", description: "Failed to like project.", variant: "destructive" });
+  };
 
   if (authLoading) {
     return (
@@ -130,59 +197,90 @@ const IndustrialProjectsPage = () => {
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {industrialProjects.map((project, index) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.15 }}
-                  className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300"
-                >
-                  {project.images && project.images.length > 0 && (
-                    <div className="relative aspect-video overflow-hidden">
-                      <ProjectImageCarousel images={project.images} title={project.title} />
-                    </div>
-                  )}
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Badge variant="outline" className="text-xs border-primary/30 text-primary">
-                        Industrial
-                      </Badge>
-                      {project.tags.slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium text-secondary-foreground rounded">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                    {project.articleUrl && (
-                      <Link
-                        to={project.articleUrl}
-                        className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 text-sm font-medium transition-colors"
-                      >
-                        <FileText size={14} />
-                        Read Case Study
-                      </Link>
+              {industrialProjects.map((project, index) => {
+                const pid = String(project.id);
+                return (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.15 }}
+                    className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300"
+                  >
+                    {project.images && project.images.length > 0 && (
+                      <div className="relative aspect-video overflow-hidden">
+                        <ProjectImageCarousel images={project.images} title={project.title} />
+                      </div>
                     )}
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+                          Industrial
+                        </Badge>
+                        {project.tags.slice(0, 3).map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                        {project.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                        {project.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tags.map((tag) => (
+                          <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium text-secondary-foreground rounded">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Engagement metrics */}
+                      <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1.5">
+                          <Eye size={14} className="text-primary/70" />
+                          {viewCounts[pid] || 0} views
+                        </span>
+                        <button
+                          onClick={() => handleLikeProject(project.id)}
+                          className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                        >
+                          <Heart size={14} className="text-primary/70" />
+                          {likeCounts[pid] || 0} likes
+                        </button>
+                        <span className="flex items-center gap-1.5">
+                          <BookOpen size={14} className="text-primary/70" />
+                          {readCounts[pid] || 0} reads
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <MessageSquare size={14} className="text-primary/70" />
+                          {commentCounts[pid] || 0}
+                        </span>
+                      </div>
+
+                      {/* Comments section */}
+                      <ProjectComments projectId={pid} />
+
+                      {project.articleUrl && (
+                        <Link
+                          to={project.articleUrl}
+                          className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 text-sm font-medium transition-colors mt-3"
+                        >
+                          <FileText size={14} />
+                          Read Case Study
+                        </Link>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </main>
         <Footer />
+        <GuestAccessModal isOpen={showAccessModal} onClose={() => setShowAccessModal(false)} />
       </div>
     </PageTransition>
   );
