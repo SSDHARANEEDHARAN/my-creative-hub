@@ -286,22 +286,17 @@ const Orb = ({
     let mouseDirTarget = { x: 0, y: 0 };
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const size = Math.min(rect.width, rect.height);
-      const uvX = ((x - rect.width / 2) / size) * 2.0;
-      const uvY = ((y - rect.height / 2) / size) * 2.0;
+      // Use entire window for mouse tracking
+      const uvX = ((e.clientX / window.innerWidth) - 0.5) * 2.0;
+      const uvY = ((e.clientY / window.innerHeight) - 0.5) * 2.0;
       mouseUV = { x: uvX, y: -uvY };
-      // Entire container is hover area
-      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
       mouseInOrb = true;
-      targetHover = Math.max(0.15, 1.0 - dist * 0.35);
-      // Squareness: how close the mouse is to edges
-      const edgeX = Math.abs(x - rect.width / 2) / (rect.width / 2);
-      const edgeY = Math.abs(y - rect.height / 2) / (rect.height / 2);
-      targetSquareness = Math.max(edgeX, edgeY);
-      targetSquareness = Math.pow(targetSquareness, 1.5); // ease in
+      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
+      targetHover = Math.max(0.15, 1.0 - dist * 0.25);
+      // Squareness based on edge proximity
+      const edgeX = Math.abs(e.clientX - window.innerWidth / 2) / (window.innerWidth / 2);
+      const edgeY = Math.abs(e.clientY - window.innerHeight / 2) / (window.innerHeight / 2);
+      targetSquareness = Math.pow(Math.max(edgeX, edgeY), 1.5);
       mouseDirTarget = { x: uvX * 0.5, y: -uvY * 0.5 };
     };
 
@@ -325,8 +320,9 @@ const Orb = ({
       scrollProgress = progress;
     };
 
-    container.addEventListener("mousemove", handleMouseMove);
-    container.addEventListener("mouseleave", handleMouseLeave);
+    // Listen on window so entire page triggers the effect
+    window.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
     container.addEventListener("click", handleClick);
     window.addEventListener("scroll", handleScroll, { passive: true });
 
