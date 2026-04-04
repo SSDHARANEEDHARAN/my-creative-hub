@@ -113,6 +113,7 @@ const App = () => (
                 <BrowserRouter>
                   <ContentProtection />
                   <ScrollToTopButton />
+                  <EdgeGlow />
                   <AnimatedRoutes />
                 </BrowserRouter>
               </TooltipProvider>
