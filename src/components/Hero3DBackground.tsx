@@ -18,6 +18,34 @@ const MouseTracker = () => {
   return null;
 };
 
+/* ── Breathing Core Glow ── */
+const CoreGlow = () => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    const t = state.clock.elapsedTime;
+    const scale = 1 + Math.sin(t * 0.8) * 0.15;
+    meshRef.current.scale.setScalar(scale);
+    const mat = meshRef.current.material as THREE.MeshPhysicalMaterial;
+    mat.emissiveIntensity = 0.4 + Math.sin(t * 1.2) * 0.3;
+    mat.opacity = 0.3 + Math.sin(t * 0.8) * 0.15;
+  });
+  return (
+    <mesh ref={meshRef}>
+      <sphereGeometry args={[0.15, 16, 16]} />
+      <meshPhysicalMaterial
+        color="#4a90d9"
+        emissive="#4a90d9"
+        emissiveIntensity={0.6}
+        transparent
+        opacity={0.4}
+        metalness={0}
+        roughness={1}
+      />
+    </mesh>
+  );
+};
+
 /* ── Geodesic Sphere Shell ── */
 const GeodesicShell = () => {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -68,19 +96,8 @@ const GeodesicShell = () => {
           roughness={0.1}
         />
       </mesh>
-      {/* Core glow sphere */}
-      <mesh>
-        <sphereGeometry args={[0.15, 16, 16]} />
-        <meshPhysicalMaterial
-          color="#4a90d9"
-          emissive="#4a90d9"
-          emissiveIntensity={0.6}
-          transparent
-          opacity={0.4}
-          metalness={0}
-          roughness={1}
-        />
-      </mesh>
+      {/* Core glow sphere with breathing pulse */}
+      <CoreGlow />
     </group>
   );
 };
