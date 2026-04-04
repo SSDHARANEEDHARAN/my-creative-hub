@@ -33,7 +33,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-[2] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,hsl(var(--background)/0.6)_100%)]" />
 
       {/* Layer 3: Readability overlay */}
-      <div className="absolute inset-0 z-[3] bg-background/30 dark:bg-background/40 backdrop-blur-[1px]" />
+      <div className="absolute inset-0 z-[3] bg-background/30 dark:bg-background/40 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 z-[4] overflow-hidden pointer-events-none">
