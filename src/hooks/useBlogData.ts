@@ -79,28 +79,13 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
     if (!postId || viewTracked.current) return;
     
     const trackView = async () => {
-      // For logged-in users, check if they already viewed
-      if (userEmail) {
-        const { data: existingView } = await supabase
-          .from("blog_views")
-          .select("id")
-          .eq("post_id", postId)
-          .eq("viewer_email", userEmail)
-          .maybeSingle();
-        
-        if (existingView) {
-          viewTracked.current = true;
-          return; // Already viewed by this user
-        }
-      } else {
-        // For anonymous users, use sessionStorage
-        const viewKey = `blog_viewed_${postId}`;
-        if (sessionStorage.getItem(viewKey)) {
-          viewTracked.current = true;
-          return;
-        }
-        sessionStorage.setItem(viewKey, "1");
+      // Use sessionStorage to prevent duplicate view tracking
+      const viewKey = `blog_viewed_${postId}`;
+      if (sessionStorage.getItem(viewKey)) {
+        viewTracked.current = true;
+        return;
       }
+      sessionStorage.setItem(viewKey, "1");
       
       try {
         await supabase.from("blog_views").insert({
