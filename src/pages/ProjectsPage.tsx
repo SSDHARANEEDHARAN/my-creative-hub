@@ -558,6 +558,13 @@ const ProjectsPage = () => {
                 <Cog size={18} />
                 Engineering ({sharedEngineeringProjects.length})
               </button>
+              <button
+                onClick={() => navigate("/industrial-projects")}
+                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"
+              >
+                <Factory size={18} />
+                Industrial
+              </button>
             </motion.div>
           </div>
         </section>
