@@ -20,7 +20,6 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
   const [isLoading, setIsLoading] = useState(true);
   const viewTracked = useRef(false);
 
-  // Load public counts (no auth needed)
   const loadPublicCounts = useCallback(async () => {
     if (!postId) return;
     try {
@@ -56,7 +55,6 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
     }
   }, [postId]);
 
-  // Check user-specific like state (needs email)
   const checkUserLikeState = useCallback(async () => {
     if (!postId || !userEmail) {
       setHasLiked(false);
@@ -74,12 +72,11 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
     }
   }, [postId, userEmail]);
 
-  // Track view once per user (unique views only)
+  // Track view once per session
   useEffect(() => {
     if (!postId || viewTracked.current) return;
     
     const trackView = async () => {
-      // Use sessionStorage to prevent duplicate view tracking
       const viewKey = `blog_viewed_${postId}`;
       if (sessionStorage.getItem(viewKey)) {
         viewTracked.current = true;
@@ -102,15 +99,24 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
     trackView();
   }, [postId, userEmail, userName]);
 
-  // Load public counts on mount
-  useEffect(() => {
-    loadPublicCounts();
-  }, [loadPublicCounts]);
+  useEffect(() => { loadPublicCounts(); }, [loadPublicCounts]);
+  useEffect(() => { checkUserLikeState(); }, [checkUserLikeState]);
 
-  // Re-check user like state when email becomes available
+  // Realtime subscription for live count updates
   useEffect(() => {
-    checkUserLikeState();
-  }, [checkUserLikeState]);
+    if (!postId) return;
+
+    const channel = supabase
+      .channel(`blog-counts-${postId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'blog_views', filter: `post_id=eq.${postId}` }, () => loadPublicCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blog_likes', filter: `post_id=eq.${postId}` }, () => loadPublicCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blog_comments', filter: `post_id=eq.${postId}` }, () => loadPublicCounts())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [postId, loadPublicCounts]);
 
   const addLike = async (name: string, email: string) => {
     if (!postId) return;
@@ -174,7 +180,6 @@ export const useBlogData = (postId: string, userEmail: string | null, userName: 
       description: "Your comment is pending approval.",
     });
 
-    // Refresh comments
     loadPublicCounts();
     return true;
   };
@@ -234,7 +239,6 @@ export const useBlogListCounts = (postIds: string[], userEmail: string | null) =
     }
   }, [postIds.join(",")]);
 
-  // Check user-specific likes separately
   const checkUserLikes = useCallback(async () => {
     if (!postIds.length || !userEmail) {
       setUserLikes(new Set());
@@ -254,6 +258,22 @@ export const useBlogListCounts = (postIds: string[], userEmail: string | null) =
 
   useEffect(() => { loadCounts(); }, [loadCounts]);
   useEffect(() => { checkUserLikes(); }, [checkUserLikes]);
+
+  // Realtime subscription for list-level blog count updates
+  useEffect(() => {
+    if (!postIds.length) return;
+
+    const channel = supabase
+      .channel('blog-list-counts')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'blog_views' }, () => loadCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blog_likes' }, () => loadCounts())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blog_comments' }, () => loadCounts())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [postIds, loadCounts]);
 
   return { likeCounts, commentCounts, viewCounts, userLikes, setUserLikes, setLikeCounts, refresh: loadCounts };
 };
