@@ -231,6 +231,18 @@ const Navigation = () => {
                           <p className="text-xs text-muted-foreground truncate max-w-[180px]">{displayUser.email}</p>
                         </div>
                       </div>
+                      {displayIsAdmin && (
+                        <div className="space-y-1">
+                          <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
+                            <LayoutDashboard className="w-4 h-4" />
+                            Dashboard
+                          </Link>
+                          <Link to="/admin/moderation" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
+                            <Shield className="w-4 h-4" />
+                            Moderation
+                          </Link>
+                        </div>
+                      )}
                       <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Log out
