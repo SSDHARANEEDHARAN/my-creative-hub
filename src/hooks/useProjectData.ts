@@ -48,28 +48,14 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
     if (!projectId || viewTracked.current) return;
 
     const trackView = async () => {
-      if (userEmail) {
-        const { data: existingView } = await supabase
-          .from("project_views")
-          .select("id")
-          .eq("project_id", projectId)
-          .eq("viewer_email", userEmail)
-          .maybeSingle();
-
-        if (existingView) {
-          viewTracked.current = true;
-          await loadCounts();
-          return;
-        }
-      } else {
-        const key = `project_viewed_${projectId}`;
-        if (sessionStorage.getItem(key)) {
-          viewTracked.current = true;
-          await loadCounts();
-          return;
-        }
-        sessionStorage.setItem(key, "1");
+      // Use sessionStorage to prevent duplicate view tracking
+      const key = `project_viewed_${projectId}`;
+      if (sessionStorage.getItem(key)) {
+        viewTracked.current = true;
+        await loadCounts();
+        return;
       }
+      sessionStorage.setItem(key, "1");
 
       viewTracked.current = true;
 
