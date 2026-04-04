@@ -345,6 +345,12 @@ const ServicesPage = () => {
           category={activeTab === "it" ? "IT Services" : "Engineering Services"}
         />
       )}
+      <LoginPopupModal
+        isOpen={showLoginPopup && !user}
+        onClose={() => setShowLoginPopup(false)}
+        title="Sign In Required"
+        description="Please sign in to access our services"
+      />
     </>
   );
 };
