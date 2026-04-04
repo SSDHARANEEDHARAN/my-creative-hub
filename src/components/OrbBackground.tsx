@@ -285,6 +285,9 @@ const Orb = ({
     let scrollProgress = 0;
     const rotationSpeed = 0.3;
 
+    let targetSquareness = 0;
+    let mouseDirTarget = { x: 0, y: 0 };
+
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -293,10 +296,16 @@ const Orb = ({
       const uvX = ((x - rect.width / 2) / size) * 2.0;
       const uvY = ((y - rect.height / 2) / size) * 2.0;
       mouseUV = { x: uvX, y: -uvY };
-      // Entire container is hover area — intensity based on distance from center
+      // Entire container is hover area
       const dist = Math.sqrt(uvX * uvX + uvY * uvY);
       mouseInOrb = true;
       targetHover = Math.max(0.15, 1.0 - dist * 0.35);
+      // Squareness: how close the mouse is to edges
+      const edgeX = Math.abs(x - rect.width / 2) / (rect.width / 2);
+      const edgeY = Math.abs(y - rect.height / 2) / (rect.height / 2);
+      targetSquareness = Math.max(edgeX, edgeY);
+      targetSquareness = Math.pow(targetSquareness, 1.5); // ease in
+      mouseDirTarget = { x: uvX * 0.5, y: -uvY * 0.5 };
     };
 
     const handleMouseLeave = () => {
