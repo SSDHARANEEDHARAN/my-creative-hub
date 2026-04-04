@@ -144,8 +144,11 @@ const Orb = ({
       float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
       float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
 
-      vec3 col = mix(baseColor1, baseColor2, cl);
-      col = mix(baseColor3, col, v0);
+      vec3 c1 = mix(silverColor1, blueColor1, hoverVal);
+      vec3 c2 = mix(silverColor2, blueColor2, hoverVal);
+      vec3 c3 = mix(silverColor3, blueColor3, hoverVal);
+      vec3 col = mix(c1, c2, cl);
+      col = mix(c3, col, v0);
       col = (col + v1) * v2 * v3;
 
       col += burstVal * 0.6 * exp(-len * 3.0);
