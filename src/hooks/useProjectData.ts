@@ -19,45 +19,40 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
   const loadCounts = useCallback(async () => {
     if (!projectId) return;
 
-    const queries: Promise<any>[] = [
-      supabase
-        .from("project_view_counts")
-        .select("view_count")
-        .eq("project_id", projectId)
-        .maybeSingle(),
-      supabase
-        .from("project_likes_public")
-        .select("id")
-        .eq("project_id", projectId),
-      supabase
-        .from("project_read_counts")
-        .select("read_count")
-        .eq("project_id", projectId)
-        .maybeSingle(),
-    ];
+    const viewPromise = supabase
+      .from("project_view_counts")
+      .select("view_count")
+      .eq("project_id", projectId)
+      .maybeSingle();
 
-    // Check if user already liked from DB
-    if (userEmail) {
-      queries.push(
-        supabase
+    const likePromise = supabase
+      .from("project_likes_public")
+      .select("id")
+      .eq("project_id", projectId);
+
+    const readPromise = supabase
+      .from("project_read_counts")
+      .select("read_count")
+      .eq("project_id", projectId)
+      .maybeSingle();
+
+    const userLikePromise = userEmail
+      ? supabase
           .from("project_likes")
           .select("id")
           .eq("project_id", projectId)
           .eq("email", userEmail)
           .maybeSingle()
-      );
-    }
+      : Promise.resolve({ data: null });
 
-    const results = await Promise.all(queries);
-    const viewData = results[0].data;
-    const likeData = results[1].data;
-    const readData = results[2].data;
-    const userLikeData = results[3]?.data;
+    const [viewResult, likeResult, readResult, userLikeResult] = await Promise.all([
+      viewPromise, likePromise, readPromise, userLikePromise
+    ]);
 
-    setViewCount(Number(viewData?.view_count) || 0);
-    setLikeCount(likeData?.length || 0);
-    setReadCount(Number(readData?.read_count) || 0);
-    setHasLiked(Boolean(userLikeData));
+    setViewCount(Number(viewResult.data?.view_count) || 0);
+    setLikeCount(likeResult.data?.length || 0);
+    setReadCount(Number(readResult.data?.read_count) || 0);
+    setHasLiked(Boolean(userLikeResult.data));
     setHasRead(false);
   }, [projectId, userEmail]);
 
