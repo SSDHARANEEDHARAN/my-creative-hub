@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
-const ScrollToTopButton = () => {
+const ScrollToTopButton = forwardRef<HTMLDivElement>((_, ref) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ const ScrollToTopButton = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.div
+          ref={ref}
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.5 }}
@@ -47,6 +48,8 @@ const ScrollToTopButton = () => {
       )}
     </AnimatePresence>
   );
-};
+});
+
+ScrollToTopButton.displayName = "ScrollToTopButton";
 
 export default ScrollToTopButton;
