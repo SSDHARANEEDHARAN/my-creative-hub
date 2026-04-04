@@ -234,8 +234,8 @@ const Orb = ({
     const trailPosUniforms: Record<string, { value: number[] }> = {};
     const trailAlphaUniforms: Record<string, { value: number }> = {};
     for (let i = 0; i < MAX_TRAIL; i++) {
-      trailPosUniforms[`trailPos[${i}]`] = { value: [0, 0] };
-      trailAlphaUniforms[`trailAlpha[${i}]`] = { value: 0 };
+      trailPosUniforms[`trailPos[${i}]`] = { value: [-10, -10] };
+      trailAlphaUniforms[`trailAlpha[${i}]`] = { value: 0.0 };
     }
 
     const program = new Program(gl, {
