@@ -191,10 +191,7 @@ const Orb = ({
       uv.y *= 1.0 + scrollSquash * 0.3;
       uv.x *= 1.0 - scrollSquash * 0.1;
 
-      float angle = rot;
-      float s = sin(angle);
-      float c = cos(angle);
-      uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
+      // No rotation — square stays axis-aligned
 
       float distAmt = hover * hoverIntensity;
       uv.x += distAmt * 0.3 * sin(uv.y * 12.0 + iTime * 2.0);
