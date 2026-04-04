@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut, Shield, Factory, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, Shield, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
@@ -19,14 +19,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut, isAdmin } = useAuth();
+
+  const displayUser = isLoggingOut ? null : user;
+  const displayIsAdmin = !isLoggingOut && isAdmin;
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
+      setIsOpen(false);
       await signOut();
-      window.location.href = "/";
+      navigate("/", { replace: true });
     } catch (error) {
+      setIsLoggingOut(false);
       console.error("Logout failed:", error);
     }
   };
@@ -38,6 +46,12 @@ const Navigation = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setIsLoggingOut(false);
+    }
+  }, [user]);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -56,14 +70,13 @@ const Navigation = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled 
-          ? "bg-background/95 backdrop-blur-xl border-b-2 border-border shadow-lg" 
+        scrolled
+          ? "bg-background/95 backdrop-blur-xl border-b-2 border-border shadow-lg"
           : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
           <Link to="/" className="group flex items-center gap-2">
             <motion.div
               whileHover={{ rotate: 180 }}
@@ -77,7 +90,6 @@ const Navigation = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
@@ -85,11 +97,13 @@ const Navigation = () => {
                 to={link.href}
                 className="relative px-3 xl:px-4 py-2 group"
               >
-                <span className={`relative z-10 text-sm font-medium transition-colors duration-300 ${
-                  location.pathname === link.href 
-                    ? "text-foreground" 
-                    : "text-muted-foreground group-hover:text-foreground"
-                }`}>
+                <span
+                  className={`relative z-10 text-sm font-medium transition-colors duration-300 ${
+                    location.pathname === link.href
+                      ? "text-foreground"
+                      : "text-muted-foreground group-hover:text-foreground"
+                  }`}
+                >
                   {link.name}
                 </span>
                 {location.pathname === link.href && (
@@ -103,19 +117,18 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Desktop Actions */}
           <div className="hidden lg:flex items-center gap-3">
             <SocialLinks iconSize={16} />
             <div className="w-px h-6 bg-border" />
             <ThemeToggle />
-            {user ? (
+            {displayUser ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 border-2 border-border hover:border-primary/50 transition-colors overflow-hidden">
                     <Avatar className="h-full w-full">
-                      <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email || ""} />
+                      <AvatarImage src={displayUser.user_metadata?.avatar_url} alt={displayUser.email || ""} />
                       <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                        {(user.email?.[0] || "U").toUpperCase()}
+                        {(displayUser.email?.[0] || "U").toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -123,12 +136,12 @@ const Navigation = () => {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.user_metadata?.display_name || "User"}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <p className="text-sm font-medium leading-none">{displayUser.user_metadata?.display_name || "User"}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{displayUser.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {isAdmin && (
+                  {displayIsAdmin && (
                     <>
                       <DropdownMenuItem asChild>
                         <Link to="/admin/dashboard" className="cursor-pointer">
@@ -160,7 +173,6 @@ const Navigation = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-2">
             <ThemeToggle />
             <motion.button
@@ -173,7 +185,6 @@ const Navigation = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -195,8 +206,8 @@ const Navigation = () => {
                       to={link.href}
                       onClick={() => setIsOpen(false)}
                       className={`block py-3 px-4 font-medium transition-all duration-300 ${
-                        location.pathname === link.href 
-                          ? "text-foreground bg-secondary border-l-4 border-foreground" 
+                        location.pathname === link.href
+                          ? "text-foreground bg-secondary border-l-4 border-foreground"
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary border-l-4 border-transparent"
                       }`}
                     >
@@ -206,21 +217,21 @@ const Navigation = () => {
                 ))}
                 <div className="pt-4 border-t-2 border-border mt-4 space-y-4 px-4">
                   <SocialLinks className="justify-start" />
-                  {user ? (
+                  {displayUser ? (
                     <div className="space-y-4 pt-4 border-t border-border">
                       <div className="flex items-center gap-3 px-4 py-2 bg-secondary/50 rounded-lg">
                         <Avatar className="h-10 w-10 border border-border">
-                          <AvatarImage src={user.user_metadata?.avatar_url} />
+                          <AvatarImage src={displayUser.user_metadata?.avatar_url} />
                           <AvatarFallback className="bg-primary/10 text-primary">
-                            {(user.email?.[0] || "U").toUpperCase()}
+                            {(displayUser.email?.[0] || "U").toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                          <p className="text-sm font-bold">{user.user_metadata?.display_name || "User"}</p>
-                          <p className="text-xs text-muted-foreground truncate max-w-[180px]">{user.email}</p>
+                          <p className="text-sm font-bold">{displayUser.user_metadata?.display_name || "User"}</p>
+                          <p className="text-xs text-muted-foreground truncate max-w-[180px]">{displayUser.email}</p>
                         </div>
                       </div>
-                      <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => { handleLogout(); setIsOpen(false); }}>
+                      <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Log out
                       </Button>
