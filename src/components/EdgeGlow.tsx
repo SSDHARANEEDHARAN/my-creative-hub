@@ -71,8 +71,8 @@ const EdgeGlow = () => {
       const leftProx = 1.0 - mx;
       const rightProx = mx;
 
-      const glowR = 40, glowG = 100, glowB = 255;
-      const baseR = 100, baseG = 140, baseB = 255;
+      const glowR = 60, glowG = 130, glowB = 255;
+      const baseR = 140, baseG = 170, baseB = 230;
 
       const drawEdgeLine = (
         x1: number, y1: number, x2: number, y2: number,
