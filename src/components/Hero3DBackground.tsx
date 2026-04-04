@@ -68,19 +68,8 @@ const GeodesicShell = () => {
           roughness={0.1}
         />
       </mesh>
-      {/* Core glow sphere */}
-      <mesh>
-        <sphereGeometry args={[0.15, 16, 16]} />
-        <meshPhysicalMaterial
-          color="#4a90d9"
-          emissive="#4a90d9"
-          emissiveIntensity={0.6}
-          transparent
-          opacity={0.4}
-          metalness={0}
-          roughness={1}
-        />
-      </mesh>
+      {/* Core glow sphere with breathing pulse */}
+      <CoreGlow />
     </group>
   );
 };
