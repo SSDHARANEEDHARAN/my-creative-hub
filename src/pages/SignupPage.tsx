@@ -58,7 +58,7 @@ const SignupPage = () => {
       } else {
         toast({
           title: "Account Created!",
-          description: "You can now log in with your credentials.",
+          description: "Your account is pending admin approval. You'll be notified once approved.",
         });
         navigate("/login");
       }
