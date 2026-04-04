@@ -3,8 +3,8 @@ import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, FileText, Code2, Cog, Eye, Heart, MessageSquare } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ExternalLink, FileText, Code2, Cog, Eye, Heart, MessageSquare, Factory } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 import ImageLightbox from "@/components/ImageLightbox";
 import { useProjectListCounts } from "@/hooks/useProjectData";
@@ -440,6 +440,7 @@ const engineeringProjects: Project[] = [
 ];
 
 const ProjectsPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
@@ -556,6 +557,13 @@ const ProjectsPage = () => {
               >
                 <Cog size={18} />
                 Engineering ({sharedEngineeringProjects.length})
+              </button>
+              <button
+                onClick={() => navigate("/industrial-projects")}
+                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"
+              >
+                <Factory size={18} />
+                Industrial
               </button>
             </motion.div>
           </div>
