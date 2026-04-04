@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut, User as UserIcon, Settings, Shield } from "lucide-react";
+import { Menu, X, LogOut, Shield, Factory, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
@@ -20,7 +20,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -46,6 +46,7 @@ const Navigation = () => {
     { name: "Services", href: "/services" },
     { name: "Gallery", href: "/gallery" },
     { name: "Projects", href: "/projects" },
+    { name: "Industrial", href: "/industrial-projects" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ];
@@ -128,12 +129,23 @@ const Navigation = () => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/services" className="cursor-pointer">
-                      <Shield className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
-                    </Link>
-                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/dashboard" className="cursor-pointer">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          <span>Dashboard</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/moderation" className="cursor-pointer">
+                          <Shield className="mr-2 h-4 w-4" />
+                          <span>Moderation</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
                   <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>

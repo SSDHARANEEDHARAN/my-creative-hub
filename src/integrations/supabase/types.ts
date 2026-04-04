@@ -263,6 +263,42 @@ export type Database = {
         }
         Relationships: []
       }
+      industrial_projects: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          is_published: boolean
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          is_published?: boolean
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          is_published?: boolean
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           email: string
@@ -326,6 +362,7 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          status: string
           updated_at: string
           user_id: string
         }
@@ -334,6 +371,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          status?: string
           updated_at?: string
           user_id: string
         }
@@ -342,6 +380,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          status?: string
           updated_at?: string
           user_id?: string
         }
@@ -515,6 +554,30 @@ export type Database = {
           skill_type?: string
           sort_order?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_activity: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string
         }
         Relationships: []
       }

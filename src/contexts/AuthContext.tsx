@@ -8,10 +8,9 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   isAdmin: boolean;
+  userStatus: string | null;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: (returnPath?: string) => Promise<void>;
-  signInWithApple: (returnPath?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -31,6 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userStatus, setUserStatus] = useState<string | null>(null);
 
   const checkAdminRole = async (userId: string) => {
     try {
@@ -52,6 +52,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const checkUserStatus = async (userId: string): Promise<string> => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("status")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error || !data) return "pending";
+      return data.status || "pending";
+    } catch {
+      return "pending";
+    }
+  };
+
+  const trackActivity = async (userId: string, action: string) => {
+    try {
+      await supabase.from("user_activity").insert({
+        user_id: userId,
+        action,
+      });
+    } catch (err) {
+      console.error("Failed to track activity:", err);
+    }
+  };
+
   const syncUserRole = useCallback(async (currentUser: User) => {
     try {
       await supabase.functions.invoke("sync-user-role", {
@@ -66,7 +92,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, nextSession) => {
         setSession(nextSession);
@@ -76,15 +101,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           await syncUserRole(nextSession.user);
           const adminStatus = await checkAdminRole(nextSession.user.id);
           setIsAdmin(adminStatus);
+          const status = await checkUserStatus(nextSession.user.id);
+          setUserStatus(status);
+
+          // Auto-approve admin
+          if (adminStatus && status !== "approved") {
+            setUserStatus("approved");
+          }
         } else {
           setIsAdmin(false);
+          setUserStatus(null);
         }
 
         setIsLoading(false);
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(async ({ data: { session: existingSession } }) => {
       setSession(existingSession);
       setUser(existingSession?.user ?? null);
@@ -93,6 +125,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await syncUserRole(existingSession.user);
         const adminStatus = await checkAdminRole(existingSession.user.id);
         setIsAdmin(adminStatus);
+        const status = await checkUserStatus(existingSession.user.id);
+        setUserStatus(adminStatus ? "approved" : status);
       }
 
       setIsLoading(false);
@@ -102,7 +136,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [syncUserRole]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (!error && data.user) {
+      // Check status before allowing login
+      const status = await checkUserStatus(data.user.id);
+      const adminCheck = await checkAdminRole(data.user.id);
+
+      if (!adminCheck && status === "pending") {
+        await supabase.auth.signOut();
+        return { error: new Error("Your account is pending approval. Please wait for admin to approve your access.") };
+      }
+
+      if (!adminCheck && status === "restricted") {
+        await supabase.auth.signOut();
+        return { error: new Error("Your account has been restricted. Please contact the administrator.") };
+      }
+
+      // Track login activity
+      await trackActivity(data.user.id, "login");
+    }
+
     return { error: error as Error | null };
   };
 
@@ -117,37 +171,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error: error as Error | null };
   };
 
-  const signInWithGoogle = async (returnPath: string = "/services") => {
-    localStorage.setItem("authReturnTo", returnPath);
-    const oauthRedirectUri = `${window.location.origin}/auth/callback`;
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: oauthRedirectUri,
-      });
-      if (result?.error) throw result.error;
-    } catch (error) {
-      console.error("Google login failed:", error);
-      throw error;
-    }
-  };
-
-  const signInWithApple = async (returnPath: string = "/services") => {
-    localStorage.setItem("authReturnTo", returnPath);
-    const oauthRedirectUri = `${window.location.origin}/auth/callback`;
-    try {
-      const result = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: oauthRedirectUri,
-      });
-      if (result?.error) throw result.error;
-    } catch (error) {
-      console.error("Apple login failed:", error);
-      throw error;
-    }
-  };
-
   const signOut = async () => {
+    if (user) {
+      await trackActivity(user.id, "logout");
+    }
     await supabase.auth.signOut();
     setIsAdmin(false);
+    setUserStatus(null);
   };
 
   return (
@@ -157,10 +187,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         session,
         isLoading,
         isAdmin,
+        userStatus,
         signIn,
         signUp,
-        signInWithGoogle,
-        signInWithApple,
         signOut,
       }}
     >
