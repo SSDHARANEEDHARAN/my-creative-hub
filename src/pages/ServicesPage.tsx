@@ -4,9 +4,10 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Button } from "@/components/ui/button";
 import ServiceRequestModal from "@/components/ServiceRequestModal";
-import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu } from "lucide-react";
-import { useState } from "react";
-
+import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import LoginPopupModal from "@/components/LoginPopupModal";
 interface Service {
   id: number;
   icon: React.ComponentType<{ className?: string }>;
