@@ -181,7 +181,7 @@ const SignupPage = () => {
 
               <div className="mt-4 p-4 bg-muted/50 rounded-lg">
                 <p className="text-xs text-muted-foreground text-center">
-                  Note: Admin access must be granted by the site owner after registration.
+                  Note: After signup, your account will be pending approval by the admin before you can log in.
                 </p>
               </div>
             </motion.div>
