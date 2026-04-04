@@ -89,7 +89,7 @@ const Orb = ({
     const vec3 blueColor1 = vec3(0.7, 0.85, 1.0);
     const vec3 blueColor2 = vec3(0.3, 0.5, 0.9);
     const vec3 blueColor3 = vec3(0.08, 0.12, 0.28);
-    const float baseInnerRadius = 0.85;
+    const float baseInnerRadius = 1.0;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
@@ -181,8 +181,8 @@ const Orb = ({
 
     vec4 mainImage(vec2 fragCoord) {
       vec2 center = iResolution.xy * 0.5;
-      float size = min(iResolution.x, iResolution.y);
-      vec2 uv = (fragCoord - center) / size * 2.0;
+      // Use separate scaling per axis so square reaches all edges
+      vec2 uv = (fragCoord - center) / iResolution.xy * 2.0;
 
       uv.x += shake * 0.015 * sin(iTime * 60.0);
       uv.y += shake * 0.015 * cos(iTime * 73.0);
