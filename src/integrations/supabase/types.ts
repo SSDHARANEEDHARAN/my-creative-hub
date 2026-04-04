@@ -443,6 +443,30 @@ export type Database = {
         }
         Relationships: []
       }
+      project_reads: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          reader_email: string | null
+          reader_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          reader_email?: string | null
+          reader_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          reader_email?: string | null
+          reader_name?: string | null
+        }
+        Relationships: []
+      }
       project_views: {
         Row: {
           created_at: string
@@ -750,6 +774,13 @@ export type Database = {
           id?: string | null
           name?: string | null
           project_id?: string | null
+        }
+        Relationships: []
+      }
+      project_read_counts: {
+        Row: {
+          project_id: string | null
+          read_count: number | null
         }
         Relationships: []
       }
