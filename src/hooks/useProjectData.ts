@@ -114,17 +114,14 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
   const toggleLike = useCallback(async (name: string, email: string) => {
     if (!projectId) return;
 
-    const likeStorageKey = getProjectLikeStorageKey(projectId, email);
-    if (hasLiked || localStorage.getItem(likeStorageKey) === "1") {
-      setHasLiked(true);
-      await loadCounts();
+    // Check from DB state, not localStorage
+    if (hasLiked) {
       return;
     }
 
     const previousLikeCount = likeCount;
     setHasLiked(true);
     setLikeCount((count) => count + 1);
-    localStorage.setItem(likeStorageKey, "1");
 
     const { error } = await supabase.from("project_likes").insert({
       project_id: projectId,
@@ -134,14 +131,13 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
 
     if (error) {
       if (error.code === "23505") {
+        // Already liked in DB
         setHasLiked(true);
-        localStorage.setItem(likeStorageKey, "1");
         await loadCounts();
         return;
       }
 
       console.error("Failed to like project:", error);
-      localStorage.removeItem(likeStorageKey);
       setHasLiked(false);
       setLikeCount(previousLikeCount);
       return;
@@ -152,19 +148,18 @@ export const useProjectViewLikes = (projectId: string, userEmail: string | null,
 
   const trackRead = useCallback(async () => {
     if (!projectId || readTracked.current) return;
-
-    const readStorageKey = getProjectReadStorageKey(projectId, userEmail);
-    if (sessionStorage.getItem(readStorageKey)) {
-      readTracked.current = true;
-      setHasRead(true);
-      return;
-    }
-
-    sessionStorage.setItem(readStorageKey, "1");
     readTracked.current = true;
     setHasRead(true);
-    setReadCount((current) => Math.max(current, viewCount));
-  }, [projectId, userEmail, viewCount]);
+
+    // Always insert read into DB
+    await supabase.from("project_reads").insert({
+      project_id: projectId,
+      reader_email: userEmail,
+      reader_name: null,
+    });
+
+    await loadCounts();
+  }, [projectId, userEmail, loadCounts]);
 
   return { viewCount, likeCount, readCount, hasLiked, hasRead, toggleLike, trackRead, refresh: loadCounts };
 };
