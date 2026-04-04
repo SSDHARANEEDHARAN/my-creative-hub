@@ -4,9 +4,10 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Button } from "@/components/ui/button";
 import ServiceRequestModal from "@/components/ServiceRequestModal";
-import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu } from "lucide-react";
-import { useState } from "react";
-
+import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import LoginPopupModal from "@/components/LoginPopupModal";
 interface Service {
   id: number;
   icon: React.ComponentType<{ className?: string }>;
@@ -164,6 +165,16 @@ const ServicesPage = () => {
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const { user, isLoading: authLoading } = useAuth();
+
+  // Show login popup if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      const timer = setTimeout(() => setShowLoginPopup(true), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [authLoading, user]);
   
   const services = activeTab === "it" ? itServices : engineeringServices;
 
@@ -176,6 +187,14 @@ const ServicesPage = () => {
     setIsModalOpen(false);
     setSelectedService(null);
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -326,6 +345,12 @@ const ServicesPage = () => {
           category={activeTab === "it" ? "IT Services" : "Engineering Services"}
         />
       )}
+      <LoginPopupModal
+        isOpen={showLoginPopup && !user}
+        onClose={() => setShowLoginPopup(false)}
+        title="Sign In Required"
+        description="Please sign in to access our services"
+      />
     </>
   );
 };
