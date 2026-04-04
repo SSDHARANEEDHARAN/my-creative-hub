@@ -16,8 +16,8 @@ const Hero = () => {
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-16">
       {/* Layer 0: Orb WebGL Background */}
-      <div className="absolute inset-0 z-0">
-        <OrbBackground hue={220} hoverIntensity={0.3} rotateOnHover />
+      <div className="absolute inset-0 z-0" style={{ pointerEvents: 'auto' }}>
+        <OrbBackground hue={0} hoverIntensity={0.5} rotateOnHover forceHoverState={false} />
       </div>
 
       {/* Layer 2: CRT Scanline overlay */}
