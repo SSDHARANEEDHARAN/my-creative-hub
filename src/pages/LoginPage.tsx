@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
-import { lovable } from "@/integrations/lovable/index";
+
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
