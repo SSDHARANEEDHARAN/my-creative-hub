@@ -16,8 +16,8 @@ const Hero = () => {
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 pb-16">
       {/* Layer 0: Orb WebGL Background */}
-      <div className="absolute inset-0 z-0">
-        <OrbBackground hue={220} hoverIntensity={0.3} rotateOnHover />
+      <div className="absolute inset-0 z-0" style={{ pointerEvents: 'auto' }}>
+        <OrbBackground hue={0} hoverIntensity={0.5} rotateOnHover forceHoverState={false} />
       </div>
 
       {/* Layer 2: CRT Scanline overlay */}
@@ -33,7 +33,7 @@ const Hero = () => {
       <div className="absolute inset-0 z-[2] pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_50%,hsl(var(--background)/0.6)_100%)]" />
 
       {/* Layer 3: Readability overlay */}
-      <div className="absolute inset-0 z-[3] bg-background/30 dark:bg-background/40 backdrop-blur-[1px]" />
+      <div className="absolute inset-0 z-[3] bg-background/30 dark:bg-background/40 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 z-[4] overflow-hidden pointer-events-none">
@@ -51,7 +51,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--border)/0.15)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--border)/0.15)_1px,transparent_1px)] bg-[size:60px_60px] [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_70%)]" />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10 pointer-events-auto">
         <div className="max-w-5xl mx-auto text-center">
           {/* Status badge */}
           <motion.div
