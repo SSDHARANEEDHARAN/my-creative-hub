@@ -42,15 +42,6 @@ const LoginPage = () => {
     }
   }, [isAuthLoading, user, navigate, returnPath]);
 
-  useEffect(() => {
-    if (oauthError) {
-      toast({
-        title: "OAuth Login Failed",
-        description: "Authentication could not be completed. Please try again.",
-        variant: "destructive",
-      });
-    }
-  }, [oauthError, toast]);
 
   // Forgot passkey state
   const [view, setView] = useState<View>("login");
