@@ -8,6 +8,8 @@ interface OrbProps {
   forceHoverState?: boolean;
 }
 
+const MAX_TRAIL = 12;
+
 const Orb = ({
   hue = 0,
   hoverIntensity = 0.2,
@@ -38,6 +40,9 @@ const Orb = ({
     uniform float burst;
     uniform float breath;
     uniform float shake;
+    uniform float scrollSquash;
+    uniform vec2 trailPos[${MAX_TRAIL}];
+    uniform float trailAlpha[${MAX_TRAIL}];
     varying vec2 vUv;
 
     vec3 hash33(vec3 p3) {
@@ -88,21 +93,15 @@ const Orb = ({
       return intensity / (1.0 + dist * dist * attenuation);
     }
 
-    // Expanding ring effect
     float ring(float len, float center, float width, float intensity) {
       return intensity * exp(-pow((len - center) / width, 2.0));
     }
 
     vec4 draw(vec2 uv, float hoverVal, float burstVal, float breathVal) {
-      vec3 color1 = baseColor1;
-      vec3 color2 = baseColor2;
-      vec3 color3 = baseColor3;
-
       float ang = atan(uv.y, uv.x);
       float len = length(uv);
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
 
-      // Breathing pulse modulates the radius
       float breathPulse = breathVal * 0.04;
       float noiseScale = 0.65 + hoverVal * 1.8;
       float innerRadius = baseInnerRadius + hoverVal * 0.15 + burstVal * 0.3 + breathPulse;
@@ -114,29 +113,21 @@ const Orb = ({
 
       float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
 
-      // Dramatic angular distortion on hover
       r0 += hoverVal * 0.15 * sin(ang * (3.0 + hoverVal * 6.0) + iTime * 3.0);
       r0 += hoverVal * 0.08 * cos(ang * 7.0 - iTime * 2.0);
 
-      // Multiple expanding burst rings
       float ringGlow = 0.0;
       if (burstVal > 0.01) {
         float expansion = (1.0 - burstVal) * 2.5;
-        // Ring 1 — main shockwave
         ringGlow += ring(len, expansion * 0.6, 0.06 + burstVal * 0.1, burstVal * 1.2);
-        // Ring 2 — secondary wave (delayed)
         ringGlow += ring(len, expansion * 0.4, 0.04 + burstVal * 0.08, burstVal * 0.7);
-        // Ring 3 — inner ripple
         ringGlow += ring(len, expansion * 0.2, 0.03 + burstVal * 0.05, burstVal * 0.4);
-        // Surface ripple on the orb itself
         r0 += burstVal * 0.12 * sin(len * 40.0 - (1.0 - burstVal) * 20.0);
       }
 
       float d0 = distance(uv, (r0 * invLen) * uv);
       float v0 = light1(1.0, 10.0, d0);
       v0 *= smoothstep(r0 * 1.05, r0, len);
-
-      // Breathing glow on the edge
       v0 += breathVal * 0.08 * smoothstep(r0 + 0.1, r0, len);
 
       float cl = cos(ang + iTime * (2.0 + hoverVal * 3.0)) * 0.5 + 0.5;
@@ -150,13 +141,22 @@ const Orb = ({
       float v2 = smoothstep(1.0, mix(innerRadius, 1.0, n0 * 0.5), len);
       float v3 = smoothstep(innerRadius, mix(innerRadius, 1.0, 0.5), len);
 
-      vec3 col = mix(color1, color2, cl);
-      col = mix(color3, col, v0);
+      vec3 col = mix(baseColor1, baseColor2, cl);
+      col = mix(baseColor3, col, v0);
       col = (col + v1) * v2 * v3;
 
-      // Burst flash + ring glow
       col += burstVal * 0.6 * exp(-len * 3.0);
       col += vec3(ringGlow);
+
+      // Particle trail dots
+      for (int idx = 0; idx < ${MAX_TRAIL}; idx++) {
+        float ta = trailAlpha[idx];
+        if (ta > 0.01) {
+          float pd = distance(uv, trailPos[idx]);
+          float ps = 0.012 + float(idx) * 0.002;
+          col += vec3(ta * 0.6 * exp(-pd * pd / (ps * ps)));
+        }
+      }
 
       col = clamp(col, 0.0, 1.0);
       return extractAlpha(col);
@@ -167,9 +167,12 @@ const Orb = ({
       float size = min(iResolution.x, iResolution.y);
       vec2 uv = (fragCoord - center) / size * 2.0;
 
-      // Screen shake offset
       uv.x += shake * 0.015 * sin(iTime * 60.0);
       uv.y += shake * 0.015 * cos(iTime * 73.0);
+
+      // Scroll squash/stretch
+      uv.y *= 1.0 + scrollSquash * 0.3;
+      uv.x *= 1.0 - scrollSquash * 0.1;
 
       float angle = rot;
       float s = sin(angle);
@@ -201,7 +204,23 @@ const Orb = ({
     gl.clearColor(0, 0, 0, 0);
     container.appendChild(gl.canvas);
 
+    // Trail data
+    const trailPositions = new Float32Array(MAX_TRAIL * 2);
+    const trailAlphas = new Float32Array(MAX_TRAIL);
+    let trailIndex = 0;
+    let trailTimer = 0;
+    let mouseUV = { x: 0, y: 0 };
+    let mouseInOrb = false;
+
     const geometry = new Triangle(gl);
+
+    const trailPosUniforms: Record<string, { value: number[] }> = {};
+    const trailAlphaUniforms: Record<string, { value: number }> = {};
+    for (let i = 0; i < MAX_TRAIL; i++) {
+      trailPosUniforms[`trailPos[${i}]`] = { value: [0, 0] };
+      trailAlphaUniforms[`trailAlpha[${i}]`] = { value: 0 };
+    }
+
     const program = new Program(gl, {
       vertex: vert,
       fragment: frag,
@@ -217,6 +236,9 @@ const Orb = ({
         burst: { value: 0 },
         breath: { value: 0 },
         shake: { value: 0 },
+        scrollSquash: { value: 0 },
+        ...trailPosUniforms,
+        ...trailAlphaUniforms,
       },
     });
 
@@ -241,6 +263,7 @@ const Orb = ({
     let currentRot = 0;
     let burstValue = 0;
     let shakeValue = 0;
+    let scrollProgress = 0;
     const rotationSpeed = 0.3;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -250,19 +273,34 @@ const Orb = ({
       const size = Math.min(rect.width, rect.height);
       const uvX = ((x - rect.width / 2) / size) * 2.0;
       const uvY = ((y - rect.height / 2) / size) * 2.0;
-      targetHover = Math.sqrt(uvX * uvX + uvY * uvY) < 0.8 ? 1 : 0;
+      const dist = Math.sqrt(uvX * uvX + uvY * uvY);
+      mouseUV = { x: uvX, y: -uvY };
+      mouseInOrb = dist < 0.8;
+      targetHover = mouseInOrb ? 1 : 0;
     };
 
-    const handleMouseLeave = () => { targetHover = 0; };
+    const handleMouseLeave = () => {
+      targetHover = 0;
+      mouseInOrb = false;
+    };
 
     const handleClick = () => {
       burstValue = 1.0;
       shakeValue = 1.0;
     };
 
+    const handleScroll = () => {
+      const section = container.closest("section");
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const progress = Math.max(0, Math.min(1, -rect.top / rect.height));
+      scrollProgress = progress;
+    };
+
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("mouseleave", handleMouseLeave);
     container.addEventListener("click", handleClick);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     let rafId: number;
     const update = (t: number) => {
@@ -274,11 +312,9 @@ const Orb = ({
       program.uniforms.hue.value = hue;
       program.uniforms.hoverIntensity.value = hoverIntensity;
 
-      // Smooth hover interpolation
       const effectiveHover = forceHoverState ? 1 : targetHover;
       program.uniforms.hover.value += (effectiveHover - program.uniforms.hover.value) * 0.08;
 
-      // Burst + shake decay
       burstValue *= 0.96;
       shakeValue *= 0.92;
       if (burstValue < 0.005) burstValue = 0;
@@ -286,8 +322,30 @@ const Orb = ({
       program.uniforms.burst.value = burstValue;
       program.uniforms.shake.value = shakeValue;
 
-      // Ambient breathing pulse (sine wave, ~4s cycle)
-      program.uniforms.breath.value = (Math.sin(time * 1.6) * 0.5 + 0.5);
+      program.uniforms.breath.value = Math.sin(time * 1.6) * 0.5 + 0.5;
+
+      // Smooth scroll squash
+      const currentSquash = program.uniforms.scrollSquash.value as number;
+      program.uniforms.scrollSquash.value = currentSquash + (scrollProgress - currentSquash) * 0.05;
+
+      // Particle trail — spawn every ~50ms when mouse is inside orb
+      trailTimer += dt;
+      if (mouseInOrb && trailTimer > 0.05) {
+        trailTimer = 0;
+        const idx = trailIndex % MAX_TRAIL;
+        trailPositions[idx * 2] = mouseUV.x;
+        trailPositions[idx * 2 + 1] = mouseUV.y;
+        trailAlphas[idx] = 1.0;
+        trailIndex++;
+      }
+
+      // Decay trail alphas and update uniforms
+      for (let i = 0; i < MAX_TRAIL; i++) {
+        trailAlphas[i] *= 0.94;
+        if (trailAlphas[i] < 0.01) trailAlphas[i] = 0;
+        program.uniforms[`trailPos[${i}]`].value = [trailPositions[i * 2], trailPositions[i * 2 + 1]];
+        program.uniforms[`trailAlpha[${i}]`].value = trailAlphas[i];
+      }
 
       if (rotateOnHover && effectiveHover > 0.5) {
         currentRot += dt * rotationSpeed;
@@ -301,6 +359,7 @@ const Orb = ({
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", handleScroll);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
       container.removeEventListener("click", handleClick);
