@@ -177,12 +177,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
-    if (user) {
-      await trackActivity(user.id, "logout");
-    }
-    await supabase.auth.signOut();
+    const currentUser = user;
+
+    setSession(null);
+    setUser(null);
     setIsAdmin(false);
     setUserStatus(null);
+    setIsLoading(false);
+
+    try {
+      if (currentUser) {
+        await trackActivity(currentUser.id, "logout");
+      }
+    } catch (error) {
+      console.error("Failed to track logout activity:", error);
+    }
+
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error("Supabase sign out failed:", error);
+      throw error;
+    }
   };
 
   return (
