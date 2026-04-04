@@ -43,6 +43,8 @@ const Orb = ({
     uniform float scrollSquash;
     uniform vec2 trailPos[${MAX_TRAIL}];
     uniform float trailAlpha[${MAX_TRAIL}];
+    uniform float squareness;
+    uniform vec2 mouseDir;
     varying vec2 vUv;
 
     vec3 hash33(vec3 p3) {
@@ -102,8 +104,11 @@ const Orb = ({
 
     vec4 draw(vec2 uv, float hoverVal, float burstVal, float breathVal) {
       float ang = atan(uv.y, uv.x);
-      float len = length(uv);
-      float invLen = len > 0.0 ? 1.0 / len : 0.0;
+      // Superellipse: blend between circle (p=2) and square (p=high)
+      float p = 2.0 + squareness * 8.0;
+      float len = pow(pow(abs(uv.x), p) + pow(abs(uv.y), p), 1.0 / p);
+      float circleLen = length(uv);
+      float invLen = circleLen > 0.0 ? 1.0 / circleLen : 0.0;
 
       float breathPulse = breathVal * 0.04;
       float noiseScale = 0.65 + hoverVal * 1.8;
@@ -249,6 +254,8 @@ const Orb = ({
         breath: { value: 0 },
         shake: { value: 0 },
         scrollSquash: { value: 0 },
+        squareness: { value: 0 },
+        mouseDir: { value: [0, 0] },
         ...trailPosUniforms,
         ...trailAlphaUniforms,
       },
@@ -278,6 +285,9 @@ const Orb = ({
     let scrollProgress = 0;
     const rotationSpeed = 0.3;
 
+    let targetSquareness = 0;
+    let mouseDirTarget = { x: 0, y: 0 };
+
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -286,15 +296,23 @@ const Orb = ({
       const uvX = ((x - rect.width / 2) / size) * 2.0;
       const uvY = ((y - rect.height / 2) / size) * 2.0;
       mouseUV = { x: uvX, y: -uvY };
-      // Entire container is hover area — intensity based on distance from center
+      // Entire container is hover area
       const dist = Math.sqrt(uvX * uvX + uvY * uvY);
       mouseInOrb = true;
       targetHover = Math.max(0.15, 1.0 - dist * 0.35);
+      // Squareness: how close the mouse is to edges
+      const edgeX = Math.abs(x - rect.width / 2) / (rect.width / 2);
+      const edgeY = Math.abs(y - rect.height / 2) / (rect.height / 2);
+      targetSquareness = Math.max(edgeX, edgeY);
+      targetSquareness = Math.pow(targetSquareness, 1.5); // ease in
+      mouseDirTarget = { x: uvX * 0.5, y: -uvY * 0.5 };
     };
 
     const handleMouseLeave = () => {
       targetHover = 0;
       mouseInOrb = false;
+      targetSquareness = 0;
+      mouseDirTarget = { x: 0, y: 0 };
     };
 
     const handleClick = () => {
@@ -340,6 +358,15 @@ const Orb = ({
       // Smooth scroll squash
       const currentSquash = program.uniforms.scrollSquash.value as number;
       program.uniforms.scrollSquash.value = currentSquash + (scrollProgress - currentSquash) * 0.05;
+
+      // Smooth squareness transition
+      const currentSq = program.uniforms.squareness.value as number;
+      program.uniforms.squareness.value = currentSq + (targetSquareness - currentSq) * 0.06;
+      const currentDir = program.uniforms.mouseDir.value as number[];
+      program.uniforms.mouseDir.value = [
+        currentDir[0] + (mouseDirTarget.x - currentDir[0]) * 0.06,
+        currentDir[1] + (mouseDirTarget.y - currentDir[1]) * 0.06,
+      ];
 
       // Particle trail — spawn every ~50ms when mouse is inside orb
       trailTimer += dt;
