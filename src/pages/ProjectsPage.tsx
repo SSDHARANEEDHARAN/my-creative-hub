@@ -1,3 +1,4 @@
+// Projects page - updated
 import { useState, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
