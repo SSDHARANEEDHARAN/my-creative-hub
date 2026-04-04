@@ -36,15 +36,15 @@ const Orb = ({
     uniform float rot;
     uniform float hoverIntensity;
     uniform float burst;
+    uniform float breath;
+    uniform float shake;
     varying vec2 vUv;
 
     vec3 hash33(vec3 p3) {
       p3 = fract(p3 * vec3(0.1031, 0.11369, 0.13787));
       p3 += dot(p3, p3.yxz + 19.19);
       return -1.0 + 2.0 * fract(vec3(
-        p3.x + p3.y,
-        p3.x + p3.z,
-        p3.y + p3.z
+        p3.x + p3.y, p3.x + p3.z, p3.y + p3.z
       ) * p3.zyx);
     }
 
@@ -60,10 +60,7 @@ const Orb = ({
       vec3 d2 = d0 - (i2 - K1);
       vec3 d3 = d0 - 0.5;
       vec4 h = max(0.6 - vec4(
-        dot(d0, d0),
-        dot(d1, d1),
-        dot(d2, d2),
-        dot(d3, d3)
+        dot(d0, d0), dot(d1, d1), dot(d2, d2), dot(d3, d3)
       ), 0.0);
       vec4 n = h * h * h * h * vec4(
         dot(d0, hash33(i)),
@@ -79,21 +76,24 @@ const Orb = ({
       return vec4(colorIn.rgb / (a + 1e-5), a);
     }
 
-    // Pure white/silver/platinum tones
-    const vec3 baseColor1 = vec3(0.95, 0.95, 1.0);    // cool white
-    const vec3 baseColor2 = vec3(0.75, 0.78, 0.85);   // silver
-    const vec3 baseColor3 = vec3(0.15, 0.16, 0.22);   // dark steel
+    const vec3 baseColor1 = vec3(0.95, 0.95, 1.0);
+    const vec3 baseColor2 = vec3(0.75, 0.78, 0.85);
+    const vec3 baseColor3 = vec3(0.15, 0.16, 0.22);
     const float baseInnerRadius = 0.6;
 
     float light1(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * attenuation);
     }
-
     float light2(float intensity, float attenuation, float dist) {
       return intensity / (1.0 + dist * dist * attenuation);
     }
 
-    vec4 draw(vec2 uv, float hoverVal, float burstVal) {
+    // Expanding ring effect
+    float ring(float len, float center, float width, float intensity) {
+      return intensity * exp(-pow((len - center) / width, 2.0));
+    }
+
+    vec4 draw(vec2 uv, float hoverVal, float burstVal, float breathVal) {
       vec3 color1 = baseColor1;
       vec3 color2 = baseColor2;
       vec3 color3 = baseColor3;
@@ -102,33 +102,43 @@ const Orb = ({
       float len = length(uv);
       float invLen = len > 0.0 ? 1.0 / len : 0.0;
 
-      // Dynamic noise scale — increases dramatically on hover
+      // Breathing pulse modulates the radius
+      float breathPulse = breathVal * 0.04;
       float noiseScale = 0.65 + hoverVal * 1.8;
-      float innerRadius = baseInnerRadius + hoverVal * 0.15 + burstVal * 0.3;
+      float innerRadius = baseInnerRadius + hoverVal * 0.15 + burstVal * 0.3 + breathPulse;
 
-      // Primary noise with hover-boosted time
       float timeSpeed = 0.5 + hoverVal * 2.0;
       float n0 = snoise3(vec3(uv * noiseScale, iTime * timeSpeed)) * 0.5 + 0.5;
-
-      // Secondary noise layer on hover for complex morphing
       float n1 = snoise3(vec3(uv * noiseScale * 2.0, iTime * 0.8 + 10.0)) * 0.5 + 0.5;
       n0 = mix(n0, n0 * n1, hoverVal * 0.7);
 
       float r0 = mix(mix(innerRadius, 1.0, 0.4), mix(innerRadius, 1.0, 0.6), n0);
 
-      // Dramatic angular distortion on hover — spiky morphing
+      // Dramatic angular distortion on hover
       r0 += hoverVal * 0.15 * sin(ang * (3.0 + hoverVal * 6.0) + iTime * 3.0);
       r0 += hoverVal * 0.08 * cos(ang * 7.0 - iTime * 2.0);
 
-      // Burst ripple ring
+      // Multiple expanding burst rings
+      float ringGlow = 0.0;
       if (burstVal > 0.01) {
-        float ripple = sin((len - burstVal * 2.0) * 30.0) * burstVal * 0.15;
-        r0 += ripple;
+        float expansion = (1.0 - burstVal) * 2.5;
+        // Ring 1 — main shockwave
+        ringGlow += ring(len, expansion * 0.6, 0.06 + burstVal * 0.1, burstVal * 1.2);
+        // Ring 2 — secondary wave (delayed)
+        ringGlow += ring(len, expansion * 0.4, 0.04 + burstVal * 0.08, burstVal * 0.7);
+        // Ring 3 — inner ripple
+        ringGlow += ring(len, expansion * 0.2, 0.03 + burstVal * 0.05, burstVal * 0.4);
+        // Surface ripple on the orb itself
+        r0 += burstVal * 0.12 * sin(len * 40.0 - (1.0 - burstVal) * 20.0);
       }
 
       float d0 = distance(uv, (r0 * invLen) * uv);
       float v0 = light1(1.0, 10.0, d0);
       v0 *= smoothstep(r0 * 1.05, r0, len);
+
+      // Breathing glow on the edge
+      v0 += breathVal * 0.08 * smoothstep(r0 + 0.1, r0, len);
+
       float cl = cos(ang + iTime * (2.0 + hoverVal * 3.0)) * 0.5 + 0.5;
 
       float a = iTime * (-1.0 - hoverVal * 2.0);
@@ -144,11 +154,11 @@ const Orb = ({
       col = mix(color3, col, v0);
       col = (col + v1) * v2 * v3;
 
-      // Burst flash — bright white pulse
-      col += burstVal * 0.5 * exp(-len * 3.0);
+      // Burst flash + ring glow
+      col += burstVal * 0.6 * exp(-len * 3.0);
+      col += vec3(ringGlow);
 
       col = clamp(col, 0.0, 1.0);
-
       return extractAlpha(col);
     }
 
@@ -157,19 +167,22 @@ const Orb = ({
       float size = min(iResolution.x, iResolution.y);
       vec2 uv = (fragCoord - center) / size * 2.0;
 
+      // Screen shake offset
+      uv.x += shake * 0.015 * sin(iTime * 60.0);
+      uv.y += shake * 0.015 * cos(iTime * 73.0);
+
       float angle = rot;
       float s = sin(angle);
       float c = cos(angle);
       uv = vec2(c * uv.x - s * uv.y, s * uv.x + c * uv.y);
 
-      // Dramatic UV distortion on hover
       float distAmt = hover * hoverIntensity;
       uv.x += distAmt * 0.3 * sin(uv.y * 12.0 + iTime * 2.0);
       uv.y += distAmt * 0.3 * cos(uv.x * 12.0 + iTime * 2.0);
       uv.x += distAmt * 0.15 * snoise3(vec3(uv * 3.0, iTime * 1.5));
       uv.y += distAmt * 0.15 * snoise3(vec3(uv * 3.0 + 50.0, iTime * 1.5));
 
-      return draw(uv, hover, burst);
+      return draw(uv, hover, burst, breath);
     }
 
     void main() {
@@ -195,17 +208,15 @@ const Orb = ({
       uniforms: {
         iTime: { value: 0 },
         iResolution: {
-          value: new Vec3(
-            gl.canvas.width,
-            gl.canvas.height,
-            gl.canvas.width / gl.canvas.height
-          ),
+          value: new Vec3(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height),
         },
         hue: { value: hue },
         hover: { value: 0 },
         rot: { value: 0 },
         hoverIntensity: { value: hoverIntensity },
         burst: { value: 0 },
+        breath: { value: 0 },
+        shake: { value: 0 },
       },
     });
 
@@ -219,11 +230,7 @@ const Orb = ({
       renderer.setSize(width * dpr, height * dpr);
       gl.canvas.style.width = width + "px";
       gl.canvas.style.height = height + "px";
-      program.uniforms.iResolution.value.set(
-        gl.canvas.width,
-        gl.canvas.height,
-        gl.canvas.width / gl.canvas.height
-      );
+      program.uniforms.iResolution.value.set(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height);
     }
 
     window.addEventListener("resize", resize);
@@ -233,28 +240,24 @@ const Orb = ({
     let lastTime = 0;
     let currentRot = 0;
     let burstValue = 0;
+    let shakeValue = 0;
     const rotationSpeed = 0.3;
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const width = rect.width;
-      const height = rect.height;
-      const size = Math.min(width, height);
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const uvX = ((x - centerX) / size) * 2.0;
-      const uvY = ((y - centerY) / size) * 2.0;
+      const size = Math.min(rect.width, rect.height);
+      const uvX = ((x - rect.width / 2) / size) * 2.0;
+      const uvY = ((y - rect.height / 2) / size) * 2.0;
       targetHover = Math.sqrt(uvX * uvX + uvY * uvY) < 0.8 ? 1 : 0;
     };
 
-    const handleMouseLeave = () => {
-      targetHover = 0;
-    };
+    const handleMouseLeave = () => { targetHover = 0; };
 
     const handleClick = () => {
       burstValue = 1.0;
+      shakeValue = 1.0;
     };
 
     container.addEventListener("mousemove", handleMouseMove);
@@ -266,18 +269,25 @@ const Orb = ({
       rafId = requestAnimationFrame(update);
       const dt = (t - lastTime) * 0.001;
       lastTime = t;
-      program.uniforms.iTime.value = t * 0.001;
+      const time = t * 0.001;
+      program.uniforms.iTime.value = time;
       program.uniforms.hue.value = hue;
       program.uniforms.hoverIntensity.value = hoverIntensity;
 
+      // Smooth hover interpolation
       const effectiveHover = forceHoverState ? 1 : targetHover;
-      program.uniforms.hover.value +=
-        (effectiveHover - program.uniforms.hover.value) * 0.08;
+      program.uniforms.hover.value += (effectiveHover - program.uniforms.hover.value) * 0.08;
 
-      // Burst decay
-      burstValue *= 0.95;
+      // Burst + shake decay
+      burstValue *= 0.96;
+      shakeValue *= 0.92;
       if (burstValue < 0.005) burstValue = 0;
+      if (shakeValue < 0.005) shakeValue = 0;
       program.uniforms.burst.value = burstValue;
+      program.uniforms.shake.value = shakeValue;
+
+      // Ambient breathing pulse (sine wave, ~4s cycle)
+      program.uniforms.breath.value = (Math.sin(time * 1.6) * 0.5 + 0.5);
 
       if (rotateOnHover && effectiveHover > 0.5) {
         currentRot += dt * rotationSpeed;
