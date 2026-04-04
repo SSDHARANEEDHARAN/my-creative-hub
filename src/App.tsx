@@ -21,7 +21,7 @@ const AboutPage = lazy(() => import("./pages/AboutPage"));
 const SkillsPage = lazy(() => import("./pages/SkillsPage"));
 const ServicesPage = lazy(() => import("./pages/ServicesPage"));
 const GalleryPage = lazy(() => import("./pages/GalleryPage"));
-const ProjectsPage = lazy(() => import("./pages/ProjectsPage"));
+const ProjectsPage = lazy(() => import("./pages/ProjectsPage").catch(() => window.location.reload() as never));
 const TestimonialsPage = lazy(() => import("./pages/TestimonialsPage"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
