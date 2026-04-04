@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut, User as UserIcon, Settings, Shield } from "lucide-react";
+import { Menu, X, LogOut, Shield, Factory, LayoutDashboard } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
