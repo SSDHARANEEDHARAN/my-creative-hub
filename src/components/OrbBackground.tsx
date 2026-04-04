@@ -293,8 +293,9 @@ const Orb = ({
       const uvY = ((y - rect.height / 2) / size) * 2.0;
       const dist = Math.sqrt(uvX * uvX + uvY * uvY);
       mouseUVPos = { x: uvX, y: -uvY };
-      mouseInOrb = dist < 0.8;
-      targetHover = mouseInOrb ? 1 : 0;
+      // Respond to cursor anywhere in the container, intensity based on proximity
+      mouseInOrb = true;
+      targetHover = Math.max(0.3, 1.0 - dist * 0.4);
     };
 
     const handleMouseLeave = () => {
