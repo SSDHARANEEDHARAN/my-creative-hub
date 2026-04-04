@@ -1,4 +1,5 @@
-import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
+import { Github, ArrowUpRight, Cpu, Cog, FileText, ExternalLink, Eye, Heart, BookOpen, MessageSquare, Factory } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useState, memo, useCallback, useMemo } from "react";
 import ProjectImageCarousel from "./ProjectImageCarousel";
@@ -85,6 +86,7 @@ const SmallProjectLinks = memo(({ project }: { project: Project }) => {
 SmallProjectLinks.displayName = 'SmallProjectLinks';
 
 const Projects = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const projects = activeTab === "it" ? itProjects : engineeringProjects;
   const featuredProjects = projects.filter(p => p.featured);
@@ -139,6 +141,13 @@ const Projects = () => {
             >
               <Cog size={16} />
               Engineering ({engineeringProjects.length})
+            </button>
+            <button
+              onClick={() => navigate("/industrial-projects")}
+              className="flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base text-muted-foreground hover:text-foreground"
+            >
+              <Factory size={16} />
+              Industrial Projects
             </button>
           </div>
         </div>
