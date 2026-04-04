@@ -102,6 +102,8 @@
     --warning-foreground: 0 0% 100%;
 
     /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 95%), hsl(0 0% 75%));
+    --gradient-secondary: linear-gradient(135deg, hsl(0 0% 15%), hsl(0 0% 25%));
     --gradient-mesh: radial-gradient(at 40% 20%, hsl(0 0% 100% / 0.03) 0px, transparent 50%),
                      radial-gradient(at 80% 0%, hsl(0 0% 100% / 0.02) 0px, transparent 50%),
                      radial-gradient(at 0% 50%, hsl(0 0% 100% / 0.04) 0px, transparent 50%);
