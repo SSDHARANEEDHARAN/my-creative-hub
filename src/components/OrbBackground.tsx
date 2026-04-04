@@ -43,6 +43,8 @@ const Orb = ({
     uniform float scrollSquash;
     uniform vec2 trailPos[${MAX_TRAIL}];
     uniform float trailAlpha[${MAX_TRAIL}];
+    uniform float squareness;
+    uniform vec2 mouseDir;
     varying vec2 vUv;
 
     vec3 hash33(vec3 p3) {
