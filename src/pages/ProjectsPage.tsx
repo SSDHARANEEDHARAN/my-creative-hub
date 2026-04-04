@@ -577,7 +577,7 @@ const ProjectsPage = () => {
                   <div className="mb-12">
                     <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                       <span className="w-2 h-8 bg-primary" />
-                      Featured Projects
+                      New Projects
                     </h2>
                     <div className="grid md:grid-cols-2 gap-8">
                       {featuredProjects.map((project, index) => (
