@@ -68,14 +68,32 @@ const IndustrialProjectsPage = () => {
     refreshCounts();
   }, [currentUserEmail, currentUserName, refreshCounts]);
 
+  // Track if user already liked (from DB via counts hook)
+  const [userLikes, setUserLikes] = useState<Record<string, boolean>>({});
+
+  // Check which projects user already liked from DB
+  useEffect(() => {
+    if (!currentUserEmail) return;
+    const checkLikes = async () => {
+      const { data } = await supabase
+        .from("project_likes")
+        .select("project_id")
+        .eq("email", currentUserEmail)
+        .in("project_id", projectIds);
+      const likedMap: Record<string, boolean> = {};
+      data?.forEach(item => { likedMap[item.project_id] = true; });
+      setUserLikes(likedMap);
+    };
+    checkLikes();
+  }, [currentUserEmail, projectIds]);
+
   const handleLikeProject = async (projectId: number) => {
     if (!currentUserEmail || !currentUserName) {
       setShowLoginPopup(true);
       return;
     }
 
-    const likeKey = `project_like_${projectId}_${currentUserEmail}`;
-    if (localStorage.getItem(likeKey) === "1") {
+    if (userLikes[String(projectId)]) {
       toast({ description: "You already liked this project." });
       return;
     }
@@ -87,14 +105,14 @@ const IndustrialProjectsPage = () => {
     });
 
     if (!error) {
-      localStorage.setItem(likeKey, "1");
+      setUserLikes(prev => ({ ...prev, [String(projectId)]: true }));
       toast({ description: "Project liked!" });
       refreshCounts();
       return;
     }
 
     if (error.code === "23505") {
-      localStorage.setItem(likeKey, "1");
+      setUserLikes(prev => ({ ...prev, [String(projectId)]: true }));
       toast({ description: "You already liked this project." });
       return;
     }
