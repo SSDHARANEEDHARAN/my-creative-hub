@@ -278,11 +278,12 @@ const IndustrialProjectsPage = () => {
                     className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300"
                   >
                     {project.images && project.images.length > 0 && (
-                      <div
-                        className="relative aspect-video overflow-hidden cursor-pointer"
-                        onClick={() => handleReadProject(project.id)}
-                      >
-                        <ProjectImageCarousel images={project.images} title={project.title} />
+                      <div className="relative aspect-video overflow-hidden cursor-pointer">
+                        <ProjectImageCarousel
+                          images={project.images}
+                          title={project.title}
+                          onImageClick={(imgIndex) => openLightbox(project, imgIndex)}
+                        />
                       </div>
                     )}
                     <div className="p-6">
