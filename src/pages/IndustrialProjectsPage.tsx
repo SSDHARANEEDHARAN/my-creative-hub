@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { industrialProjects } from "@/data/projectsData";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import ImageLightbox from "@/components/ImageLightbox";
 import ProjectComments from "@/components/ProjectComments";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
