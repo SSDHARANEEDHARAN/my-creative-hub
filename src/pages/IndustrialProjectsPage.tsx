@@ -317,7 +317,7 @@ const IndustrialProjectsPage = () => {
                         >
                           <Heart
                             size={14}
-                            className={localStorage.getItem(`project_like_${project.id}_${currentUserEmail}`) === "1" ? "text-red-500 fill-red-500" : "text-primary/70"}
+                            className={userLikes[pid] ? "text-red-500 fill-red-500" : "text-primary/70"}
                           />
                           <motion.span key={likeCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
                             {likeCounts[pid] || 0}
