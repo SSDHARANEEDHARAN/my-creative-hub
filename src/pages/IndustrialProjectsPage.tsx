@@ -421,6 +421,13 @@ const IndustrialProjectsPage = () => {
           </div>
         </main>
         <Footer />
+        {/* Lightbox */}
+        <ImageLightbox
+          images={lightbox?.images || []}
+          initialIndex={lightbox?.index || 0}
+          isOpen={!!lightbox}
+          onClose={() => setLightbox(null)}
+        />
       </div>
     </PageTransition>
   );
