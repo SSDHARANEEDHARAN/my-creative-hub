@@ -337,16 +337,6 @@ export const industrialProjects: Project[] = [
 // Engineering Projects
 export const engineeringProjects: Project[] = [
   {
-    id: 101,
-    title: "Coming Soon",
-    description: "Projects are updating coming soon new project stay tuned to watch",
-    images: [],
-    tags: ["Upcoming"],
-    articleUrl: "/projects/article/automotive-engine-block",
-    featured: false,
-    category: "engineering",
-  },
-  {
     id: 102,
     title: "Manufacturing Line Simulation",
     description: "FlexSim simulation of automotive production line for cycle time optimization, bottleneck identification, and throughput improvement achieving 25% efficiency gain.",
