@@ -20,6 +20,8 @@ import { toast } from "@/hooks/use-toast";
 const IndustrialProjectsPage = () => {
   const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [expandedGallery, setExpandedGallery] = useState<Record<number, boolean>>({});
+  const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
 
   const isApproved = isAdmin || userStatus === "approved";
   const isRejected = userStatus === "restricted";
