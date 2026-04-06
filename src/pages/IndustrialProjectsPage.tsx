@@ -72,7 +72,14 @@ const IndustrialProjectsPage = () => {
     refreshCounts();
   }, [currentUserEmail, currentUserName, refreshCounts]);
 
-  // Track if user already liked (from DB via counts hook)
+  const openLightbox = useCallback((project: typeof industrialProjects[0], imageIndex: number) => {
+    const imgs = (project.images || []).map((src, i) => ({ src, alt: `${project.title} - Image ${i + 1}` }));
+    setLightboxImages(imgs);
+    setLightboxIndex(imageIndex);
+    setLightboxOpen(true);
+    handleReadProject(project.id);
+  }, [handleReadProject]);
+
   const [userLikes, setUserLikes] = useState<Record<string, boolean>>({});
 
   // Check which projects user already liked from DB
