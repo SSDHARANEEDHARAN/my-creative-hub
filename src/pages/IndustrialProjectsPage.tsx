@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { industrialProjects } from "@/data/projectsData";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import ImageLightbox from "@/components/ImageLightbox";
 import ProjectComments from "@/components/ProjectComments";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -19,6 +20,9 @@ import { toast } from "@/hooks/use-toast";
 const IndustrialProjectsPage = () => {
   const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   const isApproved = isAdmin || userStatus === "approved";
   const isRejected = userStatus === "restricted";
@@ -68,7 +72,14 @@ const IndustrialProjectsPage = () => {
     refreshCounts();
   }, [currentUserEmail, currentUserName, refreshCounts]);
 
-  // Track if user already liked (from DB via counts hook)
+  const openLightbox = useCallback((project: typeof industrialProjects[0], imageIndex: number) => {
+    const imgs = (project.images || []).map((src, i) => ({ src, alt: `${project.title} - Image ${i + 1}` }));
+    setLightboxImages(imgs);
+    setLightboxIndex(imageIndex);
+    setLightboxOpen(true);
+    handleReadProject(project.id);
+  }, [handleReadProject]);
+
   const [userLikes, setUserLikes] = useState<Record<string, boolean>>({});
 
   // Check which projects user already liked from DB
@@ -267,11 +278,12 @@ const IndustrialProjectsPage = () => {
                     className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300"
                   >
                     {project.images && project.images.length > 0 && (
-                      <div
-                        className="relative aspect-video overflow-hidden cursor-pointer"
-                        onClick={() => handleReadProject(project.id)}
-                      >
-                        <ProjectImageCarousel images={project.images} title={project.title} />
+                      <div className="relative aspect-video overflow-hidden cursor-pointer">
+                        <ProjectImageCarousel
+                          images={project.images}
+                          title={project.title}
+                          onImageClick={(imgIndex) => openLightbox(project, imgIndex)}
+                        />
                       </div>
                     )}
                     <div className="p-6">
@@ -317,7 +329,7 @@ const IndustrialProjectsPage = () => {
                         >
                           <Heart
                             size={14}
-                            className={localStorage.getItem(`project_like_${project.id}_${currentUserEmail}`) === "1" ? "text-red-500 fill-red-500" : "text-primary/70"}
+                            className={userLikes[pid] ? "text-red-500 fill-red-500" : "text-primary/70"}
                           />
                           <motion.span key={likeCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
                             {likeCounts[pid] || 0}
@@ -360,6 +372,12 @@ const IndustrialProjectsPage = () => {
           </div>
         </main>
         <Footer />
+        <ImageLightbox
+          images={lightboxImages}
+          initialIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+        />
       </div>
     </PageTransition>
   );
