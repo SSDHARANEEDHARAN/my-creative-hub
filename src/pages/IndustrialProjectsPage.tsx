@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { industrialProjects } from "@/data/projectsData";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import ImageLightbox from "@/components/ImageLightbox";
 import ProjectComments from "@/components/ProjectComments";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -19,6 +20,8 @@ import { toast } from "@/hooks/use-toast";
 const IndustrialProjectsPage = () => {
   const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [expandedGallery, setExpandedGallery] = useState<Record<number, boolean>>({});
+  const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
 
   const isApproved = isAdmin || userStatus === "approved";
   const isRejected = userStatus === "restricted";
@@ -266,14 +269,72 @@ const IndustrialProjectsPage = () => {
                     transition={{ delay: index * 0.15 }}
                     className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300"
                   >
+                    {/* Main carousel - first image as hero */}
                     {project.images && project.images.length > 0 && (
                       <div
                         className="relative aspect-video overflow-hidden cursor-pointer"
                         onClick={() => handleReadProject(project.id)}
                       >
-                        <ProjectImageCarousel images={project.images} title={project.title} />
+                        <ProjectImageCarousel
+                          images={[project.images[0]]}
+                          title={project.title}
+                          onImageClick={() => {
+                            setLightbox({
+                              images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
+                              index: 0,
+                            });
+                          }}
+                        />
                       </div>
                     )}
+
+                    {/* Project Gallery Grid */}
+                    {project.images && project.images.length > 1 && (() => {
+                      const galleryImages = project.images.slice(1);
+                      const isExpanded = expandedGallery[project.id];
+                      const previewCount = 6;
+                      const visibleImages = isExpanded ? galleryImages : galleryImages.slice(0, previewCount);
+                      const hasMore = galleryImages.length > previewCount;
+
+                      return (
+                        <div className="px-6 pt-4">
+                          <h4 className="text-sm font-semibold text-foreground mb-3">
+                            Project Gallery ({galleryImages.length} images)
+                          </h4>
+                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                            {visibleImages.map((img, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => {
+                                  handleReadProject(project.id);
+                                  setLightbox({
+                                    images: galleryImages.map((g, i) => ({ src: g, alt: `${project.title} - Gallery ${i + 1}` })),
+                                    index: idx,
+                                  });
+                                }}
+                                className="aspect-square rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-all duration-200 hover:scale-[1.03]"
+                              >
+                                <img src={img} alt={`${project.title} gallery ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                              </button>
+                            ))}
+                          </div>
+                          {hasMore && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setExpandedGallery(prev => ({ ...prev, [project.id]: !isExpanded }))}
+                              className="w-full mt-2 text-xs text-muted-foreground hover:text-primary"
+                            >
+                              {isExpanded ? (
+                                <><ChevronUp size={14} className="mr-1" /> Show Less</>
+                              ) : (
+                                <><ChevronDown size={14} className="mr-1" /> Show All {galleryImages.length} Images</>
+                              )}
+                            </Button>
+                          )}
+                        </div>
+                      );
+                    })()}
                     <div className="p-6">
                       <div className="flex items-center gap-2 mb-3">
                         <Badge variant="outline" className="text-xs border-primary/30 text-primary">
@@ -317,7 +378,7 @@ const IndustrialProjectsPage = () => {
                         >
                           <Heart
                             size={14}
-                            className={localStorage.getItem(`project_like_${project.id}_${currentUserEmail}`) === "1" ? "text-red-500 fill-red-500" : "text-primary/70"}
+                            className={userLikes[String(project.id)] ? "text-red-500 fill-red-500" : "text-primary/70"}
                           />
                           <motion.span key={likeCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
                             {likeCounts[pid] || 0}
@@ -360,6 +421,13 @@ const IndustrialProjectsPage = () => {
           </div>
         </main>
         <Footer />
+        {/* Lightbox */}
+        <ImageLightbox
+          images={lightbox?.images || []}
+          initialIndex={lightbox?.index || 0}
+          isOpen={!!lightbox}
+          onClose={() => setLightbox(null)}
+        />
       </div>
     </PageTransition>
   );
