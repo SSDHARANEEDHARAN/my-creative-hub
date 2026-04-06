@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { industrialProjects } from "@/data/projectsData";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import ImageLightbox from "@/components/ImageLightbox";
 import ProjectComments from "@/components/ProjectComments";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
