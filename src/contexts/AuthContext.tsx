@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStatus, setUserStatus] = useState<string | null>(null);
 
-  const checkAdminRole = async (userId: string) => {
+  const checkAdminRole = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from("user_roles")
@@ -50,9 +50,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error checking admin role:", error);
       return false;
     }
-  };
+  }, []);
 
-  const checkUserStatus = async (userId: string): Promise<string> => {
+  const checkUserStatus = useCallback(async (userId: string): Promise<string> => {
     try {
       const { data, error } = await supabase
         .from("profiles")
@@ -65,9 +65,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch {
       return "pending";
     }
-  };
+  }, []);
 
-  const trackActivity = async (userId: string, action: string) => {
+  const trackActivity = useCallback(async (userId: string, action: string) => {
     try {
       await supabase.from("user_activity").insert({
         user_id: userId,
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error("Failed to track activity:", err);
     }
-  };
+  }, []);
 
   const syncUserRole = useCallback(async (currentUser: User) => {
     try {
@@ -91,48 +91,85 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const loadUserAccess = useCallback(async (currentUser: User) => {
+    const isOwnerAdmin = currentUser.email?.toLowerCase() === OWNER_ADMIN_EMAIL;
+
+    if (isOwnerAdmin) {
+      setIsAdmin(true);
+      setUserStatus("approved");
+    }
+
+    await syncUserRole(currentUser).catch(console.error);
+
+    const [adminStatus, status] = await Promise.all([
+      checkAdminRole(currentUser.id),
+      checkUserStatus(currentUser.id),
+    ]);
+
+    setIsAdmin(adminStatus || isOwnerAdmin);
+    setUserStatus(adminStatus || isOwnerAdmin ? "approved" : status);
+  }, [checkAdminRole, checkUserStatus, syncUserRole]);
+
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, nextSession) => {
-        setSession(nextSession);
-        setUser(nextSession?.user ?? null);
+    let isActive = true;
 
-        if (nextSession?.user) {
-          // Sync role first (ensures admin role exists in DB), then check
-          await syncUserRole(nextSession.user).catch(console.error);
-          const adminStatus = await checkAdminRole(nextSession.user.id);
-          setIsAdmin(adminStatus);
-          const status = await checkUserStatus(nextSession.user.id);
-          setUserStatus(adminStatus ? "approved" : status);
-        } else {
-          setIsAdmin(false);
-          setUserStatus(null);
-        }
+    const handleSession = (nextSession: Session | null) => {
+      if (!isActive) return;
 
-        setIsLoading(false);
-      }
-    );
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
 
-    supabase.auth.getSession().then(async ({ data: { session: existingSession } }) => {
-      setSession(existingSession);
-      setUser(existingSession?.user ?? null);
-
-      if (!existingSession?.user) {
+      if (!nextSession?.user) {
+        setIsAdmin(false);
+        setUserStatus(null);
         setIsLoading(false);
         return;
       }
 
-      // Sync role first, then check
-      await syncUserRole(existingSession.user).catch(console.error);
-      const adminStatus = await checkAdminRole(existingSession.user.id);
-      setIsAdmin(adminStatus);
-      const status = await checkUserStatus(existingSession.user.id);
-      setUserStatus(adminStatus ? "approved" : status);
-      setIsLoading(false);
-    });
+      setIsLoading(true);
 
-    return () => subscription.unsubscribe();
-  }, [syncUserRole]);
+      void loadUserAccess(nextSession.user)
+        .catch((error) => {
+          console.error("Error loading user access:", error);
+
+          if (!isActive) return;
+
+          const isOwnerAdmin = nextSession.user.email?.toLowerCase() === OWNER_ADMIN_EMAIL;
+          setIsAdmin(isOwnerAdmin);
+          setUserStatus(isOwnerAdmin ? "approved" : "pending");
+        })
+        .finally(() => {
+          if (isActive) {
+            setIsLoading(false);
+          }
+        });
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, nextSession) => {
+        handleSession(nextSession);
+      }
+    );
+
+    void supabase.auth.getSession()
+      .then(({ data: { session: existingSession } }) => {
+        handleSession(existingSession);
+      })
+      .catch((error) => {
+        console.error("Error restoring session:", error);
+        if (!isActive) return;
+        setSession(null);
+        setUser(null);
+        setIsAdmin(false);
+        setUserStatus(null);
+        setIsLoading(false);
+      });
+
+    return () => {
+      isActive = false;
+      subscription.unsubscribe();
+    };
+  }, [loadUserAccess]);
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
