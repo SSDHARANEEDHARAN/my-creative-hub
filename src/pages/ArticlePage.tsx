@@ -5,7 +5,7 @@ import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, User
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
-import { engineeringProjects, itProjects } from "@/data/projectsData";
+import { engineeringProjects, itProjects, getAllProjects } from "@/data/projectsData";
 import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
 import { useProjectViewLikes } from "@/hooks/useProjectData";
@@ -18,7 +18,8 @@ import { toast } from "@/hooks/use-toast";
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticleBySlug(slug) : undefined;
-  const project = article ? (engineeringProjects.find(p => p.id === article.id) || itProjects.find(p => p.articleUrl?.includes(slug!))) : undefined;
+  const project = article ? getAllProjects().find(p => p.id === article.id || p.articleUrl?.includes(slug!)) : undefined;
+  const galleryImages = project?.images?.slice(1) ?? [];
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
@@ -87,7 +88,7 @@ const ArticlePage = memo(() => {
             <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
             <p className="text-muted-foreground mb-8">The article you're looking for doesn't exist.</p>
             <Link to="/projects" className="text-primary hover:underline">
-              ← Back to Projects
+              ← Back to List
             </Link>
           </div>
         </main>
@@ -122,7 +123,7 @@ const ArticlePage = memo(() => {
                 className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
               >
                 <ArrowLeft size={18} />
-                Back to Projects
+                Back to List
               </Link>
               
               <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
@@ -482,7 +483,7 @@ const ArticlePage = memo(() => {
               >
                 <h2 className="font-display text-2xl font-bold mb-6">Project Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {(project?.images || []).slice(1).map((image, index) => (
+                  {galleryImages.map((image, index) => (
                     <img 
                       key={index}
                       src={image} 

@@ -5,9 +5,9 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { Button } from "@/components/ui/button";
 import ServiceRequestModal from "@/components/ServiceRequestModal";
 import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu, Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import LoginPopupModal from "@/components/LoginPopupModal";
+import { useNavigate } from "react-router-dom";
 interface Service {
   id: number;
   icon: React.ComponentType<{ className?: string }>;
@@ -165,16 +165,8 @@ const ServicesPage = () => {
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const { user, isLoading: authLoading } = useAuth();
-
-  // Show login popup if not logged in
-  useEffect(() => {
-    if (!authLoading && !user) {
-      const timer = setTimeout(() => setShowLoginPopup(true), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [authLoading, user]);
+  const navigate = useNavigate();
   
   const services = activeTab === "it" ? itServices : engineeringServices;
 
@@ -193,6 +185,52 @@ const ServicesPage = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <>
+        <Helmet>
+          <title>Services | Dharaneedharan SS - Mechatronics Design Engineer & Full Stack Developer</title>
+          <meta name="description" content="Professional IT and Engineering services including web development, software development, AI solutions, CAD design, and manufacturing simulation." />
+        </Helmet>
+        
+        <div className="min-h-screen bg-background transition-colors duration-300">
+          <Navigation />
+          <main className="pt-20">
+            <section className="py-12 sm:py-16 md:py-24">
+              <div className="container mx-auto px-4 sm:px-6">
+                <ScrollReveal>
+                  <div className="text-center mb-10 sm:mb-16">
+                    <div className="section-badge-sharp mb-4 sm:mb-6 inline-flex">
+                      <span className="section-badge-dot-sharp" />
+                      <span className="text-secondary-foreground font-medium text-xs sm:text-sm">Services</span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mt-4">
+                      What I Offer
+                    </h1>
+                    <p className="text-muted-foreground mt-4 max-w-2xl mx-auto text-sm sm:text-base md:text-lg px-4">
+                      Professional services spanning IT development and Engineering design
+                    </p>
+                  </div>
+                </ScrollReveal>
+
+                <ScrollReveal delay={200}>
+                  <div className="bg-card border border-border rounded-xl p-8 text-center mb-8 max-w-md mx-auto">
+                    <h3 className="text-xl font-bold mb-3">Sign In Required</h3>
+                    <p className="text-muted-foreground mb-4">Sign in to view exclusive professional services.</p>
+                    <Button variant="default" size="lg" onClick={() => navigate('/login')}>
+                      Sign In to Access
+                    </Button>
+                  </div>
+                </ScrollReveal>
+              </div>
+            </section>
+          </main>
+          <Footer />
+        </div>
+      </>
     );
   }
 
@@ -345,12 +383,6 @@ const ServicesPage = () => {
           category={activeTab === "it" ? "IT Services" : "Engineering Services"}
         />
       )}
-      <LoginPopupModal
-        isOpen={showLoginPopup && !user}
-        onClose={() => setShowLoginPopup(false)}
-        title="Sign In to Access"
-        description="Sign in to access exclusive special services for IT, Engineering, and Industrial"
-      />
     </>
   );
 };
