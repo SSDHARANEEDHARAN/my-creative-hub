@@ -307,6 +307,16 @@ const Projects = () => {
         {showIndustrial && (
           <div className="mt-8 sm:mt-10 mb-8 sm:mb-10">
             <div className="mb-8">
+              <div className="flex justify-center sm:justify-end mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-border text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowIndustrial(false)}
+                >
+                  Back to List
+                </Button>
+              </div>
               <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-center">
                 Industrial <span className="text-gradient">Projects</span>
               </h2>
@@ -342,14 +352,14 @@ const Projects = () => {
                         )}
                       </div>
                       <div className="p-6">
-                        <h3 className="font-display text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                        <h3 className="font-display text-base font-semibold mb-2 group-hover:text-primary transition-colors">
                           {project.title}
                         </h3>
-                        <p className="text-muted-foreground text-sm mb-4 leading-relaxed line-clamp-2">
+                        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                           {project.description}
                         </p>
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {project.tags.slice(0, 2).map((tag) => (
+                          {project.tags.map((tag) => (
                             <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium text-secondary-foreground rounded">
                               {tag}
                             </span>
@@ -375,15 +385,9 @@ const Projects = () => {
                           </div>
                         </div>
 
-                        {project.articleUrl && (
-                          <a
-                            href={project.articleUrl}
-                            className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 text-sm font-medium transition-colors"
-                          >
-                            <FileText size={14} />
-                            Read Case Study
-                          </a>
-                        )}
+                        <div className="flex gap-2">
+                          <SmallProjectLinks project={project} />
+                        </div>
                       </div>
                     </div>
                   );

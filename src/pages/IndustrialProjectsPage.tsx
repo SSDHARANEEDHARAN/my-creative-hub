@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, ChevronDown, ChevronUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,7 +19,6 @@ import { toast } from "@/hooks/use-toast";
 const IndustrialProjectsPage = () => {
   const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [expandedGallery, setExpandedGallery] = useState<Record<number, boolean>>({});
   const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
 
   const isApproved = isAdmin || userStatus === "approved";
@@ -266,153 +264,84 @@ const IndustrialProjectsPage = () => {
                     key={project.id}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.15 }}
-                    className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300"
+                    transition={{ delay: index * 0.1 }}
+                    className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
                   >
-                    {/* Main carousel - first image as hero */}
-                    {project.images && project.images.length > 0 && (
-                      <div
-                        className="relative aspect-video overflow-hidden cursor-pointer"
-                        onClick={() => handleReadProject(project.id)}
-                      >
-                        <ProjectImageCarousel
-                          images={[project.images[0]]}
-                          title={project.title}
-                          onImageClick={() => {
-                            setLightbox({
-                              images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
-                              index: 0,
-                            });
-                          }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Project Gallery Grid */}
-                    {project.images && project.images.length > 1 && (() => {
-                      const galleryImages = project.images.slice(1);
-                      const isExpanded = expandedGallery[project.id];
-                      const previewCount = 6;
-                      const visibleImages = isExpanded ? galleryImages : galleryImages.slice(0, previewCount);
-                      const hasMore = galleryImages.length > previewCount;
-
-                      return (
-                        <div className="px-6 pt-4">
-                          <h4 className="text-sm font-semibold text-foreground mb-3">
-                            Project Gallery ({galleryImages.length} images)
-                          </h4>
-                          <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                            {visibleImages.map((img, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => {
-                                  handleReadProject(project.id);
-                                  setLightbox({
-                                    images: galleryImages.map((g, i) => ({ src: g, alt: `${project.title} - Gallery ${i + 1}` })),
-                                    index: idx,
-                                  });
-                                }}
-                                className="aspect-square rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-all duration-200 hover:scale-[1.03]"
-                              >
-                                <img src={img} alt={`${project.title} gallery ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" />
-                              </button>
-                            ))}
-                          </div>
-                          {hasMore && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setExpandedGallery(prev => ({ ...prev, [project.id]: !isExpanded }))}
-                              className="w-full mt-2 text-xs text-muted-foreground hover:text-primary"
-                            >
-                              {isExpanded ? (
-                                <><ChevronUp size={14} className="mr-1" /> Show Less</>
-                              ) : (
-                                <><ChevronDown size={14} className="mr-1" /> Show All {galleryImages.length} Images</>
-                              )}
-                            </Button>
-                          )}
+                    <div
+                      className="relative aspect-video overflow-hidden cursor-pointer"
+                      onClick={() => {
+                        handleReadProject(project.id);
+                        if (project.images && project.images.length > 0) {
+                          setLightbox({
+                            images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
+                            index: 0,
+                          });
+                        }
+                      }}
+                    >
+                      {project.images && project.images.length > 0 ? (
+                        <ProjectImageCarousel images={project.images} title={project.title} />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-6 text-center">
+                          <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
                         </div>
-                      );
-                    })()}
-                    <div className="p-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+                      )}
+                    </div>
+
+                    <div className="p-4">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded">
                           Industrial
-                        </Badge>
-                        {project.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <h3
-                        className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors cursor-pointer"
-                        onClick={() => handleReadProject(project.id)}
-                      >
-                        {project.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-                        {project.description}
-                      </p>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.tags.map((tag) => (
-                          <span key={tag} className="px-2.5 py-1 bg-secondary text-xs font-medium text-secondary-foreground rounded">
+                        </span>
+                        {project.tags.slice(0, 2).map((tag) => (
+                          <span key={tag} className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded">
                             {tag}
                           </span>
                         ))}
                       </div>
-
-                      {/* Engagement metrics with smooth transitions */}
-                      <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <Eye size={14} className="text-primary/70" />
-                          <motion.span key={viewCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
-                            {viewCounts[pid] || 0}
-                          </motion.span>
-                          views
+                      <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
+                        {project.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                        {project.description}
+                      </p>
+                      <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <Eye size={12} />
+                          {viewCounts[pid] || 0}
                         </span>
                         <button
                           onClick={() => handleLikeProject(project.id)}
-                          className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                          className="flex items-center gap-1 whitespace-nowrap hover:text-primary transition-colors"
                         >
                           <Heart
-                            size={14}
+                            size={12}
                             className={userLikes[String(project.id)] ? "text-red-500 fill-red-500" : "text-primary/70"}
                           />
-                          <motion.span key={likeCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
-                            {likeCounts[pid] || 0}
-                          </motion.span>
-                          likes
+                          {likeCounts[pid] || 0}
                         </button>
-                        <span className="flex items-center gap-1.5">
-                          <BookOpen size={14} className="text-primary/70" />
-                          <motion.span key={readCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
-                            {readCounts[pid] || 0}
-                          </motion.span>
-                          reads
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <BookOpen size={12} />
+                          {readCounts[pid] || 0}
                         </span>
-                        <span className="flex items-center gap-1.5">
-                          <MessageSquare size={14} className="text-primary/70" />
-                          <motion.span key={commentCounts[pid]} initial={{ scale: 1.3 }} animate={{ scale: 1 }} transition={{ duration: 0.3 }}>
-                            {commentCounts[pid] || 0}
-                          </motion.span>
+                        <span className="flex items-center gap-1 whitespace-nowrap">
+                          <MessageSquare size={12} />
+                          {commentCounts[pid] || 0}
                         </span>
                       </div>
-
-                      {/* Comments section */}
-                      <ProjectComments projectId={pid} />
-
-                      {project.articleUrl && (
-                        <Link
-                          to={project.articleUrl}
-                          onClick={() => handleReadProject(project.id)}
-                          className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 text-sm font-medium transition-colors mt-3"
-                        >
-                          <FileText size={14} />
-                          Read Case Study
-                        </Link>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {project.articleUrl ? (
+                          <Link
+                            to={project.articleUrl}
+                            onClick={() => handleReadProject(project.id)}
+                            className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
+                          >
+                            Read More <FileText size={12} />
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">Read More coming soon</span>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 );

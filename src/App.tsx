@@ -30,10 +30,13 @@ import AuthCallbackPage from "./pages/AuthCallbackPage";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./contexts/AuthContext";
 import { GuestProvider } from "./contexts/GuestContext";
+import { LayoutProvider } from "./contexts/LayoutContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ContentProtection from "./components/ContentProtection";
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -116,9 +119,13 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                  <ContentProtection />
-                  <ScrollToTopButton />
-                  <AnimatedRoutes />
+                  <LayoutProvider globalLayoutEnabled>
+                    <ContentProtection />
+                    <Navigation persisted />
+                    <ScrollToTopButton />
+                    <AnimatedRoutes />
+                    <Footer persisted />
+                  </LayoutProvider>
                 </BrowserRouter>
               </TooltipProvider>
             </GuestProvider>

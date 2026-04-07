@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLayoutContext } from "@/contexts/LayoutContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +17,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const Navigation = () => {
+interface NavigationProps {
+  persisted?: boolean;
+}
+
+const Navigation = ({ persisted }: NavigationProps) => {
+  const { globalLayoutEnabled } = useLayoutContext();
+  if (globalLayoutEnabled && !persisted) {
+    return null;
+  }
+
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);

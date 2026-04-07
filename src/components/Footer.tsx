@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Heart, Mail, ArrowUpRight } from "lucide-react";
 import SocialLinks from "./SocialLinks";
 import NewsletterSubscription from "./NewsletterSubscription";
+import { useLayoutContext } from "@/contexts/LayoutContext";
 
 const footerLinks = [
   { name: "Home", href: "/" },
@@ -12,7 +13,16 @@ const footerLinks = [
   { name: "Contact", href: "/contact" },
 ];
 
-const Footer = forwardRef<HTMLElement>((_, ref) => {
+interface FooterProps {
+  persisted?: boolean;
+}
+
+const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
+  const { globalLayoutEnabled } = useLayoutContext();
+  if (globalLayoutEnabled && !persisted) {
+    return null;
+  }
+
   const currentYear = new Date().getFullYear();
 
   return (
