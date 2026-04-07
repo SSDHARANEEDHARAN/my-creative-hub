@@ -193,7 +193,7 @@ export interface Project {
   githubUrl?: string;
   liveUrl?: string;
   featured: boolean;
-  category: "it" | "engineering";
+  category: "it" | "engineering" | "industrial";
 }
 
 // IT Projects (9 projects)
