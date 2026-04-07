@@ -123,8 +123,8 @@ const IndustrialProjectsPage = () => {
     toast({ title: "Error", description: "Failed to like project.", variant: "destructive" });
   };
 
-  // Loading state - show spinner then login popup
-  if (authLoading) {
+  // Loading state - only show spinner if we don't have user info yet
+  if (authLoading && !user) {
     return (
       <PageTransition>
         <div className="min-h-screen bg-background flex items-center justify-center">
