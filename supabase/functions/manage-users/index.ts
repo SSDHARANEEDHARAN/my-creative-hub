@@ -28,22 +28,20 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
+    // ── check-ip: no auth needed ──
     if (action === "check-ip") {
       try {
-        const { data: blockedIp, error } = await adminClient
+        const { data: blockedIp } = await adminClient
           .from("blocked_ips")
           .select("ip,reason")
           .eq("ip", requestIp)
           .maybeSingle();
 
-        if (error) throw error;
-
         return new Response(JSON.stringify({ blocked: !!blockedIp, ip: requestIp, reason: blockedIp?.reason || null }), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
-      } catch (error) {
-        console.error("check-ip error:", error);
+      } catch {
         return new Response(JSON.stringify({ blocked: false, ip: requestIp }), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -51,6 +49,7 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ── track-ip: requires auth ──
     if (action === "track-ip") {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader) {
@@ -73,9 +72,11 @@ Deno.serve(async (req) => {
       }
 
       try {
+        // Update last_ip on profiles
         const { error } = await adminClient
           .from("profiles")
-          .upsert({ user_id: user.id, last_ip: requestIp }, { onConflict: ["user_id"] });
+          .update({ last_ip: requestIp })
+          .eq("user_id", user.id);
 
         if (error) throw error;
 
@@ -83,14 +84,16 @@ Deno.serve(async (req) => {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        return new Response(JSON.stringify({ error: message }), {
           status: 500,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
     }
 
+    // ── All remaining actions require admin auth ──
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -111,7 +114,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check if caller is admin
     const { data: roleData } = await adminClient
       .from("user_roles")
       .select("role")
@@ -126,8 +128,8 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ── list ──
     if (action === "list") {
-      // Get all profiles with their roles and activity
       const { data: profiles, error } = await adminClient
         .from("profiles")
         .select("*")
@@ -135,25 +137,21 @@ Deno.serve(async (req) => {
 
       if (error) throw error;
 
-      // Get roles for all users
       const { data: roles } = await adminClient.from("user_roles").select("*");
-
-      // Get activity for all users
       const { data: activities } = await adminClient
         .from("user_activity")
         .select("*")
         .order("created_at", { ascending: false });
 
-      // Get view counts and share counts from various tables
-      const enriched = profiles?.map((p: any) => {
-        const userRoles = roles?.filter((r: any) => r.user_id === p.user_id) || [];
-        const userActivity = activities?.filter((a: any) => a.user_id === p.user_id) || [];
-        const lastLogin = userActivity.find((a: any) => a.action === "login");
-        const lastLogout = userActivity.find((a: any) => a.action === "logout");
+      const enriched = (profiles || []).map((p: Record<string, unknown>) => {
+        const userRoles = (roles || []).filter((r: Record<string, unknown>) => r.user_id === p.user_id);
+        const userActivity = (activities || []).filter((a: Record<string, unknown>) => a.user_id === p.user_id);
+        const lastLogin = userActivity.find((a: Record<string, unknown>) => a.action === "login");
+        const lastLogout = userActivity.find((a: Record<string, unknown>) => a.action === "logout");
 
         return {
           ...p,
-          roles: userRoles.map((r: any) => r.role),
+          roles: userRoles.map((r: Record<string, unknown>) => r.role),
           lastLogin: lastLogin?.created_at || null,
           lastLogout: lastLogout?.created_at || null,
           activityCount: userActivity.length,
@@ -166,18 +164,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Helper function to get userId from email or use provided userId
-    const getUserId = async (userId: string | undefined, email: string | undefined) => {
+    // Helper to resolve userId
+    const getUserId = async (userId?: string, email?: string): Promise<string> => {
       if (userId) return userId;
       if (email) {
         const { data: users } = await adminClient.auth.admin.listUsers();
-        const user = users.users.find(u => u.email === email);
-        if (!user) throw new Error("User not found");
-        return user.id;
+        const found = users.users.find((u: { email?: string }) => u.email === email);
+        if (!found) throw new Error("User not found");
+        return found.id;
       }
       throw new Error("Missing targetUserId or targetEmail");
     };
 
+    // ── update-status ──
     if (action === "update-status") {
       if (!status) {
         return new Response(JSON.stringify({ error: "Missing status" }), {
@@ -186,7 +185,8 @@ Deno.serve(async (req) => {
         });
       }
 
-      if (!["pending", "approved", "restricted", "temporary_locked", "blocked", "rejected"].includes(status)) {
+      const validStatuses = ["pending", "approved", "restricted", "temporary_locked", "blocked", "rejected"];
+      if (!validStatuses.includes(status)) {
         return new Response(JSON.stringify({ error: "Invalid status" }), {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -194,67 +194,89 @@ Deno.serve(async (req) => {
       }
 
       try {
-        const userId = await getUserId(targetUserId, targetEmail);
+        const resolvedUserId = await getUserId(targetUserId, targetEmail);
 
+        // If blocking, add IP to blocked_ips
         if (status === "blocked") {
-          const { data: profile, error: profileError } = await adminClient
+          const { data: profile } = await adminClient
             .from("profiles")
             .select("last_ip")
-            .eq("user_id", userId)
+            .eq("user_id", resolvedUserId)
             .maybeSingle();
 
-          if (profileError) throw profileError;
           const targetIp = profile?.last_ip;
-
           if (targetIp) {
-            const { error: blockError } = await adminClient
+            // Use insert with select-first approach to avoid type issues
+            const { data: existing } = await adminClient
               .from("blocked_ips")
-              .upsert(
-                { ip: targetIp, user_id: userId, reason: "blocked by admin" },
-                { onConflict: ["ip"] }
-              );
-            if (blockError) throw blockError;
+              .select("id")
+              .eq("ip", targetIp)
+              .maybeSingle();
+
+            if (!existing) {
+              await adminClient
+                .from("blocked_ips")
+                .insert({ ip: targetIp, user_id: resolvedUserId, reason: "blocked by admin" });
+            }
           }
         }
 
-        const { error } = await adminClient
+        // If unblocking (going back to pending/approved), remove from blocked_ips
+        if (status === "pending" || status === "approved") {
+          const { data: profile } = await adminClient
+            .from("profiles")
+            .select("last_ip")
+            .eq("user_id", resolvedUserId)
+            .maybeSingle();
+
+          if (profile?.last_ip) {
+            await adminClient.from("blocked_ips").delete().eq("ip", profile.last_ip);
+          }
+          // Also delete by user_id
+          await adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId);
+        }
+
+        const { error: updateError } = await adminClient
           .from("profiles")
           .update({ status })
-          .eq("user_id", userId);
+          .eq("user_id", resolvedUserId);
 
-        if (error) throw error;
+        if (updateError) throw updateError;
 
         return new Response(JSON.stringify({ success: true }), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        return new Response(JSON.stringify({ error: message }), {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
     }
 
+    // ── delete ──
     if (action === "delete") {
       try {
-        const userId = await getUserId(targetUserId, targetEmail);
+        const resolvedUserId = await getUserId(targetUserId, targetEmail);
 
-        // Delete from related tables
-        await adminClient.from("profiles").delete().eq("user_id", userId);
-        await adminClient.from("user_roles").delete().eq("user_id", userId);
-        await adminClient.from("user_activity").delete().eq("user_id", userId);
+        // Clean up all related data
+        await adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId);
+        await adminClient.from("profiles").delete().eq("user_id", resolvedUserId);
+        await adminClient.from("user_roles").delete().eq("user_id", resolvedUserId);
+        await adminClient.from("user_activity").delete().eq("user_id", resolvedUserId);
 
-        // Delete from auth
-        const { error } = await adminClient.auth.admin.deleteUser(userId);
+        const { error } = await adminClient.auth.admin.deleteUser(resolvedUserId);
         if (error) throw error;
 
         return new Response(JSON.stringify({ success: true }), {
           status: 200,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
-      } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        return new Response(JSON.stringify({ error: message }), {
           status: 400,
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
