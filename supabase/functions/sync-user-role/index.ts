@@ -21,22 +21,27 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceRoleKey) {
+      console.error("Missing environment variables", {
+        hasUrl: !!supabaseUrl,
+        hasAnon: !!supabaseAnonKey,
+        hasService: !!supabaseServiceRoleKey,
+      });
+      return new Response(JSON.stringify({ error: "Server configuration error" }), {
+        status: 500,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     const authClient = createClient(supabaseUrl, supabaseAnonKey, {
-      global: {
-        headers: {
-          Authorization: authHeader,
-        },
-      },
+      global: { headers: { Authorization: authHeader } },
     });
 
-    const {
-      data: { user },
-      error: userError,
-    } = await authClient.auth.getUser();
+    const { data: { user }, error: userError } = await authClient.auth.getUser();
 
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -54,25 +59,25 @@ Deno.serve(async (req) => {
     }
 
     const targetRole = normalizedEmail === OWNER_ADMIN_EMAIL ? "admin" : "user";
-
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    const { error: deleteError } = await adminClient
+    // Use upsert to avoid duplicate key errors
+    const { error: upsertError } = await adminClient
       .from("user_roles")
-      .delete()
-      .eq("user_id", user.id);
+      .upsert(
+        { user_id: user.id, role: targetRole },
+        { onConflict: "user_id,role" }
+      );
 
-    if (deleteError) {
-      throw deleteError;
-    }
-
-    const { error: insertError } = await adminClient.from("user_roles").insert({
-      user_id: user.id,
-      role: targetRole,
-    });
-
-    if (insertError) {
-      throw insertError;
+    if (upsertError) {
+      // If upsert fails (e.g. role changed), delete old and insert new
+      await adminClient.from("user_roles").delete().eq("user_id", user.id);
+      const { error: insertError } = await adminClient
+        .from("user_roles")
+        .insert({ user_id: user.id, role: targetRole });
+      if (insertError) {
+        throw insertError;
+      }
     }
 
     return new Response(JSON.stringify({ success: true, role: targetRole }), {
