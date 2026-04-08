@@ -376,6 +376,15 @@ const AdminDashboardPage = () => {
                           </Button>
                         </>
                       )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-primary hover:text-primary h-7 text-xs"
+                        onClick={() => fetchUserHistory(u)}
+                      >
+                        <History className="w-3 h-3 mr-1" />
+                        History
+                      </Button>
                     </div>
                   )}
                 </TableCell>
