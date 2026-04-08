@@ -72,7 +72,6 @@ Deno.serve(async (req) => {
       }
 
       try {
-        // Update last_ip on profiles
         const { error } = await adminClient
           .from("profiles")
           .update({ last_ip: requestIp })
@@ -91,6 +90,78 @@ Deno.serve(async (req) => {
           headers: { "Content-Type": "application/json", ...corsHeaders },
         });
       }
+    }
+
+    // ── user-history: requires admin auth ──
+    if (action === "user-history") {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user }, error: userError } = await authClient.auth.getUser();
+      if (userError || !user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+      const { data: roleData } = await adminClient
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (!roleData) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      const uid = targetUserId;
+      if (!uid) {
+        return new Response(JSON.stringify({ error: "Missing targetUserId" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        });
+      }
+
+      // Get user email from profiles
+      const { data: profile } = await adminClient
+        .from("profiles")
+        .select("email")
+        .eq("user_id", uid)
+        .maybeSingle();
+
+      const userEmail = profile?.email || "";
+
+      // Fetch all activity data in parallel
+      const [viewsRes, readsRes, likesRes, commentsRes, downloadsRes, activityRes] = await Promise.all([
+        adminClient.from("project_views").select("*").eq("viewer_email", userEmail),
+        adminClient.from("project_reads").select("*").eq("reader_email", userEmail),
+        adminClient.from("project_likes").select("*").eq("email", userEmail),
+        adminClient.from("project_comments").select("*").eq("email", userEmail),
+        adminClient.from("download_tracking").select("*").eq("downloader_email", userEmail),
+        adminClient.from("user_activity").select("*").eq("user_id", uid).order("created_at", { ascending: false }).limit(50),
+      ]);
+
+      return new Response(JSON.stringify({
+        views: viewsRes.data || [],
+        reads: readsRes.data || [],
+        likes: likesRes.data || [],
+        comments: commentsRes.data || [],
+        downloads: downloadsRes.data || [],
+        activity: activityRes.data || [],
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
     // ── All remaining actions require admin auth ──
@@ -206,7 +277,6 @@ Deno.serve(async (req) => {
 
           const targetIp = profile?.last_ip;
           if (targetIp) {
-            // Use insert with select-first approach to avoid type issues
             const { data: existing } = await adminClient
               .from("blocked_ips")
               .select("id")
@@ -221,7 +291,7 @@ Deno.serve(async (req) => {
           }
         }
 
-        // If unblocking (going back to pending/approved), remove from blocked_ips
+        // If unblocking, remove from blocked_ips
         if (status === "pending" || status === "approved") {
           const { data: profile } = await adminClient
             .from("profiles")
@@ -232,7 +302,6 @@ Deno.serve(async (req) => {
           if (profile?.last_ip) {
             await adminClient.from("blocked_ips").delete().eq("ip", profile.last_ip);
           }
-          // Also delete by user_id
           await adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId);
         }
 
@@ -261,7 +330,6 @@ Deno.serve(async (req) => {
       try {
         const resolvedUserId = await getUserId(targetUserId, targetEmail);
 
-        // Clean up all related data
         await adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId);
         await adminClient.from("profiles").delete().eq("user_id", resolvedUserId);
         await adminClient.from("user_roles").delete().eq("user_id", resolvedUserId);
