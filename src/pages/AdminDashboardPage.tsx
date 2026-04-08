@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2 } from "lucide-react";
+import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
