@@ -1,11 +1,17 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2 } from "lucide-react";
+import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
@@ -41,6 +47,9 @@ const AdminDashboardPage = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [historyUser, setHistoryUser] = useState<UserProfile | null>(null);
+  const [historyData, setHistoryData] = useState<any>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -97,6 +106,22 @@ const AdminDashboardPage = () => {
       toast({ title: "Error", description: err.message || "Failed to delete user.", variant: "destructive" });
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const fetchUserHistory = async (u: UserProfile) => {
+    setHistoryUser(u);
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "user-history", targetUserId: u.user_id },
+      });
+      if (error) throw error;
+      setHistoryData(data);
+    } catch {
+      toast({ title: "Error", description: "Failed to load user history.", variant: "destructive" });
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
@@ -351,6 +376,15 @@ const AdminDashboardPage = () => {
                           </Button>
                         </>
                       )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-primary hover:text-primary h-7 text-xs"
+                        onClick={() => fetchUserHistory(u)}
+                      >
+                        <History className="w-3 h-3 mr-1" />
+                        History
+                      </Button>
                     </div>
                   )}
                 </TableCell>
@@ -440,6 +474,100 @@ const AdminDashboardPage = () => {
           </div>
         </main>
         <Footer />
+
+        {/* User History Dialog */}
+        <Dialog open={!!historyUser} onOpenChange={(open) => { if (!open) { setHistoryUser(null); setHistoryData(null); } }}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Activity History — {historyUser?.email || "User"}
+              </DialogTitle>
+            </DialogHeader>
+            {historyLoading ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : historyData ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <Eye className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <p className="text-lg font-bold">{historyData.views?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Views</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <p className="text-lg font-bold">{historyData.reads?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Reads</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <Heart className="w-4 h-4 mx-auto mb-1 text-red-500" />
+                    <p className="text-lg font-bold">{historyData.likes?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Likes</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <MessageSquare className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <p className="text-lg font-bold">{historyData.comments?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Comments</p>
+                  </div>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3 text-center">
+                  <Download className="w-4 h-4 mx-auto mb-1 text-primary" />
+                  <p className="text-lg font-bold">{historyData.downloads?.length || 0}</p>
+                  <p className="text-xs text-muted-foreground">Downloads</p>
+                </div>
+
+                {/* Recent Activity Log */}
+                {historyData.activity?.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">Recent Activity</h4>
+                    <div className="space-y-1 max-h-48 overflow-y-auto">
+                      {historyData.activity.map((a: any) => (
+                        <div key={a.id} className="flex justify-between text-xs border-b border-border py-1">
+                          <span className="capitalize text-foreground">{a.action}</span>
+                          <span className="text-muted-foreground">{new Date(a.created_at).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Liked Projects */}
+                {historyData.likes?.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">Liked Projects</h4>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {historyData.likes.map((l: any) => (
+                        <div key={l.id} className="flex justify-between text-xs border-b border-border py-1">
+                          <span className="text-foreground">{l.project_id}</span>
+                          <span className="text-muted-foreground">{new Date(l.created_at).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comments */}
+                {historyData.comments?.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">Comments</h4>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {historyData.comments.map((c: any) => (
+                        <div key={c.id} className="border-b border-border py-1">
+                          <p className="text-xs text-foreground truncate">{c.content}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(c.created_at).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">No data available</p>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </PageTransition>
   );
