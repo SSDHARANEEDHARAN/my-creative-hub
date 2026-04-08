@@ -47,6 +47,9 @@ const AdminDashboardPage = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [historyUser, setHistoryUser] = useState<UserProfile | null>(null);
+  const [historyData, setHistoryData] = useState<any>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
 
