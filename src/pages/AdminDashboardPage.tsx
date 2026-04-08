@@ -474,6 +474,100 @@ const AdminDashboardPage = () => {
           </div>
         </main>
         <Footer />
+
+        {/* User History Dialog */}
+        <Dialog open={!!historyUser} onOpenChange={(open) => { if (!open) { setHistoryUser(null); setHistoryData(null); } }}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Activity History — {historyUser?.email || "User"}
+              </DialogTitle>
+            </DialogHeader>
+            {historyLoading ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : historyData ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <Eye className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <p className="text-lg font-bold">{historyData.views?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Views</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <Clock className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <p className="text-lg font-bold">{historyData.reads?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Reads</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <Heart className="w-4 h-4 mx-auto mb-1 text-red-500" />
+                    <p className="text-lg font-bold">{historyData.likes?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Likes</p>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <MessageSquare className="w-4 h-4 mx-auto mb-1 text-primary" />
+                    <p className="text-lg font-bold">{historyData.comments?.length || 0}</p>
+                    <p className="text-xs text-muted-foreground">Comments</p>
+                  </div>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3 text-center">
+                  <Download className="w-4 h-4 mx-auto mb-1 text-primary" />
+                  <p className="text-lg font-bold">{historyData.downloads?.length || 0}</p>
+                  <p className="text-xs text-muted-foreground">Downloads</p>
+                </div>
+
+                {/* Recent Activity Log */}
+                {historyData.activity?.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">Recent Activity</h4>
+                    <div className="space-y-1 max-h-48 overflow-y-auto">
+                      {historyData.activity.map((a: any) => (
+                        <div key={a.id} className="flex justify-between text-xs border-b border-border py-1">
+                          <span className="capitalize text-foreground">{a.action}</span>
+                          <span className="text-muted-foreground">{new Date(a.created_at).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Liked Projects */}
+                {historyData.likes?.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">Liked Projects</h4>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {historyData.likes.map((l: any) => (
+                        <div key={l.id} className="flex justify-between text-xs border-b border-border py-1">
+                          <span className="text-foreground">{l.project_id}</span>
+                          <span className="text-muted-foreground">{new Date(l.created_at).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Comments */}
+                {historyData.comments?.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">Comments</h4>
+                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                      {historyData.comments.map((c: any) => (
+                        <div key={c.id} className="border-b border-border py-1">
+                          <p className="text-xs text-foreground truncate">{c.content}</p>
+                          <p className="text-xs text-muted-foreground">{new Date(c.created_at).toLocaleString()}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">No data available</p>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </PageTransition>
   );
