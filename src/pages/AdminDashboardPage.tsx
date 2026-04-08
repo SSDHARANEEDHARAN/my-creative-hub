@@ -109,7 +109,22 @@ const AdminDashboardPage = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const fetchUserHistory = async (u: UserProfile) => {
+    setHistoryUser(u);
+    setHistoryLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "user-history", targetUserId: u.user_id },
+      });
+      if (error) throw error;
+      setHistoryData(data);
+    } catch {
+      toast({ title: "Error", description: "Failed to load user history.", variant: "destructive" });
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
     switch (status) {
       case "approved":
         return <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Approved</Badge>;
