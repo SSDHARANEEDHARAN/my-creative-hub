@@ -35,6 +35,30 @@ export type Database = {
         }
         Relationships: []
       }
+      blocked_ips: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string
+          reason: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip: string
+          reason?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string
+          reason?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       blog_comments: {
         Row: {
           content: string
@@ -362,6 +386,7 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          last_ip: string | null
           status: string
           updated_at: string
           user_id: string
@@ -371,6 +396,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          last_ip?: string | null
           status?: string
           updated_at?: string
           user_id: string
@@ -380,6 +406,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          last_ip?: string | null
           status?: string
           updated_at?: string
           user_id?: string

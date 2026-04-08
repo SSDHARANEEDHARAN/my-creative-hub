@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.verify-otp-reset]
 verify_jwt = false
+
+[functions.manage-users]
+verify_jwt = false
