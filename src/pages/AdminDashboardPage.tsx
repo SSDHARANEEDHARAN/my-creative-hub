@@ -125,6 +125,7 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "approved":
         return <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Approved</Badge>;
