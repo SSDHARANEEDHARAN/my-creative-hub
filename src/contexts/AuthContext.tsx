@@ -9,6 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   userStatus: string | null;
+  blockedIp: string | null;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStatus, setUserStatus] = useState<string | null>(null);
+  const [blockedIp, setBlockedIp] = useState<string | null>(null);
 
   const checkAdminRole = useCallback(async (userId: string) => {
     try {
@@ -91,6 +93,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  const checkIpBlockStatus = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "check-ip" },
+      });
+
+      if (!error && data?.blocked) {
+        setBlockedIp(data.ip || null);
+      }
+    } catch (error) {
+      console.error("Error checking blocked IP status:", error);
+    }
+  }, []);
+
+  const trackUserIp = useCallback(async (currentUser: User) => {
+    try {
+      await supabase.functions.invoke("manage-users", {
+        body: { action: "track-ip" },
+      });
+    } catch (error) {
+      console.error("Error tracking user IP:", error);
+    }
+  }, []);
+
   const loadUserAccess = useCallback(async (currentUser: User) => {
     const isOwnerAdmin = currentUser.email?.toLowerCase() === OWNER_ADMIN_EMAIL;
 
@@ -128,8 +154,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setIsLoading(true);
 
-      void loadUserAccess(nextSession.user)
-        .catch((error) => {
+      void Promise.all([
+        trackUserIp(nextSession.user).catch(console.error),
+        loadUserAccess(nextSession.user).catch((error) => {
           console.error("Error loading user access:", error);
 
           if (!isActive) return;
@@ -137,7 +164,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const isOwnerAdmin = nextSession.user.email?.toLowerCase() === OWNER_ADMIN_EMAIL;
           setIsAdmin(isOwnerAdmin);
           setUserStatus(isOwnerAdmin ? "approved" : "pending");
-        })
+        }),
+      ])
         .finally(() => {
           if (isActive) {
             setIsLoading(false);
@@ -169,41 +197,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isActive = false;
       subscription.unsubscribe();
     };
-  }, [loadUserAccess]);
+  }, [loadUserAccess, trackUserIp]);
+
+  useEffect(() => {
+    void checkIpBlockStatus();
+  }, [checkIpBlockStatus]);
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (!error && data.user) {
-      // Check status before allowing login
-      const status = await checkUserStatus(data.user.id);
-      const adminCheck = await checkAdminRole(data.user.id);
-
-      if (!adminCheck && status === "pending") {
-        await supabase.auth.signOut();
-        return { error: new Error("Your account is pending approval. Please wait for admin to approve your access.") };
-      }
-
-      if (!adminCheck && status === "restricted") {
-        await supabase.auth.signOut();
-        return { error: new Error("Your account has been restricted. Please contact the administrator.") };
-      }
-
-      // Track login activity
       await trackActivity(data.user.id, "login");
+      return { error: null };
     }
 
     return { error: error as Error | null };
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: window.location.origin,
       },
     });
+
+    if (!error && data.user?.id) {
+      try {
+        await supabase.from("profiles").insert({
+          user_id: data.user.id,
+          email: data.user.email,
+          status: "pending",
+        });
+      } catch (profileError) {
+        console.error("Failed to create profile record for new signup:", profileError);
+      }
+    }
+
     return { error: error as Error | null };
   };
 
@@ -240,6 +271,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         isAdmin,
         userStatus,
+        blockedIp,
         signIn,
         signUp,
         signOut,

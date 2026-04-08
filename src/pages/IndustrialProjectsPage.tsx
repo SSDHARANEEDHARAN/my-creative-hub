@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,8 +22,10 @@ const IndustrialProjectsPage = () => {
   const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
 
   const isApproved = isAdmin || userStatus === "approved";
-  const isRejected = userStatus === "restricted";
+  const isRejected = userStatus === "restricted" || userStatus === "rejected";
   const isPending = userStatus === "pending";
+  const isTemporaryLocked = userStatus === "temporary_locked";
+  const isBlocked = userStatus === "blocked";
 
   const currentUserEmail = user?.email || null;
   const currentUserName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || null;
@@ -121,8 +123,8 @@ const IndustrialProjectsPage = () => {
     toast({ title: "Error", description: "Failed to like project.", variant: "destructive" });
   };
 
-  // Loading state - only show spinner if we don't have user info yet
-  if (authLoading && !user) {
+  // Loading state - wait for auth to fully load before rendering any content
+  if (authLoading) {
     return (
       <PageTransition>
         <div className="min-h-screen bg-background flex items-center justify-center">
@@ -168,6 +170,41 @@ const IndustrialProjectsPage = () => {
     );
   }
 
+  if (isBlocked) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <Navigation />
+          <main className="pt-24 pb-16">
+            <div className="container mx-auto px-4 flex items-center justify-center min-h-[60vh]">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center max-w-md p-8 bg-card border border-red-600/30 rounded-xl shadow-lg"
+              >
+                <div className="w-16 h-16 bg-red-600/10 rounded-full flex items-center justify-center mx-auto mb-5">
+                  <Ban className="w-8 h-8 text-red-600" />
+                </div>
+                <h2 className="text-2xl font-bold text-foreground mb-3">Account Blocked</h2>
+                <p className="text-muted-foreground mb-6">
+                  Your account has been blocked based on IP address. This action was taken to prevent disturbance to others.
+                </p>
+                <a
+                  href="mailto:TharaneeTharanss@gmail.com"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  <Mail className="w-4 h-4" />
+                  Contact TharaneeTharanss@gmail.com
+                </a>
+              </motion.div>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </PageTransition>
+    );
+  }
+
   if (isRejected) {
     return (
       <PageTransition>
@@ -183,9 +220,9 @@ const IndustrialProjectsPage = () => {
                 <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-5">
                   <ShieldX className="w-8 h-8 text-destructive" />
                 </div>
-                <h2 className="text-2xl font-bold text-foreground mb-3">Verification Rejected</h2>
+                <h2 className="text-2xl font-bold text-foreground mb-3">Verification Cancelled</h2>
                 <p className="text-muted-foreground mb-6">
-                  Your account verification has been rejected. Please contact the administrator for assistance.
+                  Verification cancelled. Please try again.
                 </p>
                 <a
                   href="mailto:tharaneetharanss@gmail.com"
@@ -222,9 +259,24 @@ const IndustrialProjectsPage = () => {
                 <p className="text-muted-foreground mb-6">
                   Your account is awaiting admin verification. You'll be able to access Industrial Projects once approved.
                 </p>
-                <div className="px-4 py-3 bg-muted rounded-lg text-sm text-muted-foreground">
+                <div className="px-4 py-3 bg-muted rounded-lg text-sm text-muted-foreground mb-6">
                   <span className="font-medium text-foreground">Status:</span> Pending Approval
                 </div>
+                <div className="px-4 py-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-sm mb-6">
+                  <p className="text-yellow-700 dark:text-yellow-400 font-medium mb-2">
+                    ⏱️ Please wait for 24 hours for admin review.
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    If you don't see updates after 24 hours, kindly contact the administrator.
+                  </p>
+                </div>
+                <a
+                  href="mailto:TharaneeTharanss@gmail.com"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  <Mail className="w-4 h-4" />
+                  Contact TharaneeTharanss@gmail.com
+                </a>
               </motion.div>
             </div>
           </main>

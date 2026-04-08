@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye } from "lucide-react";
+import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -81,20 +81,47 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const deleteUser = async (targetUserId: string) => {
+    if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+    setActionLoading(targetUserId);
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-users", {
+        body: { action: "delete", targetUserId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      toast({ title: "Success", description: "User deleted successfully." });
+      fetchUsers();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Failed to delete user.", variant: "destructive" });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "approved":
         return <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Approved</Badge>;
       case "restricted":
         return <Badge variant="destructive">Restricted</Badge>;
+      case "rejected":
+        return <Badge variant="destructive" className="bg-red-600/10 text-red-600 border-red-600/20">Rejected</Badge>;
+      case "temporary_locked":
+        return <Badge className="bg-orange-500/10 text-orange-500 border-orange-500/20">Temporary Locked</Badge>;
+      case "blocked":
+        return <Badge variant="destructive" className="bg-red-600/10 text-red-600 border-red-600/20">Blocked</Badge>;
       default:
-        return <Badge variant="secondary">Pending</Badge>;
+        return <Badge variant="secondary">Verification Pending</Badge>;
     }
   };
 
   const pendingUsers = users.filter((u) => u.status === "pending");
   const approvedUsers = users.filter((u) => u.status === "approved");
-  const restrictedUsers = users.filter((u) => u.status === "restricted");
+  const restrictedUsers = users.filter((u) => u.status === "restricted" || u.status === "rejected");
+  const temporaryLockedUsers = users.filter((u) => u.status === "temporary_locked");
+  const blockedUsers = users.filter((u) => u.status === "blocked");
 
   const formatDate = (d: string | null) => {
     if (!d) return "—";
@@ -108,7 +135,7 @@ const AdminDashboardPage = () => {
           <TableRow>
             <TableHead>Email</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Verification Status</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Last Login</TableHead>
             <TableHead>Last Logout</TableHead>
@@ -160,37 +187,169 @@ const AdminDashboardPage = () => {
                             size="sm"
                             variant="outline"
                             className="text-destructive hover:text-destructive h-7 text-xs"
-                            onClick={() => updateUserStatus(u.user_id, "restricted")}
+                            onClick={() => updateUserStatus(u.user_id, "rejected")}
                             disabled={actionLoading === u.user_id}
                           >
                             <XCircle className="w-3 h-3 mr-1" />
                             Reject
                           </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-orange-500 hover:text-orange-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "temporary_locked")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Shield className="w-3 h-3 mr-1" />}
+                            Temp Lock
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "blocked")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Ban className="w-3 h-3 mr-1" />}
+                            Block
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => deleteUser(u.user_id)}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3 mr-1" />}
+                            Delete
+                          </Button>
                         </>
                       )}
                       {u.status === "approved" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-destructive hover:text-destructive h-7 text-xs"
-                          onClick={() => updateUserStatus(u.user_id, "restricted")}
-                          disabled={actionLoading === u.user_id}
-                        >
-                          {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Ban className="w-3 h-3 mr-1" />}
-                          Restrict
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-destructive hover:text-destructive h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "restricted")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Ban className="w-3 h-3 mr-1" />}
+                            Restrict
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-orange-500 hover:text-orange-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "temporary_locked")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Shield className="w-3 h-3 mr-1" />}
+                            Temp Lock
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "blocked")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Ban className="w-3 h-3 mr-1" />}
+                            Block
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => deleteUser(u.user_id)}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3 mr-1" />}
+                            Delete
+                          </Button>
+                        </>
                       )}
                       {u.status === "restricted" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-green-500 hover:text-green-600 h-7 text-xs"
-                          onClick={() => updateUserStatus(u.user_id, "approved")}
-                          disabled={actionLoading === u.user_id}
-                        >
-                          {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlock className="w-3 h-3 mr-1" />}
-                          Unrestrict
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-500 hover:text-green-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "pending")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlock className="w-3 h-3 mr-1" />}
+                            Restore pending
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => deleteUser(u.user_id)}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3 mr-1" />}
+                            Delete
+                          </Button>
+                        </>
+                      )}
+                      {u.status === "temporary_locked" && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-500 hover:text-green-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "approved")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlock className="w-3 h-3 mr-1" />}
+                            Unlock
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "blocked")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Ban className="w-3 h-3 mr-1" />}
+                            Block
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => deleteUser(u.user_id)}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3 mr-1" />}
+                            Delete
+                          </Button>
+                        </>
+                      )}
+                      {u.status === "blocked" && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-500 hover:text-green-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "pending")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlock className="w-3 h-3 mr-1" />}
+                            Unblock
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 hover:text-red-700 h-7 text-xs"
+                            onClick={() => deleteUser(u.user_id)}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3 mr-1" />}
+                            Delete
+                          </Button>
+                        </>
                       )}
                     </div>
                   )}
@@ -222,12 +381,14 @@ const AdminDashboardPage = () => {
             </motion.div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 mb-8">
               {[
                 { label: "Total Users", value: users.length, icon: Users, color: "text-primary" },
                 { label: "Pending", value: pendingUsers.length, icon: Clock, color: "text-yellow-500" },
                 { label: "Approved", value: approvedUsers.length, icon: CheckCircle, color: "text-green-500" },
                 { label: "Restricted", value: restrictedUsers.length, icon: Ban, color: "text-destructive" },
+                { label: "Temp Locked", value: temporaryLockedUsers.length, icon: Shield, color: "text-orange-500" },
+                { label: "Blocked", value: blockedUsers.length, icon: XCircle, color: "text-red-600" },
               ].map((stat) => (
                 <motion.div
                   key={stat.label}
@@ -264,11 +425,15 @@ const AdminDashboardPage = () => {
                     <TabsTrigger value="pending">Pending ({pendingUsers.length})</TabsTrigger>
                     <TabsTrigger value="approved">Approved ({approvedUsers.length})</TabsTrigger>
                     <TabsTrigger value="restricted">Restricted ({restrictedUsers.length})</TabsTrigger>
+                    <TabsTrigger value="temporary_locked">Temp Locked ({temporaryLockedUsers.length})</TabsTrigger>
+                    <TabsTrigger value="blocked">Blocked ({blockedUsers.length})</TabsTrigger>
                   </TabsList>
                   <TabsContent value="all">{renderUserTable(users)}</TabsContent>
                   <TabsContent value="pending">{renderUserTable(pendingUsers)}</TabsContent>
                   <TabsContent value="approved">{renderUserTable(approvedUsers)}</TabsContent>
                   <TabsContent value="restricted">{renderUserTable(restrictedUsers)}</TabsContent>
+                  <TabsContent value="temporary_locked">{renderUserTable(temporaryLockedUsers)}</TabsContent>
+                  <TabsContent value="blocked">{renderUserTable(blockedUsers)}</TabsContent>
                 </Tabs>
               </motion.div>
             )}

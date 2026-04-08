@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "next-themes";
 import { AnimatePresence } from "framer-motion";
@@ -28,13 +28,14 @@ import OnboardingPage from "./pages/OnboardingPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import NotFound from "./pages/NotFound";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { GuestProvider } from "./contexts/GuestContext";
 import { LayoutProvider } from "./contexts/LayoutContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ContentProtection from "./components/ContentProtection";
+import UserStatusBlocker from "./components/UserStatusBlocker";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 
@@ -108,6 +109,15 @@ const AnimatedRoutes = () => {
   );
 };
 
+const IpBlockRedirect = () => {
+  const location = useLocation();
+  const { blockedIp, isLoading } = useAuth();
+
+  if (isLoading || !blockedIp) return null;
+  if (location.pathname !== "/") return <Navigate to="/" replace />;
+  return null;
+};
+
 const App = () => (
   <ErrorBoundary>
     <HelmetProvider>
@@ -118,7 +128,9 @@ const App = () => (
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
+                <UserStatusBlocker />
                 <BrowserRouter>
+                  <IpBlockRedirect />
                   <LayoutProvider globalLayoutEnabled>
                     <ContentProtection />
                     <Navigation persisted />
