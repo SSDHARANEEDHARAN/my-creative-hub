@@ -103,8 +103,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: { action: "check-ip" },
       });
 
-      if (!error && data?.blocked) {
-        setBlockedIp(data.ip || null);
+      if (!error && data) {
+        if (data.blocked) {
+          setBlockedIp(data.ip || "unknown");
+        } else {
+          setBlockedIp(null);
+        }
+        if (data.temp_locked) {
+          setTempLockedIp(data.ip || "unknown");
+          setLockedAt(data.locked_at || null);
+        } else {
+          setTempLockedIp(null);
+          setLockedAt(null);
+        }
       }
     } catch (error) {
       console.error("Error checking blocked IP status:", error);
@@ -276,6 +287,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin,
         userStatus,
         blockedIp,
+        tempLockedIp,
+        lockedAt,
         signIn,
         signUp,
         signOut,
