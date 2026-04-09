@@ -10,6 +10,8 @@ interface AuthContextType {
   isAdmin: boolean;
   userStatus: string | null;
   blockedIp: string | null;
+  tempLockedIp: string | null;
+  lockedAt: string | null;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -33,6 +35,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStatus, setUserStatus] = useState<string | null>(null);
   const [blockedIp, setBlockedIp] = useState<string | null>(null);
+  const [tempLockedIp, setTempLockedIp] = useState<string | null>(null);
+  const [lockedAt, setLockedAt] = useState<string | null>(null);
 
   const checkAdminRole = useCallback(async (userId: string) => {
     try {
