@@ -41,6 +41,7 @@ interface UserProfile {
   lastLogin: string | null;
   lastLogout: string | null;
   activityCount: number;
+  last_ip: string | null;
 }
 
 const AdminDashboardPage = () => {
@@ -160,10 +161,10 @@ const AdminDashboardPage = () => {
           <TableRow>
             <TableHead>Email</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>IP Address</TableHead>
             <TableHead>Verification Status</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Last Login</TableHead>
-            <TableHead>Last Logout</TableHead>
             <TableHead>Joined</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -171,7 +172,7 @@ const AdminDashboardPage = () => {
         <TableBody>
           {userList.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+              <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
                 No users found
               </TableCell>
             </TableRow>
@@ -180,6 +181,7 @@ const AdminDashboardPage = () => {
               <TableRow key={u.id}>
                 <TableCell className="font-mono text-sm">{u.email || "—"}</TableCell>
                 <TableCell>{u.display_name || "—"}</TableCell>
+                <TableCell className="font-mono text-xs">{u.last_ip || "—"}</TableCell>
                 <TableCell>{getStatusBadge(u.status)}</TableCell>
                 <TableCell>
                   {u.roles.includes("admin") ? (
@@ -189,7 +191,6 @@ const AdminDashboardPage = () => {
                   )}
                 </TableCell>
                 <TableCell className="text-xs">{formatDate(u.lastLogin)}</TableCell>
-                <TableCell className="text-xs">{formatDate(u.lastLogout)}</TableCell>
                 <TableCell className="text-xs">{formatDate(u.created_at)}</TableCell>
                 <TableCell className="text-right">
                   {u.user_id === user?.id ? (
@@ -294,17 +295,27 @@ const AdminDashboardPage = () => {
                           </Button>
                         </>
                       )}
-                      {u.status === "restricted" && (
+                      {(u.status === "restricted" || u.status === "rejected") && (
                         <>
                           <Button
                             size="sm"
                             variant="outline"
                             className="text-green-500 hover:text-green-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "approved")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3 mr-1" />}
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-yellow-500 hover:text-yellow-600 h-7 text-xs"
                             onClick={() => updateUserStatus(u.user_id, "pending")}
                             disabled={actionLoading === u.user_id}
                           >
                             {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlock className="w-3 h-3 mr-1" />}
-                            Restore pending
+                            Restore Pending
                           </Button>
                           <Button
                             size="sm"
