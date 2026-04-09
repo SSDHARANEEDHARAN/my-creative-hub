@@ -295,17 +295,27 @@ const AdminDashboardPage = () => {
                           </Button>
                         </>
                       )}
-                      {u.status === "restricted" && (
+                      {(u.status === "restricted" || u.status === "rejected") && (
                         <>
                           <Button
                             size="sm"
                             variant="outline"
                             className="text-green-500 hover:text-green-600 h-7 text-xs"
+                            onClick={() => updateUserStatus(u.user_id, "approved")}
+                            disabled={actionLoading === u.user_id}
+                          >
+                            {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3 mr-1" />}
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-yellow-500 hover:text-yellow-600 h-7 text-xs"
                             onClick={() => updateUserStatus(u.user_id, "pending")}
                             disabled={actionLoading === u.user_id}
                           >
                             {actionLoading === u.user_id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlock className="w-3 h-3 mr-1" />}
-                            Restore pending
+                            Restore Pending
                           </Button>
                           <Button
                             size="sm"
