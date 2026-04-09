@@ -10,6 +10,8 @@ interface AuthContextType {
   isAdmin: boolean;
   userStatus: string | null;
   blockedIp: string | null;
+  tempLockedIp: string | null;
+  lockedAt: string | null;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -33,6 +35,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStatus, setUserStatus] = useState<string | null>(null);
   const [blockedIp, setBlockedIp] = useState<string | null>(null);
+  const [tempLockedIp, setTempLockedIp] = useState<string | null>(null);
+  const [lockedAt, setLockedAt] = useState<string | null>(null);
 
   const checkAdminRole = useCallback(async (userId: string) => {
     try {
@@ -99,8 +103,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: { action: "check-ip" },
       });
 
-      if (!error && data?.blocked) {
-        setBlockedIp(data.ip || null);
+      if (!error && data) {
+        if (data.blocked) {
+          setBlockedIp(data.ip || "unknown");
+        } else {
+          setBlockedIp(null);
+        }
+        if (data.temp_locked) {
+          setTempLockedIp(data.ip || "unknown");
+          setLockedAt(data.locked_at || null);
+        } else {
+          setTempLockedIp(null);
+          setLockedAt(null);
+        }
       }
     } catch (error) {
       console.error("Error checking blocked IP status:", error);
@@ -272,6 +287,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin,
         userStatus,
         blockedIp,
+        tempLockedIp,
+        lockedAt,
         signIn,
         signUp,
         signOut,

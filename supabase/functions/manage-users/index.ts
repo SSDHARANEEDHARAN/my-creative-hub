@@ -5,6 +5,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonResponse = (data: unknown, status = 200) =>
+  new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json", ...corsHeaders },
+  });
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -31,108 +37,95 @@ Deno.serve(async (req) => {
     // ── check-ip: no auth needed ──
     if (action === "check-ip") {
       try {
+        // Check blocked IPs
         const { data: blockedIp } = await adminClient
           .from("blocked_ips")
           .select("ip,reason")
           .eq("ip", requestIp)
           .maybeSingle();
 
-        return new Response(JSON.stringify({ blocked: !!blockedIp, ip: requestIp, reason: blockedIp?.reason || null }), {
-          status: 200,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        if (blockedIp) {
+          return jsonResponse({ blocked: true, temp_locked: false, locked_at: null, ip: requestIp, reason: blockedIp.reason });
+        }
+
+        // Check if any profile with this IP is temp_locked
+        const { data: lockedProfile } = await adminClient
+          .from("profiles")
+          .select("status,locked_at,last_ip")
+          .eq("last_ip", requestIp)
+          .eq("status", "temporary_locked")
+          .maybeSingle();
+
+        if (lockedProfile) {
+          const lockedAt = lockedProfile.locked_at;
+          const isExpired = lockedAt && (Date.now() - new Date(lockedAt).getTime()) > 48 * 60 * 60 * 1000;
+
+          if (isExpired) {
+            // Auto-unlock after 48 hours
+            await adminClient
+              .from("profiles")
+              .update({ status: "approved", locked_at: null })
+              .eq("last_ip", requestIp)
+              .eq("status", "temporary_locked");
+
+            return jsonResponse({ blocked: false, temp_locked: false, locked_at: null, ip: requestIp });
+          }
+
+          return jsonResponse({ blocked: false, temp_locked: true, locked_at: lockedAt, ip: requestIp });
+        }
+
+        return jsonResponse({ blocked: false, temp_locked: false, locked_at: null, ip: requestIp });
       } catch {
-        return new Response(JSON.stringify({ blocked: false, ip: requestIp }), {
-          status: 200,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ blocked: false, temp_locked: false, locked_at: null, ip: requestIp });
       }
     }
 
     // ── track-ip: requires auth ──
     if (action === "track-ip") {
       const authHeader = req.headers.get("Authorization");
-      if (!authHeader) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
 
       const authClient = createClient(supabaseUrl, supabaseAnonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-
       const { data: { user }, error: userError } = await authClient.auth.getUser();
-      if (userError || !user) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
 
       try {
-        const { error } = await adminClient
+        await adminClient
           .from("profiles")
           .update({ last_ip: requestIp })
           .eq("user_id", user.id);
 
-        if (error) throw error;
-
-        return new Response(JSON.stringify({ success: true, ip: requestIp }), {
-          status: 200,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ success: true, ip: requestIp });
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Unknown error";
-        return new Response(JSON.stringify({ error: message }), {
-          status: 500,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ error: message }, 500);
       }
     }
 
     // ── user-history: requires admin auth ──
     if (action === "user-history") {
       const authHeader = req.headers.get("Authorization");
-      if (!authHeader) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
+
       const authClient = createClient(supabaseUrl, supabaseAnonKey, {
         global: { headers: { Authorization: authHeader } },
       });
       const { data: { user }, error: userError } = await authClient.auth.getUser();
-      if (userError || !user) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
+
       const { data: roleData } = await adminClient
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
         .eq("role", "admin")
         .maybeSingle();
-      if (!roleData) {
-        return new Response(JSON.stringify({ error: "Forbidden" }), {
-          status: 403,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (!roleData) return jsonResponse({ error: "Forbidden" }, 403);
 
       const uid = targetUserId;
-      if (!uid) {
-        return new Response(JSON.stringify({ error: "Missing targetUserId" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (!uid) return jsonResponse({ error: "Missing targetUserId" }, 400);
 
-      // Get user email from profiles
       const { data: profile } = await adminClient
         .from("profiles")
         .select("email")
@@ -141,7 +134,6 @@ Deno.serve(async (req) => {
 
       const userEmail = profile?.email || "";
 
-      // Fetch all activity data in parallel
       const [viewsRes, readsRes, likesRes, commentsRes, downloadsRes, activityRes] = await Promise.all([
         adminClient.from("project_views").select("*").eq("viewer_email", userEmail),
         adminClient.from("project_reads").select("*").eq("reader_email", userEmail),
@@ -151,39 +143,25 @@ Deno.serve(async (req) => {
         adminClient.from("user_activity").select("*").eq("user_id", uid).order("created_at", { ascending: false }).limit(50),
       ]);
 
-      return new Response(JSON.stringify({
+      return jsonResponse({
         views: viewsRes.data || [],
         reads: readsRes.data || [],
         likes: likesRes.data || [],
         comments: commentsRes.data || [],
         downloads: downloadsRes.data || [],
         activity: activityRes.data || [],
-      }), {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
     // ── All remaining actions require admin auth ──
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
+    if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
 
     const authClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-
     const { data: { user }, error: userError } = await authClient.auth.getUser();
-    if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
+    if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
 
     const { data: roleData } = await adminClient
       .from("user_roles")
@@ -191,13 +169,7 @@ Deno.serve(async (req) => {
       .eq("user_id", user.id)
       .eq("role", "admin")
       .maybeSingle();
-
-    if (!roleData) {
-      return new Response(JSON.stringify({ error: "Forbidden: Admin only" }), {
-        status: 403,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
-    }
+    if (!roleData) return jsonResponse({ error: "Forbidden: Admin only" }, 403);
 
     // ── list ──
     if (action === "list") {
@@ -229,10 +201,7 @@ Deno.serve(async (req) => {
         };
       });
 
-      return new Response(JSON.stringify({ users: enriched }), {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      });
+      return jsonResponse({ users: enriched });
     }
 
     // Helper to resolve userId
@@ -249,25 +218,18 @@ Deno.serve(async (req) => {
 
     // ── update-status ──
     if (action === "update-status") {
-      if (!status) {
-        return new Response(JSON.stringify({ error: "Missing status" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (!status) return jsonResponse({ error: "Missing status" }, 400);
 
       const validStatuses = ["pending", "approved", "restricted", "temporary_locked", "blocked", "rejected"];
-      if (!validStatuses.includes(status)) {
-        return new Response(JSON.stringify({ error: "Invalid status" }), {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
-      }
+      if (!validStatuses.includes(status)) return jsonResponse({ error: "Invalid status" }, 400);
 
       try {
         const resolvedUserId = await getUserId(targetUserId, targetEmail);
 
-        // If blocking, add IP to blocked_ips
+        // Build update object
+        const updateData: Record<string, unknown> = { status };
+
+        // Handle BLOCK: add IP to blocklist
         if (status === "blocked") {
           const { data: profile } = await adminClient
             .from("profiles")
@@ -289,9 +251,15 @@ Deno.serve(async (req) => {
                 .insert({ ip: targetIp, user_id: resolvedUserId, reason: "blocked by admin" });
             }
           }
+          updateData.locked_at = null;
         }
 
-        // If unblocking, remove from blocked_ips
+        // Handle TEMP LOCK: set locked_at timestamp
+        if (status === "temporary_locked") {
+          updateData.locked_at = new Date().toISOString();
+        }
+
+        // Handle UNBLOCK/APPROVE: remove from blocklist
         if (status === "pending" || status === "approved") {
           const { data: profile } = await adminClient
             .from("profiles")
@@ -303,25 +271,20 @@ Deno.serve(async (req) => {
             await adminClient.from("blocked_ips").delete().eq("ip", profile.last_ip);
           }
           await adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId);
+          updateData.locked_at = null;
         }
 
         const { error: updateError } = await adminClient
           .from("profiles")
-          .update({ status })
+          .update(updateData)
           .eq("user_id", resolvedUserId);
 
         if (updateError) throw updateError;
 
-        return new Response(JSON.stringify({ success: true }), {
-          status: 200,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ success: true });
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Unknown error";
-        return new Response(JSON.stringify({ error: message }), {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ error: message }, 400);
       }
     }
 
@@ -330,36 +293,47 @@ Deno.serve(async (req) => {
       try {
         const resolvedUserId = await getUserId(targetUserId, targetEmail);
 
-        await adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId);
+        // Get email for cleaning related tables
+        const { data: profile } = await adminClient
+          .from("profiles")
+          .select("email,last_ip")
+          .eq("user_id", resolvedUserId)
+          .maybeSingle();
+
+        const userEmail = profile?.email || "";
+
+        // Clean all related data
+        await Promise.all([
+          adminClient.from("blocked_ips").delete().eq("user_id", resolvedUserId),
+          profile?.last_ip ? adminClient.from("blocked_ips").delete().eq("ip", profile.last_ip) : Promise.resolve(),
+          adminClient.from("user_roles").delete().eq("user_id", resolvedUserId),
+          adminClient.from("user_activity").delete().eq("user_id", resolvedUserId),
+          userEmail ? adminClient.from("project_comments").delete().eq("email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("project_likes").delete().eq("email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("project_views").delete().eq("viewer_email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("project_reads").delete().eq("reader_email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("blog_comments").delete().eq("email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("blog_likes").delete().eq("email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("blog_views").delete().eq("viewer_email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("download_tracking").delete().eq("downloader_email", userEmail) : Promise.resolve(),
+          userEmail ? adminClient.from("guest_visitors").delete().eq("email", userEmail) : Promise.resolve(),
+        ]);
+
         await adminClient.from("profiles").delete().eq("user_id", resolvedUserId);
-        await adminClient.from("user_roles").delete().eq("user_id", resolvedUserId);
-        await adminClient.from("user_activity").delete().eq("user_id", resolvedUserId);
 
         const { error } = await adminClient.auth.admin.deleteUser(resolvedUserId);
         if (error) throw error;
 
-        return new Response(JSON.stringify({ success: true }), {
-          status: 200,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ success: true });
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Unknown error";
-        return new Response(JSON.stringify({ error: message }), {
-          status: 400,
-          headers: { "Content-Type": "application/json", ...corsHeaders },
-        });
+        return jsonResponse({ error: message }, 400);
       }
     }
 
-    return new Response(JSON.stringify({ error: "Unknown action" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
+    return jsonResponse({ error: "Unknown action" }, 400);
   } catch (error) {
     console.error("manage-users error:", error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json", ...corsHeaders },
-    });
+    return jsonResponse({ error: "Internal server error" }, 500);
   }
 });
