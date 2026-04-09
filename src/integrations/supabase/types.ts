@@ -387,6 +387,7 @@ export type Database = {
           email: string | null
           id: string
           last_ip: string | null
+          locked_at: string | null
           status: string
           updated_at: string
           user_id: string
@@ -397,6 +398,7 @@ export type Database = {
           email?: string | null
           id?: string
           last_ip?: string | null
+          locked_at?: string | null
           status?: string
           updated_at?: string
           user_id: string
@@ -407,6 +409,7 @@ export type Database = {
           email?: string | null
           id?: string
           last_ip?: string | null
+          locked_at?: string | null
           status?: string
           updated_at?: string
           user_id?: string
