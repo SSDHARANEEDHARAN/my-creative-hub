@@ -41,6 +41,7 @@ interface UserProfile {
   lastLogin: string | null;
   lastLogout: string | null;
   activityCount: number;
+  last_ip: string | null;
 }
 
 const AdminDashboardPage = () => {
