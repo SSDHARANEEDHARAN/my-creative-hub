@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { Eye, LogIn, X, User, Mail, Loader2 } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Eye, LogIn, X, User, Mail, Loader2, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,8 @@ const GuestAccessModal = ({ isOpen, onClose, returnPath = "/" }: GuestAccessModa
   const { registerGuest } = useGuest();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isBlogPage = location.pathname.startsWith("/blog");
 
   const targetReturnPath = returnPath?.startsWith("/") ? returnPath : "/";
   const oauthRedirectUri = `${window.location.origin}/login?returnTo=${encodeURIComponent(targetReturnPath)}`;
@@ -200,18 +202,22 @@ const GuestAccessModal = ({ isOpen, onClose, returnPath = "/" }: GuestAccessModa
                   </div>
                 </div>
 
-                <Button
-                  onClick={() => setMode("guest")}
-                  variant="secondary"
-                  className="w-full h-12 text-base"
-                >
-                  <Eye className="w-5 h-5 mr-2" />
-                  Just View (Guest Access)
-                </Button>
+                {!isBlogPage && (
+                  <>
+                    <Button
+                      onClick={() => setMode("guest")}
+                      variant="secondary"
+                      className="w-full h-12 text-base"
+                    >
+                      <Eye className="w-5 h-5 mr-2" />
+                      Just View (Guest Access)
+                    </Button>
 
-                <p className="text-xs text-center text-muted-foreground">
-                  Guest access allows viewing all content except Services page
-                </p>
+                    <p className="text-xs text-center text-muted-foreground">
+                      Guest access allows viewing all content freely
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           ) : (

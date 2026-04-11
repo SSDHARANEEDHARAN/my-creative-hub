@@ -134,41 +134,7 @@ const IndustrialProjectsPage = () => {
     );
   }
 
-  // Not logged in - show page with login popup overlay
-  if (!user) {
-    return (
-      <PageTransition>
-        <div className="min-h-screen bg-background">
-          <Navigation />
-          <main className="pt-24 pb-16">
-            <div className="container mx-auto px-4 flex items-center justify-center min-h-[60vh]">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center max-w-md p-8"
-              >
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-5">
-                  <Factory className="w-8 h-8 text-primary" />
-                </div>
-                <h2 className="text-2xl font-bold text-foreground mb-3">Industrial Projects</h2>
-                <p className="text-muted-foreground mb-6">Sign in to access exclusive industrial-grade projects.</p>
-                <Button onClick={() => setShowLoginPopup(true)} variant="default">
-                  Sign In to Access
-                </Button>
-              </motion.div>
-            </div>
-          </main>
-          <Footer />
-          <LoginPopupModal
-            isOpen={showLoginPopup}
-            onClose={() => setShowLoginPopup(false)}
-            title="Sign In Required"
-            description="Sign in to access Industrial Projects"
-          />
-        </div>
-      </PageTransition>
-    );
-  }
+
 
   if (isBlocked) {
     return (
@@ -318,82 +284,106 @@ const IndustrialProjectsPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                    onClick={() => {
+                      if (!isApproved) {
+                        setShowLoginPopup(true);
+                      }
+                    }}
                   >
-                    <div
-                      className="relative aspect-video overflow-hidden cursor-pointer"
-                      onClick={() => {
-                        handleReadProject(project.id);
-                        if (project.images && project.images.length > 0) {
-                          setLightbox({
-                            images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
-                            index: 0,
-                          });
-                        }
-                      }}
-                    >
-                      {project.images && project.images.length > 0 ? (
-                        <ProjectImageCarousel images={project.images} title={project.title} />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-6 text-center">
-                          <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-4">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded">
-                          Industrial
-                        </span>
-                        {project.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
-                        {project.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                        {project.description}
-                      </p>
-                      <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1 whitespace-nowrap">
-                          <Eye size={12} />
-                          {viewCounts[pid] || 0}
-                        </span>
-                        <button
-                          onClick={() => handleLikeProject(project.id)}
-                          className="flex items-center gap-1 whitespace-nowrap hover:text-primary transition-colors"
-                        >
-                          <Heart
-                            size={12}
-                            className={userLikes[String(project.id)] ? "text-red-500 fill-red-500" : "text-primary/70"}
-                          />
-                          {likeCounts[pid] || 0}
-                        </button>
-                        <span className="flex items-center gap-1 whitespace-nowrap">
-                          <BookOpen size={12} />
-                          {readCounts[pid] || 0}
-                        </span>
-                        <span className="flex items-center gap-1 whitespace-nowrap">
-                          <MessageSquare size={12} />
-                          {commentCounts[pid] || 0}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {project.articleUrl ? (
-                          <Link
-                            to={project.articleUrl}
-                            onClick={() => handleReadProject(project.id)}
-                            className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
-                          >
-                            Read More <FileText size={12} />
-                          </Link>
+                    {isApproved && (
+                      <div
+                        className="relative aspect-video overflow-hidden cursor-pointer"
+                        onClick={() => {
+                          handleReadProject(project.id);
+                          if (project.images && project.images.length > 0) {
+                            setLightbox({
+                              images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
+                              index: 0,
+                            });
+                          }
+                        }}
+                      >
+                        {project.images && project.images.length > 0 ? (
+                          <ProjectImageCarousel images={project.images} title={project.title} />
                         ) : (
-                          <span className="text-muted-foreground text-sm">Read More coming soon</span>
+                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-6 text-center">
+                            <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
+                          </div>
                         )}
                       </div>
+                    )}
+
+                    <div className={isApproved ? "p-4" : "p-6"}>
+                      {isApproved && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          <span className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded">
+                            Industrial
+                          </span>
+                          {project.tags.slice(0, 2).map((tag) => (
+                            <span key={tag} className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs font-medium rounded">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      
+                      <h3 className={`font-bold group-hover:text-primary transition-colors ${isApproved ? "text-lg mb-2 line-clamp-1" : "text-xl mb-4"}`}>
+                        {project.title}
+                      </h3>
+
+                      {!isApproved ? (
+                        <div className="mt-4 pt-4 border-t border-border">
+                          <p className="text-sm font-medium text-primary italic">
+                            “If you want to know more, please sign in to view full details”
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                            {project.description}
+                          </p>
+                          <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1 whitespace-nowrap">
+                              <Eye size={12} />
+                              {viewCounts[pid] || 0}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleLikeProject(project.id);
+                              }}
+                              className="flex items-center gap-1 whitespace-nowrap hover:text-primary transition-colors"
+                            >
+                              <Heart
+                                size={12}
+                                className={userLikes[String(project.id)] ? "text-red-500 fill-red-500" : "text-primary/70"}
+                              />
+                              {likeCounts[pid] || 0}
+                            </button>
+                            <span className="flex items-center gap-1 whitespace-nowrap">
+                              <BookOpen size={12} />
+                              {readCounts[pid] || 0}
+                            </span>
+                            <span className="flex items-center gap-1 whitespace-nowrap">
+                              <MessageSquare size={12} />
+                              {commentCounts[pid] || 0}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {project.articleUrl ? (
+                              <Link
+                                to={project.articleUrl}
+                                onClick={() => handleReadProject(project.id)}
+                                className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
+                              >
+                                Read More <FileText size={12} />
+                              </Link>
+                            ) : (
+                              <span className="text-muted-foreground text-sm">Read More coming soon</span>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </motion.div>
                 );
@@ -408,6 +398,12 @@ const IndustrialProjectsPage = () => {
           initialIndex={lightbox?.index || 0}
           isOpen={!!lightbox}
           onClose={() => setLightbox(null)}
+        />
+        <LoginPopupModal
+          isOpen={showLoginPopup}
+          onClose={() => setShowLoginPopup(false)}
+          title="Sign In Required"
+          description="Sign in to access Industrial Projects"
         />
       </div>
     </PageTransition>

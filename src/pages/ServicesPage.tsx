@@ -4,8 +4,11 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { Button } from "@/components/ui/button";
 import ServiceRequestModal from "@/components/ServiceRequestModal";
-import { Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useGuest } from "@/contexts/GuestContext";
+import GuestAccessModal from "@/components/GuestAccessModal";
+import { ShieldAlert, LogIn, Lock, Code, Cog, Brain, Rocket, Check, MessageSquare, Cpu } from "lucide-react";
 interface Service {
   id: number;
   icon: React.ComponentType<{ className?: string }>;
@@ -160,10 +163,15 @@ const engineeringServices: Service[] = [
 ];
 
 const ServicesPage = () => {
+  const { user } = useAuth();
+  const { isGuest } = useGuest();
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAccessModal, setShowAccessModal] = useState(false);
   
+  const isRestricted = false; // Guest restriction removed by user request
+
   const services = activeTab === "it" ? itServices : engineeringServices;
 
   const handleServiceClick = (service: Service) => {
@@ -325,6 +333,13 @@ const ServicesPage = () => {
           category={activeTab === "it" ? "IT Services" : "Engineering Services"}
         />
       )}
+
+      {/* Access Modal */}
+      <GuestAccessModal 
+        isOpen={showAccessModal} 
+        onClose={() => setShowAccessModal(false)} 
+        returnPath="/services"
+      />
     </>
   );
 };

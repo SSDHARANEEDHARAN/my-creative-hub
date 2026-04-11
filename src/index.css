@@ -123,20 +123,20 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
   }
 
   @media (min-width: 640px) {
     body {
-      font-size: 15px;
+      font-size: 14px;
     }
   }
 
   @media (min-width: 1024px) {
     body {
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 
