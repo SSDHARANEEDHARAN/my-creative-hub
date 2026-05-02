@@ -247,6 +247,14 @@ const AdminModerationPage = () => {
       toast({ title: "Missing fields", description: "Title and description are required", variant: "destructive" });
       return;
     }
+    if (publish) {
+      setPublishConfirm({ kind: "project", title: projectForm.title });
+      return;
+    }
+    await doSaveProject(false);
+  };
+
+  const doSaveProject = async (publish: boolean) => {
     const payload = {
       title: projectForm.title!, description: projectForm.description!,
       category: projectForm.category || "it", tech_stack: projectForm.tech_stack || [],
