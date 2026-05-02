@@ -115,6 +115,10 @@ const AdminModerationPage = () => {
   const [showExpDialog, setShowExpDialog] = useState(false);
   const [expSkillInput, setExpSkillInput] = useState("");
 
+  // Subscriber count + publish confirmation
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+  const [publishConfirm, setPublishConfirm] = useState<null | { kind: "blog" | "project"; title: string }>(null);
+
   const loadData = async () => {
     setIsLoading(true);
     const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes] = await Promise.all([
