@@ -121,7 +121,7 @@ const AdminModerationPage = () => {
 
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, subsRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -130,7 +130,9 @@ const AdminModerationPage = () => {
       supabase.from("certificates").select("*").order("sort_order", { ascending: true }),
       supabase.from("about_content").select("*"),
       supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
+      supabase.from("newsletter_subscribers").select("id", { count: "exact", head: true }).eq("is_active", true),
     ]);
+    setSubscriberCount(subsRes.count ?? 0);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
