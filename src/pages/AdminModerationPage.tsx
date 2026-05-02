@@ -195,6 +195,14 @@ const AdminModerationPage = () => {
       toast({ title: "Missing fields", description: "Title, slug, and content are required", variant: "destructive" });
       return;
     }
+    if (publish) {
+      setPublishConfirm({ kind: "blog", title: blogForm.title });
+      return;
+    }
+    await doSaveBlog(false);
+  };
+
+  const doSaveBlog = async (publish: boolean) => {
     const payload = {
       title: blogForm.title!, slug: blogForm.slug!, excerpt: blogForm.excerpt || "",
       content: blogForm.content!, cover_image: blogForm.cover_image || null,
