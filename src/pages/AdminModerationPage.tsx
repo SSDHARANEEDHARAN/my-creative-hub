@@ -115,9 +115,13 @@ const AdminModerationPage = () => {
   const [showExpDialog, setShowExpDialog] = useState(false);
   const [expSkillInput, setExpSkillInput] = useState("");
 
+  // Subscriber count + publish confirmation
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+  const [publishConfirm, setPublishConfirm] = useState<null | { kind: "blog" | "project"; title: string }>(null);
+
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, subsRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -126,7 +130,9 @@ const AdminModerationPage = () => {
       supabase.from("certificates").select("*").order("sort_order", { ascending: true }),
       supabase.from("about_content").select("*"),
       supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
+      supabase.from("newsletter_subscribers").select("id", { count: "exact", head: true }).eq("is_active", true),
     ]);
+    setSubscriberCount(subsRes.count ?? 0);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
@@ -189,6 +195,14 @@ const AdminModerationPage = () => {
       toast({ title: "Missing fields", description: "Title, slug, and content are required", variant: "destructive" });
       return;
     }
+    if (publish) {
+      setPublishConfirm({ kind: "blog", title: blogForm.title });
+      return;
+    }
+    await doSaveBlog(false);
+  };
+
+  const doSaveBlog = async (publish: boolean) => {
     const payload = {
       title: blogForm.title!, slug: blogForm.slug!, excerpt: blogForm.excerpt || "",
       content: blogForm.content!, cover_image: blogForm.cover_image || null,
@@ -233,6 +247,14 @@ const AdminModerationPage = () => {
       toast({ title: "Missing fields", description: "Title and description are required", variant: "destructive" });
       return;
     }
+    if (publish) {
+      setPublishConfirm({ kind: "project", title: projectForm.title });
+      return;
+    }
+    await doSaveProject(false);
+  };
+
+  const doSaveProject = async (publish: boolean) => {
     const payload = {
       title: projectForm.title!, description: projectForm.description!,
       category: projectForm.category || "it", tech_stack: projectForm.tech_stack || [],
@@ -949,6 +971,47 @@ const AdminModerationPage = () => {
             <div className="flex gap-3 justify-end pt-2">
               <Button variant="outline" onClick={() => setShowExpDialog(false)}>Cancel</Button>
               <Button onClick={saveExp}>{editingExpId ? "Update" : "Add"} Experience</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Publish confirmation with subscriber count preview */}
+      <Dialog open={!!publishConfirm} onOpenChange={(o) => !o && setPublishConfirm(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm publish</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-muted-foreground">
+              You are about to publish the {publishConfirm?.kind}:
+            </p>
+            <p className="font-medium text-foreground border-l-2 border-primary pl-3">
+              {publishConfirm?.title}
+            </p>
+            <div className="rounded-lg border border-border bg-muted/40 p-4">
+              <div className="flex items-center gap-3">
+                <Send className="w-5 h-5 text-primary" />
+                <div>
+                  <p className="text-2xl font-bold text-foreground leading-none">{subscriberCount}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    active {subscriberCount === 1 ? "subscriber" : "subscribers"} will receive a notification email
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={() => setPublishConfirm(null)}>Cancel</Button>
+              <Button
+                onClick={async () => {
+                  const kind = publishConfirm?.kind;
+                  setPublishConfirm(null);
+                  if (kind === "blog") await doSaveBlog(true);
+                  else if (kind === "project") await doSaveProject(true);
+                }}
+              >
+                <Send className="w-4 h-4 mr-2" /> Publish & notify
+              </Button>
             </div>
           </div>
         </DialogContent>
