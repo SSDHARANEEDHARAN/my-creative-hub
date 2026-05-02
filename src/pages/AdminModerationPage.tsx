@@ -975,6 +975,47 @@ const AdminModerationPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Publish confirmation with subscriber count preview */}
+      <Dialog open={!!publishConfirm} onOpenChange={(o) => !o && setPublishConfirm(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm publish</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-muted-foreground">
+              You are about to publish the {publishConfirm?.kind}:
+            </p>
+            <p className="font-medium text-foreground border-l-2 border-primary pl-3">
+              {publishConfirm?.title}
+            </p>
+            <div className="rounded-lg border border-border bg-muted/40 p-4">
+              <div className="flex items-center gap-3">
+                <Send className="w-5 h-5 text-primary" />
+                <div>
+                  <p className="text-2xl font-bold text-foreground leading-none">{subscriberCount}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    active {subscriberCount === 1 ? "subscriber" : "subscribers"} will receive a notification email
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={() => setPublishConfirm(null)}>Cancel</Button>
+              <Button
+                onClick={async () => {
+                  const kind = publishConfirm?.kind;
+                  setPublishConfirm(null);
+                  if (kind === "blog") await doSaveBlog(true);
+                  else if (kind === "project") await doSaveProject(true);
+                }}
+              >
+                <Send className="w-4 h-4 mr-2" /> Publish & notify
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </PageTransition>
   );
 };
