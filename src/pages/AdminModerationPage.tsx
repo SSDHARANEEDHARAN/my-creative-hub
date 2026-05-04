@@ -1056,7 +1056,7 @@ const AdminModerationPage = () => {
       </Dialog>
 
       {/* Publish confirmation with subscriber count preview */}
-      <Dialog open={!!publishConfirm} onOpenChange={(o) => !o && setPublishConfirm(null)}>
+      <Dialog open={!!publishConfirm} onOpenChange={(o) => { if (!o && !publishing) setPublishConfirm(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm publish</DialogTitle>
