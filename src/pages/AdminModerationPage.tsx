@@ -115,9 +115,51 @@ const AdminModerationPage = () => {
   const [showExpDialog, setShowExpDialog] = useState(false);
   const [expSkillInput, setExpSkillInput] = useState("");
 
-  // Subscriber count + publish confirmation
-  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+  // Subscriber audience preview + publish confirmation
+  interface AudienceStats {
+    active: number;
+    inactive: number;
+    total: number;
+    topDomains: { domain: string; count: number }[];
+  }
+  const [audience, setAudience] = useState<AudienceStats>({ active: 0, inactive: 0, total: 0, topDomains: [] });
+  const [audienceLoading, setAudienceLoading] = useState(false);
   const [publishConfirm, setPublishConfirm] = useState<null | { kind: "blog" | "project"; title: string }>(null);
+  const [publishing, setPublishing] = useState(false);
+
+  // Notification history
+  interface PublishNotification {
+    id: string; kind: string; title: string; slug: string | null;
+    total_subscribers: number; sent_count: number; failed_count: number;
+    status: string; error_message: string | null; created_at: string;
+  }
+  const [notifications, setNotifications] = useState<PublishNotification[]>([]);
+
+  const fetchAudience = async (): Promise<AudienceStats> => {
+    setAudienceLoading(true);
+    const { data } = await supabase.from("newsletter_subscribers").select("email, is_active");
+    const rows = data || [];
+    const active = rows.filter(r => r.is_active).length;
+    const inactive = rows.length - active;
+    const domainMap = new Map<string, number>();
+    rows.filter(r => r.is_active).forEach(r => {
+      const d = (r.email || "").split("@")[1]?.toLowerCase() || "unknown";
+      domainMap.set(d, (domainMap.get(d) || 0) + 1);
+    });
+    const topDomains = Array.from(domainMap.entries())
+      .map(([domain, count]) => ({ domain, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    const stats = { active, inactive, total: rows.length, topDomains };
+    setAudience(stats);
+    setAudienceLoading(false);
+    return stats;
+  };
+
+  const openPublishConfirm = async (kind: "blog" | "project", title: string) => {
+    setPublishConfirm({ kind, title });
+    await fetchAudience(); // refresh right before showing the count
+  };
 
   const loadData = async () => {
     setIsLoading(true);
