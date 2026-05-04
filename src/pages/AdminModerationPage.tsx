@@ -579,6 +579,7 @@ const AdminModerationPage = () => {
                 </TabsTrigger>
                 <TabsTrigger value="approved">Approved</TabsTrigger>
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
+                <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
               </TabsList>
 
               {/* ── Blogs Tab ── */}
