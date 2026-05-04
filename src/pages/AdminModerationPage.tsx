@@ -239,10 +239,27 @@ const AdminModerationPage = () => {
       return;
     }
     if (publish) {
-      setPublishConfirm({ kind: "blog", title: blogForm.title });
+      await openPublishConfirm("blog", blogForm.title);
       return;
     }
     await doSaveBlog(false);
+  };
+
+  const logNotification = async (entry: {
+    kind: "blog" | "project"; title: string; slug?: string | null;
+    total_subscribers: number; sent_count: number; failed_count: number;
+    status: string; error_message?: string | null;
+  }) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("publish_notifications").insert({
+        kind: entry.kind, title: entry.title, slug: entry.slug ?? null,
+        triggered_by: user?.id ?? null,
+        total_subscribers: entry.total_subscribers,
+        sent_count: entry.sent_count, failed_count: entry.failed_count,
+        status: entry.status, error_message: entry.error_message ?? null,
+      });
+    } catch (e) { console.error("Failed to log notification", e); }
   };
 
   const doSaveBlog = async (publish: boolean) => {
@@ -258,11 +275,20 @@ const AdminModerationPage = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     if (publish) {
       try {
-        await supabase.functions.invoke("notify-subscribers", {
+        const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
           body: { type: "post", title: blogForm.title, description: blogForm.excerpt || "", slug: blogForm.slug },
         });
-        toast({ title: editingBlogId ? "Blog updated & subscribers notified" : "Blog published & subscribers notified" });
-      } catch { toast({ title: editingBlogId ? "Blog updated" : "Blog created" }); }
+        if (invokeErr) throw invokeErr;
+        const sent = (data as any)?.sent ?? 0;
+        const total = (data as any)?.total ?? 0;
+        const failed = Math.max(0, total - sent);
+        const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        toast({ title: editingBlogId ? "Blog updated" : "Blog published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
+      } catch (e: any) {
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        toast({ title: editingBlogId ? "Blog updated" : "Blog created", description: "Notification failed — see history", variant: "destructive" });
+      }
     } else {
       toast({ title: editingBlogId ? "Blog saved as draft" : "Blog draft created" });
     }
@@ -291,7 +317,7 @@ const AdminModerationPage = () => {
       return;
     }
     if (publish) {
-      setPublishConfirm({ kind: "project", title: projectForm.title });
+      await openPublishConfirm("project", projectForm.title);
       return;
     }
     await doSaveProject(false);
@@ -311,17 +337,27 @@ const AdminModerationPage = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     if (publish) {
       try {
-        await supabase.functions.invoke("notify-subscribers", {
+        const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
           body: { type: "project", title: projectForm.title, description: projectForm.description?.substring(0, 200) || "" },
         });
-        toast({ title: editingProjectId ? "Project updated & subscribers notified" : "Project published & subscribers notified" });
-      } catch { toast({ title: editingProjectId ? "Project updated" : "Project created" }); }
+        if (invokeErr) throw invokeErr;
+        const sent = (data as any)?.sent ?? 0;
+        const total = (data as any)?.total ?? 0;
+        const failed = Math.max(0, total - sent);
+        const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        toast({ title: editingProjectId ? "Project updated" : "Project published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
+      } catch (e: any) {
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        toast({ title: editingProjectId ? "Project updated" : "Project created", description: "Notification failed — see history", variant: "destructive" });
+      }
     } else {
       toast({ title: editingProjectId ? "Project saved as draft" : "Project draft created" });
     }
     setShowProjectDialog(false);
     loadData();
   };
+
 
   const deleteProject = async (id: string) => {
     const { error } = await supabase.from("projects").delete().eq("id", id);
