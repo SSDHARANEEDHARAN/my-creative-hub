@@ -1068,28 +1068,69 @@ const AdminModerationPage = () => {
             <p className="font-medium text-foreground border-l-2 border-primary pl-3">
               {publishConfirm?.title}
             </p>
-            <div className="rounded-lg border border-border bg-muted/40 p-4">
-              <div className="flex items-center gap-3">
-                <Send className="w-5 h-5 text-primary" />
-                <div>
-                  <p className="text-2xl font-bold text-foreground leading-none">{subscriberCount}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    active {subscriberCount === 1 ? "subscriber" : "subscribers"} will receive a notification email
-                  </p>
-                </div>
+            <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">Audience preview</span>
+                <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
+                  <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
+                </Button>
               </div>
+              {audienceLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground py-3">
+                  <RefreshCw className="w-4 h-4 animate-spin" /> Refreshing audience…
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-2xl font-bold text-foreground leading-none">{audience.active}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        active {audience.active === 1 ? "subscriber" : "subscribers"} will receive email
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-muted-foreground/70 leading-none">{audience.inactive}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        inactive / unsubscribed (will be skipped)
+                      </p>
+                    </div>
+                  </div>
+                  {audience.topDomains.length > 0 && (
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Top email domains</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {audience.topDomains.map(d => (
+                          <Badge key={d.domain} variant="secondary" className="text-[10px]">
+                            {d.domain} · {d.count}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             <div className="flex gap-2 justify-end pt-2">
-              <Button variant="outline" onClick={() => setPublishConfirm(null)}>Cancel</Button>
+              <Button variant="outline" disabled={publishing} onClick={() => setPublishConfirm(null)}>Cancel</Button>
               <Button
+                disabled={publishing || audienceLoading}
                 onClick={async () => {
                   const kind = publishConfirm?.kind;
-                  setPublishConfirm(null);
-                  if (kind === "blog") await doSaveBlog(true);
-                  else if (kind === "project") await doSaveProject(true);
+                  setPublishing(true);
+                  try {
+                    if (kind === "blog") await doSaveBlog(true);
+                    else if (kind === "project") await doSaveProject(true);
+                  } finally {
+                    setPublishing(false);
+                    setPublishConfirm(null);
+                  }
                 }}
               >
-                <Send className="w-4 h-4 mr-2" /> Publish & notify
+                {publishing ? (
+                  <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Sending…</>
+                ) : (
+                  <><Send className="w-4 h-4 mr-2" /> Publish & notify</>
+                )}
               </Button>
             </div>
           </div>
