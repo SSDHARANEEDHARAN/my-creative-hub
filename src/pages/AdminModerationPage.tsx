@@ -115,13 +115,55 @@ const AdminModerationPage = () => {
   const [showExpDialog, setShowExpDialog] = useState(false);
   const [expSkillInput, setExpSkillInput] = useState("");
 
-  // Subscriber count + publish confirmation
-  const [subscriberCount, setSubscriberCount] = useState<number>(0);
+  // Subscriber audience preview + publish confirmation
+  interface AudienceStats {
+    active: number;
+    inactive: number;
+    total: number;
+    topDomains: { domain: string; count: number }[];
+  }
+  const [audience, setAudience] = useState<AudienceStats>({ active: 0, inactive: 0, total: 0, topDomains: [] });
+  const [audienceLoading, setAudienceLoading] = useState(false);
   const [publishConfirm, setPublishConfirm] = useState<null | { kind: "blog" | "project"; title: string }>(null);
+  const [publishing, setPublishing] = useState(false);
+
+  // Notification history
+  interface PublishNotification {
+    id: string; kind: string; title: string; slug: string | null;
+    total_subscribers: number; sent_count: number; failed_count: number;
+    status: string; error_message: string | null; created_at: string;
+  }
+  const [notifications, setNotifications] = useState<PublishNotification[]>([]);
+
+  const fetchAudience = async (): Promise<AudienceStats> => {
+    setAudienceLoading(true);
+    const { data } = await supabase.from("newsletter_subscribers").select("email, is_active");
+    const rows = data || [];
+    const active = rows.filter(r => r.is_active).length;
+    const inactive = rows.length - active;
+    const domainMap = new Map<string, number>();
+    rows.filter(r => r.is_active).forEach(r => {
+      const d = (r.email || "").split("@")[1]?.toLowerCase() || "unknown";
+      domainMap.set(d, (domainMap.get(d) || 0) + 1);
+    });
+    const topDomains = Array.from(domainMap.entries())
+      .map(([domain, count]) => ({ domain, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    const stats = { active, inactive, total: rows.length, topDomains };
+    setAudience(stats);
+    setAudienceLoading(false);
+    return stats;
+  };
+
+  const openPublishConfirm = async (kind: "blog" | "project", title: string) => {
+    setPublishConfirm({ kind, title });
+    await fetchAudience(); // refresh right before showing the count
+  };
 
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, subsRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -130,9 +172,10 @@ const AdminModerationPage = () => {
       supabase.from("certificates").select("*").order("sort_order", { ascending: true }),
       supabase.from("about_content").select("*"),
       supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
-      supabase.from("newsletter_subscribers").select("id", { count: "exact", head: true }).eq("is_active", true),
+      supabase.from("publish_notifications").select("*").order("created_at", { ascending: false }).limit(50),
     ]);
-    setSubscriberCount(subsRes.count ?? 0);
+    await fetchAudience();
+    if (notifsRes.data) setNotifications(notifsRes.data as PublishNotification[]);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
@@ -196,10 +239,27 @@ const AdminModerationPage = () => {
       return;
     }
     if (publish) {
-      setPublishConfirm({ kind: "blog", title: blogForm.title });
+      await openPublishConfirm("blog", blogForm.title);
       return;
     }
     await doSaveBlog(false);
+  };
+
+  const logNotification = async (entry: {
+    kind: "blog" | "project"; title: string; slug?: string | null;
+    total_subscribers: number; sent_count: number; failed_count: number;
+    status: string; error_message?: string | null;
+  }) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("publish_notifications").insert({
+        kind: entry.kind, title: entry.title, slug: entry.slug ?? null,
+        triggered_by: user?.id ?? null,
+        total_subscribers: entry.total_subscribers,
+        sent_count: entry.sent_count, failed_count: entry.failed_count,
+        status: entry.status, error_message: entry.error_message ?? null,
+      });
+    } catch (e) { console.error("Failed to log notification", e); }
   };
 
   const doSaveBlog = async (publish: boolean) => {
@@ -215,11 +275,20 @@ const AdminModerationPage = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     if (publish) {
       try {
-        await supabase.functions.invoke("notify-subscribers", {
+        const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
           body: { type: "post", title: blogForm.title, description: blogForm.excerpt || "", slug: blogForm.slug },
         });
-        toast({ title: editingBlogId ? "Blog updated & subscribers notified" : "Blog published & subscribers notified" });
-      } catch { toast({ title: editingBlogId ? "Blog updated" : "Blog created" }); }
+        if (invokeErr) throw invokeErr;
+        const sent = (data as any)?.sent ?? 0;
+        const total = (data as any)?.total ?? 0;
+        const failed = Math.max(0, total - sent);
+        const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        toast({ title: editingBlogId ? "Blog updated" : "Blog published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
+      } catch (e: any) {
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        toast({ title: editingBlogId ? "Blog updated" : "Blog created", description: "Notification failed — see history", variant: "destructive" });
+      }
     } else {
       toast({ title: editingBlogId ? "Blog saved as draft" : "Blog draft created" });
     }
@@ -248,7 +317,7 @@ const AdminModerationPage = () => {
       return;
     }
     if (publish) {
-      setPublishConfirm({ kind: "project", title: projectForm.title });
+      await openPublishConfirm("project", projectForm.title);
       return;
     }
     await doSaveProject(false);
@@ -268,17 +337,27 @@ const AdminModerationPage = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
     if (publish) {
       try {
-        await supabase.functions.invoke("notify-subscribers", {
+        const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
           body: { type: "project", title: projectForm.title, description: projectForm.description?.substring(0, 200) || "" },
         });
-        toast({ title: editingProjectId ? "Project updated & subscribers notified" : "Project published & subscribers notified" });
-      } catch { toast({ title: editingProjectId ? "Project updated" : "Project created" }); }
+        if (invokeErr) throw invokeErr;
+        const sent = (data as any)?.sent ?? 0;
+        const total = (data as any)?.total ?? 0;
+        const failed = Math.max(0, total - sent);
+        const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        toast({ title: editingProjectId ? "Project updated" : "Project published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
+      } catch (e: any) {
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        toast({ title: editingProjectId ? "Project updated" : "Project created", description: "Notification failed — see history", variant: "destructive" });
+      }
     } else {
       toast({ title: editingProjectId ? "Project saved as draft" : "Project draft created" });
     }
     setShowProjectDialog(false);
     loadData();
   };
+
 
   const deleteProject = async (id: string) => {
     const { error } = await supabase.from("projects").delete().eq("id", id);
@@ -483,7 +562,7 @@ const AdminModerationPage = () => {
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 md:grid-cols-9">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-10">
                 <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
@@ -500,6 +579,7 @@ const AdminModerationPage = () => {
                 </TabsTrigger>
                 <TabsTrigger value="approved">Approved</TabsTrigger>
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
+                <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
               </TabsList>
 
               {/* ── Blogs Tab ── */}
@@ -717,6 +797,63 @@ const AdminModerationPage = () => {
                     ))}
                   </div>
                 )}
+              </TabsContent>
+
+              <TabsContent value="notifications" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Send className="w-5 h-5" /> Publish Notification History
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Last email send status for every published blog and project. Most recent 50 events.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {notifications.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No publish notifications yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                              <th className="py-2 pr-3">When</th>
+                              <th className="py-2 pr-3">Type</th>
+                              <th className="py-2 pr-3">Title</th>
+                              <th className="py-2 pr-3">Status</th>
+                              <th className="py-2 pr-3 text-right">Sent / Total</th>
+                              <th className="py-2 pr-3 text-right">Failed</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {notifications.map(n => (
+                              <tr key={n.id} className="border-b border-border/40">
+                                <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</td>
+                                <td className="py-2 pr-3"><Badge variant="outline">{n.kind}</Badge></td>
+                                <td className="py-2 pr-3 font-medium max-w-xs truncate" title={n.title}>{n.title}</td>
+                                <td className="py-2 pr-3">
+                                  <Badge variant={
+                                    n.status === "success" ? "default" :
+                                    n.status === "partial" ? "secondary" :
+                                    n.status === "no_subscribers" ? "outline" :
+                                    "destructive"
+                                  }>
+                                    {n.status}
+                                  </Badge>
+                                  {n.error_message && (
+                                    <p className="text-[11px] text-destructive mt-1 max-w-xs truncate" title={n.error_message}>{n.error_message}</p>
+                                  )}
+                                </td>
+                                <td className="py-2 pr-3 text-right tabular-nums">{n.sent_count} / {n.total_subscribers}</td>
+                                <td className="py-2 pr-3 text-right tabular-nums">{n.failed_count}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </div>
@@ -977,7 +1114,7 @@ const AdminModerationPage = () => {
       </Dialog>
 
       {/* Publish confirmation with subscriber count preview */}
-      <Dialog open={!!publishConfirm} onOpenChange={(o) => !o && setPublishConfirm(null)}>
+      <Dialog open={!!publishConfirm} onOpenChange={(o) => { if (!o && !publishing) setPublishConfirm(null); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm publish</DialogTitle>
@@ -989,28 +1126,69 @@ const AdminModerationPage = () => {
             <p className="font-medium text-foreground border-l-2 border-primary pl-3">
               {publishConfirm?.title}
             </p>
-            <div className="rounded-lg border border-border bg-muted/40 p-4">
-              <div className="flex items-center gap-3">
-                <Send className="w-5 h-5 text-primary" />
-                <div>
-                  <p className="text-2xl font-bold text-foreground leading-none">{subscriberCount}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    active {subscriberCount === 1 ? "subscriber" : "subscribers"} will receive a notification email
-                  </p>
-                </div>
+            <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">Audience preview</span>
+                <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
+                  <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
+                </Button>
               </div>
+              {audienceLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground py-3">
+                  <RefreshCw className="w-4 h-4 animate-spin" /> Refreshing audience…
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-2xl font-bold text-foreground leading-none">{audience.active}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        active {audience.active === 1 ? "subscriber" : "subscribers"} will receive email
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-muted-foreground/70 leading-none">{audience.inactive}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        inactive / unsubscribed (will be skipped)
+                      </p>
+                    </div>
+                  </div>
+                  {audience.topDomains.length > 0 && (
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Top email domains</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {audience.topDomains.map(d => (
+                          <Badge key={d.domain} variant="secondary" className="text-[10px]">
+                            {d.domain} · {d.count}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             <div className="flex gap-2 justify-end pt-2">
-              <Button variant="outline" onClick={() => setPublishConfirm(null)}>Cancel</Button>
+              <Button variant="outline" disabled={publishing} onClick={() => setPublishConfirm(null)}>Cancel</Button>
               <Button
+                disabled={publishing || audienceLoading}
                 onClick={async () => {
                   const kind = publishConfirm?.kind;
-                  setPublishConfirm(null);
-                  if (kind === "blog") await doSaveBlog(true);
-                  else if (kind === "project") await doSaveProject(true);
+                  setPublishing(true);
+                  try {
+                    if (kind === "blog") await doSaveBlog(true);
+                    else if (kind === "project") await doSaveProject(true);
+                  } finally {
+                    setPublishing(false);
+                    setPublishConfirm(null);
+                  }
                 }}
               >
-                <Send className="w-4 h-4 mr-2" /> Publish & notify
+                {publishing ? (
+                  <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Sending…</>
+                ) : (
+                  <><Send className="w-4 h-4 mr-2" /> Publish & notify</>
+                )}
               </Button>
             </div>
           </div>

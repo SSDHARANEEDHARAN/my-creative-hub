@@ -575,6 +575,51 @@ export type Database = {
         }
         Relationships: []
       }
+      publish_notifications: {
+        Row: {
+          content_id: string | null
+          created_at: string
+          error_message: string | null
+          failed_count: number
+          id: string
+          kind: string
+          sent_count: number
+          slug: string | null
+          status: string
+          title: string
+          total_subscribers: number
+          triggered_by: string | null
+        }
+        Insert: {
+          content_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          failed_count?: number
+          id?: string
+          kind: string
+          sent_count?: number
+          slug?: string | null
+          status?: string
+          title: string
+          total_subscribers?: number
+          triggered_by?: string | null
+        }
+        Update: {
+          content_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          failed_count?: number
+          id?: string
+          kind?: string
+          sent_count?: number
+          slug?: string | null
+          status?: string
+          title?: string
+          total_subscribers?: number
+          triggered_by?: string | null
+        }
+        Relationships: []
+      }
       skills: {
         Row: {
           category: string
