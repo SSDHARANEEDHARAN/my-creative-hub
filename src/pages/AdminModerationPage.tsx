@@ -798,6 +798,63 @@ const AdminModerationPage = () => {
                   </div>
                 )}
               </TabsContent>
+
+              <TabsContent value="notifications" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Send className="w-5 h-5" /> Publish Notification History
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Last email send status for every published blog and project. Most recent 50 events.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {notifications.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No publish notifications yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                              <th className="py-2 pr-3">When</th>
+                              <th className="py-2 pr-3">Type</th>
+                              <th className="py-2 pr-3">Title</th>
+                              <th className="py-2 pr-3">Status</th>
+                              <th className="py-2 pr-3 text-right">Sent / Total</th>
+                              <th className="py-2 pr-3 text-right">Failed</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {notifications.map(n => (
+                              <tr key={n.id} className="border-b border-border/40">
+                                <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</td>
+                                <td className="py-2 pr-3"><Badge variant="outline">{n.kind}</Badge></td>
+                                <td className="py-2 pr-3 font-medium max-w-xs truncate" title={n.title}>{n.title}</td>
+                                <td className="py-2 pr-3">
+                                  <Badge variant={
+                                    n.status === "success" ? "default" :
+                                    n.status === "partial" ? "secondary" :
+                                    n.status === "no_subscribers" ? "outline" :
+                                    "destructive"
+                                  }>
+                                    {n.status}
+                                  </Badge>
+                                  {n.error_message && (
+                                    <p className="text-[11px] text-destructive mt-1 max-w-xs truncate" title={n.error_message}>{n.error_message}</p>
+                                  )}
+                                </td>
+                                <td className="py-2 pr-3 text-right tabular-nums">{n.sent_count} / {n.total_subscribers}</td>
+                                <td className="py-2 pr-3 text-right tabular-nums">{n.failed_count}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
         </main>
