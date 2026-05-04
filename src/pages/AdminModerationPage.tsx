@@ -562,7 +562,7 @@ const AdminModerationPage = () => {
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 md:grid-cols-9">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-10">
                 <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
