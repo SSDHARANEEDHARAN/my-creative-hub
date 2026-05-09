@@ -296,6 +296,42 @@ const AdminModerationPage = () => {
     } catch (e) { console.error("Failed to log notification", e); }
   };
 
+  const retryNotification = async (n: PublishNotification) => {
+    setRetryingId(n.id);
+    try {
+      const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
+        body: {
+          type: n.kind === "blog" ? "post" : "project",
+          title: n.title,
+          description: "",
+          slug: n.slug || undefined,
+        },
+      });
+      if (invokeErr) throw invokeErr;
+      const sent = (data as any)?.sent ?? 0;
+      const total = (data as any)?.total ?? 0;
+      const failed = Math.max(0, total - sent);
+      const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+      await logNotification({
+        kind: n.kind as "blog" | "project", title: n.title, slug: n.slug,
+        total_subscribers: total, sent_count: sent, failed_count: failed, status,
+        note: `Retry of ${n.id}`,
+      });
+      toast({ title: "Retry complete", description: total === 0 ? "No active subscribers" : `Sent to ${sent}/${total}` });
+    } catch (e: any) {
+      await logNotification({
+        kind: n.kind as "blog" | "project", title: n.title, slug: n.slug,
+        total_subscribers: 0, sent_count: 0, failed_count: 0,
+        status: "failed", error_message: e?.message || "Retry failed",
+        note: `Retry of ${n.id}`,
+      });
+      toast({ title: "Retry failed", description: e?.message || "Unknown error", variant: "destructive" });
+    } finally {
+      setRetryingId(null);
+      loadData();
+    }
+  };
+
   const doSaveBlog = async (publish: boolean) => {
     const payload = {
       title: blogForm.title!, slug: blogForm.slug!, excerpt: blogForm.excerpt || "",
