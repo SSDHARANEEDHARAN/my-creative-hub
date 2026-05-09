@@ -583,6 +583,7 @@ export type Database = {
           failed_count: number
           id: string
           kind: string
+          note: string | null
           sent_count: number
           slug: string | null
           status: string
@@ -597,6 +598,7 @@ export type Database = {
           failed_count?: number
           id?: string
           kind: string
+          note?: string | null
           sent_count?: number
           slug?: string | null
           status?: string
@@ -611,6 +613,7 @@ export type Database = {
           failed_count?: number
           id?: string
           kind?: string
+          note?: string | null
           sent_count?: number
           slug?: string | null
           status?: string
