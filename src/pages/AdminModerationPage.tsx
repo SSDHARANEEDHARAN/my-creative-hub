@@ -1212,9 +1212,14 @@ const AdminModerationPage = () => {
             <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Audience preview</span>
-                <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
-                  <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
-                </Button>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" disabled={audienceLoading || publishing || audience.total === 0} onClick={exportAudienceCSV} title="Export audience breakdown as CSV">
+                    <Download className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
+                    <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
+                  </Button>
+                </div>
               </div>
               {audienceLoading ? (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground py-3">
@@ -1250,6 +1255,18 @@ const AdminModerationPage = () => {
                   )}
                 </>
               )}
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground">Publish note (optional)</label>
+              <Textarea
+                placeholder="Add a comment for this publish event (saved with the notification log)…"
+                value={publishNote}
+                onChange={(e) => setPublishNote(e.target.value)}
+                disabled={publishing}
+                rows={2}
+                maxLength={500}
+              />
+              <p className="text-[10px] text-muted-foreground text-right">{publishNote.length}/500</p>
             </div>
             <div className="flex gap-2 justify-end pt-2">
               <Button variant="outline" disabled={publishing} onClick={() => setPublishConfirm(null)}>Cancel</Button>
