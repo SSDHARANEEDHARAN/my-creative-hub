@@ -702,7 +702,7 @@ const AdminModerationPage = () => {
                             {project.featured && <Badge variant="outline">Featured</Badge>}
                             <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
                             <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => deleteProject(project.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => setDeleteConfirm({ kind: "project", id: project.id, label: project.title })}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
