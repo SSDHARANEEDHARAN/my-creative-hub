@@ -19,8 +19,12 @@ import ReactMarkdown from "react-markdown";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
-  Award, BarChart3, GraduationCap, Info, Briefcase,
+  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // ─── Types ───────────────────────────────────────────────────────
 interface Comment {
