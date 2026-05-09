@@ -379,7 +379,7 @@ const AdminModerationPage = () => {
         const total = (data as any)?.total ?? 0;
         const failed = Math.max(0, total - sent);
         const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
-        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status, note: publishNote || null });
         toast({ title: editingProjectId ? "Project updated" : "Project published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
       } catch (e: any) {
         await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
