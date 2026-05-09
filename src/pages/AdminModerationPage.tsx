@@ -136,8 +136,17 @@ const AdminModerationPage = () => {
     id: string; kind: string; title: string; slug: string | null;
     total_subscribers: number; sent_count: number; failed_count: number;
     status: string; error_message: string | null; created_at: string;
+    note: string | null;
   }
   const [notifications, setNotifications] = useState<PublishNotification[]>([]);
+  const [publishNote, setPublishNote] = useState("");
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+
+  // Delete confirmation
+  const [deleteConfirm, setDeleteConfirm] = useState<null | {
+    kind: "blog" | "project" | "comment" | "skill" | "cert" | "exp";
+    id: string; label: string;
+  }>(null);
 
   const fetchAudience = async (): Promise<AudienceStats> => {
     setAudienceLoading(true);
