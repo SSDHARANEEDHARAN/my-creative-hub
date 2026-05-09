@@ -19,8 +19,12 @@ import ReactMarkdown from "react-markdown";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
-  Award, BarChart3, GraduationCap, Info, Briefcase,
+  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw,
 } from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 // ─── Types ───────────────────────────────────────────────────────
 interface Comment {
@@ -132,8 +136,17 @@ const AdminModerationPage = () => {
     id: string; kind: string; title: string; slug: string | null;
     total_subscribers: number; sent_count: number; failed_count: number;
     status: string; error_message: string | null; created_at: string;
+    note: string | null;
   }
   const [notifications, setNotifications] = useState<PublishNotification[]>([]);
+  const [publishNote, setPublishNote] = useState("");
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+
+  // Delete confirmation
+  const [deleteConfirm, setDeleteConfirm] = useState<null | {
+    kind: "blog" | "project" | "comment" | "skill" | "cert" | "exp";
+    id: string; label: string;
+  }>(null);
 
   const fetchAudience = async (): Promise<AudienceStats> => {
     setAudienceLoading(true);
@@ -157,8 +170,28 @@ const AdminModerationPage = () => {
   };
 
   const openPublishConfirm = async (kind: "blog" | "project", title: string) => {
+    setPublishNote("");
     setPublishConfirm({ kind, title });
     await fetchAudience(); // refresh right before showing the count
+  };
+
+  const exportAudienceCSV = () => {
+    const lines: string[] = [];
+    lines.push("section,key,value");
+    lines.push(`summary,total,${audience.total}`);
+    lines.push(`summary,active,${audience.active}`);
+    lines.push(`summary,inactive,${audience.inactive}`);
+    audience.topDomains.forEach(d => {
+      lines.push(`top_domain,${d.domain.replace(/,/g, "")},${d.count}`);
+    });
+    const csv = lines.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `audience-preview-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
   };
 
   const loadData = async () => {
@@ -248,7 +281,7 @@ const AdminModerationPage = () => {
   const logNotification = async (entry: {
     kind: "blog" | "project"; title: string; slug?: string | null;
     total_subscribers: number; sent_count: number; failed_count: number;
-    status: string; error_message?: string | null;
+    status: string; error_message?: string | null; note?: string | null;
   }) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -258,8 +291,45 @@ const AdminModerationPage = () => {
         total_subscribers: entry.total_subscribers,
         sent_count: entry.sent_count, failed_count: entry.failed_count,
         status: entry.status, error_message: entry.error_message ?? null,
-      });
+        note: entry.note ?? null,
+      } as any);
     } catch (e) { console.error("Failed to log notification", e); }
+  };
+
+  const retryNotification = async (n: PublishNotification) => {
+    setRetryingId(n.id);
+    try {
+      const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
+        body: {
+          type: n.kind === "blog" ? "post" : "project",
+          title: n.title,
+          description: "",
+          slug: n.slug || undefined,
+        },
+      });
+      if (invokeErr) throw invokeErr;
+      const sent = (data as any)?.sent ?? 0;
+      const total = (data as any)?.total ?? 0;
+      const failed = Math.max(0, total - sent);
+      const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+      await logNotification({
+        kind: n.kind as "blog" | "project", title: n.title, slug: n.slug,
+        total_subscribers: total, sent_count: sent, failed_count: failed, status,
+        note: `Retry of ${n.id}`,
+      });
+      toast({ title: "Retry complete", description: total === 0 ? "No active subscribers" : `Sent to ${sent}/${total}` });
+    } catch (e: any) {
+      await logNotification({
+        kind: n.kind as "blog" | "project", title: n.title, slug: n.slug,
+        total_subscribers: 0, sent_count: 0, failed_count: 0,
+        status: "failed", error_message: e?.message || "Retry failed",
+        note: `Retry of ${n.id}`,
+      });
+      toast({ title: "Retry failed", description: e?.message || "Unknown error", variant: "destructive" });
+    } finally {
+      setRetryingId(null);
+      loadData();
+    }
   };
 
   const doSaveBlog = async (publish: boolean) => {
@@ -283,10 +353,10 @@ const AdminModerationPage = () => {
         const total = (data as any)?.total ?? 0;
         const failed = Math.max(0, total - sent);
         const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
-        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: total, sent_count: sent, failed_count: failed, status, note: publishNote || null });
         toast({ title: editingBlogId ? "Blog updated" : "Blog published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
       } catch (e: any) {
-        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error", note: publishNote || null });
         toast({ title: editingBlogId ? "Blog updated" : "Blog created", description: "Notification failed — see history", variant: "destructive" });
       }
     } else {
@@ -345,10 +415,10 @@ const AdminModerationPage = () => {
         const total = (data as any)?.total ?? 0;
         const failed = Math.max(0, total - sent);
         const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
-        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status });
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status, note: publishNote || null });
         toast({ title: editingProjectId ? "Project updated" : "Project published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
       } catch (e: any) {
-        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error", note: publishNote || null });
         toast({ title: editingProjectId ? "Project updated" : "Project created", description: "Notification failed — see history", variant: "destructive" });
       }
     } else {
@@ -602,7 +672,7 @@ const AdminModerationPage = () => {
                           <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
                           <div className="flex gap-1.5">
                             <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => deleteBlog(blog.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => setDeleteConfirm({ kind: "blog", id: blog.id, label: blog.title })}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -632,7 +702,7 @@ const AdminModerationPage = () => {
                             {project.featured && <Badge variant="outline">Featured</Badge>}
                             <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
                             <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => deleteProject(project.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => setDeleteConfirm({ kind: "project", id: project.id, label: project.title })}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -823,10 +893,14 @@ const AdminModerationPage = () => {
                               <th className="py-2 pr-3">Status</th>
                               <th className="py-2 pr-3 text-right">Sent / Total</th>
                               <th className="py-2 pr-3 text-right">Failed</th>
+                              <th className="py-2 pr-3">Note</th>
+                              <th className="py-2 pr-3 text-right">Actions</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {notifications.map(n => (
+                            {notifications.map(n => {
+                              const canRetry = n.status === "failed" || n.status === "partial";
+                              return (
                               <tr key={n.id} className="border-b border-border/40">
                                 <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</td>
                                 <td className="py-2 pr-3"><Badge variant="outline">{n.kind}</Badge></td>
@@ -846,8 +920,17 @@ const AdminModerationPage = () => {
                                 </td>
                                 <td className="py-2 pr-3 text-right tabular-nums">{n.sent_count} / {n.total_subscribers}</td>
                                 <td className="py-2 pr-3 text-right tabular-nums">{n.failed_count}</td>
+                                <td className="py-2 pr-3 text-xs text-muted-foreground max-w-[180px] truncate" title={n.note || ""}>{n.note || "—"}</td>
+                                <td className="py-2 pr-3 text-right">
+                                  {canRetry ? (
+                                    <Button size="sm" variant="outline" disabled={retryingId === n.id} onClick={() => retryNotification(n)}>
+                                      {retryingId === n.id ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <><RotateCw className="w-3.5 h-3.5 mr-1" />Retry</>}
+                                    </Button>
+                                  ) : <span className="text-xs text-muted-foreground">—</span>}
+                                </td>
                               </tr>
-                            ))}
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
@@ -1129,9 +1212,14 @@ const AdminModerationPage = () => {
             <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">Audience preview</span>
-                <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
-                  <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
-                </Button>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" disabled={audienceLoading || publishing || audience.total === 0} onClick={exportAudienceCSV} title="Export audience breakdown as CSV">
+                    <Download className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
+                    <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
+                  </Button>
+                </div>
               </div>
               {audienceLoading ? (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground py-3">
@@ -1168,6 +1256,18 @@ const AdminModerationPage = () => {
                 </>
               )}
             </div>
+            <div className="space-y-1.5">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground">Publish note (optional)</label>
+              <Textarea
+                placeholder="Add a comment for this publish event (saved with the notification log)…"
+                value={publishNote}
+                onChange={(e) => setPublishNote(e.target.value)}
+                disabled={publishing}
+                rows={2}
+                maxLength={500}
+              />
+              <p className="text-[10px] text-muted-foreground text-right">{publishNote.length}/500</p>
+            </div>
             <div className="flex gap-2 justify-end pt-2">
               <Button variant="outline" disabled={publishing} onClick={() => setPublishConfirm(null)}>Cancel</Button>
               <Button
@@ -1194,6 +1294,32 @@ const AdminModerationPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* ── Delete confirmation ── */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this {deleteConfirm?.kind}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span> from the database. It will immediately disappear from the public site as well. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (!deleteConfirm) return;
+                if (deleteConfirm.kind === "blog") await deleteBlog(deleteConfirm.id);
+                else if (deleteConfirm.kind === "project") await deleteProject(deleteConfirm.id);
+                setDeleteConfirm(null);
+              }}
+            >
+              Delete permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageTransition>
   );
 };
