@@ -281,7 +281,7 @@ const AdminModerationPage = () => {
   const logNotification = async (entry: {
     kind: "blog" | "project"; title: string; slug?: string | null;
     total_subscribers: number; sent_count: number; failed_count: number;
-    status: string; error_message?: string | null;
+    status: string; error_message?: string | null; note?: string | null;
   }) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -291,7 +291,8 @@ const AdminModerationPage = () => {
         total_subscribers: entry.total_subscribers,
         sent_count: entry.sent_count, failed_count: entry.failed_count,
         status: entry.status, error_message: entry.error_message ?? null,
-      });
+        note: entry.note ?? null,
+      } as any);
     } catch (e) { console.error("Failed to log notification", e); }
   };
 
