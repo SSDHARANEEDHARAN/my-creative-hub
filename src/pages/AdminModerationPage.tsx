@@ -320,7 +320,7 @@ const AdminModerationPage = () => {
         await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: total, sent_count: sent, failed_count: failed, status, note: publishNote || null });
         toast({ title: editingBlogId ? "Blog updated" : "Blog published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
       } catch (e: any) {
-        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error" });
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error", note: publishNote || null });
         toast({ title: editingBlogId ? "Blog updated" : "Blog created", description: "Notification failed — see history", variant: "destructive" });
       }
     } else {
