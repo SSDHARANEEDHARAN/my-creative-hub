@@ -1294,6 +1294,32 @@ const AdminModerationPage = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* ── Delete confirmation ── */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this {deleteConfirm?.kind}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span> from the database. It will immediately disappear from the public site as well. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={async () => {
+                if (!deleteConfirm) return;
+                if (deleteConfirm.kind === "blog") await deleteBlog(deleteConfirm.id);
+                else if (deleteConfirm.kind === "project") await deleteProject(deleteConfirm.id);
+                setDeleteConfirm(null);
+              }}
+            >
+              Delete permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageTransition>
   );
 };
