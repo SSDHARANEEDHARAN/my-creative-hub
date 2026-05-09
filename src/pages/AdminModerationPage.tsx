@@ -893,10 +893,14 @@ const AdminModerationPage = () => {
                               <th className="py-2 pr-3">Status</th>
                               <th className="py-2 pr-3 text-right">Sent / Total</th>
                               <th className="py-2 pr-3 text-right">Failed</th>
+                              <th className="py-2 pr-3">Note</th>
+                              <th className="py-2 pr-3 text-right">Actions</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {notifications.map(n => (
+                            {notifications.map(n => {
+                              const canRetry = n.status === "failed" || n.status === "partial";
+                              return (
                               <tr key={n.id} className="border-b border-border/40">
                                 <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</td>
                                 <td className="py-2 pr-3"><Badge variant="outline">{n.kind}</Badge></td>
@@ -916,8 +920,17 @@ const AdminModerationPage = () => {
                                 </td>
                                 <td className="py-2 pr-3 text-right tabular-nums">{n.sent_count} / {n.total_subscribers}</td>
                                 <td className="py-2 pr-3 text-right tabular-nums">{n.failed_count}</td>
+                                <td className="py-2 pr-3 text-xs text-muted-foreground max-w-[180px] truncate" title={n.note || ""}>{n.note || "—"}</td>
+                                <td className="py-2 pr-3 text-right">
+                                  {canRetry ? (
+                                    <Button size="sm" variant="outline" disabled={retryingId === n.id} onClick={() => retryNotification(n)}>
+                                      {retryingId === n.id ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <><RotateCw className="w-3.5 h-3.5 mr-1" />Retry</>}
+                                    </Button>
+                                  ) : <span className="text-xs text-muted-foreground">—</span>}
+                                </td>
                               </tr>
-                            ))}
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
