@@ -170,8 +170,28 @@ const AdminModerationPage = () => {
   };
 
   const openPublishConfirm = async (kind: "blog" | "project", title: string) => {
+    setPublishNote("");
     setPublishConfirm({ kind, title });
     await fetchAudience(); // refresh right before showing the count
+  };
+
+  const exportAudienceCSV = () => {
+    const lines: string[] = [];
+    lines.push("section,key,value");
+    lines.push(`summary,total,${audience.total}`);
+    lines.push(`summary,active,${audience.active}`);
+    lines.push(`summary,inactive,${audience.inactive}`);
+    audience.topDomains.forEach(d => {
+      lines.push(`top_domain,${d.domain.replace(/,/g, "")},${d.count}`);
+    });
+    const csv = lines.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `audience-preview-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
   };
 
   const loadData = async () => {
