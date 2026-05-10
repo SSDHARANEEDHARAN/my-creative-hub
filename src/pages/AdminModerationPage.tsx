@@ -1088,6 +1088,61 @@ const AdminModerationPage = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              <TabsContent value="audit" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5" /> Admin Audit Log
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Every destructive admin action (delete) is recorded here with a full snapshot of the removed record so it can be manually restored. Most recent 100 entries.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {auditLog.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No audit entries yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                              <th className="py-2 pr-3">When</th>
+                              <th className="py-2 pr-3">Action</th>
+                              <th className="py-2 pr-3">Type</th>
+                              <th className="py-2 pr-3">Label</th>
+                              <th className="py-2 pr-3">By</th>
+                              <th className="py-2 pr-3">Related</th>
+                              <th className="py-2 pr-3 text-right">Snapshot</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {auditLog.map(a => (
+                              <tr key={a.id} className="border-b border-border/40">
+                                <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(a.created_at).toLocaleString()}</td>
+                                <td className="py-2 pr-3"><Badge variant="destructive">{a.action}</Badge></td>
+                                <td className="py-2 pr-3"><Badge variant="outline">{a.entity_type}</Badge></td>
+                                <td className="py-2 pr-3 max-w-xs truncate" title={a.label || ""}>{a.label || "—"}</td>
+                                <td className="py-2 pr-3 text-xs text-muted-foreground">{a.performed_by_email || "—"}</td>
+                                <td className="py-2 pr-3 text-xs">
+                                  {a.related_counts && Object.keys(a.related_counts).length > 0
+                                    ? Object.entries(a.related_counts).map(([k, v]) => `${k}:${v}`).join(" · ")
+                                    : "—"}
+                                </td>
+                                <td className="py-2 pr-3 text-right">
+                                  <Button size="sm" variant="outline" onClick={() => setViewAudit(a)}>
+                                    <Eye className="w-3.5 h-3.5 mr-1" />View
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
         </main>
