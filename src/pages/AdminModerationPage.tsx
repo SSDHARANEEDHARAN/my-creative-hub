@@ -987,7 +987,7 @@ const AdminModerationPage = () => {
                     <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" /> No pending comments
                   </CardContent></Card>
                 ) : pendingComments.map(c => (
-                  <CommentCard key={c.id} comment={c} onApprove={() => approveComment(c.id)} onSpam={() => markAsSpam(c.id)} onDelete={() => deleteComment(c.id)} showActions />
+                  <CommentCard key={c.id} comment={c} onApprove={() => approveComment(c.id)} onSpam={() => markAsSpam(c.id)} onDelete={() => openDeleteConfirm("comment", c.id, c.content.slice(0, 60))} showActions />
                 ))}
               </TabsContent>
 
