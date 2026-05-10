@@ -995,7 +995,7 @@ const AdminModerationPage = () => {
                 {approvedComments.length === 0 ? (
                   <Card><CardContent className="py-8 text-center text-muted-foreground">No approved comments</CardContent></Card>
                 ) : approvedComments.map(c => (
-                  <CommentCard key={c.id} comment={c} onDelete={() => deleteComment(c.id)} />
+                  <CommentCard key={c.id} comment={c} onDelete={() => openDeleteConfirm("comment", c.id, c.content.slice(0, 60))} />
                 ))}
               </TabsContent>
 
