@@ -214,7 +214,7 @@ const AdminModerationPage = () => {
 
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes, auditRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -224,9 +224,11 @@ const AdminModerationPage = () => {
       supabase.from("about_content").select("*"),
       supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
       supabase.from("publish_notifications").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100),
     ]);
     await fetchAudience();
     if (notifsRes.data) setNotifications(notifsRes.data as PublishNotification[]);
+    if (auditRes.data) setAuditLog(auditRes.data as AuditEntry[]);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
@@ -243,6 +245,135 @@ const AdminModerationPage = () => {
   };
 
   useEffect(() => { loadData(); }, []);
+
+  // ── Delete-with-audit helpers ──
+  const openDeleteConfirm = async (
+    kind: DeleteConfirm["kind"],
+    id: string,
+    label: string,
+  ) => {
+    setDeleteLoading(true);
+    setDeleteConfirm({
+      kind, id, label,
+      snapshot: null, relatedCounts: {}, relatedSnapshot: {},
+      warnings: [], restorable: [],
+    });
+    try {
+      let snapshot: any = null;
+      const relatedCounts: Record<string, number> = {};
+      const relatedSnapshot: Record<string, any> = {};
+      const warnings: string[] = [];
+      const restorable: string[] = [
+        "A full snapshot of this record is saved to the audit log and can be used to manually re-insert it.",
+      ];
+
+      if (kind === "blog") {
+        const { data: blog } = await supabase.from("blog_posts").select("*").eq("id", id).maybeSingle();
+        snapshot = blog;
+        const post_id = blog?.slug || id;
+        const [cmts, lks, vws] = await Promise.all([
+          supabase.from("blog_comments").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+          supabase.from("blog_likes").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+          supabase.from("blog_views").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+        ]);
+        relatedCounts.comments = cmts.count || 0;
+        relatedCounts.likes = lks.count || 0;
+        relatedCounts.views = vws.count || 0;
+        warnings.push(`The blog post record itself (title, slug, content, cover image).`);
+        if (relatedCounts.comments) warnings.push(`${relatedCounts.comments} comment row(s) linked by post_id will become orphaned (not auto-deleted).`);
+        if (relatedCounts.likes) warnings.push(`${relatedCounts.likes} like(s) linked by post_id will become orphaned.`);
+        if (relatedCounts.views) warnings.push(`${relatedCounts.views} view record(s) linked by post_id will become orphaned.`);
+        warnings.push(`The post will immediately disappear from the public blog page.`);
+      } else if (kind === "project") {
+        const { data: project } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
+        snapshot = project;
+        const [cmts, lks, vws] = await Promise.all([
+          supabase.from("project_comments").select("id", { count: "exact", head: true }).eq("project_id", id),
+          supabase.from("project_likes").select("id", { count: "exact", head: true }).eq("project_id", id),
+          supabase.from("project_views").select("id", { count: "exact", head: true }).eq("project_id", id),
+        ]);
+        relatedCounts.comments = cmts.count || 0;
+        relatedCounts.likes = lks.count || 0;
+        relatedCounts.views = vws.count || 0;
+        warnings.push(`The project record itself (title, description, tech stack, images, URLs).`);
+        if (relatedCounts.comments) warnings.push(`${relatedCounts.comments} project comment(s) will become orphaned.`);
+        if (relatedCounts.likes) warnings.push(`${relatedCounts.likes} like(s) will become orphaned.`);
+        if (relatedCounts.views) warnings.push(`${relatedCounts.views} view record(s) will become orphaned.`);
+        warnings.push(`The project will immediately disappear from the public projects page.`);
+      } else if (kind === "comment") {
+        const { data: comment } = await supabase.from("blog_comments").select("*").eq("id", id).maybeSingle();
+        snapshot = comment;
+        relatedSnapshot.reply = comment?.reply || null;
+        warnings.push(`The comment text and the commenter's name and email.`);
+        if (comment?.reply) warnings.push(`Your reply ("${(comment.reply as string).slice(0, 60)}...") will also be lost.`);
+        warnings.push(`The comment will disappear from the public blog post immediately.`);
+        warnings.push(`No email notification is sent to the commenter.`);
+      }
+
+      setDeleteConfirm({
+        kind, id, label,
+        snapshot, relatedCounts, relatedSnapshot, warnings, restorable,
+      });
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const performDelete = async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
+    try {
+      const { kind, id, label, snapshot, relatedCounts, relatedSnapshot } = deleteConfirm;
+      const tableMap: Record<string, string> = {
+        blog: "blog_posts",
+        project: "projects",
+        comment: "blog_comments",
+        skill: "skills",
+        cert: "certificates",
+        exp: "work_experiences",
+      };
+      const table = tableMap[kind];
+
+      // 1. Write audit BEFORE deleting (so failure leaves no orphan log)
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("admin_audit_log").insert({
+        action: "delete",
+        entity_type: kind,
+        entity_id: id,
+        label,
+        snapshot: snapshot ?? {},
+        related_snapshot: relatedSnapshot ?? {},
+        related_counts: relatedCounts ?? {},
+        performed_by: user?.id,
+        performed_by_email: user?.email,
+      });
+
+      // 2. Delete the record
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
+      if (error) {
+        toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+        return;
+      }
+
+      // 3. Update local state
+      if (kind === "blog") setBlogs(p => p.filter(b => b.id !== id));
+      else if (kind === "project") setProjects(p => p.filter(b => b.id !== id));
+      else if (kind === "comment") setComments(p => p.filter(b => b.id !== id));
+      else if (kind === "skill") setSkills(p => p.filter(b => b.id !== id));
+      else if (kind === "cert") setCertificates(p => p.filter(b => b.id !== id));
+      else if (kind === "exp") setWorkExps(p => p.filter(b => b.id !== id));
+
+      // 4. Refresh audit log
+      const { data: audit } = await supabase
+        .from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100);
+      if (audit) setAuditLog(audit as AuditEntry[]);
+
+      toast({ title: `${kind.charAt(0).toUpperCase() + kind.slice(1)} deleted`, description: "Recorded in audit log." });
+      setDeleteConfirm(null);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   // ── Comment actions ──
   const approveComment = async (id: string) => {
