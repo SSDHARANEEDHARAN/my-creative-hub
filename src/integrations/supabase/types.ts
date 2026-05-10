@@ -35,6 +35,48 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          entity_id: string
+          entity_type: string
+          id: string
+          label: string | null
+          performed_by: string | null
+          performed_by_email: string | null
+          related_counts: Json
+          related_snapshot: Json
+          snapshot: Json
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          id?: string
+          label?: string | null
+          performed_by?: string | null
+          performed_by_email?: string | null
+          related_counts?: Json
+          related_snapshot?: Json
+          snapshot?: Json
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          label?: string | null
+          performed_by?: string | null
+          performed_by_email?: string | null
+          related_counts?: Json
+          related_snapshot?: Json
+          snapshot?: Json
+        }
+        Relationships: []
+      }
       blocked_ips: {
         Row: {
           created_at: string
