@@ -143,10 +143,28 @@ const AdminModerationPage = () => {
   const [retryingId, setRetryingId] = useState<string | null>(null);
 
   // Delete confirmation
-  const [deleteConfirm, setDeleteConfirm] = useState<null | {
+  interface DeleteConfirm {
     kind: "blog" | "project" | "comment" | "skill" | "cert" | "exp";
-    id: string; label: string;
-  }>(null);
+    id: string;
+    label: string;
+    snapshot: any;
+    relatedCounts: Record<string, number>;
+    relatedSnapshot: Record<string, any>;
+    warnings: string[];
+    restorable: string[];
+  }
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Audit log
+  interface AuditEntry {
+    id: string; action: string; entity_type: string; entity_id: string;
+    label: string | null; snapshot: any; related_snapshot: any;
+    related_counts: any; performed_by_email: string | null; created_at: string;
+  }
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [viewAudit, setViewAudit] = useState<AuditEntry | null>(null);
 
   const fetchAudience = async (): Promise<AudienceStats> => {
     setAudienceLoading(true);
