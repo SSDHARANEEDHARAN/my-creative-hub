@@ -1445,30 +1445,90 @@ const AdminModerationPage = () => {
       </Dialog>
 
       {/* ── Delete confirmation ── */}
-      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && setDeleteConfirm(null)}>
-        <AlertDialogContent>
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && !deleting && setDeleteConfirm(null)}>
+        <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this {deleteConfirm?.kind}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This permanently removes <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span> from the database. It will immediately disappear from the public site as well. This action cannot be undone.
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="w-5 h-5" /> Delete this {deleteConfirm?.kind}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-sm">
+                <p>
+                  You are about to permanently delete{" "}
+                  <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span>.
+                  This action cannot be undone from the UI.
+                </p>
+                {deleteLoading ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <RefreshCw className="w-4 h-4 animate-spin" /> Checking what will be removed…
+                  </div>
+                ) : (
+                  <>
+                    <div className="rounded border border-destructive/30 bg-destructive/5 p-3">
+                      <p className="font-semibold text-destructive mb-2">What will be removed:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-foreground">
+                        {deleteConfirm?.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                      </ul>
+                    </div>
+                    <div className="rounded border border-border bg-muted/30 p-3">
+                      <p className="font-semibold mb-1">Recovery options:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                        {deleteConfirm?.restorable.map((w, i) => <li key={i}>{w}</li>)}
+                        <li>Open the <span className="font-medium text-foreground">Audit</span> tab to view the saved snapshot of this record.</li>
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={async () => {
-                if (!deleteConfirm) return;
-                if (deleteConfirm.kind === "blog") await deleteBlog(deleteConfirm.id);
-                else if (deleteConfirm.kind === "project") await deleteProject(deleteConfirm.id);
-                setDeleteConfirm(null);
-              }}
+              disabled={deleteLoading || deleting}
+              onClick={(e) => { e.preventDefault(); performDelete(); }}
             >
-              Delete permanently
+              {deleting ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" />Deleting…</> : "Delete & log"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ── Audit snapshot viewer ── */}
+      <Dialog open={!!viewAudit} onOpenChange={(o) => !o && setViewAudit(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Audit entry · {viewAudit?.entity_type} · {viewAudit?.action}</DialogTitle>
+          </DialogHeader>
+          {viewAudit && (
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div><span className="text-muted-foreground">When:</span> {new Date(viewAudit.created_at).toLocaleString()}</div>
+                <div><span className="text-muted-foreground">By:</span> {viewAudit.performed_by_email || "—"}</div>
+                <div className="col-span-2"><span className="text-muted-foreground">Label:</span> {viewAudit.label || "—"}</div>
+                <div className="col-span-2"><span className="text-muted-foreground">Entity ID:</span> <code className="text-xs">{viewAudit.entity_id}</code></div>
+              </div>
+              {viewAudit.related_counts && Object.keys(viewAudit.related_counts).length > 0 && (
+                <div>
+                  <p className="font-medium mb-1">Related rows at delete time:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(viewAudit.related_counts).map(([k, v]) => (
+                      <Badge key={k} variant="outline">{k}: {String(v)}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <p className="font-medium mb-1">Snapshot (use to manually restore):</p>
+                <pre className="bg-muted/40 border border-border rounded p-3 text-xs overflow-auto max-h-[40vh]">
+{JSON.stringify(viewAudit.snapshot, null, 2)}
+                </pre>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </PageTransition>
   );
 };
