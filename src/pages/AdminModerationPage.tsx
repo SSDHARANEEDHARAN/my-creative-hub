@@ -821,7 +821,7 @@ const AdminModerationPage = () => {
                           <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
                           <div className="flex gap-1.5">
                             <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => setDeleteConfirm({ kind: "blog", id: blog.id, label: blog.title })}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("blog", blog.id, blog.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
