@@ -143,10 +143,28 @@ const AdminModerationPage = () => {
   const [retryingId, setRetryingId] = useState<string | null>(null);
 
   // Delete confirmation
-  const [deleteConfirm, setDeleteConfirm] = useState<null | {
+  interface DeleteConfirm {
     kind: "blog" | "project" | "comment" | "skill" | "cert" | "exp";
-    id: string; label: string;
-  }>(null);
+    id: string;
+    label: string;
+    snapshot: any;
+    relatedCounts: Record<string, number>;
+    relatedSnapshot: Record<string, any>;
+    warnings: string[];
+    restorable: string[];
+  }
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Audit log
+  interface AuditEntry {
+    id: string; action: string; entity_type: string; entity_id: string;
+    label: string | null; snapshot: any; related_snapshot: any;
+    related_counts: any; performed_by_email: string | null; created_at: string;
+  }
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [viewAudit, setViewAudit] = useState<AuditEntry | null>(null);
 
   const fetchAudience = async (): Promise<AudienceStats> => {
     setAudienceLoading(true);
@@ -196,7 +214,7 @@ const AdminModerationPage = () => {
 
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes, auditRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -206,9 +224,11 @@ const AdminModerationPage = () => {
       supabase.from("about_content").select("*"),
       supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
       supabase.from("publish_notifications").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100),
     ]);
     await fetchAudience();
     if (notifsRes.data) setNotifications(notifsRes.data as PublishNotification[]);
+    if (auditRes.data) setAuditLog(auditRes.data as AuditEntry[]);
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
@@ -225,6 +245,135 @@ const AdminModerationPage = () => {
   };
 
   useEffect(() => { loadData(); }, []);
+
+  // ── Delete-with-audit helpers ──
+  const openDeleteConfirm = async (
+    kind: DeleteConfirm["kind"],
+    id: string,
+    label: string,
+  ) => {
+    setDeleteLoading(true);
+    setDeleteConfirm({
+      kind, id, label,
+      snapshot: null, relatedCounts: {}, relatedSnapshot: {},
+      warnings: [], restorable: [],
+    });
+    try {
+      let snapshot: any = null;
+      const relatedCounts: Record<string, number> = {};
+      const relatedSnapshot: Record<string, any> = {};
+      const warnings: string[] = [];
+      const restorable: string[] = [
+        "A full snapshot of this record is saved to the audit log and can be used to manually re-insert it.",
+      ];
+
+      if (kind === "blog") {
+        const { data: blog } = await supabase.from("blog_posts").select("*").eq("id", id).maybeSingle();
+        snapshot = blog;
+        const post_id = blog?.slug || id;
+        const [cmts, lks, vws] = await Promise.all([
+          supabase.from("blog_comments").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+          supabase.from("blog_likes").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+          supabase.from("blog_views").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+        ]);
+        relatedCounts.comments = cmts.count || 0;
+        relatedCounts.likes = lks.count || 0;
+        relatedCounts.views = vws.count || 0;
+        warnings.push(`The blog post record itself (title, slug, content, cover image).`);
+        if (relatedCounts.comments) warnings.push(`${relatedCounts.comments} comment row(s) linked by post_id will become orphaned (not auto-deleted).`);
+        if (relatedCounts.likes) warnings.push(`${relatedCounts.likes} like(s) linked by post_id will become orphaned.`);
+        if (relatedCounts.views) warnings.push(`${relatedCounts.views} view record(s) linked by post_id will become orphaned.`);
+        warnings.push(`The post will immediately disappear from the public blog page.`);
+      } else if (kind === "project") {
+        const { data: project } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
+        snapshot = project;
+        const [cmts, lks, vws] = await Promise.all([
+          supabase.from("project_comments").select("id", { count: "exact", head: true }).eq("project_id", id),
+          supabase.from("project_likes").select("id", { count: "exact", head: true }).eq("project_id", id),
+          supabase.from("project_views").select("id", { count: "exact", head: true }).eq("project_id", id),
+        ]);
+        relatedCounts.comments = cmts.count || 0;
+        relatedCounts.likes = lks.count || 0;
+        relatedCounts.views = vws.count || 0;
+        warnings.push(`The project record itself (title, description, tech stack, images, URLs).`);
+        if (relatedCounts.comments) warnings.push(`${relatedCounts.comments} project comment(s) will become orphaned.`);
+        if (relatedCounts.likes) warnings.push(`${relatedCounts.likes} like(s) will become orphaned.`);
+        if (relatedCounts.views) warnings.push(`${relatedCounts.views} view record(s) will become orphaned.`);
+        warnings.push(`The project will immediately disappear from the public projects page.`);
+      } else if (kind === "comment") {
+        const { data: comment } = await supabase.from("blog_comments").select("*").eq("id", id).maybeSingle();
+        snapshot = comment;
+        relatedSnapshot.reply = comment?.reply || null;
+        warnings.push(`The comment text and the commenter's name and email.`);
+        if (comment?.reply) warnings.push(`Your reply ("${(comment.reply as string).slice(0, 60)}...") will also be lost.`);
+        warnings.push(`The comment will disappear from the public blog post immediately.`);
+        warnings.push(`No email notification is sent to the commenter.`);
+      }
+
+      setDeleteConfirm({
+        kind, id, label,
+        snapshot, relatedCounts, relatedSnapshot, warnings, restorable,
+      });
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const performDelete = async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
+    try {
+      const { kind, id, label, snapshot, relatedCounts, relatedSnapshot } = deleteConfirm;
+      const tableMap: Record<string, string> = {
+        blog: "blog_posts",
+        project: "projects",
+        comment: "blog_comments",
+        skill: "skills",
+        cert: "certificates",
+        exp: "work_experiences",
+      };
+      const table = tableMap[kind];
+
+      // 1. Write audit BEFORE deleting (so failure leaves no orphan log)
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("admin_audit_log").insert({
+        action: "delete",
+        entity_type: kind,
+        entity_id: id,
+        label,
+        snapshot: snapshot ?? {},
+        related_snapshot: relatedSnapshot ?? {},
+        related_counts: relatedCounts ?? {},
+        performed_by: user?.id,
+        performed_by_email: user?.email,
+      });
+
+      // 2. Delete the record
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
+      if (error) {
+        toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+        return;
+      }
+
+      // 3. Update local state
+      if (kind === "blog") setBlogs(p => p.filter(b => b.id !== id));
+      else if (kind === "project") setProjects(p => p.filter(b => b.id !== id));
+      else if (kind === "comment") setComments(p => p.filter(b => b.id !== id));
+      else if (kind === "skill") setSkills(p => p.filter(b => b.id !== id));
+      else if (kind === "cert") setCertificates(p => p.filter(b => b.id !== id));
+      else if (kind === "exp") setWorkExps(p => p.filter(b => b.id !== id));
+
+      // 4. Refresh audit log
+      const { data: audit } = await supabase
+        .from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100);
+      if (audit) setAuditLog(audit as AuditEntry[]);
+
+      toast({ title: `${kind.charAt(0).toUpperCase() + kind.slice(1)} deleted`, description: "Recorded in audit log." });
+      setDeleteConfirm(null);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   // ── Comment actions ──
   const approveComment = async (id: string) => {
@@ -632,7 +781,7 @@ const AdminModerationPage = () => {
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 md:grid-cols-10">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-11">
                 <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
@@ -650,6 +799,7 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="approved">Approved</TabsTrigger>
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
                 <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
+                <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
               </TabsList>
 
               {/* ── Blogs Tab ── */}
@@ -672,7 +822,7 @@ const AdminModerationPage = () => {
                           <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
                           <div className="flex gap-1.5">
                             <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => setDeleteConfirm({ kind: "blog", id: blog.id, label: blog.title })}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("blog", blog.id, blog.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -702,7 +852,7 @@ const AdminModerationPage = () => {
                             {project.featured && <Badge variant="outline">Featured</Badge>}
                             <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
                             <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => setDeleteConfirm({ kind: "project", id: project.id, label: project.title })}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("project", project.id, project.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -838,7 +988,7 @@ const AdminModerationPage = () => {
                     <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" /> No pending comments
                   </CardContent></Card>
                 ) : pendingComments.map(c => (
-                  <CommentCard key={c.id} comment={c} onApprove={() => approveComment(c.id)} onSpam={() => markAsSpam(c.id)} onDelete={() => deleteComment(c.id)} showActions />
+                  <CommentCard key={c.id} comment={c} onApprove={() => approveComment(c.id)} onSpam={() => markAsSpam(c.id)} onDelete={() => openDeleteConfirm("comment", c.id, c.content.slice(0, 60))} showActions />
                 ))}
               </TabsContent>
 
@@ -846,7 +996,7 @@ const AdminModerationPage = () => {
                 {approvedComments.length === 0 ? (
                   <Card><CardContent className="py-8 text-center text-muted-foreground">No approved comments</CardContent></Card>
                 ) : approvedComments.map(c => (
-                  <CommentCard key={c.id} comment={c} onDelete={() => deleteComment(c.id)} />
+                  <CommentCard key={c.id} comment={c} onDelete={() => openDeleteConfirm("comment", c.id, c.content.slice(0, 60))} />
                 ))}
               </TabsContent>
 
@@ -931,6 +1081,61 @@ const AdminModerationPage = () => {
                               </tr>
                               );
                             })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="audit" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5" /> Admin Audit Log
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Every destructive admin action (delete) is recorded here with a full snapshot of the removed record so it can be manually restored. Most recent 100 entries.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {auditLog.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No audit entries yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                              <th className="py-2 pr-3">When</th>
+                              <th className="py-2 pr-3">Action</th>
+                              <th className="py-2 pr-3">Type</th>
+                              <th className="py-2 pr-3">Label</th>
+                              <th className="py-2 pr-3">By</th>
+                              <th className="py-2 pr-3">Related</th>
+                              <th className="py-2 pr-3 text-right">Snapshot</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {auditLog.map(a => (
+                              <tr key={a.id} className="border-b border-border/40">
+                                <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(a.created_at).toLocaleString()}</td>
+                                <td className="py-2 pr-3"><Badge variant="destructive">{a.action}</Badge></td>
+                                <td className="py-2 pr-3"><Badge variant="outline">{a.entity_type}</Badge></td>
+                                <td className="py-2 pr-3 max-w-xs truncate" title={a.label || ""}>{a.label || "—"}</td>
+                                <td className="py-2 pr-3 text-xs text-muted-foreground">{a.performed_by_email || "—"}</td>
+                                <td className="py-2 pr-3 text-xs">
+                                  {a.related_counts && Object.keys(a.related_counts).length > 0
+                                    ? Object.entries(a.related_counts).map(([k, v]) => `${k}:${v}`).join(" · ")
+                                    : "—"}
+                                </td>
+                                <td className="py-2 pr-3 text-right">
+                                  <Button size="sm" variant="outline" onClick={() => setViewAudit(a)}>
+                                    <Eye className="w-3.5 h-3.5 mr-1" />View
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
@@ -1296,30 +1501,90 @@ const AdminModerationPage = () => {
       </Dialog>
 
       {/* ── Delete confirmation ── */}
-      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && setDeleteConfirm(null)}>
-        <AlertDialogContent>
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && !deleting && setDeleteConfirm(null)}>
+        <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this {deleteConfirm?.kind}?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This permanently removes <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span> from the database. It will immediately disappear from the public site as well. This action cannot be undone.
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="w-5 h-5" /> Delete this {deleteConfirm?.kind}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-sm">
+                <p>
+                  You are about to permanently delete{" "}
+                  <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span>.
+                  This action cannot be undone from the UI.
+                </p>
+                {deleteLoading ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <RefreshCw className="w-4 h-4 animate-spin" /> Checking what will be removed…
+                  </div>
+                ) : (
+                  <>
+                    <div className="rounded border border-destructive/30 bg-destructive/5 p-3">
+                      <p className="font-semibold text-destructive mb-2">What will be removed:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-foreground">
+                        {deleteConfirm?.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                      </ul>
+                    </div>
+                    <div className="rounded border border-border bg-muted/30 p-3">
+                      <p className="font-semibold mb-1">Recovery options:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                        {deleteConfirm?.restorable.map((w, i) => <li key={i}>{w}</li>)}
+                        <li>Open the <span className="font-medium text-foreground">Audit</span> tab to view the saved snapshot of this record.</li>
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={async () => {
-                if (!deleteConfirm) return;
-                if (deleteConfirm.kind === "blog") await deleteBlog(deleteConfirm.id);
-                else if (deleteConfirm.kind === "project") await deleteProject(deleteConfirm.id);
-                setDeleteConfirm(null);
-              }}
+              disabled={deleteLoading || deleting}
+              onClick={(e) => { e.preventDefault(); performDelete(); }}
             >
-              Delete permanently
+              {deleting ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" />Deleting…</> : "Delete & log"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ── Audit snapshot viewer ── */}
+      <Dialog open={!!viewAudit} onOpenChange={(o) => !o && setViewAudit(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Audit entry · {viewAudit?.entity_type} · {viewAudit?.action}</DialogTitle>
+          </DialogHeader>
+          {viewAudit && (
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div><span className="text-muted-foreground">When:</span> {new Date(viewAudit.created_at).toLocaleString()}</div>
+                <div><span className="text-muted-foreground">By:</span> {viewAudit.performed_by_email || "—"}</div>
+                <div className="col-span-2"><span className="text-muted-foreground">Label:</span> {viewAudit.label || "—"}</div>
+                <div className="col-span-2"><span className="text-muted-foreground">Entity ID:</span> <code className="text-xs">{viewAudit.entity_id}</code></div>
+              </div>
+              {viewAudit.related_counts && Object.keys(viewAudit.related_counts).length > 0 && (
+                <div>
+                  <p className="font-medium mb-1">Related rows at delete time:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(viewAudit.related_counts).map(([k, v]) => (
+                      <Badge key={k} variant="outline">{k}: {String(v)}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <p className="font-medium mb-1">Snapshot (use to manually restore):</p>
+                <pre className="bg-muted/40 border border-border rounded p-3 text-xs overflow-auto max-h-[40vh]">
+{JSON.stringify(viewAudit.snapshot, null, 2)}
+                </pre>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </PageTransition>
   );
 };
