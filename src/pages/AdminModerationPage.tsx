@@ -844,6 +844,10 @@ const AdminModerationPage = () => {
                             <p className="font-medium truncate">{blog.title}</p>
                             <p className="text-xs text-muted-foreground">{blog.category} · {blog.read_time}</p>
                           </div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground" title="Live view count">
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="font-mono tabular-nums">{blogViewCounts[blog.id] || 0}</span>
+                          </div>
                           <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
                           <div className="flex gap-1.5">
                             <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
