@@ -87,6 +87,31 @@ const AdminModerationPage = () => {
   const [aboutContent, setAboutContent] = useState<AboutContent[]>([]);
   const [workExps, setWorkExps] = useState<WorkExperience[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [blogViewCounts, setBlogViewCounts] = useState<Record<string, number>>({});
+  const [projectViewCounts, setProjectViewCounts] = useState<Record<string, number>>({});
+
+  const loadLiveViewCounts = async () => {
+    const [bv, pv] = await Promise.all([
+      supabase.from("blog_views").select("post_id"),
+      supabase.from("project_views").select("project_id"),
+    ]);
+    const bc: Record<string, number> = {};
+    (bv.data || []).forEach((r: any) => { if (r.post_id) bc[r.post_id] = (bc[r.post_id] || 0) + 1; });
+    const pc: Record<string, number> = {};
+    (pv.data || []).forEach((r: any) => { if (r.project_id) pc[r.project_id] = (pc[r.project_id] || 0) + 1; });
+    setBlogViewCounts(bc);
+    setProjectViewCounts(pc);
+  };
+
+  useEffect(() => {
+    loadLiveViewCounts();
+    const channel = supabase
+      .channel("admin-live-views")
+      .on("postgres_changes", { event: "*", schema: "public", table: "blog_views" }, () => loadLiveViewCounts())
+      .on("postgres_changes", { event: "*", schema: "public", table: "project_views" }, () => loadLiveViewCounts())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   // Blog/Project form state
   const [blogForm, setBlogForm] = useState<Partial<BlogPost>>(emptyBlog);
@@ -819,6 +844,10 @@ const AdminModerationPage = () => {
                             <p className="font-medium truncate">{blog.title}</p>
                             <p className="text-xs text-muted-foreground">{blog.category} · {blog.read_time}</p>
                           </div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground" title="Live view count">
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="font-mono tabular-nums">{blogViewCounts[blog.id] || 0}</span>
+                          </div>
                           <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
                           <div className="flex gap-1.5">
                             <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
@@ -849,6 +878,10 @@ const AdminModerationPage = () => {
                             <p className="text-xs text-muted-foreground">{project.category} · {(project.tech_stack || []).join(", ")}</p>
                           </div>
                           <div className="flex gap-1.5 items-center">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground mr-1" title="Live view count">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="font-mono tabular-nums">{projectViewCounts[project.id] || 0}</span>
+                            </div>
                             {project.featured && <Badge variant="outline">Featured</Badge>}
                             <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
                             <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
