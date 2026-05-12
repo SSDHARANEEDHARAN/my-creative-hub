@@ -878,6 +878,10 @@ const AdminModerationPage = () => {
                             <p className="text-xs text-muted-foreground">{project.category} · {(project.tech_stack || []).join(", ")}</p>
                           </div>
                           <div className="flex gap-1.5 items-center">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground mr-1" title="Live view count">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="font-mono tabular-nums">{projectViewCounts[project.id] || 0}</span>
+                            </div>
                             {project.featured && <Badge variant="outline">Featured</Badge>}
                             <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
                             <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
