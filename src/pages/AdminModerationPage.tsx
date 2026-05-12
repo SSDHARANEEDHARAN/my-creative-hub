@@ -87,6 +87,31 @@ const AdminModerationPage = () => {
   const [aboutContent, setAboutContent] = useState<AboutContent[]>([]);
   const [workExps, setWorkExps] = useState<WorkExperience[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [blogViewCounts, setBlogViewCounts] = useState<Record<string, number>>({});
+  const [projectViewCounts, setProjectViewCounts] = useState<Record<string, number>>({});
+
+  const loadLiveViewCounts = async () => {
+    const [bv, pv] = await Promise.all([
+      supabase.from("blog_views").select("post_id"),
+      supabase.from("project_views").select("project_id"),
+    ]);
+    const bc: Record<string, number> = {};
+    (bv.data || []).forEach((r: any) => { if (r.post_id) bc[r.post_id] = (bc[r.post_id] || 0) + 1; });
+    const pc: Record<string, number> = {};
+    (pv.data || []).forEach((r: any) => { if (r.project_id) pc[r.project_id] = (pc[r.project_id] || 0) + 1; });
+    setBlogViewCounts(bc);
+    setProjectViewCounts(pc);
+  };
+
+  useEffect(() => {
+    loadLiveViewCounts();
+    const channel = supabase
+      .channel("admin-live-views")
+      .on("postgres_changes", { event: "*", schema: "public", table: "blog_views" }, () => loadLiveViewCounts())
+      .on("postgres_changes", { event: "*", schema: "public", table: "project_views" }, () => loadLiveViewCounts())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   // Blog/Project form state
   const [blogForm, setBlogForm] = useState<Partial<BlogPost>>(emptyBlog);
