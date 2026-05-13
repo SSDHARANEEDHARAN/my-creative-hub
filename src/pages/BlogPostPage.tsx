@@ -23,7 +23,13 @@ import { useDownloadCount } from "@/hooks/useDownloadCount";
 
 const BlogPostPage = () => {
   const { id } = useParams<{ id: string }>();
-  const post = blogPosts.find((p) => p.id === id);
+  const [isHidden, setIsHidden] = useState(false);
+  useEffect(() => {
+    if (!id) return;
+    supabase.from("hidden_static_blog_posts").select("post_id").eq("post_id", id).maybeSingle()
+      .then(({ data }) => setIsHidden(!!data));
+  }, [id]);
+  const post = !isHidden ? blogPosts.find((p) => p.id === id) : undefined;
 
   const [showCommentForm, setShowCommentForm] = useState(false);
   const [commentData, setCommentData] = useState({ name: "", email: "", text: "", honeypot: "" });
