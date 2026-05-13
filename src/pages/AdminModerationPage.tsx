@@ -252,8 +252,10 @@ const AdminModerationPage = () => {
       supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
       supabase.from("publish_notifications").select("*").order("created_at", { ascending: false }).limit(50),
       supabase.from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100),
+      supabase.from("hidden_static_blog_posts").select("post_id"),
     ]);
     await fetchAudience();
+    setHiddenStaticIds(new Set(((arguments as any) ? [] : []))); // placeholder, replaced below
     if (notifsRes.data) setNotifications(notifsRes.data as PublishNotification[]);
     if (auditRes.data) setAuditLog(auditRes.data as AuditEntry[]);
     if (commentsRes.data) setComments(commentsRes.data);
