@@ -329,6 +329,30 @@ export type Database = {
         }
         Relationships: []
       }
+      hidden_static_blog_posts: {
+        Row: {
+          created_at: string
+          hidden_by: string | null
+          hidden_by_email: string | null
+          post_id: string
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          hidden_by?: string | null
+          hidden_by_email?: string | null
+          post_id: string
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          hidden_by?: string | null
+          hidden_by_email?: string | null
+          post_id?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
       industrial_projects: {
         Row: {
           category: string
