@@ -89,6 +89,7 @@ const AdminModerationPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [blogViewCounts, setBlogViewCounts] = useState<Record<string, number>>({});
   const [projectViewCounts, setProjectViewCounts] = useState<Record<string, number>>({});
+  const [hiddenStaticIds, setHiddenStaticIds] = useState<Set<string>>(new Set());
 
   const loadLiveViewCounts = async () => {
     const [bv, pv] = await Promise.all([
