@@ -241,7 +241,7 @@ const AdminModerationPage = () => {
 
   const loadData = async () => {
     setIsLoading(true);
-    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes, auditRes] = await Promise.all([
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes, auditRes, hiddenRes] = await Promise.all([
       supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
       supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
       supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
@@ -255,7 +255,7 @@ const AdminModerationPage = () => {
       supabase.from("hidden_static_blog_posts").select("post_id"),
     ]);
     await fetchAudience();
-    setHiddenStaticIds(new Set(((arguments as any) ? [] : []))); // placeholder, replaced below
+    setHiddenStaticIds(new Set((hiddenRes.data || []).map((r: any) => r.post_id)));
     if (notifsRes.data) setNotifications(notifsRes.data as PublishNotification[]);
     if (auditRes.data) setAuditLog(auditRes.data as AuditEntry[]);
     if (commentsRes.data) setComments(commentsRes.data);
