@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -18,7 +18,7 @@ import { blogPosts as staticPosts, BlogPost } from "@/data/blogPostsData";
 
 const BlogPage = () => {
   const navigate = useNavigate();
-  const [posts] = useState<BlogPost[]>(staticPosts);
+  const [posts, setPosts] = useState<BlogPost[]>(staticPosts);
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const { user } = useAuth();
@@ -26,6 +26,23 @@ const BlogPage = () => {
 
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
+
+  // Filter out posts admin has hidden via the moderation panel
+  useEffect(() => {
+    let active = true;
+    const loadHidden = async () => {
+      const { data } = await supabase.from("hidden_static_blog_posts").select("post_id");
+      if (!active) return;
+      const hidden = new Set((data || []).map((r: any) => r.post_id));
+      setPosts(staticPosts.filter((p) => !hidden.has(p.id)));
+    };
+    loadHidden();
+    const channel = supabase
+      .channel("hidden-static-blog-posts")
+      .on("postgres_changes", { event: "*", schema: "public", table: "hidden_static_blog_posts" }, () => loadHidden())
+      .subscribe();
+    return () => { active = false; supabase.removeChannel(channel); };
+  }, []);
 
   const postIds = posts.map((p) => p.id);
   const { likeCounts, commentCounts, viewCounts, userLikes, setUserLikes, setLikeCounts } = useBlogListCounts(postIds, currentUserEmail);
