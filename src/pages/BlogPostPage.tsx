@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ImageLightbox from "@/components/ImageLightbox";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useParams, Link } from "react-router-dom";
