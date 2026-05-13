@@ -25,6 +25,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { blogPosts as staticBlogPosts } from "@/data/blogPostsData";
 
 // ─── Types ───────────────────────────────────────────────────────
 interface Comment {
