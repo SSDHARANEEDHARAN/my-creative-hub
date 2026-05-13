@@ -116,8 +116,8 @@ const BlogPostPage = () => {
         <main className="pt-20">
           {/* Hero */}
           <section className="relative">
-            <div className="aspect-[21/9] max-h-[420px] overflow-hidden relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
-              <img src={post.image} alt={post.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+            <div className="w-full h-[260px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[520px] overflow-hidden relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
+              <img src={post.image} alt={post.title} className="block w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
             </div>
             <div className="container mx-auto px-4 sm:px-6 relative -mt-32 z-10">
