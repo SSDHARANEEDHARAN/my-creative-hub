@@ -862,6 +862,62 @@ const AdminModerationPage = () => {
                     ))}
                   </div>
                 )}
+
+                {/* ── Built-in (Static) Blog Posts ── */}
+                <div className="pt-4 mt-4 border-t">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold">Built-in Blog Posts</h3>
+                      <p className="text-xs text-muted-foreground">Hide or restore the bundled posts shown on the public blog.</p>
+                    </div>
+                    <Badge variant="secondary">{staticBlogPosts.length} total · {hiddenStaticIds.size} hidden</Badge>
+                  </div>
+                  <div className="space-y-2">
+                    {staticBlogPosts.map(sp => {
+                      const isHidden = hiddenStaticIds.has(sp.id);
+                      return (
+                        <Card key={sp.id} className={isHidden ? "opacity-60" : ""}>
+                          <CardContent className="pt-3 pb-3 flex items-center gap-3">
+                            <img src={sp.image} alt="" className="w-12 h-12 rounded object-cover flex-shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.visibility = "hidden"; }} />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate text-sm">{sp.title}</p>
+                              <p className="text-xs text-muted-foreground">{sp.category} · id: {sp.id}</p>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground" title="Live view count">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="font-mono tabular-nums">{blogViewCounts[sp.id] || 0}</span>
+                            </div>
+                            <Badge variant={isHidden ? "destructive" : "default"}>{isHidden ? "Hidden" : "Visible"}</Badge>
+                            {isHidden ? (
+                              <Button size="sm" variant="outline" onClick={async () => {
+                                const { error } = await supabase.from("hidden_static_blog_posts").delete().eq("post_id", sp.id);
+                                if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
+                                setHiddenStaticIds(prev => { const s = new Set(prev); s.delete(sp.id); return s; });
+                                toast({ title: "Restored", description: "Post is visible on the public blog again." });
+                              }}><RotateCw className="w-3.5 h-3.5 mr-1" />Restore</Button>
+                            ) : (
+                              <Button size="sm" variant="destructive" onClick={async () => {
+                                if (!confirm(`Hide "${sp.title}" from the public blog?\n\nThis is reversible — you can restore it later.`)) return;
+                                const { data: { user } } = await supabase.auth.getUser();
+                                const { error } = await supabase.from("hidden_static_blog_posts").insert({
+                                  post_id: sp.id, title: sp.title, hidden_by: user?.id, hidden_by_email: user?.email,
+                                });
+                                if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
+                                await supabase.from("admin_audit_log").insert({
+                                  action: "hide", entity_type: "static_blog", entity_id: sp.id, label: sp.title,
+                                  snapshot: { id: sp.id, title: sp.title, category: sp.category, source: "static" },
+                                  related_counts: {}, performed_by: user?.id, performed_by_email: user?.email,
+                                });
+                                setHiddenStaticIds(prev => new Set([...prev, sp.id]));
+                                toast({ title: "Hidden", description: "Post is now hidden from the public blog. Recorded in audit log." });
+                              }}><Trash2 className="w-3.5 h-3.5 mr-1" />Hide</Button>
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
               </TabsContent>
 
               {/* ── Projects Tab ── */}
