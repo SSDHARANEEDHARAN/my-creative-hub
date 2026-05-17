@@ -214,13 +214,21 @@ const BlogPostPage = () => {
                   <div className="mt-12 pt-8 border-t border-border">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${userHasLiked ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
-                          <Heart size={18} fill={userHasLiked ? "currentColor" : "none"} />
-                          <span className="text-sm font-medium">{likeCount}</span>
+                        <button
+                          onClick={handleLike}
+                          aria-label={userHasLiked ? "Unlike post" : "Like post"}
+                          className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 active:scale-95 ${userHasLiked ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+                        >
+                          <Heart size={22} fill={userHasLiked ? "currentColor" : "none"} strokeWidth={2} />
+                          {isAdmin && <span className="text-sm font-medium">{likeCount}</span>}
+                          {!isAdmin && <span className="text-sm font-medium">{userHasLiked ? "Liked" : "Like"}</span>}
                         </button>
-                        <button onClick={() => { if (!currentUserEmail) { setShowAccessModal(true); return; } setShowCommentForm(!showCommentForm); }} className="flex items-center gap-2 px-4 py-2 bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+                        <button
+                          onClick={() => { if (!currentUserEmail) { setShowAccessModal(true); return; } setShowCommentForm(!showCommentForm); }}
+                          className="flex items-center gap-2 px-4 py-2 bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                        >
                           <MessageCircle size={18} />
-                          <span className="text-sm font-medium">{commentCount}</span>
+                          {isAdmin ? <span className="text-sm font-medium">{commentCount}</span> : <span className="text-sm font-medium">Comment</span>}
                         </button>
                         <BlogDownloadButton
                           postId={post.id}
@@ -233,9 +241,15 @@ const BlogPostPage = () => {
                           onDownloaded={refreshBlogDownloads}
                         />
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Eye size={14} /> {viewCount} readers
-                      </div>
+                      {isAdmin ? (
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Eye size={14} /> {viewCount} readers
+                        </div>
+                      ) : (
+                        <div className="text-xs text-muted-foreground/70 italic">
+                          Tip: double-tap the post image to like
+                        </div>
+                      )}
                     </div>
                   </div>
                 </ScrollReveal>
