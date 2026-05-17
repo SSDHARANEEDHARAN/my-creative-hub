@@ -211,22 +211,26 @@ const BlogPage = () => {
                         <p className="text-muted-foreground mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">{featuredPost.excerpt}</p>
                         <div className="flex flex-wrap items-center justify-between gap-4">
                           <div className="flex items-center gap-3 sm:gap-4">
-                            <button
-                              onClick={(e) => handleLike(featuredPost.id, e)}
-                              className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                              <Heart size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
-                              {likeCounts[featuredPost.id] || 0}
-                            </button>
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <MessageCircle size={16} /> {commentCounts[featuredPost.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
-                            </span>
+                            {isAdmin && (
+                              <>
+                                <button
+                                  onClick={(e) => handleLike(featuredPost.id, e)}
+                                  className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                  <Heart size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
+                                  {likeCounts[featuredPost.id] || 0}
+                                </button>
+                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                  <MessageCircle size={16} /> {commentCounts[featuredPost.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                  <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                  <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
+                                </span>
+                              </>
+                            )}
                             <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
                               <Clock size={16} /> {featuredPost.readTime}
                             </span>
