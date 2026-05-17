@@ -91,7 +91,43 @@ const BlogPage = () => {
     }
   };
 
-  return (
+  // Like (without unliking) — used by double-tap gesture
+  const likeOnly = async (postId: string) => {
+    if (!currentUserEmail || !currentUserName) {
+      setShowAccessModal(true);
+      return;
+    }
+    if (userLikes.has(postId)) return;
+    const { data, error } = await supabase.functions.invoke('manage-blog-likes', {
+      body: { action: "add", post_id: postId, name: currentUserName, email: currentUserEmail },
+    });
+    if (!error && !data?.error) {
+      setUserLikes((prev) => new Set([...prev, postId]));
+      setLikeCounts((prev) => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
+    }
+  };
+
+  // Handle card click: single click navigates, double-tap likes + floating heart
+  const handleCardActivate = (postId: string, e: React.MouseEvent) => {
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last && last.id === postId && now - last.t < 350) {
+      e.preventDefault();
+      e.stopPropagation();
+      lastTapRef.current = null;
+      floatingRef.current?.spawn(e.clientX, e.clientY);
+      likeOnly(postId);
+      return;
+    }
+    lastTapRef.current = { id: postId, t: now };
+    // Delay navigation slightly so a second tap can cancel it
+    window.setTimeout(() => {
+      if (lastTapRef.current && lastTapRef.current.id === postId && lastTapRef.current.t === now) {
+        navigate(`/blog/${postId}`);
+        lastTapRef.current = null;
+      }
+    }, 280);
+  };
     <>
       <Helmet>
         <title>Blog | Dharaneedharan SS - Insights & Tutorials</title>
