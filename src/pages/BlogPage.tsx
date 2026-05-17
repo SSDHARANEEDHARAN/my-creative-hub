@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -21,8 +22,10 @@ const BlogPage = () => {
   const [posts, setPosts] = useState<BlogPost[]>(staticPosts);
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { guest } = useGuest();
+  const floatingRef = useRef<FloatingHeartHandle>(null);
+  const lastTapRef = useRef<{ id: string; t: number } | null>(null);
 
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
@@ -88,8 +91,47 @@ const BlogPage = () => {
     }
   };
 
+  // Like (without unliking) — used by double-tap gesture
+  const likeOnly = async (postId: string) => {
+    if (!currentUserEmail || !currentUserName) {
+      setShowAccessModal(true);
+      return;
+    }
+    if (userLikes.has(postId)) return;
+    const { data, error } = await supabase.functions.invoke('manage-blog-likes', {
+      body: { action: "add", post_id: postId, name: currentUserName, email: currentUserEmail },
+    });
+    if (!error && !data?.error) {
+      setUserLikes((prev) => new Set([...prev, postId]));
+      setLikeCounts((prev) => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
+    }
+  };
+
+  // Handle card click: single click navigates, double-tap likes + floating heart
+  const handleCardActivate = (postId: string, e: React.MouseEvent) => {
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last && last.id === postId && now - last.t < 350) {
+      e.preventDefault();
+      e.stopPropagation();
+      lastTapRef.current = null;
+      floatingRef.current?.spawn(e.clientX, e.clientY);
+      likeOnly(postId);
+      return;
+    }
+    lastTapRef.current = { id: postId, t: now };
+    // Delay navigation slightly so a second tap can cancel it
+    window.setTimeout(() => {
+      if (lastTapRef.current && lastTapRef.current.id === postId && lastTapRef.current.t === now) {
+        navigate(`/blog/${postId}`);
+        lastTapRef.current = null;
+      }
+    }, 280);
+  };
+
   return (
     <>
+      <FloatingHeart ref={floatingRef} />
       <Helmet>
         <title>Blog | Dharaneedharan SS - Insights & Tutorials</title>
         <meta name="description" content="Read articles about web development, design patterns, and lessons learned from building products." />
@@ -140,8 +182,8 @@ const BlogPage = () => {
               {featuredPost && (
                 <ScrollReveal delay={100}>
                   <div
-                    className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group"
-                    onClick={() => navigate(`/blog/${featuredPost.id}`)}
+                    className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group select-none"
+                    onClick={(e) => handleCardActivate(featuredPost.id, e)}
                   >
                     <div className="grid md:grid-cols-2 gap-0">
                       <div className="relative overflow-hidden aspect-[4/3] md:aspect-auto">
@@ -169,22 +211,26 @@ const BlogPage = () => {
                         <p className="text-muted-foreground mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">{featuredPost.excerpt}</p>
                         <div className="flex flex-wrap items-center justify-between gap-4">
                           <div className="flex items-center gap-3 sm:gap-4">
-                            <button
-                              onClick={(e) => handleLike(featuredPost.id, e)}
-                              className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                              <Heart size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
-                              {likeCounts[featuredPost.id] || 0}
-                            </button>
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <MessageCircle size={16} /> {commentCounts[featuredPost.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
-                            </span>
+                            {isAdmin && (
+                              <>
+                                <button
+                                  onClick={(e) => handleLike(featuredPost.id, e)}
+                                  className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                  <Heart size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
+                                  {likeCounts[featuredPost.id] || 0}
+                                </button>
+                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                  <MessageCircle size={16} /> {commentCounts[featuredPost.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                  <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                  <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
+                                </span>
+                              </>
+                            )}
                             <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
                               <Clock size={16} /> {featuredPost.readTime}
                             </span>
@@ -204,8 +250,8 @@ const BlogPage = () => {
                 {otherPosts.map((post, index) => (
                   <ScrollReveal key={post.id} delay={index * 50} className="h-full">
                     <article
-                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col"
-                      onClick={() => navigate(`/blog/${post.id}`)}
+                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col select-none"
+                      onClick={(e) => handleCardActivate(post.id, e)}
                     >
                       <div className="relative overflow-hidden aspect-[16/10]">
                         <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0" />
@@ -222,22 +268,28 @@ const BlogPage = () => {
                         <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 flex-1">{post.excerpt}</p>
                         <div className="flex items-center justify-between pt-3 sm:pt-4 mt-auto border-t border-border">
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <button
-                              onClick={(e) => handleLike(post.id, e)}
-                              className={`flex items-center gap-1 text-xs sm:text-sm transition-colors ${userLikes.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                              <Heart size={14} fill={userLikes.has(post.id) ? "currentColor" : "none"} />
-                              {likeCounts[post.id] || 0}
-                            </button>
-                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                              <MessageCircle size={14} /> {commentCounts[post.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                              <Eye size={14} /> {viewCounts[post.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                              <Download size={14} /> {downloadCounts[post.id] || 0}
-                            </span>
+                            {isAdmin ? (
+                              <>
+                                <button
+                                  onClick={(e) => handleLike(post.id, e)}
+                                  className={`flex items-center gap-1 text-xs sm:text-sm transition-colors ${userLikes.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                  <Heart size={14} fill={userLikes.has(post.id) ? "currentColor" : "none"} />
+                                  {likeCounts[post.id] || 0}
+                                </button>
+                                <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                                  <MessageCircle size={14} /> {commentCounts[post.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                                  <Eye size={14} /> {viewCounts[post.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                                  <Download size={14} /> {downloadCounts[post.id] || 0}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-xs text-muted-foreground/70">Double-tap to like</span>
+                            )}
                           </div>
                           <ArrowRight size={14} className="text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
                         </div>

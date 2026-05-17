@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import ImageLightbox from "@/components/ImageLightbox";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useParams, Link } from "react-router-dom";
@@ -38,7 +39,7 @@ const BlogPostPage = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
@@ -55,11 +56,29 @@ const BlogPostPage = () => {
   } = useBlogData(id || "", currentUserEmail, currentUserName);
 
   const { count: blogDownloadCount, refresh: refreshBlogDownloads } = useDownloadCount("blog", id || "");
+  const floatingRef = useRef<FloatingHeartHandle>(null);
+  const lastTapRef = useRef<number>(0);
+
   const handleLike = async () => {
     if (!currentUserEmail || !currentUserName) { setShowAccessModal(true); return; }
     await addLike(currentUserName, currentUserEmail);
     if (!userHasLiked) {
       await supabase.functions.invoke("send-contact-email", { body: { type: "blog_like", name: currentUserName, email: currentUserEmail, subject: "New Blog Like", message: `Liked: ${post?.title}`, blogTitle: post?.title, blogUrl: window.location.href } });
+    }
+  };
+
+  // Double-tap anywhere on the post to like + show floating heart
+  const handleDoubleTapArea = (e: React.MouseEvent) => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 350) {
+      lastTapRef.current = 0;
+      floatingRef.current?.spawn(e.clientX, e.clientY);
+      if (!currentUserEmail || !currentUserName) { setShowAccessModal(true); return; }
+      if (!userHasLiked) {
+        addLike(currentUserName, currentUserEmail);
+      }
+    } else {
+      lastTapRef.current = now;
     }
   };
 
@@ -105,6 +124,7 @@ const BlogPostPage = () => {
 
   return (
     <>
+      <FloatingHeart ref={floatingRef} />
       <Helmet>
         <title>{post.title} | Blog - Dharaneedharan SS</title>
         <meta name="description" content={post.excerpt} />
@@ -116,9 +136,20 @@ const BlogPostPage = () => {
         <main className="pt-20">
           {/* Hero */}
           <section className="relative">
-            <div className="w-full h-[260px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[520px] overflow-hidden relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
-              <img src={post.image} alt={post.title} className="block w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+            <div
+              className="w-full h-[260px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[520px] overflow-hidden relative cursor-pointer select-none"
+              onClick={(e) => { handleDoubleTapArea(e); }}
+              onDoubleClick={(e) => e.preventDefault()}
+            >
+              <img src={post.image} alt={post.title} className="block w-full h-full object-cover hover:scale-105 transition-transform duration-300 pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); }}
+                className="absolute bottom-3 right-3 px-3 py-1.5 bg-background/80 backdrop-blur text-xs text-foreground hover:bg-background transition"
+              >
+                View image
+              </button>
             </div>
             <div className="container mx-auto px-4 sm:px-6 relative -mt-32 z-10">
               <ScrollReveal>
@@ -132,7 +163,9 @@ const BlogPostPage = () => {
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar size={12} /> {post.date}</span>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock size={12} /> {post.readTime}</span>
-                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Eye size={12} /> {viewCount} readers</span>
+                    {isAdmin && (
+                      <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Eye size={12} /> {viewCount} readers</span>
+                    )}
                   </div>
                   <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-foreground">{post.title}</h1>
                   <div className="flex items-center justify-between">
@@ -181,13 +214,21 @@ const BlogPostPage = () => {
                   <div className="mt-12 pt-8 border-t border-border">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                       <div className="flex items-center gap-4">
-                        <button onClick={handleLike} className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 ${userHasLiked ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}>
-                          <Heart size={18} fill={userHasLiked ? "currentColor" : "none"} />
-                          <span className="text-sm font-medium">{likeCount}</span>
+                        <button
+                          onClick={handleLike}
+                          aria-label={userHasLiked ? "Unlike post" : "Like post"}
+                          className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 active:scale-95 ${userHasLiked ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
+                        >
+                          <Heart size={22} fill={userHasLiked ? "currentColor" : "none"} strokeWidth={2} />
+                          {isAdmin && <span className="text-sm font-medium">{likeCount}</span>}
+                          {!isAdmin && <span className="text-sm font-medium">{userHasLiked ? "Liked" : "Like"}</span>}
                         </button>
-                        <button onClick={() => { if (!currentUserEmail) { setShowAccessModal(true); return; } setShowCommentForm(!showCommentForm); }} className="flex items-center gap-2 px-4 py-2 bg-secondary text-muted-foreground hover:text-foreground transition-colors">
+                        <button
+                          onClick={() => { if (!currentUserEmail) { setShowAccessModal(true); return; } setShowCommentForm(!showCommentForm); }}
+                          className="flex items-center gap-2 px-4 py-2 bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+                        >
                           <MessageCircle size={18} />
-                          <span className="text-sm font-medium">{commentCount}</span>
+                          {isAdmin ? <span className="text-sm font-medium">{commentCount}</span> : <span className="text-sm font-medium">Comment</span>}
                         </button>
                         <BlogDownloadButton
                           postId={post.id}
@@ -200,9 +241,15 @@ const BlogPostPage = () => {
                           onDownloaded={refreshBlogDownloads}
                         />
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <Eye size={14} /> {viewCount} readers
-                      </div>
+                      {isAdmin ? (
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Eye size={14} /> {viewCount} readers
+                        </div>
+                      ) : (
+                        <div className="text-xs text-muted-foreground/70 italic">
+                          Tip: double-tap the post image to like
+                        </div>
+                      )}
                     </div>
                   </div>
                 </ScrollReveal>
@@ -231,7 +278,7 @@ const BlogPostPage = () => {
                 {postComments.length > 0 && (
                   <ScrollReveal delay={200}>
                     <div className="mt-10">
-                      <h3 className="font-display font-bold text-xl mb-6">Comments ({commentCount})</h3>
+                      <h3 className="font-display font-bold text-xl mb-6">Comments{isAdmin ? ` (${commentCount})` : ""}</h3>
                       <div className="space-y-6">
                         {postComments.map((comment) => (
                           <div key={comment.id} className="p-5 bg-card border border-border">
