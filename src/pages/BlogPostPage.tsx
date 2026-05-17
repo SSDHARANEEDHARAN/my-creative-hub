@@ -136,9 +136,20 @@ const BlogPostPage = () => {
         <main className="pt-20">
           {/* Hero */}
           <section className="relative">
-            <div className="w-full h-[260px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[520px] overflow-hidden relative cursor-pointer" onClick={() => setLightboxOpen(true)}>
-              <img src={post.image} alt={post.title} className="block w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+            <div
+              className="w-full h-[260px] sm:h-[340px] md:h-[400px] lg:h-[460px] xl:h-[520px] overflow-hidden relative cursor-pointer select-none"
+              onClick={(e) => { handleDoubleTapArea(e); }}
+              onDoubleClick={(e) => e.preventDefault()}
+            >
+              <img src={post.image} alt={post.title} className="block w-full h-full object-cover hover:scale-105 transition-transform duration-300 pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); }}
+                className="absolute bottom-3 right-3 px-3 py-1.5 bg-background/80 backdrop-blur text-xs text-foreground hover:bg-background transition"
+              >
+                View image
+              </button>
             </div>
             <div className="container mx-auto px-4 sm:px-6 relative -mt-32 z-10">
               <ScrollReveal>
