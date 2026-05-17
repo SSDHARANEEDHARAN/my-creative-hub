@@ -163,7 +163,9 @@ const BlogPostPage = () => {
                     </span>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar size={12} /> {post.date}</span>
                     <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock size={12} /> {post.readTime}</span>
-                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Eye size={12} /> {viewCount} readers</span>
+                    {isAdmin && (
+                      <span className="flex items-center gap-1.5 text-xs text-muted-foreground"><Eye size={12} /> {viewCount} readers</span>
+                    )}
                   </div>
                   <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-foreground">{post.title}</h1>
                   <div className="flex items-center justify-between">
