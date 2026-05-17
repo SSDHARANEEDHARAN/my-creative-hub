@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
