@@ -268,22 +268,28 @@ const BlogPage = () => {
                         <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 flex-1">{post.excerpt}</p>
                         <div className="flex items-center justify-between pt-3 sm:pt-4 mt-auto border-t border-border">
                           <div className="flex items-center gap-2 sm:gap-3">
-                            <button
-                              onClick={(e) => handleLike(post.id, e)}
-                              className={`flex items-center gap-1 text-xs sm:text-sm transition-colors ${userLikes.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
-                            >
-                              <Heart size={14} fill={userLikes.has(post.id) ? "currentColor" : "none"} />
-                              {likeCounts[post.id] || 0}
-                            </button>
-                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                              <MessageCircle size={14} /> {commentCounts[post.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                              <Eye size={14} /> {viewCounts[post.id] || 0}
-                            </span>
-                            <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                              <Download size={14} /> {downloadCounts[post.id] || 0}
-                            </span>
+                            {isAdmin ? (
+                              <>
+                                <button
+                                  onClick={(e) => handleLike(post.id, e)}
+                                  className={`flex items-center gap-1 text-xs sm:text-sm transition-colors ${userLikes.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                  <Heart size={14} fill={userLikes.has(post.id) ? "currentColor" : "none"} />
+                                  {likeCounts[post.id] || 0}
+                                </button>
+                                <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                                  <MessageCircle size={14} /> {commentCounts[post.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                                  <Eye size={14} /> {viewCounts[post.id] || 0}
+                                </span>
+                                <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                                  <Download size={14} /> {downloadCounts[post.id] || 0}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-xs text-muted-foreground/70">Double-tap to like</span>
+                            )}
                           </div>
                           <ArrowRight size={14} className="text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
                         </div>
