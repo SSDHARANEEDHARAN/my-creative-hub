@@ -124,6 +124,7 @@ const BlogPostPage = () => {
 
   return (
     <>
+      <FloatingHeart ref={floatingRef} />
       <Helmet>
         <title>{post.title} | Blog - Dharaneedharan SS</title>
         <meta name="description" content={post.excerpt} />
