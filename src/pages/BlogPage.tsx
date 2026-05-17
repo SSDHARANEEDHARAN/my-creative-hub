@@ -250,8 +250,8 @@ const BlogPage = () => {
                 {otherPosts.map((post, index) => (
                   <ScrollReveal key={post.id} delay={index * 50} className="h-full">
                     <article
-                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col"
-                      onClick={() => navigate(`/blog/${post.id}`)}
+                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col select-none"
+                      onClick={(e) => handleCardActivate(post.id, e)}
                     >
                       <div className="relative overflow-hidden aspect-[16/10]">
                         <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0" />
