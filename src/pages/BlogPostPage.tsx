@@ -56,11 +56,29 @@ const BlogPostPage = () => {
   } = useBlogData(id || "", currentUserEmail, currentUserName);
 
   const { count: blogDownloadCount, refresh: refreshBlogDownloads } = useDownloadCount("blog", id || "");
+  const floatingRef = useRef<FloatingHeartHandle>(null);
+  const lastTapRef = useRef<number>(0);
+
   const handleLike = async () => {
     if (!currentUserEmail || !currentUserName) { setShowAccessModal(true); return; }
     await addLike(currentUserName, currentUserEmail);
     if (!userHasLiked) {
       await supabase.functions.invoke("send-contact-email", { body: { type: "blog_like", name: currentUserName, email: currentUserEmail, subject: "New Blog Like", message: `Liked: ${post?.title}`, blogTitle: post?.title, blogUrl: window.location.href } });
+    }
+  };
+
+  // Double-tap anywhere on the post to like + show floating heart
+  const handleDoubleTapArea = (e: React.MouseEvent) => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 350) {
+      lastTapRef.current = 0;
+      floatingRef.current?.spawn(e.clientX, e.clientY);
+      if (!currentUserEmail || !currentUserName) { setShowAccessModal(true); return; }
+      if (!userHasLiked) {
+        addLike(currentUserName, currentUserEmail);
+      }
+    } else {
+      lastTapRef.current = now;
     }
   };
 
