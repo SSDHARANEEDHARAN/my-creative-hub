@@ -39,7 +39,7 @@ const BlogPostPage = () => {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
