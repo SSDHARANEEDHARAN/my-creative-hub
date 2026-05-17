@@ -182,8 +182,8 @@ const BlogPage = () => {
               {featuredPost && (
                 <ScrollReveal delay={100}>
                   <div
-                    className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group"
-                    onClick={() => navigate(`/blog/${featuredPost.id}`)}
+                    className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group select-none"
+                    onClick={(e) => handleCardActivate(featuredPost.id, e)}
                   >
                     <div className="grid md:grid-cols-2 gap-0">
                       <div className="relative overflow-hidden aspect-[4/3] md:aspect-auto">
