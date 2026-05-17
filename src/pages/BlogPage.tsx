@@ -22,8 +22,10 @@ const BlogPage = () => {
   const [posts, setPosts] = useState<BlogPost[]>(staticPosts);
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("All");
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { guest } = useGuest();
+  const floatingRef = useRef<FloatingHeartHandle>(null);
+  const lastTapRef = useRef<{ id: string; t: number } | null>(null);
 
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.email?.split("@")[0] || guest?.name || null;
