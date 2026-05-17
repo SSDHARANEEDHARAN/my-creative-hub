@@ -278,7 +278,7 @@ const BlogPostPage = () => {
                 {postComments.length > 0 && (
                   <ScrollReveal delay={200}>
                     <div className="mt-10">
-                      <h3 className="font-display font-bold text-xl mb-6">Comments ({commentCount})</h3>
+                      <h3 className="font-display font-bold text-xl mb-6">Comments{isAdmin ? ` (${commentCount})` : ""}</h3>
                       <div className="space-y-6">
                         {postComments.map((comment) => (
                           <div key={comment.id} className="p-5 bg-card border border-border">
