@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import ImageLightbox from "@/components/ImageLightbox";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
 import { useParams, Link } from "react-router-dom";
