@@ -187,7 +187,7 @@ const CertificateModal = ({ certificate, isOpen, onClose }: CertificateModalProp
                 <div className="text-center space-y-4">
                   <p className="text-muted-foreground">This is to certify that</p>
                   <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-                    Tharaneetharan SS
+                    Creative Hub Member
                   </h2>
                   <p className="text-muted-foreground">has successfully completed</p>
                   <h3 className="font-display text-xl md:text-2xl font-semibold text-primary">

@@ -46,12 +46,12 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
               Creating innovative mechatronics solutions and advanced engineering designs - from robotics to automation systems.
             </p>
             <a 
-              href="mailto:tharaneetharanss@gmail.com"
+              href="mailto:contact@example.com"
               className="inline-flex items-center gap-2 text-foreground hover:text-muted-foreground transition-colors font-medium group text-sm sm:text-base"
             >
               <Mail size={16} />
-              <span className="hidden sm:inline">tharaneetharanss@gmail.com</span>
-              <span className="sm:hidden">Email Me</span>
+              <span className="hidden sm:inline">contact@example.com</span>
+              <span className="sm:hidden">Email Us</span>
               <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>
           </div>

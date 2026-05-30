@@ -82,7 +82,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
           d.setFontSize(7);
           d.setFont("helvetica", "normal");
           d.setTextColor(160, 160, 160);
-          d.text("© Dharaneedharan SS  |  www.dharaneedharan.dev", margin, pageHeight - 12);
+          d.text("© Portfolio Team  |  www.example.com", margin, pageHeight - 12);
           d.text(`Page ${pageNum}`, pageWidth - margin, pageHeight - 12, { align: "right" });
         };
 
@@ -291,7 +291,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         doc.setFontSize(9);
         doc.setFont("helvetica", "normal");
         doc.setTextColor(120, 120, 120);
-        doc.text("www.dharaneedharan.dev", cx, cy + 22, { align: "center" });
+        doc.text("www.example.com", cx, cy + 22, { align: "center" });
         doc.text("Mechanical Engineer  •  CAD Designer  •  IoT Specialist", cx, cy + 30, { align: "center" });
 
         doc.save(`${projectTitle.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}-case-study.pdf`);

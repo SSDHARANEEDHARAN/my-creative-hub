@@ -62,7 +62,7 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
         d.setFontSize(7);
         d.setFont("helvetica", "normal");
         d.setTextColor(160, 160, 160);
-        d.text("© Dharaneedharan SS  |  www.dharaneedharan.dev", margin, pageHeight - 12);
+        d.text("© Portfolio Team  |  www.example.com", margin, pageHeight - 12);
         d.text(`Page ${pageNum}`, pageWidth - margin, pageHeight - 12, { align: "right" });
       };
 
@@ -273,7 +273,7 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(120, 120, 120);
-      doc.text("www.dharaneedharan.dev", cx, cy + 22, { align: "center" });
+      doc.text("www.example.com", cx, cy + 22, { align: "center" });
       doc.text("Full Stack Developer  •  CAD Engineer  •  IoT Specialist", cx, cy + 30, { align: "center" });
 
       doc.save(`${title.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.pdf`);

@@ -156,11 +156,11 @@ const IndustrialProjectsPage = () => {
                   Your account has been blocked based on IP address. This action was taken to prevent disturbance to others.
                 </p>
                 <a
-                  href="mailto:TharaneeTharanss@gmail.com"
+                  href="mailto:contact@example.com"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   <Mail className="w-4 h-4" />
-                  Contact TharaneeTharanss@gmail.com
+                  Contact Support
                 </a>
               </motion.div>
             </div>
@@ -191,11 +191,11 @@ const IndustrialProjectsPage = () => {
                   Verification cancelled. Please try again.
                 </p>
                 <a
-                  href="mailto:tharaneetharanss@gmail.com"
+                  href="mailto:contact@example.com"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   <Mail className="w-4 h-4" />
-                  Contact tharaneetharanss@gmail.com
+                  Contact Support
                 </a>
               </motion.div>
             </div>
@@ -237,11 +237,11 @@ const IndustrialProjectsPage = () => {
                   </p>
                 </div>
                 <a
-                  href="mailto:TharaneeTharanss@gmail.com"
+                  href="mailto:contact@example.com"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   <Mail className="w-4 h-4" />
-                  Contact TharaneeTharanss@gmail.com
+                  Contact Support
                 </a>
               </motion.div>
             </div>

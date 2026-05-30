@@ -130,11 +130,11 @@ const ContentProtection = () => {
             To request permission, please contact:
           </p>
           <a
-            href="mailto:tharaneetharanss@gmail.com"
+            href="mailto:contact@example.com"
             className="inline-flex items-center gap-2 text-primary hover:underline font-semibold text-sm"
           >
             <Mail className="w-4 h-4" />
-            tharaneetharanss@gmail.com
+            contact@example.com
           </a>
         </div>
 

@@ -21,14 +21,14 @@ const UserStatusBlocker = () => {
           </div>
           <h2 className="text-2xl font-bold text-foreground mb-3">Your access has been blocked</h2>
           <p className="text-muted-foreground mb-6 leading-relaxed">
-            Your access has been blocked. Contact: tharaneetharanss
+            Your access has been blocked. If you need assistance, contact support.
           </p>
           <div className="px-4 py-3 bg-red-600/10 border border-red-600/20 rounded-lg text-sm mb-6">
             <p className="text-red-700 dark:text-red-400 font-medium mb-2">Blocked IP</p>
             <p className="text-muted-foreground text-xs break-all">{blockedIp}</p>
           </div>
           <a
-            href="mailto:tharaneetharanss@gmail.com"
+            href="mailto:contact@example.com"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Mail className="w-4 h-4" />
@@ -68,7 +68,7 @@ const UserStatusBlocker = () => {
             </p>
           </div>
           <a
-            href="mailto:tharaneetharanss@gmail.com"
+            href="mailto:contact@example.com"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Mail className="w-4 h-4" />
@@ -123,11 +123,11 @@ const UserStatusBlocker = () => {
             Your account has been blocked. Contact administrator for assistance.
           </p>
           <a
-            href="mailto:tharaneetharanss@gmail.com"
+            href="mailto:contact@example.com"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Mail className="w-4 h-4" />
-            Contact TharaneeTharanss@gmail.com
+            Contact Support
           </a>
         </motion.div>
       </div>

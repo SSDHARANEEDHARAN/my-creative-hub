@@ -53,7 +53,7 @@ export const GuestProvider = ({ children }: { children: ReactNode }) => {
         type: "guest_welcome",
         name,
         email,
-        subject: "Welcome to Tharaneetharan's Portfolio",
+        subject: "Welcome to the portfolio",
         message: `New guest visitor: ${name} (${email})`,
       },
     });

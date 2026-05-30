@@ -150,7 +150,7 @@ const AboutPage = () => {
                       
                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                         <span className="flex items-center gap-1"><MapPin size={14} className="text-primary" />Namakkal, India</span>
-                        <span className="flex items-center gap-1 break-all"><Mail size={14} className="text-primary shrink-0" />tharaneetharanss@gmail.com</span>
+                        <span className="flex items-center gap-1 break-all"><Mail size={14} className="text-primary shrink-0" />contact@example.com</span>
                         <span className="flex items-center gap-1"><Phone size={14} className="text-primary" />+91 8870086023</span>
                       </div>
                       

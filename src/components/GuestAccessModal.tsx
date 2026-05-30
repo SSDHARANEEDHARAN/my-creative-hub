@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useGuest } from "@/contexts/GuestContext";
-import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GuestAccessModalProps {
   isOpen: boolean;
@@ -33,8 +33,11 @@ const GuestAccessModal = ({ isOpen, onClose, returnPath = "/" }: GuestAccessModa
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: oauthRedirectUri,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: oauthRedirectUri,
+        },
       });
       if (error) {
         toast({
@@ -57,8 +60,11 @@ const GuestAccessModal = ({ isOpen, onClose, returnPath = "/" }: GuestAccessModa
   const handleAppleLogin = async () => {
     setIsAppleLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: oauthRedirectUri,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "apple",
+        options: {
+          redirectTo: oauthRedirectUri,
+        },
       });
       if (error) {
         toast({ title: "Login Failed", description: error.message, variant: "destructive" });

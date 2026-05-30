@@ -1,177 +1,221 @@
-# Supabase CLI
+﻿# My Creative Hub
 
-[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=develop)](https://coveralls.io/github/supabase/cli?branch=develop) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
-](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
+## Proprietary Software – Restricted Access
 
-[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
+**My Creative Hub** is a proprietary full-stack web application developed and maintained by SSDHARANEEDHARAN. This platform serves as a centralized digital ecosystem for showcasing projects, creative works, professional achievements, technical research, and portfolio content.
 
-This repository contains all the functionality for Supabase CLI.
+The application is built using modern web technologies, including React, TypeScript, Vite, Tailwind CSS, and Supabase, with a strong emphasis on security, scalability, performance, and data protection.
 
-- [x] Running Supabase locally
-- [x] Managing database migrations
-- [x] Creating and deploying Supabase Functions
-- [x] Generating types directly from your database schema
-- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
+---
 
-## Getting started
+# Confidentiality & Intellectual Property Notice
 
-### Install the CLI
+© 2026 SSDHARANEEDHARAN. All Rights Reserved.
 
-Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
+This repository contains proprietary software, confidential implementation details, custom business logic, design assets, source code, architecture, and related intellectual property owned exclusively by the repository owner.
 
-```bash
-npm i supabase --save-dev
-```
+The contents of this repository are protected under applicable copyright, intellectual property, and software protection laws.
 
-When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+Access to this repository does not grant any ownership rights, usage rights, redistribution rights, modification rights, or commercial rights unless explicitly authorized in writing by the copyright holder.
 
-```
-NODE_OPTIONS=--no-experimental-fetch yarn add supabase
-```
+---
 
-> **Note**
-For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
+# Restricted Usage Policy
 
-<details>
-  <summary><b>macOS</b></summary>
+Unless prior written permission has been obtained from the repository owner, the following activities are strictly prohibited:
 
-  Available via [Homebrew](https://brew.sh). To install:
+* Copying source code in whole or in part
+* Downloading for redistribution purposes
+* Republishing repository contents
+* Commercial exploitation of any component
+* Reverse engineering project architecture
+* Creating derivative works
+* Rebranding or reselling project assets
+* Using code snippets in personal, academic, or commercial projects
+* Training artificial intelligence models using repository content
+* Reproducing UI/UX designs, workflows, or implementation patterns
 
-  ```sh
-  brew install supabase/tap/supabase
-  ```
+Any unauthorized use may constitute a violation of copyright and intellectual property regulations.
 
-  To install the beta release channel:
-  
-  ```sh
-  brew install supabase/tap/supabase-beta
-  brew link --overwrite supabase-beta
-  ```
-  
-  To upgrade:
+---
 
-  ```sh
-  brew upgrade supabase
-  ```
-</details>
+# Authorized Access Requirement
 
-<details>
-  <summary><b>Windows</b></summary>
+Access to source code, development resources, internal documentation, configuration files, deployment architecture, and project assets is restricted to authorized individuals only.
 
-  Available via [Scoop](https://scoop.sh). To install:
+Individuals seeking access must obtain explicit written approval from the repository owner.
 
-  ```powershell
-  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-  scoop install supabase
-  ```
+Approval requests may be reviewed based on:
 
-  To upgrade:
+* Purpose of access
+* Intended use
+* Security considerations
+* Project requirements
+* Collaboration agreements
 
-  ```powershell
-  scoop update supabase
-  ```
-</details>
+Access may be revoked at any time without prior notice.
 
-<details>
-  <summary><b>Linux</b></summary>
+---
 
-  Available via [Homebrew](https://brew.sh) and Linux packages.
+# Security Statement
 
-  #### via Homebrew
+Security is a core design principle of this project.
 
-  To install:
+This repository may contain security-sensitive implementation details, including:
 
-  ```sh
-  brew install supabase/tap/supabase
-  ```
+* Authentication workflows
+* Authorization mechanisms
+* Database structures
+* API integrations
+* Access-control logic
+* Infrastructure configurations
+* Deployment workflows
 
-  To upgrade:
+For security reasons:
 
-  ```sh
-  brew upgrade supabase
-  ```
+* Internal architecture documentation may be restricted.
+* Sensitive configuration files are excluded from source control.
+* Administrative credentials are never distributed.
+* Production secrets are protected through secure environment management.
 
-  #### via Linux packages
+Any attempt to bypass security controls, gain unauthorized access, extract protected information, or interfere with repository operations is strictly prohibited.
 
-  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+---
 
-  ```sh
-  sudo apk add --allow-untrusted <...>.apk
-  ```
+# Privacy Commitment
 
-  ```sh
-  sudo dpkg -i <...>.deb
-  ```
+This project follows privacy-conscious development practices.
 
-  ```sh
-  sudo rpm -i <...>.rpm
-  ```
+Protected information may include:
 
-  ```sh
-  sudo pacman -U <...>.pkg.tar.zst
-  ```
-</details>
+* User account information
+* Authentication metadata
+* Application configuration data
+* Internal operational records
+* Development environment settings
 
-<details>
-  <summary><b>Other Platforms</b></summary>
+No sensitive credentials, production secrets, or privileged access tokens are intended for public distribution.
 
-  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+Users and contributors are expected to maintain the confidentiality of any information obtained through authorized access.
 
-  ```sh
-  go install github.com/supabase/cli@latest
-  ```
+---
 
-  Add a symlink to the binary in `$PATH` for easier access:
+# Technology Stack
 
-  ```sh
-  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
-  ```
+## Frontend
 
-  This works on other non-standard Linux distros.
-</details>
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
 
-<details>
-  <summary><b>Community Maintained Packages</b></summary>
+## Backend & Infrastructure
 
-  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
-  To install in your working directory:
+* Supabase Authentication
+* Supabase Database
+* Supabase Storage
+* Supabase Edge Functions
 
-  ```bash
-  pkgx install supabase
-  ```
+## Deployment
 
-  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
-</details>
+* Vercel
+* GitHub
 
-### Run the CLI
+---
+
+# Development Environment
+
+## Prerequisites
+
+* Node.js (LTS Version Recommended)
+* Bun / npm / pnpm / yarn
+* Supabase Project Configuration
+
+## Installation
 
 ```bash
-supabase bootstrap
+git clone <repository-url>
+cd my-creative-hub
+bun install
 ```
 
-Or using npx:
+## Environment Configuration
+
+Create a local `.env` file and configure the required environment variables:
+
+```env
+VITE_SUPABASE_URL=YOUR_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+```
+
+---
+
+# Running the Application
+
+Development Mode:
 
 ```bash
-npx supabase bootstrap
+bun dev
 ```
 
-The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+Production Build:
 
-## Docs
-
-Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
-
-## Breaking changes
-
-We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
-
-However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
-
-## Developing
-
-To run from source:
-
-```sh
-# Go >= 1.22
-go run . help
+```bash
+bun run build
 ```
+
+Preview Production Build:
+
+```bash
+bun run preview
+```
+
+---
+
+# Contribution Policy
+
+Public contributions are currently restricted.
+
+External collaboration requests will be reviewed individually and may require:
+
+* Identity verification
+* Project approval
+* Confidentiality agreements
+* Authorized repository access
+
+Submitting pull requests or modifications without prior authorization does not guarantee review or acceptance.
+
+---
+
+# Legal Notice
+
+This repository is provided for authorized evaluation and approved collaboration purposes only.
+
+No license is granted, implied, or transferred through access to this repository.
+
+The repository owner reserves all rights, including but not limited to:
+
+* Ownership rights
+* Copyright rights
+* Distribution rights
+* Commercial rights
+* Modification rights
+* Licensing rights
+
+Unauthorized reproduction, distribution, publication, or commercial use of any portion of this repository may result in access revocation and legal remedies where applicable.
+
+---
+
+# Contact & Access Requests
+
+For collaboration opportunities, licensing inquiries, security reporting, or source-code access requests, contact the repository owner directly.
+
+All requests are subject to review and approval.
+
+---
+
+**Classification:** Proprietary Software
+**Access Level:** Restricted
+**Security Status:** Protected Repository
+**License Status:** All Rights Reserved
+**Maintenance Status:** Actively Maintained

@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const OWNER_EMAIL = "tharaneetharanss@gmail.com";
+const OWNER_EMAIL = "contact@example.com";
 const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.vercel.app";
 
 const corsHeaders = {
@@ -82,7 +82,7 @@ ${opts.preheader ? `<span style="display:none;max-height:0;overflow:hidden;mso-h
 
   <!-- Footer -->
   <div style="background:#f8f9fa;border-top:1px solid #eee;padding:20px 40px;text-align:center;">
-    <p style="margin:0 0 4px;font-size:11px;color:#999;letter-spacing:0.3px;">&copy; ${new Date().getFullYear()} Dharaneedharan SS &middot; ArtTech Engine</p>
+    <p style="margin:0 0 4px;font-size:11px;color:#999;letter-spacing:0.3px;">&copy; ${new Date().getFullYear()} ArtTech Engine</p>
     ${opts.footerText ? `<p style="margin:0 0 4px;font-size:11px;color:#bbb;">${opts.footerText}</p>` : ''}
     ${opts.unsubscribeUrl ? `<p style="margin:4px 0 0;"><a href="${opts.unsubscribeUrl}" style="color:#999;text-decoration:underline;font-size:11px;">Unsubscribe</a></p>` : ''}
   </div>
@@ -207,7 +207,7 @@ const handler = async (req: Request): Promise<Response> => {
       await sendEmail(d.email, `Reply to Your Comment: ${sT}`, buildEmail({
         headline: "You Received a Reply",
         body: `<p style="color:#111;margin:0 0 6px;font-size:16px;font-weight:600;">Hi ${sN},</p>
-        <p style="color:#555;font-size:14px;line-height:1.8;margin:0 0 16px;">Dharaneedharan SS replied to your comment on <strong style="color:#111;">${sT}</strong>.</p>
+        <p style="color:#555;font-size:14px;line-height:1.8;margin:0 0 16px;">A team member replied to your comment on <strong style="color:#111;">${sT}</strong>.</p>
         ${quoteBlock(sOC, "Your Comment")}
         <div style="border-left:3px solid #1a1a2e;padding:14px 18px;margin:16px 0;background:#f0f0ff;border-radius:0 6px 6px 0;">
           <p style="margin:0 0 6px;color:#1a1a2e;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;">Admin Reply</p>

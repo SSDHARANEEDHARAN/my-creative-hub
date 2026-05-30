@@ -112,9 +112,9 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
 
       doc.setFontSize(9);
       doc.setTextColor(...medGray);
-      doc.text("Email: tharaneetharanss@gmail.com | Phone: +91 8870086023", margin, y + 20);
-      doc.text("Location: Namakkal, India | LinkedIn: linkedin.com/in/dharaneedharan-ss-70941a211", margin, y + 25);
-      doc.text("GitHub: github.com/SSDHARANEEDHARAN", margin, y + 30);
+      doc.text("Email: contact@example.com | Phone: +1 000 000 0000", margin, y + 20);
+      doc.text("Location: Remote / Worldwide | LinkedIn: linkedin.com/in/example", margin, y + 25);
+      doc.text("GitHub: github.com/example", margin, y + 30);
       y += 38;
 
       const checkPageBreak = (needed = 20) => {
