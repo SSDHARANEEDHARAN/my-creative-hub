@@ -1,5 +1,5 @@
 // Projects page - updated
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -8,6 +8,7 @@ import { ExternalLink, FileText, Code2, Cog, Eye, Heart, MessageSquare, Factory 
 import { Link, useNavigate } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 import ImageLightbox from "@/components/ImageLightbox";
+import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
@@ -401,11 +402,15 @@ const ProjectsPage = () => {
   const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [showAccessModal, setShowAccessModal] = useState(false);
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
 
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || guest?.name || null;
+
+  const floatingRef = useRef<FloatingHeartHandle>(null);
+  const lastTapRef = useRef<{ id: string; t: number } | null>(null);
 
   const projects = activeTab === "it" ? sharedItProjects : sharedEngineeringProjects;
   const featuredProjects = projects.filter((p) => p.featured);
@@ -415,7 +420,7 @@ const ProjectsPage = () => {
     () => [...sharedItProjects, ...sharedEngineeringProjects].map((project) => String(project.id)),
     []
   );
-  const { viewCounts, likeCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
+  const { viewCounts, likeCounts, commentCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
 
   const openLightbox = (images: string[], title: string, index: number) => {
     setLightboxImages(images.map((src, i) => ({ src, alt: `${title} - Image ${i + 1}` })));
@@ -423,35 +428,54 @@ const ProjectsPage = () => {
     setLightboxOpen(true);
   };
 
-  const handleLikeProject = async (projectId: number) => {
+  const insertLike = async (projectId: string) => {
     if (!currentUserEmail || !currentUserName) {
       setShowAccessModal(true);
-      return;
+      return { ok: false as const };
     }
-
     const { error } = await supabase.from("project_likes").insert({
-      project_id: String(projectId),
+      project_id: projectId,
       name: currentUserName,
       email: currentUserEmail,
     });
-
     if (!error) {
-      toast({ description: "Project liked!" });
+      setLikedIds((s) => new Set([...s, projectId]));
       refreshCounts();
-      return;
+      return { ok: true as const };
     }
-
     if (error.code === "23505") {
-      toast({ description: "You already liked this project." });
+      setLikedIds((s) => new Set([...s, projectId]));
       refreshCounts();
+      return { ok: true as const, duplicate: true };
+    }
+    toast({ title: "Error", description: "Failed to update like count.", variant: "destructive" });
+    return { ok: false as const };
+  };
+
+  const handleLikeProject = async (projectId: number) => {
+    const res = await insertLike(String(projectId));
+    if (res.ok) toast({ description: res.duplicate ? "You already liked this project." : "Project liked!" });
+  };
+
+  // Double-tap any project card to like with floating heart animation
+  const handleCardActivate = (projectId: number, e: React.MouseEvent) => {
+    const id = String(projectId);
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last && last.id === id && now - last.t < 350) {
+      e.preventDefault();
+      e.stopPropagation();
+      lastTapRef.current = null;
+      floatingRef.current?.spawn(e.clientX, e.clientY);
+      insertLike(id);
       return;
     }
-
-    toast({ title: "Error", description: "Failed to update like count.", variant: "destructive" });
+    lastTapRef.current = { id, t: now };
   };
 
   return (
     <>
+      <FloatingHeart ref={floatingRef} />
       <Helmet>
         <title>Projects | Dharaneedharan SS - IT & Engineering Portfolio</title>
         <meta
@@ -549,7 +573,8 @@ const ProjectsPage = () => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                          onClick={(e) => handleCardActivate(project.id, e)}
+                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
                         >
                           <div className="relative aspect-video overflow-hidden">
                             {project.images && project.images.length > 0 ? (
@@ -582,19 +607,25 @@ const ProjectsPage = () => {
                                 </span>
                               ))}
                             </div>
-                            <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
-                              <span className="flex items-center gap-1"><Eye size={13} /> {viewCounts[String(project.id)] || 0} views</span>
-                              <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
-                                <Heart size={13} /> {likeCounts[String(project.id)] || 0} likes
-                              </button>
-                            </div>
-                            <ProjectComments projectId={String(project.id)} />
+                            {isAdmin ? (
+                              <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1"><Eye size={13} /> {viewCounts[String(project.id)] || 0} views</span>
+                                <button onClick={(e) => { e.stopPropagation(); handleLikeProject(project.id); }} className="flex items-center gap-1 hover:text-primary transition-colors">
+                                  <Heart size={13} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0} likes
+                                </button>
+                                <span className="flex items-center gap-1"><MessageSquare size={13} /> {commentCounts[String(project.id)] || 0}</span>
+                              </div>
+                            ) : (
+                              <div className="mb-3 text-xs text-muted-foreground/70">Double-tap to like</div>
+                            )}
+                            {isAdmin && <ProjectComments projectId={String(project.id)} />}
                             <div className="flex items-center gap-4">
                               {project.liveUrl && (
                                 <a
                                   href={project.liveUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
                                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                                 >
                                   View Live <ExternalLink size={14} />
@@ -603,6 +634,7 @@ const ProjectsPage = () => {
                               {project.articleUrl && (
                                 <Link
                                   to={project.articleUrl}
+                                  onClick={(e) => e.stopPropagation()}
                                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                                 >
                                   Read Case Study <FileText size={14} />
@@ -629,7 +661,8 @@ const ProjectsPage = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                        onClick={(e) => handleCardActivate(project.id, e)}
+                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
                       >
                         <div className="relative aspect-video overflow-hidden">
                           {project.images && project.images.length > 0 ? (
@@ -657,19 +690,24 @@ const ProjectsPage = () => {
                               </span>
                             ))}
                           </div>
-                          <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground relative">
-                            <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
-                            <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
-                              <Heart size={12} /> {likeCounts[String(project.id)] || 0}
-                            </button>
-                            <ProjectComments projectId={String(project.id)} compact />
-                          </div>
+                          {isAdmin ? (
+                            <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground relative">
+                              <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
+                              <button onClick={(e) => { e.stopPropagation(); handleLikeProject(project.id); }} className="flex items-center gap-1 hover:text-primary transition-colors">
+                                <Heart size={12} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0}
+                              </button>
+                              <span className="flex items-center gap-1"><MessageSquare size={12} /> {commentCounts[String(project.id)] || 0}</span>
+                            </div>
+                          ) : (
+                            <div className="mb-2 text-xs text-muted-foreground/70">Double-tap to like</div>
+                          )}
                           <div className="flex items-center gap-3">
                             {project.liveUrl && (
                               <a
                                 href={project.liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
                                 className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
                               >
                                 View Live <ExternalLink size={12} />
@@ -678,6 +716,7 @@ const ProjectsPage = () => {
                             {project.articleUrl && (
                               <Link
                                 to={project.articleUrl}
+                                onClick={(e) => e.stopPropagation()}
                                 className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
                               >
                                 Read More <FileText size={12} />

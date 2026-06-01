@@ -36,6 +36,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ContentProtection from "./components/ContentProtection";
 import UserStatusBlocker from "./components/UserStatusBlocker";
+import SiteVisitTracker from "./components/SiteVisitTracker";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 
@@ -124,6 +125,7 @@ const App = () => (
                 <UserStatusBlocker />
                 <BrowserRouter>
                   <IpBlockRedirect />
+                  <SiteVisitTracker />
                   <LayoutProvider globalLayoutEnabled>
                     <ContentProtection />
                     <Navigation persisted />

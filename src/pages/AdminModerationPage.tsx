@@ -19,7 +19,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
-  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw,
+  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw, Globe,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -91,6 +91,27 @@ const AdminModerationPage = () => {
   const [blogViewCounts, setBlogViewCounts] = useState<Record<string, number>>({});
   const [projectViewCounts, setProjectViewCounts] = useState<Record<string, number>>({});
   const [hiddenStaticIds, setHiddenStaticIds] = useState<Set<string>>(new Set());
+  const [siteVisits, setSiteVisits] = useState<Array<{ id: string; path: string; ip: string | null; user_agent: string | null; user_email: string | null; referrer: string | null; created_at: string }>>([]);
+  const [visitsLoading, setVisitsLoading] = useState(false);
+
+  const loadSiteVisits = async () => {
+    setVisitsLoading(true);
+    const { data } = await supabase
+      .from("site_visits")
+      .select("id, path, ip, user_agent, user_email, referrer, created_at")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    setSiteVisits((data as any) || []);
+    setVisitsLoading(false);
+  };
+  useEffect(() => {
+    loadSiteVisits();
+    const ch = supabase
+      .channel("admin-site-visits")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "site_visits" }, () => loadSiteVisits())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
 
   const loadLiveViewCounts = async () => {
     const [bv, pv] = await Promise.all([
@@ -828,6 +849,7 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="approved">Approved</TabsTrigger>
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
                 <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
+                <TabsTrigger value="visits"><Globe className="w-4 h-4 mr-1" />Visits</TabsTrigger>
                 <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
               </TabsList>
 
@@ -1233,6 +1255,107 @@ const AdminModerationPage = () => {
                         </table>
                       </div>
                     )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="visits" className="space-y-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="w-5 h-5" /> Site Visits (live)
+                    </CardTitle>
+                    <Button variant="outline" size="sm" onClick={loadSiteVisits}>
+                      <RefreshCw className="w-4 h-4 mr-1" /> Refresh
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Total page views</div>
+                        <div className="text-2xl font-bold">{siteVisits.length}</div>
+                      </div>
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Unique IPs</div>
+                        <div className="text-2xl font-bold">{new Set(siteVisits.map(v => v.ip).filter(Boolean)).size}</div>
+                      </div>
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Signed-in viewers</div>
+                        <div className="text-2xl font-bold">{new Set(siteVisits.map(v => v.user_email).filter(Boolean)).size}</div>
+                      </div>
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Today</div>
+                        <div className="text-2xl font-bold">
+                          {siteVisits.filter(v => new Date(v.created_at).toDateString() === new Date().toDateString()).length}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-semibold mb-2">Top pages</div>
+                      <div className="overflow-x-auto border border-border">
+                        <table className="w-full text-sm">
+                          <thead className="bg-secondary">
+                            <tr>
+                              <th className="text-left p-2">Path</th>
+                              <th className="text-right p-2">Views</th>
+                              <th className="text-right p-2">Unique IPs</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.entries(
+                              siteVisits.reduce<Record<string, { views: number; ips: Set<string> }>>((acc, v) => {
+                                if (!acc[v.path]) acc[v.path] = { views: 0, ips: new Set() };
+                                acc[v.path].views += 1;
+                                if (v.ip) acc[v.path].ips.add(v.ip);
+                                return acc;
+                              }, {})
+                            )
+                              .sort((a, b) => b[1].views - a[1].views)
+                              .slice(0, 20)
+                              .map(([path, info]) => (
+                                <tr key={path} className="border-t border-border">
+                                  <td className="p-2 break-all">{path}</td>
+                                  <td className="p-2 text-right">{info.views}</td>
+                                  <td className="p-2 text-right">{info.ips.size}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-semibold mb-2">Recent visitors (last 500)</div>
+                      {visitsLoading ? (
+                        <div className="text-sm text-muted-foreground">Loading…</div>
+                      ) : (
+                        <div className="overflow-x-auto border border-border max-h-[480px] overflow-y-auto">
+                          <table className="w-full text-xs">
+                            <thead className="bg-secondary sticky top-0">
+                              <tr>
+                                <th className="text-left p-2">When</th>
+                                <th className="text-left p-2">IP</th>
+                                <th className="text-left p-2">Path</th>
+                                <th className="text-left p-2">User</th>
+                                <th className="text-left p-2">Browser</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {siteVisits.map((v) => (
+                                <tr key={v.id} className="border-t border-border">
+                                  <td className="p-2 whitespace-nowrap">{new Date(v.created_at).toLocaleString()}</td>
+                                  <td className="p-2 whitespace-nowrap font-mono">{v.ip || "—"}</td>
+                                  <td className="p-2 break-all">{v.path}</td>
+                                  <td className="p-2 break-all">{v.user_email || "guest"}</td>
+                                  <td className="p-2 break-all max-w-[260px] truncate" title={v.user_agent || ""}>{v.user_agent || "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
