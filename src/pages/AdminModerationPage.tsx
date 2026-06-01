@@ -19,7 +19,7 @@ import ReactMarkdown from "react-markdown";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
-  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw,
+  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw, Globe,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -828,6 +828,7 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="approved">Approved</TabsTrigger>
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
                 <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
+                <TabsTrigger value="visits"><Globe className="w-4 h-4 mr-1" />Visits</TabsTrigger>
                 <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
               </TabsList>
 
