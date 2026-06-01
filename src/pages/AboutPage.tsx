@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import ResumeButton from "@/components/ResumeButton";
 import CertificateModal from "@/components/CertificateModal";
-import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone } from "lucide-react";
+import { Code, Cpu, Settings, Wrench, GraduationCap, Briefcase, Target, Lightbulb, MapPin, Calendar, Building2, Award, Mail, Phone, Lock } from "lucide-react";
 import { socialLinks } from "@/components/SocialLinks";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import aboutProfilePhoto from "@/assets/about-profile.jpg";
 import certIndustrial from "@/assets/certificates/industrial-training.avif";
 import certInternship from "@/assets/certificates/internship-letter.avif";
@@ -72,6 +74,8 @@ const AboutPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dbCertificates, setDbCertificates] = useState<DBCertificate[]>([]);
   const [dbExperiences, setDbExperiences] = useState<DBWorkExperience[]>([]);
+  const { user, isAdmin, userStatus } = useAuth();
+  const canViewCertificates = !!user && (isAdmin || userStatus === "approved");
 
   useEffect(() => {
     Promise.all([
@@ -295,29 +299,50 @@ const AboutPage = () => {
                 </div>
               </ScrollReveal>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl mx-auto">
-                {certifications.map((cert, index) => (
-                  <ScrollReveal key={cert.name} delay={index * 50} className="h-full">
-                    <button
-                      onClick={() => handleCertificateClick(cert)}
-                      className="w-full h-[130px] text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+              {canViewCertificates ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-w-6xl mx-auto">
+                  {certifications.map((cert, index) => (
+                    <ScrollReveal key={cert.name} delay={index * 50} className="h-full">
+                      <button
+                        onClick={() => handleCertificateClick(cert)}
+                        className="w-full h-[130px] text-left p-5 bg-card border-2 border-border sharp-card group hover:border-primary hover:bg-primary/5 transition-all duration-300 cursor-pointer"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
+                            <Award size={18} className="text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">{cert.name}</h4>
+                            <p className="text-xs text-muted-foreground">{cert.issuer}</p>
+                            <p className="text-xs text-primary/70 mt-1">{cert.year}</p>
+                          </div>
+                        </div>
+                      </button>
+                    </ScrollReveal>
+                  ))}
+                </div>
+              ) : (
+                <div className="max-w-xl mx-auto text-center p-8 sm:p-12 bg-card border-2 border-border">
+                  <div className="w-14 h-14 bg-primary/10 border border-primary/30 flex items-center justify-center mx-auto mb-5">
+                    <Lock size={22} className="text-primary" />
+                  </div>
+                  <h3 className="font-display text-lg sm:text-xl font-bold mb-2">Certificates are private</h3>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    {user
+                      ? "Your account needs admin approval before you can view certificates."
+                      : "Please sign in with an approved account to view my certifications."}
+                  </p>
+                  {!user && (
+                    <Link
+                      to="/login"
+                      state={{ returnPath: "/about" }}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-foreground text-background font-medium hover:bg-foreground/90 transition-colors"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                          <Award size={18} className="text-primary" />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-semibold text-sm leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">{cert.name}</h4>
-                          <p className="text-xs text-muted-foreground">{cert.issuer}</p>
-                          <p className="text-xs text-primary/70 mt-1">{cert.year}</p>
-                        </div>
-                      </div>
-                    </button>
-                  </ScrollReveal>
-                ))}
-              </div>
-            </div>
-          </section>
+                      <Lock size={14} /> Login to view
+                    </Link>
+                  )}
+                </div>
+              )}
         </main>
         <Footer />
 
