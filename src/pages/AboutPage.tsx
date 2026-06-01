@@ -343,6 +343,8 @@ const AboutPage = () => {
                   )}
                 </div>
               )}
+            </div>
+          </section>
         </main>
         <Footer />
 
