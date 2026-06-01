@@ -475,6 +475,7 @@ const ProjectsPage = () => {
 
   return (
     <>
+      <FloatingHeart ref={floatingRef} />
       <Helmet>
         <title>Projects | Dharaneedharan SS - IT & Engineering Portfolio</title>
         <meta
@@ -572,7 +573,8 @@ const ProjectsPage = () => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
-                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                          onClick={(e) => handleCardActivate(project.id, e)}
+                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
                         >
                           <div className="relative aspect-video overflow-hidden">
                             {project.images && project.images.length > 0 ? (
@@ -605,19 +607,25 @@ const ProjectsPage = () => {
                                 </span>
                               ))}
                             </div>
-                            <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
-                              <span className="flex items-center gap-1"><Eye size={13} /> {viewCounts[String(project.id)] || 0} views</span>
-                              <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
-                                <Heart size={13} /> {likeCounts[String(project.id)] || 0} likes
-                              </button>
-                            </div>
-                            <ProjectComments projectId={String(project.id)} />
+                            {isAdmin ? (
+                              <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1"><Eye size={13} /> {viewCounts[String(project.id)] || 0} views</span>
+                                <button onClick={(e) => { e.stopPropagation(); handleLikeProject(project.id); }} className="flex items-center gap-1 hover:text-primary transition-colors">
+                                  <Heart size={13} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0} likes
+                                </button>
+                                <span className="flex items-center gap-1"><MessageSquare size={13} /> {commentCounts[String(project.id)] || 0}</span>
+                              </div>
+                            ) : (
+                              <div className="mb-3 text-xs text-muted-foreground/70">Double-tap to like</div>
+                            )}
+                            {isAdmin && <ProjectComments projectId={String(project.id)} />}
                             <div className="flex items-center gap-4">
                               {project.liveUrl && (
                                 <a
                                   href={project.liveUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
                                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                                 >
                                   View Live <ExternalLink size={14} />
@@ -626,6 +634,7 @@ const ProjectsPage = () => {
                               {project.articleUrl && (
                                 <Link
                                   to={project.articleUrl}
+                                  onClick={(e) => e.stopPropagation()}
                                   className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                                 >
                                   Read Case Study <FileText size={14} />
@@ -652,7 +661,8 @@ const ProjectsPage = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                        onClick={(e) => handleCardActivate(project.id, e)}
+                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
                       >
                         <div className="relative aspect-video overflow-hidden">
                           {project.images && project.images.length > 0 ? (
@@ -680,19 +690,24 @@ const ProjectsPage = () => {
                               </span>
                             ))}
                           </div>
-                          <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground relative">
-                            <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
-                            <button onClick={() => handleLikeProject(project.id)} className="flex items-center gap-1 hover:text-primary transition-colors">
-                              <Heart size={12} /> {likeCounts[String(project.id)] || 0}
-                            </button>
-                            <ProjectComments projectId={String(project.id)} compact />
-                          </div>
+                          {isAdmin ? (
+                            <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground relative">
+                              <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
+                              <button onClick={(e) => { e.stopPropagation(); handleLikeProject(project.id); }} className="flex items-center gap-1 hover:text-primary transition-colors">
+                                <Heart size={12} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0}
+                              </button>
+                              <span className="flex items-center gap-1"><MessageSquare size={12} /> {commentCounts[String(project.id)] || 0}</span>
+                            </div>
+                          ) : (
+                            <div className="mb-2 text-xs text-muted-foreground/70">Double-tap to like</div>
+                          )}
                           <div className="flex items-center gap-3">
                             {project.liveUrl && (
                               <a
                                 href={project.liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
                                 className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
                               >
                                 View Live <ExternalLink size={12} />
@@ -701,6 +716,7 @@ const ProjectsPage = () => {
                             {project.articleUrl && (
                               <Link
                                 to={project.articleUrl}
+                                onClick={(e) => e.stopPropagation()}
                                 className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1 transition-colors"
                               >
                                 Read More <FileText size={12} />
