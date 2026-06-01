@@ -1,5 +1,5 @@
 // Projects page - updated
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -8,6 +8,7 @@ import { ExternalLink, FileText, Code2, Cog, Eye, Heart, MessageSquare, Factory 
 import { Link, useNavigate } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 import ImageLightbox from "@/components/ImageLightbox";
+import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
@@ -401,11 +402,15 @@ const ProjectsPage = () => {
   const [lightboxImages, setLightboxImages] = useState<{ src: string; alt: string }[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [showAccessModal, setShowAccessModal] = useState(false);
+  const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
 
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || guest?.name || null;
+
+  const floatingRef = useRef<FloatingHeartHandle>(null);
+  const lastTapRef = useRef<{ id: string; t: number } | null>(null);
 
   const projects = activeTab === "it" ? sharedItProjects : sharedEngineeringProjects;
   const featuredProjects = projects.filter((p) => p.featured);
@@ -415,7 +420,7 @@ const ProjectsPage = () => {
     () => [...sharedItProjects, ...sharedEngineeringProjects].map((project) => String(project.id)),
     []
   );
-  const { viewCounts, likeCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
+  const { viewCounts, likeCounts, commentCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
 
   const openLightbox = (images: string[], title: string, index: number) => {
     setLightboxImages(images.map((src, i) => ({ src, alt: `${title} - Image ${i + 1}` })));
@@ -423,31 +428,49 @@ const ProjectsPage = () => {
     setLightboxOpen(true);
   };
 
-  const handleLikeProject = async (projectId: number) => {
+  const insertLike = async (projectId: string) => {
     if (!currentUserEmail || !currentUserName) {
       setShowAccessModal(true);
-      return;
+      return { ok: false as const };
     }
-
     const { error } = await supabase.from("project_likes").insert({
-      project_id: String(projectId),
+      project_id: projectId,
       name: currentUserName,
       email: currentUserEmail,
     });
-
     if (!error) {
-      toast({ description: "Project liked!" });
+      setLikedIds((s) => new Set([...s, projectId]));
       refreshCounts();
-      return;
+      return { ok: true as const };
     }
-
     if (error.code === "23505") {
-      toast({ description: "You already liked this project." });
+      setLikedIds((s) => new Set([...s, projectId]));
       refreshCounts();
+      return { ok: true as const, duplicate: true };
+    }
+    toast({ title: "Error", description: "Failed to update like count.", variant: "destructive" });
+    return { ok: false as const };
+  };
+
+  const handleLikeProject = async (projectId: number) => {
+    const res = await insertLike(String(projectId));
+    if (res.ok) toast({ description: res.duplicate ? "You already liked this project." : "Project liked!" });
+  };
+
+  // Double-tap any project card to like with floating heart animation
+  const handleCardActivate = (projectId: number, e: React.MouseEvent) => {
+    const id = String(projectId);
+    const now = Date.now();
+    const last = lastTapRef.current;
+    if (last && last.id === id && now - last.t < 350) {
+      e.preventDefault();
+      e.stopPropagation();
+      lastTapRef.current = null;
+      floatingRef.current?.spawn(e.clientX, e.clientY);
+      insertLike(id);
       return;
     }
-
-    toast({ title: "Error", description: "Failed to update like count.", variant: "destructive" });
+    lastTapRef.current = { id, t: now };
   };
 
   return (
