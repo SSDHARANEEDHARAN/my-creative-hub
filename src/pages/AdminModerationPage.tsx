@@ -32,7 +32,7 @@ interface Comment {
   id: string; post_id: string; name: string; email: string; content: string;
   created_at: string; is_approved: boolean; is_spam: boolean; reply: string | null;
 }
-interface GuestVisitor { id: string; name: string; email: string; visited_at: string; }
+interface GuestVisitor { id: string; name: string; email: string; visited_at: string; ip_address?: string | null; user_agent?: string | null; }
 interface BlogPost {
   id: string; title: string; slug: string; excerpt: string; content: string;
   cover_image: string | null; category: string; read_time: string | null;
