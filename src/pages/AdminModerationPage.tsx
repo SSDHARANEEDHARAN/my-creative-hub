@@ -105,10 +105,7 @@ const AdminModerationPage = () => {
   const handleIpAction = async (ip: string, hoursOrNull: number | null) => {
     if (!ip) return;
     try {
-      const isBlocked = !!blockedIps[ip];
-      if (isBlocked && hoursOrNull === undefined as unknown as null) return;
       if (hoursOrNull === -1) {
-        // unblock
         const { error } = await supabase.functions.invoke("manage-users", { body: { action: "unblock-ip", ip } });
         if (error) throw error;
         toast({ title: "IP unblocked", description: ip });
