@@ -30,22 +30,29 @@ Deno.serve(async (req) => {
 
     const requestIp = getRequestIp(req);
     const body = await req.json();
-    const { action, targetUserId, targetEmail, status } = body;
+    const { action, targetUserId, targetEmail, status, ip: targetIpParam, hours } = body;
 
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // ── check-ip: no auth needed ──
     if (action === "check-ip") {
       try {
-        // Check blocked IPs
+        // Check blocked IPs (auto-purge expired temp-blocks)
         const { data: blockedIp } = await adminClient
           .from("blocked_ips")
-          .select("ip,reason")
+          .select("ip,reason,expires_at")
           .eq("ip", requestIp)
           .maybeSingle();
 
         if (blockedIp) {
-          return jsonResponse({ blocked: true, temp_locked: false, locked_at: null, ip: requestIp, reason: blockedIp.reason });
+          const expiresAt = (blockedIp as { expires_at?: string | null }).expires_at;
+          if (expiresAt && new Date(expiresAt).getTime() < Date.now()) {
+            await adminClient.from("blocked_ips").delete().eq("ip", requestIp);
+          } else if (expiresAt) {
+            return jsonResponse({ blocked: false, temp_locked: true, locked_at: expiresAt, ip: requestIp, reason: blockedIp.reason });
+          } else {
+            return jsonResponse({ blocked: true, temp_locked: false, locked_at: null, ip: requestIp, reason: blockedIp.reason });
+          }
         }
 
         // Check if any profile with this IP is temp_locked
