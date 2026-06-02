@@ -1155,14 +1155,43 @@ const AdminModerationPage = () => {
                   </CardContent></Card>
                 ) : (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {guests.map(g => (
-                      <Card key={g.id}><CardContent className="pt-6">
-                        <div className="flex items-start justify-between">
-                          <div><p className="font-medium">{g.name}</p><p className="text-sm text-muted-foreground">{g.email}</p></div>
-                          <Badge variant="secondary">{new Date(g.visited_at).toLocaleDateString()}</Badge>
-                        </div>
-                      </CardContent></Card>
-                    ))}
+                    {guests.map(g => {
+                      const ip = g.ip_address || null;
+                      const ipInfo = ip ? blockedIps[ip] : undefined;
+                      const isBlocked = !!ipInfo;
+                      const isTemp = !!ipInfo?.expires_at;
+                      return (
+                        <Card key={g.id}><CardContent className="pt-6 space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div><p className="font-medium">{g.name}</p><p className="text-sm text-muted-foreground">{g.email}</p></div>
+                            <Badge variant="secondary">{new Date(g.visited_at).toLocaleDateString()}</Badge>
+                          </div>
+                          <div className="text-xs space-y-1">
+                            <p className="font-mono break-all">IP: {ip || "unknown"}</p>
+                            {isBlocked && (
+                              <Badge variant="destructive">{isTemp ? `Locked until ${new Date(ipInfo!.expires_at!).toLocaleString()}` : "Blocked"}</Badge>
+                            )}
+                          </div>
+                          {ip && (
+                            <div className="flex gap-2">
+                              {isBlocked ? (
+                                <Button size="sm" variant="outline" onClick={() => handleIpAction(ip, -1)}>Unblock IP</Button>
+                              ) : (
+                                <Select onValueChange={(val) => handleIpAction(ip, val === "perm" ? null : parseInt(val, 10))}>
+                                  <SelectTrigger className="h-8 w-[160px] text-xs"><SelectValue placeholder="Block / Lock IP" /></SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="1">Lock 1 hour</SelectItem>
+                                    <SelectItem value="24">Lock 24 hours</SelectItem>
+                                    <SelectItem value="48">Lock 48 hours</SelectItem>
+                                    <SelectItem value="perm">Block permanently</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            </div>
+                          )}
+                        </CardContent></Card>
+                      );
+                    })}
                   </div>
                 )}
               </TabsContent>
