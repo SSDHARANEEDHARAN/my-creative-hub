@@ -32,7 +32,7 @@ interface Comment {
   id: string; post_id: string; name: string; email: string; content: string;
   created_at: string; is_approved: boolean; is_spam: boolean; reply: string | null;
 }
-interface GuestVisitor { id: string; name: string; email: string; visited_at: string; }
+interface GuestVisitor { id: string; name: string; email: string; visited_at: string; ip_address?: string | null; user_agent?: string | null; }
 interface BlogPost {
   id: string; title: string; slug: string; excerpt: string; content: string;
   cover_image: string | null; category: string; read_time: string | null;
@@ -93,6 +93,34 @@ const AdminModerationPage = () => {
   const [hiddenStaticIds, setHiddenStaticIds] = useState<Set<string>>(new Set());
   const [siteVisits, setSiteVisits] = useState<Array<{ id: string; path: string; ip: string | null; user_agent: string | null; user_email: string | null; referrer: string | null; created_at: string }>>([]);
   const [visitsLoading, setVisitsLoading] = useState(false);
+  const [blockedIps, setBlockedIps] = useState<Record<string, { reason: string | null; expires_at: string | null }>>({});
+
+  const loadBlockedIps = async () => {
+    const { data } = await supabase.from("blocked_ips").select("ip,reason,expires_at");
+    const map: Record<string, { reason: string | null; expires_at: string | null }> = {};
+    (data || []).forEach((r: any) => { map[r.ip] = { reason: r.reason, expires_at: r.expires_at }; });
+    setBlockedIps(map);
+  };
+
+  const handleIpAction = async (ip: string, hoursOrNull: number | null) => {
+    if (!ip) return;
+    try {
+      if (hoursOrNull === -1) {
+        const { error } = await supabase.functions.invoke("manage-users", { body: { action: "unblock-ip", ip } });
+        if (error) throw error;
+        toast({ title: "IP unblocked", description: ip });
+      } else {
+        const { error } = await supabase.functions.invoke("manage-users", {
+          body: { action: "block-ip", ip, hours: hoursOrNull ?? undefined },
+        });
+        if (error) throw error;
+        toast({ title: hoursOrNull ? `IP locked for ${hoursOrNull}h` : "IP blocked permanently", description: ip });
+      }
+      await loadBlockedIps();
+    } catch (err: any) {
+      toast({ title: "Failed", description: err?.message || "Could not update IP", variant: "destructive" });
+    }
+  };
 
   const loadSiteVisits = async () => {
     setVisitsLoading(true);
@@ -106,9 +134,11 @@ const AdminModerationPage = () => {
   };
   useEffect(() => {
     loadSiteVisits();
+    loadBlockedIps();
     const ch = supabase
       .channel("admin-site-visits")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "site_visits" }, () => loadSiteVisits())
+      .on("postgres_changes", { event: "*", schema: "public", table: "blocked_ips" }, () => loadBlockedIps())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, []);
@@ -1122,14 +1152,43 @@ const AdminModerationPage = () => {
                   </CardContent></Card>
                 ) : (
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {guests.map(g => (
-                      <Card key={g.id}><CardContent className="pt-6">
-                        <div className="flex items-start justify-between">
-                          <div><p className="font-medium">{g.name}</p><p className="text-sm text-muted-foreground">{g.email}</p></div>
-                          <Badge variant="secondary">{new Date(g.visited_at).toLocaleDateString()}</Badge>
-                        </div>
-                      </CardContent></Card>
-                    ))}
+                    {guests.map(g => {
+                      const ip = g.ip_address || null;
+                      const ipInfo = ip ? blockedIps[ip] : undefined;
+                      const isBlocked = !!ipInfo;
+                      const isTemp = !!ipInfo?.expires_at;
+                      return (
+                        <Card key={g.id}><CardContent className="pt-6 space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div><p className="font-medium">{g.name}</p><p className="text-sm text-muted-foreground">{g.email}</p></div>
+                            <Badge variant="secondary">{new Date(g.visited_at).toLocaleDateString()}</Badge>
+                          </div>
+                          <div className="text-xs space-y-1">
+                            <p className="font-mono break-all">IP: {ip || "unknown"}</p>
+                            {isBlocked && (
+                              <Badge variant="destructive">{isTemp ? `Locked until ${new Date(ipInfo!.expires_at!).toLocaleString()}` : "Blocked"}</Badge>
+                            )}
+                          </div>
+                          {ip && (
+                            <div className="flex gap-2">
+                              {isBlocked ? (
+                                <Button size="sm" variant="outline" onClick={() => handleIpAction(ip, -1)}>Unblock IP</Button>
+                              ) : (
+                                <Select onValueChange={(val) => handleIpAction(ip, val === "perm" ? null : parseInt(val, 10))}>
+                                  <SelectTrigger className="h-8 w-[160px] text-xs"><SelectValue placeholder="Block / Lock IP" /></SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="1">Lock 1 hour</SelectItem>
+                                    <SelectItem value="24">Lock 24 hours</SelectItem>
+                                    <SelectItem value="48">Lock 48 hours</SelectItem>
+                                    <SelectItem value="perm">Block permanently</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            </div>
+                          )}
+                        </CardContent></Card>
+                      );
+                    })}
                   </div>
                 )}
               </TabsContent>
@@ -1336,21 +1395,50 @@ const AdminModerationPage = () => {
                               <tr>
                                 <th className="text-left p-2">When</th>
                                 <th className="text-left p-2">IP</th>
+                                <th className="text-left p-2">Status</th>
                                 <th className="text-left p-2">Path</th>
                                 <th className="text-left p-2">User</th>
                                 <th className="text-left p-2">Browser</th>
+                                <th className="text-left p-2">Action</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {siteVisits.map((v) => (
-                                <tr key={v.id} className="border-t border-border">
-                                  <td className="p-2 whitespace-nowrap">{new Date(v.created_at).toLocaleString()}</td>
-                                  <td className="p-2 whitespace-nowrap font-mono">{v.ip || "—"}</td>
-                                  <td className="p-2 break-all">{v.path}</td>
-                                  <td className="p-2 break-all">{v.user_email || "guest"}</td>
-                                  <td className="p-2 break-all max-w-[260px] truncate" title={v.user_agent || ""}>{v.user_agent || "—"}</td>
-                                </tr>
-                              ))}
+                              {siteVisits.map((v) => {
+                                const ipInfo = v.ip ? blockedIps[v.ip] : undefined;
+                                const isBlocked = !!ipInfo;
+                                const isTemp = !!ipInfo?.expires_at;
+                                return (
+                                  <tr key={v.id} className="border-t border-border">
+                                    <td className="p-2 whitespace-nowrap">{new Date(v.created_at).toLocaleString()}</td>
+                                    <td className="p-2 whitespace-nowrap font-mono">{v.ip || "—"}</td>
+                                    <td className="p-2 whitespace-nowrap">
+                                      {isBlocked ? (
+                                        <Badge variant="destructive">{isTemp ? `Locked until ${new Date(ipInfo!.expires_at!).toLocaleString()}` : "Blocked"}</Badge>
+                                      ) : <span className="text-muted-foreground">Active</span>}
+                                    </td>
+                                    <td className="p-2 break-all">{v.path}</td>
+                                    <td className="p-2 break-all">{v.user_email || "guest"}</td>
+                                    <td className="p-2 break-all max-w-[260px] truncate" title={v.user_agent || ""}>{v.user_agent || "—"}</td>
+                                    <td className="p-2 whitespace-nowrap">
+                                      {v.ip ? (
+                                        isBlocked ? (
+                                          <Button size="sm" variant="outline" onClick={() => handleIpAction(v.ip!, -1)}>Unblock</Button>
+                                        ) : (
+                                          <Select onValueChange={(val) => handleIpAction(v.ip!, val === "perm" ? null : parseInt(val, 10))}>
+                                            <SelectTrigger className="h-7 w-[120px] text-xs"><SelectValue placeholder="Block IP" /></SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="1">Lock 1 hour</SelectItem>
+                                              <SelectItem value="24">Lock 24 hours</SelectItem>
+                                              <SelectItem value="48">Lock 48 hours</SelectItem>
+                                              <SelectItem value="perm">Block permanently</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        )
+                                      ) : "—"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
                             </tbody>
                           </table>
                         </div>

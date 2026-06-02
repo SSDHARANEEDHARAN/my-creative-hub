@@ -30,22 +30,29 @@ Deno.serve(async (req) => {
 
     const requestIp = getRequestIp(req);
     const body = await req.json();
-    const { action, targetUserId, targetEmail, status } = body;
+    const { action, targetUserId, targetEmail, status, ip: targetIpParam, hours } = body;
 
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
     // ── check-ip: no auth needed ──
     if (action === "check-ip") {
       try {
-        // Check blocked IPs
+        // Check blocked IPs (auto-purge expired temp-blocks)
         const { data: blockedIp } = await adminClient
           .from("blocked_ips")
-          .select("ip,reason")
+          .select("ip,reason,expires_at")
           .eq("ip", requestIp)
           .maybeSingle();
 
         if (blockedIp) {
-          return jsonResponse({ blocked: true, temp_locked: false, locked_at: null, ip: requestIp, reason: blockedIp.reason });
+          const expiresAt = (blockedIp as { expires_at?: string | null }).expires_at;
+          if (expiresAt && new Date(expiresAt).getTime() < Date.now()) {
+            await adminClient.from("blocked_ips").delete().eq("ip", requestIp);
+          } else if (expiresAt) {
+            return jsonResponse({ blocked: false, temp_locked: true, locked_at: expiresAt, ip: requestIp, reason: blockedIp.reason });
+          } else {
+            return jsonResponse({ blocked: true, temp_locked: false, locked_at: null, ip: requestIp, reason: blockedIp.reason });
+          }
         }
 
         // Check if any profile with this IP is temp_locked
@@ -329,6 +336,41 @@ Deno.serve(async (req) => {
         const message = err instanceof Error ? err.message : "Unknown error";
         return jsonResponse({ error: message }, 400);
       }
+    }
+
+    // ── block-ip: admin blocks an arbitrary IP (permanent or temporary) ──
+    if (action === "block-ip" || action === "unblock-ip") {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
+
+      const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user: caller } } = await authClient.auth.getUser();
+      if (!caller) return jsonResponse({ error: "Unauthorized" }, 401);
+
+      const { data: roleRow } = await adminClient
+        .from("user_roles").select("role").eq("user_id", caller.id).eq("role", "admin").maybeSingle();
+      if (!roleRow) return jsonResponse({ error: "Forbidden" }, 403);
+
+      const ip = (targetIpParam || "").toString().trim();
+      if (!ip) return jsonResponse({ error: "Missing ip" }, 400);
+
+      if (action === "unblock-ip") {
+        await adminClient.from("blocked_ips").delete().eq("ip", ip);
+        return jsonResponse({ success: true });
+      }
+
+      const expires_at = typeof hours === "number" && hours > 0
+        ? new Date(Date.now() + hours * 3600 * 1000).toISOString()
+        : null;
+      await adminClient.from("blocked_ips").delete().eq("ip", ip);
+      await adminClient.from("blocked_ips").insert({
+        ip,
+        reason: expires_at ? `temp lock ${hours}h by admin` : "blocked by admin",
+        expires_at,
+      });
+      return jsonResponse({ success: true, expires_at });
     }
 
     return jsonResponse({ error: "Unknown action" }, 400);
