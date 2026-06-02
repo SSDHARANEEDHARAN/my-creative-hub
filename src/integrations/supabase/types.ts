@@ -80,6 +80,7 @@ export type Database = {
       blocked_ips: {
         Row: {
           created_at: string
+          expires_at: string | null
           id: string
           ip: string
           reason: string | null
@@ -87,6 +88,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          expires_at?: string | null
           id?: string
           ip: string
           reason?: string | null
@@ -94,6 +96,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          expires_at?: string | null
           id?: string
           ip?: string
           reason?: string | null
