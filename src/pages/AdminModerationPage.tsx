@@ -93,6 +93,37 @@ const AdminModerationPage = () => {
   const [hiddenStaticIds, setHiddenStaticIds] = useState<Set<string>>(new Set());
   const [siteVisits, setSiteVisits] = useState<Array<{ id: string; path: string; ip: string | null; user_agent: string | null; user_email: string | null; referrer: string | null; created_at: string }>>([]);
   const [visitsLoading, setVisitsLoading] = useState(false);
+  const [blockedIps, setBlockedIps] = useState<Record<string, { reason: string | null; expires_at: string | null }>>({});
+
+  const loadBlockedIps = async () => {
+    const { data } = await supabase.from("blocked_ips").select("ip,reason,expires_at");
+    const map: Record<string, { reason: string | null; expires_at: string | null }> = {};
+    (data || []).forEach((r: any) => { map[r.ip] = { reason: r.reason, expires_at: r.expires_at }; });
+    setBlockedIps(map);
+  };
+
+  const handleIpAction = async (ip: string, hoursOrNull: number | null) => {
+    if (!ip) return;
+    try {
+      const isBlocked = !!blockedIps[ip];
+      if (isBlocked && hoursOrNull === undefined as unknown as null) return;
+      if (hoursOrNull === -1) {
+        // unblock
+        const { error } = await supabase.functions.invoke("manage-users", { body: { action: "unblock-ip", ip } });
+        if (error) throw error;
+        toast({ title: "IP unblocked", description: ip });
+      } else {
+        const { error } = await supabase.functions.invoke("manage-users", {
+          body: { action: "block-ip", ip, hours: hoursOrNull ?? undefined },
+        });
+        if (error) throw error;
+        toast({ title: hoursOrNull ? `IP locked for ${hoursOrNull}h` : "IP blocked permanently", description: ip });
+      }
+      await loadBlockedIps();
+    } catch (err: any) {
+      toast({ title: "Failed", description: err?.message || "Could not update IP", variant: "destructive" });
+    }
+  };
 
   const loadSiteVisits = async () => {
     setVisitsLoading(true);
@@ -106,9 +137,11 @@ const AdminModerationPage = () => {
   };
   useEffect(() => {
     loadSiteVisits();
+    loadBlockedIps();
     const ch = supabase
       .channel("admin-site-visits")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "site_visits" }, () => loadSiteVisits())
+      .on("postgres_changes", { event: "*", schema: "public", table: "blocked_ips" }, () => loadBlockedIps())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, []);
