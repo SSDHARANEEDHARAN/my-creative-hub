@@ -338,6 +338,41 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ── block-ip: admin blocks an arbitrary IP (permanent or temporary) ──
+    if (action === "block-ip" || action === "unblock-ip") {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader) return jsonResponse({ error: "Unauthorized" }, 401);
+
+      const authClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user: caller } } = await authClient.auth.getUser();
+      if (!caller) return jsonResponse({ error: "Unauthorized" }, 401);
+
+      const { data: roleRow } = await adminClient
+        .from("user_roles").select("role").eq("user_id", caller.id).eq("role", "admin").maybeSingle();
+      if (!roleRow) return jsonResponse({ error: "Forbidden" }, 403);
+
+      const ip = (targetIpParam || "").toString().trim();
+      if (!ip) return jsonResponse({ error: "Missing ip" }, 400);
+
+      if (action === "unblock-ip") {
+        await adminClient.from("blocked_ips").delete().eq("ip", ip);
+        return jsonResponse({ success: true });
+      }
+
+      const expires_at = typeof hours === "number" && hours > 0
+        ? new Date(Date.now() + hours * 3600 * 1000).toISOString()
+        : null;
+      await adminClient.from("blocked_ips").delete().eq("ip", ip);
+      await adminClient.from("blocked_ips").insert({
+        ip,
+        reason: expires_at ? `temp lock ${hours}h by admin` : "blocked by admin",
+        expires_at,
+      });
+      return jsonResponse({ success: true, expires_at });
+    }
+
     return jsonResponse({ error: "Unknown action" }, 400);
   } catch (error) {
     console.error("manage-users error:", error);
