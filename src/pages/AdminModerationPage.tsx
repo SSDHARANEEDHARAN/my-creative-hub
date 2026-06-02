@@ -1369,21 +1369,50 @@ const AdminModerationPage = () => {
                               <tr>
                                 <th className="text-left p-2">When</th>
                                 <th className="text-left p-2">IP</th>
+                                <th className="text-left p-2">Status</th>
                                 <th className="text-left p-2">Path</th>
                                 <th className="text-left p-2">User</th>
                                 <th className="text-left p-2">Browser</th>
+                                <th className="text-left p-2">Action</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {siteVisits.map((v) => (
-                                <tr key={v.id} className="border-t border-border">
-                                  <td className="p-2 whitespace-nowrap">{new Date(v.created_at).toLocaleString()}</td>
-                                  <td className="p-2 whitespace-nowrap font-mono">{v.ip || "—"}</td>
-                                  <td className="p-2 break-all">{v.path}</td>
-                                  <td className="p-2 break-all">{v.user_email || "guest"}</td>
-                                  <td className="p-2 break-all max-w-[260px] truncate" title={v.user_agent || ""}>{v.user_agent || "—"}</td>
-                                </tr>
-                              ))}
+                              {siteVisits.map((v) => {
+                                const ipInfo = v.ip ? blockedIps[v.ip] : undefined;
+                                const isBlocked = !!ipInfo;
+                                const isTemp = !!ipInfo?.expires_at;
+                                return (
+                                  <tr key={v.id} className="border-t border-border">
+                                    <td className="p-2 whitespace-nowrap">{new Date(v.created_at).toLocaleString()}</td>
+                                    <td className="p-2 whitespace-nowrap font-mono">{v.ip || "—"}</td>
+                                    <td className="p-2 whitespace-nowrap">
+                                      {isBlocked ? (
+                                        <Badge variant="destructive">{isTemp ? `Locked until ${new Date(ipInfo!.expires_at!).toLocaleString()}` : "Blocked"}</Badge>
+                                      ) : <span className="text-muted-foreground">Active</span>}
+                                    </td>
+                                    <td className="p-2 break-all">{v.path}</td>
+                                    <td className="p-2 break-all">{v.user_email || "guest"}</td>
+                                    <td className="p-2 break-all max-w-[260px] truncate" title={v.user_agent || ""}>{v.user_agent || "—"}</td>
+                                    <td className="p-2 whitespace-nowrap">
+                                      {v.ip ? (
+                                        isBlocked ? (
+                                          <Button size="sm" variant="outline" onClick={() => handleIpAction(v.ip!, -1)}>Unblock</Button>
+                                        ) : (
+                                          <Select onValueChange={(val) => handleIpAction(v.ip!, val === "perm" ? null : parseInt(val, 10))}>
+                                            <SelectTrigger className="h-7 w-[120px] text-xs"><SelectValue placeholder="Block IP" /></SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="1">Lock 1 hour</SelectItem>
+                                              <SelectItem value="24">Lock 24 hours</SelectItem>
+                                              <SelectItem value="48">Lock 48 hours</SelectItem>
+                                              <SelectItem value="perm">Block permanently</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        )
+                                      ) : "—"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
                             </tbody>
                           </table>
                         </div>
