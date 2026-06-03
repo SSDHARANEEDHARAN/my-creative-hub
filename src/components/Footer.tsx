@@ -36,7 +36,7 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
           <div>
             <Link to="/" className="group flex items-center gap-2 mb-4 sm:mb-6">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center hover:scale-105 transition-transform duration-300">
-                <span className="text-background font-bold text-sm sm:text-lg">DS</span>
+                <span className="text-background font-bold text-sm sm:text-lg">SS</span>
               </div>
               <span className="font-display text-xl sm:text-2xl font-bold text-foreground">
                 SS. Tharan
