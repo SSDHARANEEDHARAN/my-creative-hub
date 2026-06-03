@@ -77,7 +77,7 @@ const Hero = () => {
           >
             Hi, I'm{" "}
             <span className="text-gradient relative">
-              Dharaneedharan SS
+              SS. Tharan
               <motion.span
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}

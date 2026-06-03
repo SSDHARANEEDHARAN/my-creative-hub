@@ -68,7 +68,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
     { name: "About", href: "/about" },
     { name: "Skills", href: "/skills" },
     { name: "Services", href: "/services" },
-    { name: "Gallery", href: "/gallery" },
+    
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", href: "/contact" },
@@ -96,7 +96,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
               <span className="text-background font-bold text-sm sm:text-lg">DS</span>
             </motion.div>
             <span className="font-display text-lg sm:text-xl font-bold text-foreground">
-              Dharaneedharan SS
+              SS. Tharan
             </span>
           </Link>
 

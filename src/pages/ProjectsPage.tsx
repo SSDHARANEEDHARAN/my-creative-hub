@@ -477,7 +477,7 @@ const ProjectsPage = () => {
     <>
       <FloatingHeart ref={floatingRef} />
       <Helmet>
-        <title>Projects | Dharaneedharan SS - IT & Engineering Portfolio</title>
+        <title>Projects | SS. Tharan - IT & Engineering Portfolio</title>
         <meta
           name="description"
           content="Explore my portfolio of IT and Engineering projects including web applications, IoT systems, CAD designs, and manufacturing simulations."

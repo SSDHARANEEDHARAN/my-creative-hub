@@ -126,7 +126,7 @@ const BlogPostPage = () => {
     <>
       <FloatingHeart ref={floatingRef} />
       <Helmet>
-        <title>{post.title} | Blog - Dharaneedharan SS</title>
+        <title>{post.title} | Blog - SS. Tharan</title>
         <meta name="description" content={post.excerpt} />
       </Helmet>
 

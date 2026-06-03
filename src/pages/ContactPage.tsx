@@ -64,8 +64,8 @@ const ContactPage = () => {
   return (
     <>
       <Helmet>
-        <title>Contact | Dharaneedharan SS - Get In Touch</title>
-        <meta name="description" content="Get in touch with Dharaneedharan SS for IT development and Engineering design projects. Let's create something amazing together." />
+        <title>Contact | SS. Tharan - Get In Touch</title>
+        <meta name="description" content="Get in touch with SS. Tharan for IT development and Engineering design projects. Let's create something amazing together." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">

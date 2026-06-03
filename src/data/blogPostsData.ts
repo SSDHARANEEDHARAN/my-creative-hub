@@ -13,7 +13,7 @@ export interface BlogPost {
   };
 }
 
-const author = { name: "Dharaneedharan SS", avatar: "" };
+const author = { name: "SS. Tharan", avatar: "" };
 
 export const blogPosts: BlogPost[] = [
   // === IoT (4 posts) ===
