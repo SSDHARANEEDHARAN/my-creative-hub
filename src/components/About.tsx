@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 const About = () => {
   const [aboutData, setAboutData] = useState({
     title: "Turning Vision Into\nDigital Reality",
-    paragraph1: "Hello! I'm Dharaneedharan SS, a passionate Mechatronics Design Engineer based in Namakkal, India. With over 3+ years of experience in mechatronics design, robotics, and automation, I've had the privilege of working with innovative companies to design and implement cutting-edge mechanical and robotic systems.",
+    paragraph1: "Hello! I'm SS. Tharan, a passionate Mechatronics Design Engineer based in Namakkal, India. With over 3+ years of experience in mechatronics design, robotics, and automation, I've had the privilege of working with innovative companies to design and implement cutting-edge mechanical and robotic systems.",
     paragraph2: "My approach combines mechanical design expertise with advanced automation, enabling me to build Industry 4.0 solutions, robotics systems, and integrated hardware-software architectures that deliver real-world impact.",
   });
 

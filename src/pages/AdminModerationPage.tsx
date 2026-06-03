@@ -827,7 +827,7 @@ const AdminModerationPage = () => {
 
   return (
     <PageTransition>
-      <Helmet><title>Admin Dashboard | Dharaneedharan SS</title></Helmet>
+      <Helmet><title>Admin Dashboard | SS. Tharan</title></Helmet>
       <div className="min-h-screen bg-background">
         <Navigation />
         <main className="pt-24 pb-16">

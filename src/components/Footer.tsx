@@ -39,7 +39,7 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
                 <span className="text-background font-bold text-sm sm:text-lg">DS</span>
               </div>
               <span className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                Dharaneedharan SS
+                SS. Tharan
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed mb-4 sm:mb-6 max-w-sm text-sm sm:text-base">
@@ -90,7 +90,7 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
 
         <div className="pt-6 sm:pt-8 border-t-2 border-border flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 text-center sm:text-left">
-            © {currentYear} Dharaneedharan SS. Crafted with
+            © {currentYear} SS. Tharan. Crafted with
             <span className="animate-pulse">
               <Heart size={12} className="text-foreground" fill="currentColor" />
             </span>

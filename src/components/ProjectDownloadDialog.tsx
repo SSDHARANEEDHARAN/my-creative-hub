@@ -67,7 +67,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
           d.setFontSize(32);
           d.setFont("helvetica", "bold");
           d.setTextColor(232, 232, 232);
-          d.text("Dharaneedharan SS", cx, cy + 2, { align: "center" });
+          d.text("SS. Tharan", cx, cy + 2, { align: "center" });
           d.setFontSize(8);
           d.setFont("helvetica", "normal");
           d.setTextColor(215, 215, 215);
@@ -130,7 +130,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
           { title: "Tools & Software Used", content: tags.map(t => `• ${t}`).join("\n") },
           { title: "Key Design Features", content: "• Parametric 3D modeling with full design intent\n• Tolerance analysis per ASME Y14.5 standards\n• Material selection based on functional requirements\n• Assembly design with interference checking\n• Manufacturing-ready 2D drawings with GD&T" },
           { title: "Results & Outcomes", content: "The final design met all performance targets and passed manufacturing review. Design validation through simulation confirmed structural integrity and thermal performance within specified limits." },
-          { title: "Disclaimer", content: "This document is part of Dharaneedharan SS's engineering portfolio. All designs and analyses are for demonstration purposes. For detailed SolidWorks/Creo files, please contact directly." },
+          { title: "Disclaimer", content: "This document is part of SS. Tharan's engineering portfolio. All designs and analyses are for demonstration purposes. For detailed SolidWorks/Creo files, please contact directly." },
         ];
 
         let secNum = 0;
@@ -285,7 +285,7 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         doc.setFontSize(28);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(255, 255, 255);
-        doc.text("Dharaneedharan SS", cx, cy, { align: "center" });
+        doc.text("SS. Tharan", cx, cy, { align: "center" });
         doc.setFillColor(34, 197, 94);
         doc.rect(cx - 20, cy + 8, 40, 1.5, "F");
         doc.setFontSize(9);
@@ -298,20 +298,20 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
       } else {
         const stepContent = `ISO-10303-21;
 HEADER;
-FILE_DESCRIPTION(('Dharaneedharan SS - Engineering Portfolio'),'2;1');
-FILE_NAME('${projectTitle.replace(/'/g, "")}.step','${new Date().toISOString()}',('Dharaneedharan SS'),('Portfolio'),'','','');
+FILE_DESCRIPTION(('SS. Tharan - Engineering Portfolio'),'2;1');
+FILE_NAME('${projectTitle.replace(/'/g, "")}.step','${new Date().toISOString()}',('SS. Tharan'),('Portfolio'),'','','');
 FILE_SCHEMA(('AUTOMOTIVE_DESIGN'));
 ENDSEC;
 DATA;
 /* ================================================ */
 /* Project: ${projectTitle} */
-/* Author: Dharaneedharan SS */
+/* Author: SS. Tharan */
 /* Technologies: ${tags.join(", ")} */
 /* Description: ${projectDescription.substring(0, 200)} */
 /* ================================================ */
 /* This is a portfolio demonstration STEP file. */
 /* For the complete SolidWorks/Creo native files, */
-/* please contact Dharaneedharan SS directly. */
+/* please contact SS. Tharan directly. */
 /* ================================================ */
 #1=SHAPE_REPRESENTATION('${projectTitle}',(#2),#3);
 #2=AXIS2_PLACEMENT_3D('',#4,#5,#6);

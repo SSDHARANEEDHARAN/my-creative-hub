@@ -96,7 +96,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
               <span className="text-background font-bold text-sm sm:text-lg">DS</span>
             </motion.div>
             <span className="font-display text-lg sm:text-xl font-bold text-foreground">
-              Dharaneedharan SS
+              SS. Tharan
             </span>
           </Link>
 

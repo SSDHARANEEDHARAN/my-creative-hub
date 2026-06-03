@@ -29,7 +29,7 @@ const GalleryPage = () => {
   return (
     <>
       <Helmet>
-        <title>Gallery | Dharaneedharan SS - Travel Adventures in India</title>
+        <title>Gallery | SS. Tharan - Travel Adventures in India</title>
         <meta name="description" content="Explore travel photos from beautiful places across India - Namakkal, Ooty, Pondicherry, Rameswaram, Kodaikanal and more." />
       </Helmet>
       

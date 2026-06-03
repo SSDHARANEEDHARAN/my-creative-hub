@@ -133,7 +133,7 @@ const BlogPage = () => {
     <>
       <FloatingHeart ref={floatingRef} />
       <Helmet>
-        <title>Blog | Dharaneedharan SS - Insights & Tutorials</title>
+        <title>Blog | SS. Tharan - Insights & Tutorials</title>
         <meta name="description" content="Read articles about web development, design patterns, and lessons learned from building products." />
       </Helmet>
 

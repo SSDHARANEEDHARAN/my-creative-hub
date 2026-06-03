@@ -115,7 +115,7 @@ const SkillsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Skills | Dharaneedharan SS - Mechatronics Design Engineer & Full Stack Developer</title>
+        <title>Skills | SS. Tharan - Mechatronics Design Engineer & Full Stack Developer</title>
         <meta name="description" content="Explore technical skills in React, Python, Embedded Systems, SolidWorks, FlexSim, NX, Creo, and PTC Windchill." />
       </Helmet>
       

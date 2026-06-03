@@ -45,7 +45,7 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
         d.setFontSize(32);
         d.setFont("helvetica", "bold");
         d.setTextColor(232, 232, 232);
-        d.text("Dharaneedharan SS", cx, cy + 2, { align: "center" });
+        d.text("SS. Tharan", cx, cy + 2, { align: "center" });
         // Subtle tagline
         d.setFontSize(8);
         d.setFont("helvetica", "normal");
@@ -265,7 +265,7 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
       doc.setFontSize(28);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(255, 255, 255);
-      doc.text("Dharaneedharan SS", cx, cy, { align: "center" });
+      doc.text("SS. Tharan", cx, cy, { align: "center" });
 
       doc.setFillColor(59, 130, 246);
       doc.rect(cx - 20, cy + 8, 40, 1.5, "F");

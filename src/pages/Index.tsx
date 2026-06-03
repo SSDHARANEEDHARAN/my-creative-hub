@@ -14,7 +14,7 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>Dharaneedharan SS | Mechatronics Design Engineer</title>
+        <title>SS. Tharan | Mechatronics Design Engineer</title>
         <meta name="description" content="Mechatronics Design Engineer skilled in Industry 4.0, Robotics, PLC, Automation, and Embedded Systems." />
         <meta name="keywords" content="Mechatronics Engineer, CAD engineer, robotics portfolio, automation, SolidWorks, FlexSim, siemens nx, Industry 4.0" />
       </Helmet>
