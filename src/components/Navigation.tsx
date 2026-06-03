@@ -68,7 +68,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
     { name: "About", href: "/about" },
     { name: "Skills", href: "/skills" },
     { name: "Services", href: "/services" },
-    { name: "Gallery", href: "/gallery" },
+    
     { name: "Projects", href: "/projects" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", href: "/contact" },
