@@ -10,7 +10,7 @@ import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import SkillsPage from "./pages/SkillsPage";
 import ServicesPage from "./pages/ServicesPage";
-import GalleryPage from "./pages/GalleryPage";
+
 import ProjectsPage from "./pages/ProjectsPage";
 import TestimonialsPage from "./pages/TestimonialsPage";
 import ContactPage from "./pages/ContactPage";
@@ -51,7 +51,7 @@ const AnimatedRoutes = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/skills" element={<SkillsPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
+        
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/article/:slug" element={<ArticlePage />} />
         <Route path="/testimonials" element={<TestimonialsPage />} />
