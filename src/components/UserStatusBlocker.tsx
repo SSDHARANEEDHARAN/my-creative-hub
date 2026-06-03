@@ -28,7 +28,7 @@ const UserStatusBlocker = () => {
             <p className="text-muted-foreground text-xs break-all">{blockedIp}</p>
           </div>
           <a
-            href="mailto:contact@example.com"
+            href="mailto:tharaneetharanss@gmail.com"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Mail className="w-4 h-4" />
@@ -68,7 +68,7 @@ const UserStatusBlocker = () => {
             </p>
           </div>
           <a
-            href="mailto:contact@example.com"
+            href="mailto:tharaneetharanss@gmail.com"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Mail className="w-4 h-4" />
@@ -123,7 +123,7 @@ const UserStatusBlocker = () => {
             Your account has been blocked. Contact administrator for assistance.
           </p>
           <a
-            href="mailto:contact@example.com"
+            href="mailto:tharaneetharanss@gmail.com"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >
             <Mail className="w-4 h-4" />
