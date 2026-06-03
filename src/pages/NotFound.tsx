@@ -26,7 +26,6 @@ const sitePages = [
   { path: "/about", label: "About", icon: User, description: "Learn about me" },
   { path: "/projects", label: "Projects", icon: FolderOpen, description: "View my work" },
   { path: "/blog", label: "Blog", icon: BookOpen, description: "Read articles" },
-  { path: "/gallery", label: "Gallery", icon: Image, description: "Photo gallery" },
   { path: "/services", label: "Services", icon: Briefcase, description: "What I offer" },
   { path: "/contact", label: "Contact", icon: Mail, description: "Get in touch" },
 ];
