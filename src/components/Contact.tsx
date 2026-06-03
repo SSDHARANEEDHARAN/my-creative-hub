@@ -45,7 +45,7 @@ const Contact = () => {
   };
 
   const contactInfo = [
-    { icon: <Mail size={20} />, label: "Email", value: "contact@example.com", link: "mailto:contact@example.com" },
+    { icon: <Mail size={20} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
     { icon: <Phone size={20} />, label: "Phone", value: "+1 000 000 0000", link: "tel:+10000000000" },
     { icon: <MapPin size={20} />, label: "Location", value: "Remote / Worldwide", link: null },
   ];

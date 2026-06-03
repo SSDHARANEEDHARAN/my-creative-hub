@@ -93,10 +93,10 @@ const Navigation = ({ persisted }: NavigationProps) => {
               transition={{ duration: 0.5 }}
               className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center"
             >
-              <span className="text-background font-bold text-sm sm:text-lg">AE</span>
+              <span className="text-background font-bold text-sm sm:text-lg">DS</span>
             </motion.div>
             <span className="font-display text-lg sm:text-xl font-bold text-foreground">
-              ArtTech Engine
+              Dharaneedharan SS
             </span>
           </Link>
 

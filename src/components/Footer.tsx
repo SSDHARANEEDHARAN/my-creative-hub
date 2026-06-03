@@ -36,21 +36,21 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
           <div>
             <Link to="/" className="group flex items-center gap-2 mb-4 sm:mb-6">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center hover:scale-105 transition-transform duration-300">
-                <span className="text-background font-bold text-sm sm:text-lg">AE</span>
+                <span className="text-background font-bold text-sm sm:text-lg">DS</span>
               </div>
               <span className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                ArtTech Engine
+                Dharaneedharan SS
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed mb-4 sm:mb-6 max-w-sm text-sm sm:text-base">
               Creating innovative mechatronics solutions and advanced engineering designs - from robotics to automation systems.
             </p>
             <a 
-              href="mailto:contact@example.com"
+              href="mailto:tharaneetharanss@gmail.com"
               className="inline-flex items-center gap-2 text-foreground hover:text-muted-foreground transition-colors font-medium group text-sm sm:text-base"
             >
               <Mail size={16} />
-              <span className="hidden sm:inline">contact@example.com</span>
+              <span className="hidden sm:inline">tharaneetharanss@gmail.com</span>
               <span className="sm:hidden">Email Us</span>
               <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </a>

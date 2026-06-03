@@ -50,7 +50,7 @@ const ContactPage = () => {
   };
 
   const contactInfo = [
-    { icon: <Mail size={18} />, label: "Email", value: "contact@example.com", link: "mailto:contact@example.com" },
+    { icon: <Mail size={18} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
     { icon: <Phone size={18} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
     { icon: <MapPin size={18} />, label: "Location", value: "Namakkal, India", link: null },
   ];
