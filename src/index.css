@@ -47,6 +47,7 @@
     --teal-light: 0 0% 90%;
     --slate: 0 0% 15%;
     --soft-white: 0 0% 98%;
+    --glow-blue: 210 100% 60%;
     
     /* Gradients - Monochrome */
     --gradient-primary: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 25%));
@@ -226,6 +227,17 @@
   .border-glow:hover {
     border-color: hsl(var(--primary));
     box-shadow: 0 0 30px hsl(var(--primary) / 0.15);
+  }
+
+  .card-blue-glow {
+    border: 1px solid hsl(var(--glow-blue) / 0.3);
+    box-shadow: 0 0 15px hsl(var(--glow-blue) / 0.12);
+    transition: var(--transition-smooth);
+  }
+
+  .card-blue-glow:hover {
+    border-color: hsl(var(--glow-blue) / 0.55);
+    box-shadow: 0 0 25px hsl(var(--glow-blue) / 0.22);
   }
 
   .card-gradient {
