@@ -334,7 +334,7 @@ const Blog = () => {
 
         {/* Featured Post */}
         <div
-          className="bg-card rounded-3xl overflow-hidden border-glow hover-lift shadow-lg mb-12 cursor-pointer group"
+          className="bg-card rounded-3xl overflow-hidden border-glow card-blue-glow hover-lift shadow-lg mb-12 cursor-pointer group"
           onClick={() => setSelectedPost(featuredPost)}
         >
           <div className="grid md:grid-cols-2 gap-0">
@@ -396,7 +396,7 @@ const Blog = () => {
           {otherPosts.map((post) => (
             <article
               key={post.id}
-              className="bg-card rounded-2xl overflow-hidden border-glow hover-lift shadow-md group cursor-pointer"
+              className="bg-card rounded-2xl overflow-hidden border-glow card-blue-glow hover-lift shadow-md group cursor-pointer"
               onClick={() => setSelectedPost(post)}
             >
               <div className="relative overflow-hidden aspect-[16/10]">

@@ -574,7 +574,7 @@ const ProjectsPage = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
                           onClick={(e) => handleCardActivate(project.id, e)}
-                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
+                          className="group sharp-card overflow-hidden card-blue-glow shadow-lg transition-all duration-300 select-none"
                         >
                           <div className="relative aspect-video overflow-hidden">
                             {project.images && project.images.length > 0 ? (
@@ -662,7 +662,7 @@ const ProjectsPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
                         onClick={(e) => handleCardActivate(project.id, e)}
-                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
+                        className="group sharp-card overflow-hidden card-blue-glow shadow-md transition-all duration-300 select-none"
                       >
                         <div className="relative aspect-video overflow-hidden">
                           {project.images && project.images.length > 0 ? (
