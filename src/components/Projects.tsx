@@ -185,7 +185,7 @@ const Projects = () => {
           {featuredProjects.map((project) => (
             <div 
               key={project.id}
-              className="group sharp-card overflow-hidden card-blue-glow shadow-lg transition-all duration-200 hover-lift"
+              className="group sharp-card overflow-hidden border-2 border-border shadow-lg hover:border-primary/30 transition-all duration-200 hover-lift"
             >
               <div className="relative overflow-hidden aspect-[16/10]">
                 {project.images && project.images.length > 0 ? (
@@ -259,7 +259,7 @@ const Projects = () => {
           {otherProjects.map((project) => (
             <div 
               key={project.id}
-              className="group sharp-card overflow-hidden card-blue-glow shadow-md transition-all duration-200 hover-lift p-4"
+              className="group sharp-card overflow-hidden border-2 border-border shadow-md hover:border-primary/30 transition-all duration-200 hover-lift p-4"
             >
               <div className="relative overflow-hidden aspect-video mb-4">
                 {project.images && project.images.length > 0 ? (
@@ -340,7 +340,7 @@ const Projects = () => {
                   return (
                     <div 
                       key={project.id}
-                      className="group sharp-card overflow-hidden card-blue-glow shadow-lg transition-all duration-200 hover-lift"
+                      className="group sharp-card overflow-hidden border-2 border-border shadow-lg hover:border-primary/30 transition-all duration-200 hover-lift"
                     >
                       <div className="relative overflow-hidden aspect-video">
                         {project.images && project.images.length > 0 ? (

@@ -182,7 +182,7 @@ const BlogPage = () => {
               {featuredPost && (
                 <ScrollReveal delay={100}>
                   <div
-                    className="bg-card overflow-hidden card-blue-glow transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group select-none"
+                    className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group select-none"
                     onClick={(e) => handleCardActivate(featuredPost.id, e)}
                   >
                     <div className="grid md:grid-cols-2 gap-0">
@@ -250,7 +250,7 @@ const BlogPage = () => {
                 {otherPosts.map((post, index) => (
                   <ScrollReveal key={post.id} delay={index * 50} className="h-full">
                     <article
-                      className="bg-card overflow-hidden card-blue-glow transition-all duration-300 group cursor-pointer h-full flex flex-col select-none"
+                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col select-none"
                       onClick={(e) => handleCardActivate(post.id, e)}
                     >
                       <div className="relative overflow-hidden aspect-[16/10]">
