@@ -18,10 +18,24 @@ interface ResumeButtonProps {
   className?: string;
 }
 
-type ResumeType = "it" | "core" | "both";
+type ResumeType = "mechanical" | "both";
 
 const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeButtonProps) => {
   const [showDialog, setShowDialog] = useState(false);
+
+  const downloadMechanicalPdf = () => {
+    setShowDialog(false);
+    const link = document.createElement("a");
+    link.href = "/Dharanee_Dharan_Resume.pdf";
+    link.download = "Dharanee_Dharan_Mechanical_Resume.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast({
+      title: "Resume Downloaded! 📄",
+      description: "Mechanical resume has been downloaded.",
+    });
+  };
 
   const loadImageAsBase64 = (src: string): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -43,44 +57,35 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
   const drawPageBorder = (doc: jsPDF) => {
     const pageWidth = 210;
     const pageHeight = 297;
-    const bm = 8; // border margin
+    const bm = 8;
     const cornerSize = 18;
-
-    // Outer border rectangle
     doc.setDrawColor(100, 120, 160);
     doc.setLineWidth(1.2);
     doc.rect(bm, bm, pageWidth - bm * 2, pageHeight - bm * 2);
-
-    // Inner border rectangle
     doc.setLineWidth(0.4);
     doc.rect(bm + 2, bm + 2, pageWidth - (bm + 2) * 2, pageHeight - (bm + 2) * 2);
-
-    // Decorative corners
     const drawCorner = (cx: number, cy: number, flipX: number, flipY: number) => {
       doc.setDrawColor(100, 120, 160);
       doc.setLineWidth(0.8);
-      // L-shaped corner accent
       doc.line(cx, cy, cx + cornerSize * flipX, cy);
       doc.line(cx, cy, cx, cy + cornerSize * flipY);
-      // Small square at corner
       const sq = 4;
       doc.setFillColor(100, 120, 160);
       doc.rect(cx - (flipX < 0 ? sq : 0), cy - (flipY < 0 ? sq : 0), sq, sq, "F");
     };
-
     drawCorner(bm, bm, 1, 1);
     drawCorner(pageWidth - bm, bm, -1, 1);
     drawCorner(bm, pageHeight - bm, 1, -1);
     drawCorner(pageWidth - bm, pageHeight - bm, -1, -1);
   };
 
-  const generateResume = async (type: ResumeType) => {
+  const generateBothResume = async () => {
     setShowDialog(false);
     try {
       const doc = new jsPDF("p", "mm", "a4");
       const pageWidth = 210;
-      const bm = 8; // border margin
-      const margin = bm + 8; // content margin inside border
+      const bm = 8;
+      const margin = bm + 8;
       const contentWidth = pageWidth - margin * 2;
       let y = margin + 4;
 
@@ -89,33 +94,28 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
       const medGray: [number, number, number] = [100, 100, 100];
       const headerBg: [number, number, number] = [210, 220, 235];
 
-      // Draw page border & corners
       drawPageBorder(doc);
 
-      // --- Profile Photo ---
       try {
         const photoData = await loadImageAsBase64(profilePhoto);
         doc.addImage(photoData, "PNG", pageWidth - margin - 25, y, 25, 25);
       } catch { /* continue */ }
 
-      // --- Header ---
       doc.setFont("helvetica", "bold");
       doc.setFontSize(20);
       doc.setTextColor(...black);
       doc.text("DHARANEEDHARAN S.S", margin, y + 7);
 
-      const subtitle = type === "it" ? "Full Stack Developer" : type === "core" ? "CAD Engineer" : "Full Stack Developer & CAD Engineer";
       doc.setFont("helvetica", "normal");
       doc.setFontSize(11);
       doc.setTextColor(...darkGray);
-      doc.text(subtitle, margin, y + 14);
+      doc.text("Mechatronics Design Engineer & Full Stack Developer", margin, y + 14);
 
       doc.setFontSize(9);
       doc.setTextColor(...medGray);
-      doc.text("Email: contact@example.com | Phone: +1 000 000 0000", margin, y + 20);
-      doc.text("Location: Remote / Worldwide | LinkedIn: linkedin.com/in/example", margin, y + 25);
-      doc.text("GitHub: github.com/example", margin, y + 30);
-      y += 38;
+      doc.text("Email: tharaneetharanss@gmail.com | Phone: +91 8870086023", margin, y + 20);
+      doc.text("Location: Namakkal, India", margin, y + 25);
+      y += 35;
 
       const checkPageBreak = (needed = 20) => {
         if (y > 275 - needed) {
@@ -127,7 +127,6 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
 
       const addSectionHeader = (title: string) => {
         checkPageBreak(15);
-        // Gray/blue background bar for section header
         doc.setFillColor(...headerBg);
         doc.rect(margin, y - 4, contentWidth, 7, "F");
         doc.setFont("helvetica", "bold");
@@ -175,53 +174,28 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
         y += 2;
       };
 
-      // === PROFESSIONAL SUMMARY ===
       addSectionHeader("Professional Summary");
-      const summaries: Record<ResumeType, string> = {
-        it: "Results-driven Full Stack Developer with 3+ years of experience in web development, embedded systems, and IoT solutions. Proficient in React, Python, Node.js, TypeScript, and cloud technologies. Skilled in building scalable web applications and real-time monitoring systems.",
-        core: "Experienced CAD Engineer with 3+ years of hands-on expertise in engineering design, simulation, and product lifecycle management. Proficient in SolidWorks, PTC Creo, Siemens NX, FlexSim, and PTC Windchill. Skilled in FEA analysis, GD&T, and manufacturing optimization.",
-        both: "Results-driven Full Stack Developer and CAD Engineer with 3+ years of hands-on experience in web development, embedded systems, and engineering design. Proficient in React, Python, Node.js, and CAD tools including SolidWorks, PTC Creo, Siemens NX, and FlexSim. Skilled in building scalable web applications, IoT solutions, and performing simulation & FEA analysis for manufacturing optimization.",
-      };
-      addWrappedText(summaries[type]);
+      addWrappedText("Results-driven Mechatronics Design Engineer and Full Stack Developer with 4.5 years of hands-on experience in web development, embedded systems, and engineering design. Proficient in React, Python, Node.js, and CAD tools including SolidWorks, PTC Creo, Siemens NX, and FlexSim. Skilled in building scalable web applications, IoT solutions, and performing simulation & FEA analysis for manufacturing optimization.");
 
-      // === TECHNICAL SKILLS ===
       addSectionHeader("Technical Skills");
+      addSkillCategory("IT & Software:", [
+        "Frontend: React, JavaScript, TypeScript, HTML5, CSS3, Tailwind CSS",
+        "Backend: Python, Node.js, Express.js, PostgreSQL, MongoDB, REST API",
+        "Embedded Systems: Arduino, Raspberry Pi, IoT, MQTT",
+        "Tools: Git, Docker, Firebase, AWS",
+      ]);
+      addSkillCategory("Engineering & CAD:", [
+        "CAD Software: SolidWorks, Siemens NX, PTC Creo, AutoCAD, CATIA V5",
+        "Simulation: FlexSim, FEA Analysis, CFD",
+        "PLM: PTC Windchill, Product Data Management",
+        "Manufacturing: GD&T, Technical Drawing, 3D Modeling, CAM",
+      ]);
 
-      if (type === "it" || type === "both") {
-        addSkillCategory("IT & Software:", [
-          "Frontend: React, JavaScript, TypeScript, HTML5, CSS3, Tailwind CSS",
-          "Backend: Python, Node.js, Express.js, PostgreSQL, MongoDB, REST API",
-          "Embedded Systems: Arduino, Raspberry Pi, IoT, MQTT",
-          "Tools: Git, Docker, Firebase, AWS",
-        ]);
-      }
-
-      if (type === "core" || type === "both") {
-        addSkillCategory("Engineering & CAD:", [
-          "CAD Software: SolidWorks, Siemens NX, PTC Creo, AutoCAD, CATIA V5",
-          "Simulation: FlexSim, FEA Analysis, CFD",
-          "PLM: PTC Windchill, Product Data Management",
-          "Manufacturing: GD&T, Technical Drawing, 3D Modeling, CAM",
-        ]);
-      }
-
-      // === WORK EXPERIENCE ===
       addSectionHeader("Work Experience");
-
-      const itExperiences = [
-        { title: "Senior Full Stack Developer", company: "Infosys Limited, Chennai", duration: "2023 - Present", points: ["Leading development of enterprise web applications using React, TypeScript, and Node.js", "Architecting microservices and implementing CI/CD pipelines with Docker and AWS", "Managing a team of 4 junior developers and conducting code reviews"] },
-        { title: "Full Stack Developer", company: "TCS (Tata Consultancy Services), Bangalore", duration: "2022 - 2023", points: ["Developed IoT dashboards and real-time monitoring systems using React and Python", "Built RESTful APIs and integrated with industrial sensors and PLCs"] },
-        { title: "Software Developer", company: "Zoho Corporation, Chennai", duration: "2021 - 2022", points: ["Worked on Zoho CRM customizations and integrations", "Developed mobile applications using React Native for enterprise clients"] },
+      const experiences = [
+        { title: "Mechatronics Design Engineer", company: "Janatics India Pvt Ltd, Coimbatore", duration: "Sep 2023 – Present", points: ["Designed Industry 4.0 based mechatronics systems, robotics, and cobot trainer kits", "Developed PLC/HMI integrated automation and IIoT solutions"] },
+        { title: "Engine & ECU Diagnostics", company: "TV Sundram Iyengar & Sons Pvt Ltd, Namakkal", duration: "2020 – 2021", points: ["Performed engine and ECU diagnostics for automotive systems"] },
       ];
-
-      const coreExperiences = [
-        { title: "Senior CAD Design Engineer", company: "Mahindra & Mahindra, Chennai", duration: "2023 - Present", points: ["Leading powertrain component design using SolidWorks and PTC Creo", "Performing advanced FEA simulations and managing engineering changes through Windchill PLM"] },
-        { title: "CAD Design Engineer", company: "Sundram Fasteners, Chennai", duration: "2022 - 2023", points: ["Designed automotive components for Tier-1 manufacturing with GD&T specifications", "Created manufacturing drawings and managed product data in enterprise PLM systems"] },
-        { title: "Simulation Engineer", company: "Ashok Leyland, Chennai", duration: "2021 - 2022", points: ["Developed FlexSim simulations for assembly line optimization", "Achieved 25% throughput improvement through bottleneck analysis and layout optimization"] },
-      ];
-
-      const experiences = type === "it" ? itExperiences : type === "core" ? coreExperiences : [...itExperiences, ...coreExperiences];
-
       for (const exp of experiences) {
         checkPageBreak(20);
         doc.setFont("helvetica", "bold");
@@ -238,43 +212,34 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
         y += 2;
       }
 
-      // === EDUCATION ===
       checkPageBreak(20);
       addSectionHeader("Education");
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(...black);
-      doc.text("Bachelor of Engineering", margin, y);
-      y += 4.5;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(9);
-      doc.setTextColor(...medGray);
-      doc.text("Mechanical / Computer Science Engineering", margin, y);
+      doc.text("B.E. Mechanical Engineering", margin, y);
       y += 8;
 
-      // === KEY ACHIEVEMENTS ===
       checkPageBreak(20);
       addSectionHeader("Key Achievements");
-      addBullet("25+ projects completed across IT and Engineering domains");
-      if (type === "core" || type === "both") addBullet("Achieved 25% throughput improvement through FlexSim simulation optimization");
-      if (type === "it" || type === "both") addBullet("Led a team of 4 developers in enterprise application development");
+      addBullet("4.5 years of experience across IT and Engineering domains");
+      addBullet("25+ projects completed");
       addBullet("Proficient in 10+ technologies and 5+ CAD tools");
 
-      const fileNames: Record<ResumeType, string> = {
-        it: "Dharaneedharan_IT_Resume.pdf",
-        core: "Dharaneedharan_Core_Resume.pdf",
-        both: "Dharaneedharan_Full_Resume.pdf",
-      };
-      doc.save(fileNames[type]);
-      const labels: Record<ResumeType, string> = { it: "IT", core: "Core Engineering", both: "Full (IT + Core)" };
+      doc.save("Dharaneedharan_Full_Resume.pdf");
       toast({
         title: "Resume Downloaded! 📄",
-        description: `${labels[type]} ATS-friendly resume has been downloaded.`,
+        description: "Full (IT + Mechanical) resume has been downloaded.",
       });
     } catch (error) {
       console.error("Resume download error:", error);
       toast({ title: "Download Failed", description: "Something went wrong. Please try again.", variant: "destructive" });
     }
+  };
+
+  const handleSelect = (type: ResumeType) => {
+    if (type === "mechanical") downloadMechanicalPdf();
+    else generateBothResume();
   };
 
   return (
@@ -291,17 +256,13 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
             <DialogDescription>Select the version that best fits your needs.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-4">
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => generateResume("it")}>
-              <span className="font-semibold text-sm">IT Resume</span>
-              <span className="text-xs text-muted-foreground">Full Stack Development, React, Python, IoT</span>
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => handleSelect("mechanical")}>
+              <span className="font-semibold text-sm">Mechanical Resume</span>
+              <span className="text-xs text-muted-foreground">Mechatronics, CAD, SolidWorks, NX, Creo</span>
             </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => generateResume("core")}>
-              <span className="font-semibold text-sm">Core Engineering Resume</span>
-              <span className="text-xs text-muted-foreground">CAD, SolidWorks, NX, Creo, FlexSim, PLM</span>
-            </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => generateResume("both")}>
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-start gap-1" onClick={() => handleSelect("both")}>
               <span className="font-semibold text-sm">Both (Full Resume)</span>
-              <span className="text-xs text-muted-foreground">Combined IT + Core Engineering resume</span>
+              <span className="text-xs text-muted-foreground">Combined IT + Mechanical resume</span>
             </Button>
           </div>
         </DialogContent>

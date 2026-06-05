@@ -10,7 +10,7 @@ const Hero = () => {
   const highlights = [
     { icon: <Cpu size={16} />, text: "Mechatronics Engineer" },
     { icon: <MapPin size={16} />, text: "CAD & PLM Expert" },
-    { icon: <Calendar size={16} />, text: "3+ Years Experience" },
+    { icon: <Calendar size={16} />, text: "4.5 Years Experience" },
   ];
 
   return (
