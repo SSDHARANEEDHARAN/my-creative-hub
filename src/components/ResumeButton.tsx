@@ -11,6 +11,7 @@ import {
 } from "./ui/dialog";
 import jsPDF from "jspdf";
 import profilePhoto from "@/assets/profile-photo.png";
+import resumePdf from "@/assets/Dharanee_Dharan_Resume.pdf.asset.json";
 
 interface ResumeButtonProps {
   variant?: "hero" | "heroOutline" | "default";
@@ -26,8 +27,10 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
   const downloadMechanicalPdf = () => {
     setShowDialog(false);
     const link = document.createElement("a");
-    link.href = "/Dharanee_Dharan_Resume.pdf";
+    link.href = resumePdf.url;
     link.download = "Dharanee_Dharan_Mechanical_Resume.pdf";
+    link.rel = "noopener";
+    link.target = "_self";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
