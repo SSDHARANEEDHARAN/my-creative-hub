@@ -31,7 +31,7 @@ const nonItTechnologies = [
 ];
 
 const stats = [
-  { value: "3+", label: "Years Experience" },
+  { value: "4.5", label: "Years Experience" },
   { value: "20+", label: "Projects Done" },
   { value: "10+", label: "Technologies" },
   { value: "5+", label: "CAD Tools" },

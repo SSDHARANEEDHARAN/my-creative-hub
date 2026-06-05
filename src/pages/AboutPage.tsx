@@ -141,7 +141,7 @@ const AboutPage = () => {
                   <div className="flex flex-col md:flex-row gap-8 items-start">
                     <div className="shrink-0 group/photo">
                       <div className="w-32 h-32 md:w-40 md:h-40 overflow-hidden bg-secondary rounded-lg">
-                        <img src={aboutProfilePhoto} alt="SS. Tharan" loading="lazy" decoding="async" width={160} height={160} className="w-full h-full object-cover grayscale group-hover/photo:grayscale-0 transition-all duration-500" />
+                        <img src={aboutProfilePhoto} alt="SS. Dharanee Dharan" loading="lazy" decoding="async" width={160} height={160} className="w-full h-full object-cover grayscale group-hover/photo:grayscale-0 transition-all duration-500" />
                       </div>
                       <p className="mt-3 text-[7px] italic text-muted-foreground leading-relaxed max-w-[10rem] text-center mx-auto font-normal group-hover/photo:font-bold transition-all duration-500">
                         "Code the Brain, Move the Machine — Designing the Future || Coding Minds, Moving Machines — Powering Robotics Behind the Scenes"
@@ -149,7 +149,7 @@ const AboutPage = () => {
                     </div>
                     
                     <div className="flex-1">
-                       <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">SS. Tharan</h1>
+                       <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">SS. Dharanee Dharan</h1>
                       <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Mechatronics Design Engineer & Full Stack Developer</p>
                       
                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">

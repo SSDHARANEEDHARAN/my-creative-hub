@@ -158,7 +158,7 @@ const Skills = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mt-12 sm:mt-20">
-          {[{ value: "3+", label: "Years Experience" }, { value: "25+", label: "Projects Done" }, { value: "10+", label: "Technologies" }, { value: "5+", label: "CAD Tools" }].map((stat, i) => (
+          {[{ value: "4.5", label: "Years Experience" }, { value: "25+", label: "Projects Done" }, { value: "10+", label: "Technologies" }, { value: "5+", label: "CAD Tools" }].map((stat, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1.2 + i * 0.1 }} className="text-center p-4 sm:p-6 bg-card rounded-3xl border-2 border-border hover:border-primary/50 transition-colors">
               <div className="text-2xl sm:text-3xl font-bold text-gradient mb-1 sm:mb-2">{stat.value}</div>
               <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
