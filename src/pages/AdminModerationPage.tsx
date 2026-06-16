@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import ReactMarkdown from "react-markdown";
+import GalleryManager from "@/components/admin/GalleryManager";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
@@ -861,11 +862,12 @@ const AdminModerationPage = () => {
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 md:grid-cols-11">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-12">
                 <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
                 <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
+                <TabsTrigger value="gallery"><Image className="w-4 h-4 mr-1" />Gallery</TabsTrigger>
                 <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
                 <TabsTrigger value="about"><Info className="w-4 h-4 mr-1" />About</TabsTrigger>
                 <TabsTrigger value="pending" className="relative">
@@ -1068,6 +1070,11 @@ const AdminModerationPage = () => {
                     ))}
                   </div>
                 )}
+              </TabsContent>
+
+              {/* ── Gallery Tab ── */}
+              <TabsContent value="gallery" className="space-y-4">
+                <GalleryManager />
               </TabsContent>
 
               {/* ── About Tab ── */}

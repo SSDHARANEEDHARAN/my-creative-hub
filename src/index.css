@@ -118,6 +118,16 @@
 
   html {
     overflow-x: hidden;
+    /* Hide the scrollbar but keep scrolling functional */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/old Edge */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none; /* Chrome/Safari/Edge */
   }
 
   body {
@@ -125,6 +135,8 @@
     font-family: 'Source Sans 3', sans-serif;
     font-size: 13px;
     overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     -webkit-text-size-adjust: 100%;
   }
 

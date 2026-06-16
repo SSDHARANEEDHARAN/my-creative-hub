@@ -12,6 +12,7 @@ import SkillsPage from "./pages/SkillsPage";
 import ServicesPage from "./pages/ServicesPage";
 
 import ProjectsPage from "./pages/ProjectsPage";
+import GalleryPage from "./pages/GalleryPage";
 import TestimonialsPage from "./pages/TestimonialsPage";
 import ContactPage from "./pages/ContactPage";
 import BlogPage from "./pages/BlogPage";
@@ -21,6 +22,7 @@ import SubscribersPage from "./pages/SubscribersPage";
 import BlogCommentsPage from "./pages/BlogCommentsPage";
 import AdminModerationPage from "./pages/AdminModerationPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminGalleryPage from "./pages/AdminGalleryPage";
 import IndustrialProjectsPage from "./pages/IndustrialProjectsPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -53,6 +55,7 @@ const AnimatedRoutes = () => {
         <Route path="/skills" element={<SkillsPage />} />
         
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/projects/article/:slug" element={<ArticlePage />} />
         <Route path="/testimonials" element={<TestimonialsPage />} />
         <Route path="/contact" element={<ContactPage />} />
@@ -93,6 +96,14 @@ const AnimatedRoutes = () => {
           element={
             <ProtectedRoute requireAdmin>
               <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/gallery"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminGalleryPage />
             </ProtectedRoute>
           }
         />

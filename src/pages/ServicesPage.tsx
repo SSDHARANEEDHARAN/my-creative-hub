@@ -266,11 +266,6 @@ const ServicesPage = () => {
                         {service.description}
                       </p>
 
-                      <div className="mb-4 sm:mb-5">
-                        <span className="text-2xl sm:text-3xl font-bold text-foreground">{service.price}</span>
-                        <span className="text-muted-foreground ml-2 text-xs sm:text-sm">{service.period}</span>
-                      </div>
-
                       <ul className="space-y-2 sm:space-y-2.5 mb-4 sm:mb-6 flex-grow">
                         {service.features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-2 text-muted-foreground text-xs sm:text-sm">

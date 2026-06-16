@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogOut, Shield, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, Shield, LayoutDashboard, Images } from "lucide-react";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
 import SocialLinks from "./SocialLinks";
@@ -70,6 +70,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
     { name: "Services", href: "/services" },
     
     { name: "Projects", href: "/projects" },
+    { name: "Gallery", href: "/gallery" },
     { name: "Blog", href: "/blog" },
     { name: "Contact", href: "/contact" },
   ];
@@ -80,7 +81,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        scrolled || isOpen
           ? "bg-background/95 backdrop-blur-xl border-b-2 border-border shadow-lg"
           : "bg-transparent"
       }`}
@@ -165,6 +166,12 @@ const Navigation = ({ persisted }: NavigationProps) => {
                           <span>Moderation</span>
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/gallery" className="cursor-pointer">
+                          <Images className="mr-2 h-4 w-4" />
+                          <span>Gallery</span>
+                        </Link>
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
@@ -202,7 +209,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className="lg:hidden overflow-hidden border-t-2 border-border"
+              className="lg:hidden overflow-hidden border-t-2 border-border bg-background"
             >
               <div className="py-4 space-y-1">
                 {navLinks.map((link, index) => (
@@ -250,6 +257,10 @@ const Navigation = ({ persisted }: NavigationProps) => {
                           <Link to="/admin/moderation" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
                             <Shield className="w-4 h-4" />
                             Moderation
+                          </Link>
+                          <Link to="/admin/gallery" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
+                            <Images className="w-4 h-4" />
+                            Gallery
                           </Link>
                         </div>
                       )}

@@ -107,10 +107,6 @@ const ServiceRequestModal = ({ isOpen, onClose, service, category }: ServiceRequ
               {service.title}
             </h2>
             <p className="text-sm text-muted-foreground mt-1">{service.description}</p>
-            <div className="mt-2">
-              <span className="text-lg font-bold text-foreground">{service.price}</span>
-              <span className="text-muted-foreground text-sm ml-1">starting</span>
-            </div>
           </div>
           <button 
             onClick={onClose}
