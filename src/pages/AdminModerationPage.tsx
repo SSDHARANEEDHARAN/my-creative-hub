@@ -869,7 +869,7 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
                 <TabsTrigger value="gallery"><Image className="w-4 h-4 mr-1" />Gallery</TabsTrigger>
                 <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
-                <TabsTrigger value="about"><Info className="w-4 h-4 mr-1" />About</TabsTrigger>
+                
                 <TabsTrigger value="pending" className="relative">
                   Comments
                   {pendingComments.length > 0 && (
