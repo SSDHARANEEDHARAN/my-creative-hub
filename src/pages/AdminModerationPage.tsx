@@ -1077,30 +1077,6 @@ const AdminModerationPage = () => {
                 <GalleryManager />
               </TabsContent>
 
-              {/* ── About Tab ── */}
-              <TabsContent value="about" className="space-y-4">
-                <div className="flex justify-end">
-                  <Button onClick={() => setShowAboutDialog(true)}><Edit className="w-4 h-4 mr-2" /> Edit About Content</Button>
-                </div>
-                <Card>
-                  <CardHeader><CardTitle>Current About Content</CardTitle></CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Title</p>
-                      <p className="text-foreground">{aboutIntro.title || "Not set"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Paragraph 1</p>
-                      <p className="text-foreground text-sm">{aboutIntro.paragraph1 || "Not set"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Paragraph 2</p>
-                      <p className="text-foreground text-sm">{aboutIntro.paragraph2 || "Not set"}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
               {/* ── Experience Tab ── */}
               <TabsContent value="experience" className="space-y-4">
                 <div className="flex justify-end">
