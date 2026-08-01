@@ -492,7 +492,22 @@ const AdminDashboardPage = () => {
 
               </motion.div>
             )}
+
+            {/* Site Content: About description + Resume */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-8"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">About & Resume</h2>
+              </div>
+              <AboutResumeManager />
+            </motion.div>
           </div>
+
         </main>
         <Footer />
 
