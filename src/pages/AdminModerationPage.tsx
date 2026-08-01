@@ -763,20 +763,6 @@ const AdminModerationPage = () => {
     if (url) setCertForm(prev => ({ ...prev, image_url: url }));
   };
 
-  // ── About Content ──
-  const saveAbout = async () => {
-    const existing = aboutContent.find(a => a.section_key === "intro");
-    let error;
-    if (existing) {
-      ({ error } = await supabase.from("about_content").update({ content: aboutIntro as any }).eq("section_key", "intro"));
-    } else {
-      ({ error } = await supabase.from("about_content").insert({ section_key: "intro", content: aboutIntro as any }));
-    }
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    toast({ title: "About content updated" });
-    setShowAboutDialog(false);
-    loadData();
-  };
 
   // ── Work Experience CRUD ──
   const openExpForm = (exp?: WorkExperience) => {
