@@ -855,7 +855,8 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
                 <TabsTrigger value="gallery"><Image className="w-4 h-4 mr-1" />Gallery</TabsTrigger>
                 <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
-                
+                <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
+
                 <TabsTrigger value="pending" className="relative">
                   Comments
                   {pendingComments.length > 0 && (
@@ -868,7 +869,6 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
                 <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
                 <TabsTrigger value="visits"><Globe className="w-4 h-4 mr-1" />Visits</TabsTrigger>
-                <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
               </TabsList>
 
               {/* ── Blogs Tab ── */}
