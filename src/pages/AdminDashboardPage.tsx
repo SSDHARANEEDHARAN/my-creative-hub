@@ -465,8 +465,9 @@ const AdminDashboardPage = () => {
                 className="bg-card border border-border rounded-xl p-6"
               >
                 <Tabs defaultValue="all">
-                  <TabsList className="mb-4">
+                  <TabsList className="mb-4 flex-wrap h-auto">
                     <TabsTrigger value="all">All ({users.length})</TabsTrigger>
+                    <TabsTrigger value="admins">Admins ({adminUsers.length})</TabsTrigger>
                     <TabsTrigger value="pending">Pending ({pendingUsers.length})</TabsTrigger>
                     <TabsTrigger value="approved">Approved ({approvedUsers.length})</TabsTrigger>
                     <TabsTrigger value="restricted">Restricted ({restrictedUsers.length})</TabsTrigger>
@@ -474,12 +475,19 @@ const AdminDashboardPage = () => {
                     <TabsTrigger value="blocked">Blocked ({blockedUsers.length})</TabsTrigger>
                   </TabsList>
                   <TabsContent value="all">{renderUserTable(users)}</TabsContent>
+                  <TabsContent value="admins" className="space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      Admin accounts can be blocked or deleted here. Your own account is protected.
+                    </p>
+                    {renderUserTable(adminUsers)}
+                  </TabsContent>
                   <TabsContent value="pending">{renderUserTable(pendingUsers)}</TabsContent>
                   <TabsContent value="approved">{renderUserTable(approvedUsers)}</TabsContent>
                   <TabsContent value="restricted">{renderUserTable(restrictedUsers)}</TabsContent>
                   <TabsContent value="temporary_locked">{renderUserTable(temporaryLockedUsers)}</TabsContent>
                   <TabsContent value="blocked">{renderUserTable(blockedUsers)}</TabsContent>
                 </Tabs>
+
               </motion.div>
             )}
           </div>
