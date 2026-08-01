@@ -1632,21 +1632,6 @@ const AdminModerationPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── About Dialog ── */}
-      <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Edit About Content</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <Input placeholder="Section Title" value={aboutIntro.title} onChange={e => setAboutIntro(p => ({ ...p, title: e.target.value }))} />
-            <Textarea placeholder="First Paragraph" value={aboutIntro.paragraph1} onChange={e => setAboutIntro(p => ({ ...p, paragraph1: e.target.value }))} rows={4} />
-            <Textarea placeholder="Second Paragraph" value={aboutIntro.paragraph2} onChange={e => setAboutIntro(p => ({ ...p, paragraph2: e.target.value }))} rows={4} />
-            <div className="flex gap-3 justify-end pt-2">
-              <Button variant="outline" onClick={() => setShowAboutDialog(false)}>Cancel</Button>
-              <Button onClick={saveAbout}>Save About Content</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* ── Work Experience Dialog ── */}
       <Dialog open={showExpDialog} onOpenChange={setShowExpDialog}>
