@@ -148,6 +148,8 @@ const AdminDashboardPage = () => {
   const restrictedUsers = users.filter((u) => u.status === "restricted" || u.status === "rejected");
   const temporaryLockedUsers = users.filter((u) => u.status === "temporary_locked");
   const blockedUsers = users.filter((u) => u.status === "blocked");
+  const adminUsers = users.filter((u) => u.roles?.includes("admin"));
+
 
   const formatDate = (d: string | null) => {
     if (!d) return "—";
