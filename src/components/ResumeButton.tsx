@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ import {
 import jsPDF from "jspdf";
 import profilePhoto from "@/assets/profile-photo.png";
 import resumePdf from "@/assets/Dharanee_Dharan_Resume.pdf.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ResumeButtonProps {
   variant?: "hero" | "heroOutline" | "default";
@@ -23,12 +24,25 @@ type ResumeType = "mechanical" | "both";
 
 const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeButtonProps) => {
   const [showDialog, setShowDialog] = useState(false);
+  const [savedResume, setSavedResume] = useState<{ url: string; filename: string } | null>(null);
+
+  useEffect(() => {
+    supabase
+      .from("about_content")
+      .select("content")
+      .eq("section_key", "resume")
+      .maybeSingle()
+      .then(({ data }) => {
+        const c = data?.content as { url?: string; filename?: string } | null;
+        if (c?.url) setSavedResume({ url: c.url, filename: c.filename || "Resume.pdf" });
+      });
+  }, []);
 
   const downloadMechanicalPdf = () => {
     setShowDialog(false);
     const link = document.createElement("a");
-    link.href = resumePdf.url;
-    link.download = "Dharanee_Dharan_Mechanical_Resume.pdf";
+    link.href = savedResume?.url || resumePdf.url;
+    link.download = savedResume?.filename || "Dharanee_Dharan_Mechanical_Resume.pdf";
     link.rel = "noopener";
     link.target = "_self";
     document.body.appendChild(link);
@@ -39,6 +53,7 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
       description: "Mechanical resume has been downloaded.",
     });
   };
+
 
   const loadImageAsBase64 = (src: string): Promise<string> => {
     return new Promise((resolve, reject) => {

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download } from "lucide-react";
+import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download, FileText } from "lucide-react";
+import AboutResumeManager from "@/components/admin/AboutResumeManager";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
@@ -148,6 +150,8 @@ const AdminDashboardPage = () => {
   const restrictedUsers = users.filter((u) => u.status === "restricted" || u.status === "rejected");
   const temporaryLockedUsers = users.filter((u) => u.status === "temporary_locked");
   const blockedUsers = users.filter((u) => u.status === "blocked");
+  const adminUsers = users.filter((u) => u.roles?.includes("admin"));
+
 
   const formatDate = (d: string | null) => {
     if (!d) return "—";
@@ -465,8 +469,9 @@ const AdminDashboardPage = () => {
                 className="bg-card border border-border rounded-xl p-6"
               >
                 <Tabs defaultValue="all">
-                  <TabsList className="mb-4">
+                  <TabsList className="mb-4 flex-wrap h-auto">
                     <TabsTrigger value="all">All ({users.length})</TabsTrigger>
+                    <TabsTrigger value="admins">Admins ({adminUsers.length})</TabsTrigger>
                     <TabsTrigger value="pending">Pending ({pendingUsers.length})</TabsTrigger>
                     <TabsTrigger value="approved">Approved ({approvedUsers.length})</TabsTrigger>
                     <TabsTrigger value="restricted">Restricted ({restrictedUsers.length})</TabsTrigger>
@@ -474,15 +479,37 @@ const AdminDashboardPage = () => {
                     <TabsTrigger value="blocked">Blocked ({blockedUsers.length})</TabsTrigger>
                   </TabsList>
                   <TabsContent value="all">{renderUserTable(users)}</TabsContent>
+                  <TabsContent value="admins" className="space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      Admin accounts can be blocked or deleted here. Your own account is protected.
+                    </p>
+                    {renderUserTable(adminUsers)}
+                  </TabsContent>
                   <TabsContent value="pending">{renderUserTable(pendingUsers)}</TabsContent>
                   <TabsContent value="approved">{renderUserTable(approvedUsers)}</TabsContent>
                   <TabsContent value="restricted">{renderUserTable(restrictedUsers)}</TabsContent>
                   <TabsContent value="temporary_locked">{renderUserTable(temporaryLockedUsers)}</TabsContent>
                   <TabsContent value="blocked">{renderUserTable(blockedUsers)}</TabsContent>
                 </Tabs>
+
               </motion.div>
             )}
+
+            {/* Site Content: About description + Resume */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-8"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">About & Resume</h2>
+              </div>
+              <AboutResumeManager />
+            </motion.div>
           </div>
+
         </main>
         <Footer />
 

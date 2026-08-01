@@ -190,7 +190,7 @@ const AdminModerationPage = () => {
 
   // About form state
   const [aboutIntro, setAboutIntro] = useState({ title: "", paragraph1: "", paragraph2: "" });
-  const [showAboutDialog, setShowAboutDialog] = useState(false);
+  
 
   // Work experience form state
   const [expForm, setExpForm] = useState<Partial<WorkExperience>>(emptyExp);
@@ -763,20 +763,6 @@ const AdminModerationPage = () => {
     if (url) setCertForm(prev => ({ ...prev, image_url: url }));
   };
 
-  // ── About Content ──
-  const saveAbout = async () => {
-    const existing = aboutContent.find(a => a.section_key === "intro");
-    let error;
-    if (existing) {
-      ({ error } = await supabase.from("about_content").update({ content: aboutIntro as any }).eq("section_key", "intro"));
-    } else {
-      ({ error } = await supabase.from("about_content").insert({ section_key: "intro", content: aboutIntro as any }));
-    }
-    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-    toast({ title: "About content updated" });
-    setShowAboutDialog(false);
-    loadData();
-  };
 
   // ── Work Experience CRUD ──
   const openExpForm = (exp?: WorkExperience) => {
@@ -869,7 +855,7 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
                 <TabsTrigger value="gallery"><Image className="w-4 h-4 mr-1" />Gallery</TabsTrigger>
                 <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
-                <TabsTrigger value="about"><Info className="w-4 h-4 mr-1" />About</TabsTrigger>
+                
                 <TabsTrigger value="pending" className="relative">
                   Comments
                   {pendingComments.length > 0 && (
@@ -1075,30 +1061,6 @@ const AdminModerationPage = () => {
               {/* ── Gallery Tab ── */}
               <TabsContent value="gallery" className="space-y-4">
                 <GalleryManager />
-              </TabsContent>
-
-              {/* ── About Tab ── */}
-              <TabsContent value="about" className="space-y-4">
-                <div className="flex justify-end">
-                  <Button onClick={() => setShowAboutDialog(true)}><Edit className="w-4 h-4 mr-2" /> Edit About Content</Button>
-                </div>
-                <Card>
-                  <CardHeader><CardTitle>Current About Content</CardTitle></CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Title</p>
-                      <p className="text-foreground">{aboutIntro.title || "Not set"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Paragraph 1</p>
-                      <p className="text-foreground text-sm">{aboutIntro.paragraph1 || "Not set"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-1">Paragraph 2</p>
-                      <p className="text-foreground text-sm">{aboutIntro.paragraph2 || "Not set"}</p>
-                    </div>
-                  </CardContent>
-                </Card>
               </TabsContent>
 
               {/* ── Experience Tab ── */}
@@ -1656,21 +1618,6 @@ const AdminModerationPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* ── About Dialog ── */}
-      <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle>Edit About Content</DialogTitle></DialogHeader>
-          <div className="space-y-4">
-            <Input placeholder="Section Title" value={aboutIntro.title} onChange={e => setAboutIntro(p => ({ ...p, title: e.target.value }))} />
-            <Textarea placeholder="First Paragraph" value={aboutIntro.paragraph1} onChange={e => setAboutIntro(p => ({ ...p, paragraph1: e.target.value }))} rows={4} />
-            <Textarea placeholder="Second Paragraph" value={aboutIntro.paragraph2} onChange={e => setAboutIntro(p => ({ ...p, paragraph2: e.target.value }))} rows={4} />
-            <div className="flex gap-3 justify-end pt-2">
-              <Button variant="outline" onClick={() => setShowAboutDialog(false)}>Cancel</Button>
-              <Button onClick={saveAbout}>Save About Content</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* ── Work Experience Dialog ── */}
       <Dialog open={showExpDialog} onOpenChange={setShowExpDialog}>
