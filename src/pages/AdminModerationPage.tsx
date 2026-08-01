@@ -190,7 +190,7 @@ const AdminModerationPage = () => {
 
   // About form state
   const [aboutIntro, setAboutIntro] = useState({ title: "", paragraph1: "", paragraph2: "" });
-  const [showAboutDialog, setShowAboutDialog] = useState(false);
+  
 
   // Work experience form state
   const [expForm, setExpForm] = useState<Partial<WorkExperience>>(emptyExp);
