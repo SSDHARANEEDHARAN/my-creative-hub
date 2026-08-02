@@ -35,17 +35,31 @@ const ProjectImageCarousel = memo(({ images, title, onImageClick }: ProjectImage
       <img
         src={images[currentIndex]}
         alt={`${title} - Image ${currentIndex + 1}`}
-        className={`w-full h-full object-cover transition-opacity duration-200 ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${onImageClick ? 'cursor-pointer' : ''}`}
-        loading="lazy"
+        className={`w-full h-full object-cover transition-opacity duration-500 ease-out ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${onImageClick ? 'cursor-pointer' : ''}`}
+        loading={currentIndex === 0 ? "lazy" : "eager"}
+        decoding="async"
         onLoad={() => setImageLoaded(true)}
+        onError={() => setImageLoaded(true)}
         onClick={(e) => { if (onImageClick) { e.stopPropagation(); onImageClick(currentIndex); } }}
       />
-      
-      {/* Loading placeholder */}
+
+      {/* Shimmer placeholder */}
       {!imageLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-muted">
-          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="absolute inset-0 overflow-hidden bg-muted animate-pulse" aria-hidden="true">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent animate-shimmer" />
         </div>
+      )}
+
+      {/* Preload the next image so swipes feel instant */}
+      {images.length > 1 && (
+        <img
+          src={images[(currentIndex + 1) % images.length]}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          className="hidden"
+        />
       )}
 
       {/* Navigation Arrows */}

@@ -12,6 +12,7 @@ import { useProjectViewLikes } from "@/hooks/useProjectData";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import ProjectComments from "@/components/ProjectComments";
+import LazyImage from "@/components/LazyImage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -226,10 +227,12 @@ const ArticlePage = memo(() => {
                 
                 <div className="relative">
                   {project?.images?.[0] ? (
-                    <img 
-                      src={project.images[0]} 
+                    <LazyImage
+                      src={project.images[0]}
                       alt={article.title}
-                      className="rounded-2xl shadow-2xl w-full aspect-video object-cover"
+                      priority
+                      wrapperClassName="rounded-2xl shadow-2xl w-full aspect-video"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="rounded-2xl shadow-2xl w-full aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
@@ -484,12 +487,13 @@ const ArticlePage = memo(() => {
                 <h2 className="font-display text-2xl font-bold mb-6">Project Gallery</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {galleryImages.map((image, index) => (
-                    <img 
+                    <LazyImage
                       key={index}
-                      src={image} 
+                      src={image}
                       alt={`${article.title} - Image ${index + 2}`}
-                      className="rounded-xl aspect-video object-cover hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
+                      wrapperClassName="rounded-xl aspect-video"
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 50vw, 33vw"
                     />
                   ))}
                 </div>
