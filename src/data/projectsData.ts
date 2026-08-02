@@ -182,6 +182,30 @@ import mms21 from "@/assets/projects/mms-21.jpg";
 import mms22 from "@/assets/projects/mms-22.jpg";
 import mms23 from "@/assets/projects/mms-23.jpg";
 import mms24 from "@/assets/projects/mms-24.jpg";
+import cobotConv1 from "@/assets/projects/cobot-conveyor-1.jpg";
+import cobotConv2 from "@/assets/projects/cobot-conveyor-2.jpg";
+import cobotConv3 from "@/assets/projects/cobot-conveyor-3.jpg";
+import cobotConv4 from "@/assets/projects/cobot-conveyor-4.jpg";
+import cobotConv5 from "@/assets/projects/cobot-conveyor-5.jpg";
+import cobotConv6 from "@/assets/projects/cobot-conveyor-6.jpg";
+import cobotConv7 from "@/assets/projects/cobot-conveyor-7.jpg";
+import cobotConv8 from "@/assets/projects/cobot-conveyor-8.jpg";
+import cobotConv9 from "@/assets/projects/cobot-conveyor-9.jpg";
+import cobotConv10 from "@/assets/projects/cobot-conveyor-10.jpg";
+import cobotConv11 from "@/assets/projects/cobot-conveyor-11.jpg";
+import cobotConv12 from "@/assets/projects/cobot-conveyor-12.jpg";
+import cobotConv13 from "@/assets/projects/cobot-conveyor-13.jpg";
+import cobotConv14 from "@/assets/projects/cobot-conveyor-14.jpg";
+import cobotConv15 from "@/assets/projects/cobot-conveyor-15.jpg";
+import cobotConv16 from "@/assets/projects/cobot-conveyor-16.jpg";
+import cobotConv17 from "@/assets/projects/cobot-conveyor-17.jpg";
+import cobotConv18 from "@/assets/projects/cobot-conveyor-18.jpg";
+import cobotConv19 from "@/assets/projects/cobot-conveyor-19.jpg";
+import cobotConv20 from "@/assets/projects/cobot-conveyor-20.jpg";
+import cobotConv21 from "@/assets/projects/cobot-conveyor-21.jpg";
+import cobotConv22 from "@/assets/projects/cobot-conveyor-22.jpg";
+import cobotConv23 from "@/assets/projects/cobot-conveyor-23.jpg";
+import cobotConv24 from "@/assets/projects/cobot-conveyor-24.jpg";
 
 export interface Project {
   id: number;
@@ -341,6 +365,16 @@ export const industrialProjects: Project[] = [
     articleUrl: "/projects/article/mini-conveyor-aluminum",
     featured: false,
     category: "industrial",
+  },
+  {
+    id: 126,
+    title: "Cobot Trainer Kit with Conveyor Tracking System",
+    description: "Collaborative robot training platform integrated with a moving conveyor tracking system — enabling pick-and-place on the fly, encoder-based conveyor synchronization, and Industry 4.0 material handling education.",
+    images: [cobotConv1, cobotConv2, cobotConv3, cobotConv4, cobotConv5, cobotConv6, cobotConv7, cobotConv8, cobotConv9, cobotConv10, cobotConv11, cobotConv12, cobotConv13, cobotConv14, cobotConv15, cobotConv16, cobotConv17, cobotConv18, cobotConv19, cobotConv20, cobotConv21, cobotConv22, cobotConv23, cobotConv24],
+    tags: ["Collaborative Robotics", "Conveyor Tracking", "Encoder Sync", "Pneumatics", "Industry 4.0"],
+    articleUrl: "/projects/article/cobot-trainer-conveyor-tracking",
+    featured: true,
+    category: "engineering",
   },
   {
     id: 125,

@@ -1014,7 +1014,56 @@ export const articleContents: ArticleContent[] = [
       "Pneumatic system reliability depends on proper FRCLM unit maintenance"
     ]
   },
+  {
+    id: 126,
+    slug: "cobot-trainer-conveyor-tracking",
+    title: "Cobot Trainer Kit with Conveyor Tracking System",
+    subtitle: "Collaborative robot training platform with encoder-synchronized conveyor tracking and pick-and-place on the fly",
+    duration: "Ongoing",
+    client: "Janatics India Pvt Ltd",
+    role: "Mechatronics Design Engineer",
+    industry: "Industrial Robotics / Manufacturing Automation / Technical Education",
+    teamSize: "Engineering Team",
+    overview: "The Cobot Trainer Kit with Conveyor Tracking System is a didactic industrial robotics platform that extends collaborative robot training into dynamic material handling. Instead of picking from static fixtures, the cobot picks and places workpieces from a continuously moving conveyor, synchronized through encoder feedback and sensor-triggered part detection. The setup replicates real production lines where robots must track, follow, and handle parts in motion — a core skill in modern packaging, assembly, and Industry 4.0 manufacturing cells.\n\n⚠️ Disclaimer: This content (images/videos) is from projects developed during my tenure at Janatics. Shared for demonstration purposes only. All rights and intellectual property belong to Janatics. No unauthorized use or reproduction permitted.",
+    challenge: "Picking parts from a moving conveyor requires precise time and position synchronization between the conveyor drive, part detection sensors, and robot motion planner. The platform had to remain compact, safe, and repeatable for training environments while still demonstrating true industrial conveyor tracking behaviour — including variable belt speed, part queueing, and pick-window limits.",
+    solution: "Designed a modular conveyor line integrated with the cobot trainer kit: an aluminium-framed belt conveyor with variable-speed drive, incremental encoder feedback, photoelectric part-detection sensors, and pneumatic/vacuum end-effectors mounted through the Automatic Tool Changer. The robot controller receives encoder counts and sensor triggers to compute the workpiece position in real time, then plans a tracking trajectory to pick the part on the fly and place it into the destination station.",
+    process: [
+      { title: "Conveyor Line Design", content: "Designed the aluminium-profile conveyor frame, belt drive, roller assembly, and motor mounting with adjustable belt tensioning for stable, low-vibration transport of workpieces at variable speeds." },
+      { title: "Encoder & Sensor Integration", content: "Installed an incremental encoder on the conveyor drive and photoelectric sensors at the detection window so each workpiece position can be tracked continuously in the robot coordinate frame." },
+      { title: "Conveyor Tracking Calibration", content: "Calibrated the conveyor-to-robot frame relationship, encoder scaling (counts per mm), and sensor trigger offset to achieve repeatable pick accuracy while the belt is moving." },
+      { title: "End-Effector & ATC Integration", content: "Reused the Automatic Tool Changer to switch between pneumatic and vacuum grippers depending on workpiece geometry, allowing the same conveyor cell to demonstrate multiple handling strategies." },
+      { title: "Pneumatic Circuit & Safety", content: "Built the pneumatic supply, FRL unit, valve bank, and compact ejector circuit with clean tube routing, plus emergency stop and safe-speed limits suitable for a didactic collaborative workspace." },
+      { title: "Robot Programming & Pick Window", content: "Programmed tracking motion with defined upstream/downstream pick windows, part queue management, missed-part handling, and place sequences into the sorting/destination station." },
+      { title: "Training Module Development", content: "Prepared a hands-on curriculum covering conveyor tracking theory, encoder calibration, sensor triggering, belt speed vs. cycle time trade-offs, and troubleshooting of missed picks." }
+    ],
+    results: [
+      "Reliable pick-and-place on a continuously moving conveyor",
+      "Encoder-based real-time workpiece tracking in the robot frame",
+      "Variable belt speed training with defined pick windows",
+      "Multi-gripper handling through the Automatic Tool Changer",
+      "Compact, modular cell that integrates with the existing cobot trainer kit",
+      "Complete didactic module for Industry 4.0 dynamic material handling"
+    ],
+    technologies: ["Collaborative Robot Arm", "Belt Conveyor with VFD Drive", "Incremental Encoder", "Photoelectric Sensors", "Automatic Tool Changer (ATC)", "Pneumatic & Vacuum Grippers", "Aluminium Profile Frame"],
+    toolsUsed: ["SolidWorks", "Robot Programming Software", "Pneumatic Circuit Design Tools", "Industrial Assembly Equipment"],
+    keyMetrics: [
+      { value: "Live", label: "Conveyor Tracking" },
+      { value: "Encoder", label: "Position Sync" },
+      { value: "ATC", label: "Auto Tool Change" },
+      { value: "Industry 4.0", label: "Standard" }
+    ],
+    lessons: [
+      "Encoder scaling accuracy directly determines pick success on a moving belt",
+      "Sensor trigger offset must be calibrated together with robot approach time",
+      "Defining a realistic pick window prevents robot reach and singularity errors",
+      "Belt speed and part spacing must be balanced against robot cycle time"
+    ],
+    conclusionVideoUrls: [
+      "https://drive.google.com/file/d/1-pbC8r004dKBxg4rdjLm8y_Lb8yAgq51/preview"
+    ]
+  },
 ];
+
 
 export const getArticleBySlug = (slug: string): ArticleContent | undefined => {
   return articleContents.find(article => article.slug === slug);
