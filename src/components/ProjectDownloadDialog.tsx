@@ -13,8 +13,10 @@ interface ProjectDownloadDialogProps {
   tags: string[];
   images?: string[];
   downloadCount: number;
+  stepComingSoon?: boolean;
   onDownloaded?: () => void;
 }
+
 
 const loadImageAsBase64 = (src: string): Promise<{ data: string; width: number; height: number } | null> => {
   return new Promise((resolve) => {
