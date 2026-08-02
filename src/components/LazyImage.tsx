@@ -22,7 +22,7 @@ const LazyImage = memo(
       <div className={`relative overflow-hidden bg-muted ${wrapperClassName}`}>
         {!loaded && !failed && (
           <div className="absolute inset-0 bg-muted animate-pulse" aria-hidden="true">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/5 to-transparent animate-[shimmer_1.6s_infinite]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent animate-shimmer" />
           </div>
         )}
         <img
