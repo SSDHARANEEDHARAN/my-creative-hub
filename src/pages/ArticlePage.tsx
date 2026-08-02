@@ -603,6 +603,7 @@ const ArticlePage = memo(() => {
                     tags={project?.tags || article.technologies || []}
                     images={project?.images}
                     downloadCount={projectDownloadCount}
+                    stepComingSoon={(project?.id || article.id) === 126}
                     onDownloaded={refreshProjectDownloads}
                   />
                 </div>
