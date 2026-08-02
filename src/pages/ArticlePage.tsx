@@ -12,6 +12,7 @@ import { useProjectViewLikes } from "@/hooks/useProjectData";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import ProjectComments from "@/components/ProjectComments";
+import LazyImage from "@/components/LazyImage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
