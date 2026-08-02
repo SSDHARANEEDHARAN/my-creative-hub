@@ -41,7 +41,7 @@ const loadImageAsBase64 = (src: string): Promise<{ data: string; width: number; 
   });
 };
 
-const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, onDownloaded }: ProjectDownloadDialogProps) => {
+const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, stepComingSoon, onDownloaded }: ProjectDownloadDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -390,19 +390,31 @@ END-ISO-10303-21;`;
               </div>
             </button>
 
+            {stepComingSoon ? (
+              <div className="flex items-center gap-4 p-4 border border-dashed border-border opacity-70 cursor-not-allowed text-left">
+                <div className="w-12 h-12 bg-blue-500/10 flex items-center justify-center">
+                  <Box size={24} className="text-blue-500" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">SolidWorks / STEP File — Coming Soon</p>
+                  <p className="text-sm text-muted-foreground">STEP files for this project will be added shortly.</p>
+                </div>
+              </div>
+            ) : (
             <button
-              onClick={() => handleDownload("step")}
-              disabled={isDownloading}
-              className="flex items-center gap-4 p-4 border border-border hover:border-primary/50 hover:bg-secondary/50 transition-all text-left group"
-            >
-              <div className="w-12 h-12 bg-blue-500/10 flex items-center justify-center">
-                <Box size={24} className="text-blue-500" />
-              </div>
-              <div>
-                <p className="font-semibold text-foreground group-hover:text-primary transition-colors">SolidWorks / STEP File</p>
-                <p className="text-sm text-muted-foreground">3D CAD model in STEP format (.step)</p>
-              </div>
-            </button>
+                onClick={() => handleDownload("step")}
+                disabled={isDownloading}
+                className="flex items-center gap-4 p-4 border border-border hover:border-primary/50 hover:bg-secondary/50 transition-all text-left group"
+              >
+                <div className="w-12 h-12 bg-blue-500/10 flex items-center justify-center">
+                  <Box size={24} className="text-blue-500" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground group-hover:text-primary transition-colors">SolidWorks / STEP File</p>
+                  <p className="text-sm text-muted-foreground">3D CAD model in STEP format (.step)</p>
+                </div>
+              </button>
+            )}
           </div>
 
           {isDownloading && (
