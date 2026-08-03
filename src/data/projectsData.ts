@@ -206,6 +206,13 @@ import cobotConv21 from "@/assets/projects/cobot-conveyor-21.jpg";
 import cobotConv22 from "@/assets/projects/cobot-conveyor-22.jpg";
 import cobotConv23 from "@/assets/projects/cobot-conveyor-23.jpg";
 import cobotConv24 from "@/assets/projects/cobot-conveyor-24.jpg";
+import cncSim1 from "@/assets/projects/cnc-simulator-1.jpg";
+import cncSim2 from "@/assets/projects/cnc-simulator-2.jpg";
+import cncSim3 from "@/assets/projects/cnc-simulator-3.jpg";
+import cncSim4 from "@/assets/projects/cnc-simulator-4.jpg";
+import cncSim5 from "@/assets/projects/cnc-simulator-5.jpg";
+import cncSim6 from "@/assets/projects/cnc-simulator-6.jpg";
+import cncSim7 from "@/assets/projects/cnc-simulator-7.jpg";
 
 export interface Project {
   id: number;
@@ -373,6 +380,16 @@ export const industrialProjects: Project[] = [
     images: [cobotConv1, cobotConv2, cobotConv3, cobotConv4, cobotConv5, cobotConv6, cobotConv7, cobotConv8, cobotConv9, cobotConv10, cobotConv11, cobotConv12, cobotConv13, cobotConv14, cobotConv15, cobotConv16, cobotConv17, cobotConv18, cobotConv19, cobotConv20, cobotConv21, cobotConv22, cobotConv23, cobotConv24],
     tags: ["Collaborative Robotics", "Conveyor Tracking", "Encoder Sync", "Pneumatics", "Industry 4.0"],
     articleUrl: "/projects/article/cobot-trainer-conveyor-tracking",
+    featured: true,
+    category: "engineering",
+  },
+  {
+    id: 127,
+    title: "CNC Simulator – Didactic Machining Training Platform",
+    description: "Bench-top CNC simulator for machining education — 3-axis motion simulation, G-code execution, control panel operation, and hands-on CNC programming practice without workshop machine downtime.",
+    images: [cncSim1, cncSim2, cncSim3, cncSim4, cncSim5, cncSim6, cncSim7],
+    tags: ["CNC", "G-Code", "Motion Control", "Didactic Training", "Mechatronics"],
+    articleUrl: "/projects/article/cnc-simulator",
     featured: true,
     category: "engineering",
   },

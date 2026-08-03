@@ -1062,6 +1062,54 @@ export const articleContents: ArticleContent[] = [
       "https://drive.google.com/file/d/1-pbC8r004dKBxg4rdjLm8y_Lb8yAgq51/preview"
     ]
   },
+  {
+    id: 127,
+    slug: "cnc-simulator",
+    title: "CNC Simulator – Didactic Machining Training Platform",
+    subtitle: "Bench-top CNC training simulator for G-code programming, control panel operation, and 3-axis motion practice",
+    duration: "Ongoing",
+    client: "Janatics India Pvt Ltd",
+    role: "Mechatronics Design Engineer",
+    industry: "Machine Tools / Manufacturing Automation / Technical Education",
+    teamSize: "Engineering Team",
+    overview: "The CNC Simulator is a compact didactic platform that lets students and operators learn CNC machining without occupying an expensive production machine. It reproduces the real workflow of a CNC machine tool — control panel operation, work/tool offsets, G-code and M-code execution, jogging, homing, and 3-axis motion — on a safe bench-top setup. Trainees can write, dry-run, and validate part programs, observe axis motion in real time, and understand machine behaviour before moving to a live CNC.\n\n⚠️ Disclaimer: This content (images/videos) is from projects developed during my tenure at Janatics. Shared for demonstration purposes only. All rights and intellectual property belong to Janatics. No unauthorized use or reproduction permitted.",
+    challenge: "CNC training on production machines is expensive, risky, and limits how many learners can practise at once. The simulator had to faithfully mirror an industrial CNC control interface and true axis motion, while staying compact, low-cost, safe to operate, and robust enough for repeated classroom use.",
+    solution: "Built a bench-top 3-axis CNC simulator with a rigid frame, guided linear axes driven by stepper motors and lead screws, limit/home switches, and an industrial-style control panel with feed-rate override, jog, cycle-start/feed-hold and emergency stop. The controller executes standard G-code and M-code programs, so trainees can run the exact same part programs they would use on a real machine, in dry-run or simulated cutting mode.",
+    process: [
+      { title: "Mechanical Structure Design", content: "Designed the base frame, axis mounting plates, and enclosure so the three axes remain rigid and backlash-free while keeping the unit small enough for a training bench." },
+      { title: "Axis Drive & Motion System", content: "Integrated stepper motors, lead screws, and linear guides for X, Y and Z with proper coupling alignment and travel limits for smooth, repeatable motion." },
+      { title: "Control Panel & Electrical Build", content: "Wired the control cabinet with drives, power supply, home/limit switches, emergency stop and an operator panel laid out like an industrial CNC controller." },
+      { title: "G-Code Controller Setup", content: "Configured the CNC controller for steps-per-mm calibration, homing sequence, soft limits, feed and rapid rates, and standard G-code/M-code interpretation." },
+      { title: "Safety & Interlocks", content: "Added emergency stop, axis soft limits, and safe-jog behaviour so learners can experiment freely without damaging the machine or themselves." },
+      { title: "Program Validation & Dry Run", content: "Validated sample part programs — drilling patterns, contours, pockets — through dry runs to confirm motion accuracy and correct offset handling." },
+      { title: "Training Module Development", content: "Prepared a curriculum covering machine startup, homing, work/tool offsets, manual data input, G-code fundamentals, feed/speed selection, and fault troubleshooting." }
+    ],
+    results: [
+      "Safe, low-cost CNC training without occupying a production machine",
+      "Real G-code and M-code execution on a true 3-axis motion system",
+      "Industrial-style operator panel for realistic machine familiarisation",
+      "Repeatable homing and offset workflow for hands-on practice",
+      "Compact bench-top footprint suited to classrooms and labs",
+      "Complete didactic module for CNC programming and operation"
+    ],
+    technologies: ["3-Axis Stepper Motion System", "Lead Screws & Linear Guides", "CNC Motion Controller", "G-Code / M-Code", "Limit & Home Switches", "Industrial Operator Panel", "Emergency Stop Safety Circuit"],
+    toolsUsed: ["SolidWorks", "CNC Controller Software", "CAM / G-Code Editor", "Electrical Panel Assembly Tools"],
+    keyMetrics: [
+      { value: "3-Axis", label: "X / Y / Z Motion" },
+      { value: "G-Code", label: "Standard Programs" },
+      { value: "Bench-Top", label: "Compact Footprint" },
+      { value: "Didactic", label: "Training Ready" }
+    ],
+    lessons: [
+      "Steps-per-mm calibration is the foundation of trustworthy simulated motion",
+      "A realistic operator panel matters as much as the motion for training transfer",
+      "Soft limits and homing discipline prevent most beginner crashes",
+      "Dry-run validation teaches program verification habits that carry to real machines"
+    ],
+    conclusionVideoUrls: [
+      "https://drive.google.com/file/d/1TyuDySDovjqJIpUhZ1et94FyocHkcL7J/preview"
+    ]
+  },
 ];
 
 
