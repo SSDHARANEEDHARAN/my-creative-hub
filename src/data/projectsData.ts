@@ -206,6 +206,13 @@ import cobotConv21 from "@/assets/projects/cobot-conveyor-21.jpg";
 import cobotConv22 from "@/assets/projects/cobot-conveyor-22.jpg";
 import cobotConv23 from "@/assets/projects/cobot-conveyor-23.jpg";
 import cobotConv24 from "@/assets/projects/cobot-conveyor-24.jpg";
+import cncSim1 from "@/assets/projects/cnc-simulator-1.jpg";
+import cncSim2 from "@/assets/projects/cnc-simulator-2.jpg";
+import cncSim3 from "@/assets/projects/cnc-simulator-3.jpg";
+import cncSim4 from "@/assets/projects/cnc-simulator-4.jpg";
+import cncSim5 from "@/assets/projects/cnc-simulator-5.jpg";
+import cncSim6 from "@/assets/projects/cnc-simulator-6.jpg";
+import cncSim7 from "@/assets/projects/cnc-simulator-7.jpg";
 
 export interface Project {
   id: number;
