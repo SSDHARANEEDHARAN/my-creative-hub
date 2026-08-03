@@ -607,7 +607,7 @@ const ArticlePage = memo(() => {
                     tags={project?.tags || article.technologies || []}
                     images={project?.images}
                     downloadCount={projectDownloadCount}
-                    stepComingSoon={(project?.id || article.id) === 126}
+                    stepComingSoon={[126, 127].includes(Number(project?.id || article.id))}
                     onDownloaded={refreshProjectDownloads}
                   />
                 </div>

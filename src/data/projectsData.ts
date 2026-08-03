@@ -388,7 +388,7 @@ export const industrialProjects: Project[] = [
     title: "CNC Simulator – Didactic Machining Training Platform",
     description: "Bench-top CNC simulator for machining education — 3-axis motion simulation, G-code execution, control panel operation, and hands-on CNC programming practice without workshop machine downtime.",
     images: [cncSim1, cncSim2, cncSim3, cncSim4, cncSim5, cncSim6, cncSim7],
-    tags: ["CNC", "G-Code", "Motion Control", "Didactic Training", "Mechatronics"],
+    tags: ["CNC", "G-Code", "Motion Control", "Didactic Training", "Mechatronics", "Machining", "Stepper Drives", "SolidWorks", "Electrical Panel", "Industry 4.0"],
     articleUrl: "/projects/article/cnc-simulator",
     featured: true,
     category: "engineering",
