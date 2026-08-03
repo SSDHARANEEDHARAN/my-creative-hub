@@ -384,12 +384,6 @@ export const industrialProjects: Project[] = [
     category: "engineering",
   },
   {
-    id: 125,
-    title: "Update Soon",
-    description: "New industrial projects are coming soon. Stay tuned for exciting automation and robotics developments.",
-    images: [],
-    tags: ["Upcoming"],
-  {
     id: 127,
     title: "CNC Simulator – Didactic Machining Training Platform",
     description: "Bench-top CNC simulator for machining education — 3-axis motion simulation, G-code execution, control panel operation, and hands-on CNC programming practice without workshop machine downtime.",
