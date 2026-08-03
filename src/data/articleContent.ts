@@ -1092,7 +1092,7 @@ export const articleContents: ArticleContent[] = [
       "Compact bench-top footprint suited to classrooms and labs",
       "Complete didactic module for CNC programming and operation"
     ],
-    technologies: ["3-Axis Stepper Motion System", "Lead Screws & Linear Guides", "CNC Motion Controller", "G-Code / M-Code", "Limit & Home Switches", "Industrial Operator Panel", "Emergency Stop Safety Circuit"],
+    technologies: ["3-Axis Stepper Motion System", "Lead Screws & Linear Guides", "CNC Motion Controller", "G-Code / M-Code", "Limit & Home Switches", "Industrial Operator Panel", "Emergency Stop Safety Circuit", "Stepper Drives & Wiring", "CAM Toolpath Simulation", "Machine Homing & Work Offsets"],
     toolsUsed: ["SolidWorks", "CNC Controller Software", "CAM / G-Code Editor", "Electrical Panel Assembly Tools"],
     keyMetrics: [
       { value: "3-Axis", label: "X / Y / Z Motion" },

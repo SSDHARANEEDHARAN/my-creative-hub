@@ -56,9 +56,9 @@ const ProjectImageCarousel = memo(({ images, title, onImageClick }: ProjectImage
           src={images[(currentIndex + 1) % images.length]}
           alt=""
           aria-hidden="true"
-          loading="lazy"
+          loading="eager"
           decoding="async"
-          className="hidden"
+          className="absolute w-px h-px opacity-0 pointer-events-none -z-10"
         />
       )}
 
