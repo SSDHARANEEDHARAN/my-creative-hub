@@ -14,6 +14,7 @@ interface ProjectDownloadDialogProps {
   images?: string[];
   downloadCount: number;
   stepComingSoon?: boolean;
+  stepFileUrl?: string;
   onDownloaded?: () => void;
 }
 
