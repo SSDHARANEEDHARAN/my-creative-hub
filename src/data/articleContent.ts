@@ -1110,6 +1110,57 @@ export const articleContents: ArticleContent[] = [
       "https://drive.google.com/file/d/1TyuDySDovjqJIpUhZ1et94FyocHkcL7J/preview"
     ]
   },
+  {
+    id: 128,
+    slug: "compact-dispensing-module",
+    title: "Compact Dispensing Module for Automated Workpiece Feeding",
+    subtitle: "Pneumatically actuated magazine feeder delivering single, repeatable workpiece presentation for robotic and automated work cells",
+    duration: "Ongoing",
+    client: "Janatics India Pvt Ltd",
+    role: "Mechatronics Design Engineer",
+    industry: "Industrial Automation / Material Handling / Technical Education",
+    teamSize: "Engineering Team",
+    overview: "The Compact Dispensing Module for Automated Workpiece Feeding is a pneumatically actuated automation module designed to dispense individual workpieces from a stacked magazine in a controlled and repeatable manner. It serves as an automated feeding solution for robotic workstations, industrial automation systems, and educational training platforms where reliable single-part presentation is required.\n\nThe design combines precision linear motion, pneumatic actuation, optical sensing, and a modular mechanical structure to ensure consistent dispensing performance while minimizing cycle time and manual intervention. Its compact footprint allows seamless integration into automated assembly, pick-and-place, inspection, and material handling applications.\n\n⚠️ Disclaimer: This content (images/videos) is from projects developed during my tenure at Janatics. Shared for demonstration purposes only. All rights and intellectual property belong to Janatics. No unauthorized use or reproduction permitted.",
+    challenge: "Manual part loading into robotic cells is slow, inconsistent, and prone to double feeding. The module had to provide accurate, reliable, and repeatable dispensing of one workpiece per cycle from a storage magazine — with smooth operation, minimal cycle time, easy maintenance, and direct compatibility with industrial robotic systems, all within a compact footprint.",
+    solution: "Built a rigid base-plate module carrying a vertical workpiece magazine and a moving dispensing block driven by a double-acting compact pneumatic cylinder along a precision miniature linear guide rail. Through-beam optical sensors verify workpiece presence and successful dispensing, while magnetic piston sensors confirm cylinder end positions, so only one component is released per cycle and the controller always knows the true machine state.",
+    process: [
+      { title: "Functional Concept & Objectives", content: "Defined the dispensing sequence and design objectives: reliable single-workpiece dispensing, repeatable positioning accuracy, minimum cycle time, continuous industrial duty, easy robotic integration, and modular construction for low maintenance." },
+      { title: "Mechanical Construction", content: "Designed the feeder base plate, workpiece magazine base, stack magazine block, moving dispensing block, cylinder mounting flange, landmark plate, and stainless steel mounting hardware for high rigidity, long service life, and compact overall dimensions." },
+      { title: "Pneumatic System Design", content: "Selected a double-acting compact cylinder mounted directly to the dispensing assembly, with swivel fittings, pneumatic tubing, magnetic piston detection, and an external directional valve interface converting compressed air into controlled linear motion." },
+      { title: "Linear Motion System", content: "Integrated a precision miniature linear guide rail and carriage on a machined mounting surface to minimise friction, improve repeatability, and extend the lifespan of the dispensing mechanism." },
+      { title: "Sensor Integration", content: "Fitted through-beam optical sensors to detect workpiece presence, verify successful dispensing and prevent missed or double feeding, plus magnetic cylinder sensors for end-position feedback to the automation controller." },
+      { title: "Sequence & Commissioning", content: "Commissioned the full cycle: system initialization, magazine loading, home position confirmation, cylinder extension, moving block advancement, single workpiece dispensing, sensor verification, retraction, and ready-for-next-cycle handshake." },
+      { title: "Maintenance & Serviceability", content: "Established a maintenance routine — inspect pneumatic fittings, lubricate the linear guide, verify sensor alignment, clean magazine surfaces, check fastener tightness, and replace worn seals — with quick replacement of wear components." }
+    ],
+    results: [
+      "Accurate single-part dispensing with no double feeding",
+      "Repeatable positioning through precision linear guidance",
+      "Compact footprint for easy integration into existing work cells",
+      "Sensor-verified cycles for safe, self-checking operation",
+      "Modular architecture that simplifies assembly and maintenance",
+      "Industrial-grade components suited to continuous operation",
+      "Consistent workpiece presentation for pick-and-place robots",
+      "Reduced manual handling and faster production cycles"
+    ],
+    technologies: ["Double-Acting Compact Pneumatic Cylinder", "Precision Miniature Linear Guide Rail & Carriage", "Through-Beam Optical Sensors", "Magnetic Cylinder Position Sensors", "Swivel Pneumatic Fittings & Tubing", "Directional Valve Interface", "Stainless Steel Fastening Hardware", "Modular Base Plate Construction", "Robotic Pick-and-Place Integration"],
+    toolsUsed: ["SolidWorks", "Pneumatic Circuit Design", "Sensor Alignment & Commissioning Tools", "Precision Machining & Assembly"],
+    keyMetrics: [
+      { value: "1 Part", label: "Per Dispensing Cycle" },
+      { value: "Pneumatic", label: "Linear Actuation" },
+      { value: "Sensor", label: "Verified Dispensing" },
+      { value: "Modular", label: "Compact Footprint" }
+    ],
+    lessons: [
+      "Precision linear guidance significantly improves dispensing repeatability",
+      "Pneumatic actuation provides a simple and reliable dispensing mechanism",
+      "Sensor integration enhances operational safety and process verification",
+      "Modular mechanical design simplifies manufacturing, assembly, and maintenance",
+      "Compact dispensing modules improve flexibility in automated production systems and robotic work cells"
+    ],
+    conclusionVideoUrls: [
+      "https://drive.google.com/file/d/1SYaSRyS5WsnNyIz_yO0MMAlOkUjBQ9RX/preview"
+    ]
+  },
 ];
 
 
