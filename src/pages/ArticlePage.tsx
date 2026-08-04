@@ -607,7 +607,8 @@ const ArticlePage = memo(() => {
                     tags={project?.tags || article.technologies || []}
                     images={project?.images}
                     downloadCount={projectDownloadCount}
-                    stepComingSoon={[126, 127, 128].includes(Number(project?.id || article.id))}
+                    stepComingSoon={[126, 127].includes(Number(project?.id || article.id))}
+                    stepFileUrl={Number(project?.id || article.id) === 128 ? dispensingStepAsset.url : undefined}
                     onDownloaded={refreshProjectDownloads}
                   />
                 </div>
