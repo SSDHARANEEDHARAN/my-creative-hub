@@ -297,6 +297,13 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         doc.text("Mechanical Engineer  •  CAD Designer  •  IoT Specialist", cx, cy + 30, { align: "center" });
 
         doc.save(`${projectTitle.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}-case-study.pdf`);
+      } else if (stepFileUrl) {
+        const a = document.createElement("a");
+        a.href = stepFileUrl;
+        a.download = `${projectTitle.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.step`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       } else {
         const stepContent = `ISO-10303-21;
 HEADER;
