@@ -14,6 +14,7 @@ interface ProjectDownloadDialogProps {
   images?: string[];
   downloadCount: number;
   stepComingSoon?: boolean;
+  stepFileUrl?: string;
   onDownloaded?: () => void;
 }
 
@@ -41,7 +42,7 @@ const loadImageAsBase64 = (src: string): Promise<{ data: string; width: number; 
   });
 };
 
-const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, stepComingSoon, onDownloaded }: ProjectDownloadDialogProps) => {
+const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, stepComingSoon, stepFileUrl, onDownloaded }: ProjectDownloadDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -297,6 +298,13 @@ const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, ta
         doc.text("Mechanical Engineer  •  CAD Designer  •  IoT Specialist", cx, cy + 30, { align: "center" });
 
         doc.save(`${projectTitle.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}-case-study.pdf`);
+      } else if (stepFileUrl) {
+        const a = document.createElement("a");
+        a.href = stepFileUrl;
+        a.download = `${projectTitle.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.step`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       } else {
         const stepContent = `ISO-10303-21;
 HEADER;

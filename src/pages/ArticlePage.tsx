@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import dispensingStepAsset from "@/assets/compact-dispensing-module.step.asset.json";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
 import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare, BookOpen } from "lucide-react";
@@ -607,7 +608,8 @@ const ArticlePage = memo(() => {
                     tags={project?.tags || article.technologies || []}
                     images={project?.images}
                     downloadCount={projectDownloadCount}
-                    stepComingSoon={[126, 127, 128].includes(Number(project?.id || article.id))}
+                    stepComingSoon={[126, 127].includes(Number(project?.id || article.id))}
+                    stepFileUrl={Number(project?.id || article.id) === 128 ? dispensingStepAsset.url : undefined}
                     onDownloaded={refreshProjectDownloads}
                   />
                 </div>
