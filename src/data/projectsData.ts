@@ -213,6 +213,10 @@ import cncSim4 from "@/assets/projects/cnc-simulator-4.jpg";
 import cncSim5 from "@/assets/projects/cnc-simulator-5.jpg";
 import cncSim6 from "@/assets/projects/cnc-simulator-6.jpg";
 import cncSim7 from "@/assets/projects/cnc-simulator-7.jpg";
+import dispMod1 from "@/assets/projects/dispensing-module-1.jpg";
+import dispMod2 from "@/assets/projects/dispensing-module-2.jpg";
+import dispMod3 from "@/assets/projects/dispensing-module-3.jpg";
+import dispMod4 from "@/assets/projects/dispensing-module-4.jpg";
 
 export interface Project {
   id: number;
@@ -390,6 +394,16 @@ export const industrialProjects: Project[] = [
     images: [cncSim1, cncSim2, cncSim3, cncSim4, cncSim5, cncSim6, cncSim7],
     tags: ["CNC", "G-Code", "Motion Control", "Didactic Training", "Mechatronics", "Machining", "Stepper Drives", "SolidWorks", "Electrical Panel", "Industry 4.0"],
     articleUrl: "/projects/article/cnc-simulator",
+    featured: true,
+    category: "engineering",
+  },
+  {
+    id: 128,
+    title: "Compact Dispensing Module for Automated Workpiece Feeding",
+    description: "Pneumatically actuated dispensing module that feeds single workpieces from a stacked magazine using a precision linear guide, compact cylinder, and through-beam optical sensing for reliable, repeatable part presentation to robotic work cells.",
+    images: [dispMod1, dispMod2, dispMod3, dispMod4],
+    tags: ["Pneumatics", "Linear Guide", "Optical Sensing", "Part Feeding", "Automation Module", "SolidWorks", "Robotic Integration"],
+    articleUrl: "/projects/article/compact-dispensing-module",
     featured: true,
     category: "engineering",
   },
