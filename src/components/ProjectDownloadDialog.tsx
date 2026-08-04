@@ -42,7 +42,7 @@ const loadImageAsBase64 = (src: string): Promise<{ data: string; width: number; 
   });
 };
 
-const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, stepComingSoon, onDownloaded }: ProjectDownloadDialogProps) => {
+const ProjectDownloadDialog = ({ projectId, projectTitle, projectDescription, tags, images, downloadCount, stepComingSoon, stepFileUrl, onDownloaded }: ProjectDownloadDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
