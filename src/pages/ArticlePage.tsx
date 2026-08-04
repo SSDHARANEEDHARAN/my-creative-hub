@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import dispensingStepAsset from "@/assets/compact-dispensing-module.step.asset.json";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
 import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare, BookOpen } from "lucide-react";
