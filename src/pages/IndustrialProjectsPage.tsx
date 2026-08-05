@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban, Box } from "lucide-react";
 import Model3DViewer from "@/components/Model3DViewer";
-import { getProjectModel } from "@/data/projectModels";
+import { getProjectModel, preloadProjectModel } from "@/data/projectModels";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -390,6 +390,10 @@ const IndustrialProjectsPage = () => {
                                   e.stopPropagation();
                                   setModelProject({ id: project.id, title: project.title });
                                 }}
+                                onMouseEnter={() => preloadProjectModel(project.id)}
+                                onFocus={() => preloadProjectModel(project.id)}
+                                onTouchStart={() => preloadProjectModel(project.id)}
+                                aria-label={`Open interactive 3D view of ${project.title}`}
                                 className="text-sm font-medium inline-flex items-center gap-1 px-2 py-1 border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
                               >
                                 <Box size={12} /> 3D View
