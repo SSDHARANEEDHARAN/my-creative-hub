@@ -2,12 +2,14 @@ import { useParams, Link } from "react-router-dom";
 import dispensingStepAsset from "@/assets/compact-dispensing-module.step.asset.json";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
-import { ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare, BookOpen } from "lucide-react";
+import { Box, ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare, BookOpen } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
 import { engineeringProjects, itProjects, getAllProjects } from "@/data/projectsData";
 import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
+import Model3DViewer from "@/components/Model3DViewer";
+import { getProjectModel } from "@/data/projectModels";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
 import { useProjectViewLikes } from "@/hooks/useProjectData";
 import { useAuth } from "@/contexts/AuthContext";
@@ -38,6 +40,8 @@ const ArticlePage = memo(() => {
   );
   
   const [commentCount, setCommentCount] = useState(0);
+  const [show3D, setShow3D] = useState(false);
+  const projectModel = getProjectModel(project?.id || article?.id);
   
   useEffect(() => {
     if (!project) return;
@@ -612,6 +616,15 @@ const ArticlePage = memo(() => {
                     stepFileUrl={Number(project?.id || article.id) === 128 ? dispensingStepAsset.url : undefined}
                     onDownloaded={refreshProjectDownloads}
                   />
+                  {projectModel && (
+                    <button
+                      onClick={() => setShow3D(true)}
+                      className="mt-4 inline-flex items-center gap-2 px-6 py-3 border-2 border-primary text-primary font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      <Box size={18} />
+                      3D View (Blender / GLB)
+                    </button>
+                  )}
                 </div>
               ) : project ? (
                 <div 
@@ -710,6 +723,15 @@ const ArticlePage = memo(() => {
         </main>
         
         <Footer />
+        {projectModel && (
+          <Model3DViewer
+            url={projectModel.url}
+            filename={projectModel.filename}
+            title={project?.title || article.title}
+            isOpen={show3D}
+            onClose={() => setShow3D(false)}
+          />
+        )}
       </div>
     </>
   );

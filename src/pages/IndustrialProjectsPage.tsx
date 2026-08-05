@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban, Box } from "lucide-react";
+import Model3DViewer from "@/components/Model3DViewer";
+import { getProjectModel } from "@/data/projectModels";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +22,7 @@ const IndustrialProjectsPage = () => {
   const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
+  const [modelProject, setModelProject] = useState<{ id: number; title: string } | null>(null);
 
   const isApproved = isAdmin || userStatus === "approved";
   const isRejected = userStatus === "restricted" || userStatus === "rejected";
@@ -369,7 +372,7 @@ const IndustrialProjectsPage = () => {
                               {commentCounts[pid] || 0}
                             </span>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-wrap">
                             {project.articleUrl ? (
                               <Link
                                 to={project.articleUrl}
@@ -380,6 +383,17 @@ const IndustrialProjectsPage = () => {
                               </Link>
                             ) : (
                               <span className="text-muted-foreground text-sm">Read More coming soon</span>
+                            )}
+                            {getProjectModel(project.id) && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setModelProject({ id: project.id, title: project.title });
+                                }}
+                                className="text-sm font-medium inline-flex items-center gap-1 px-2 py-1 border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                              >
+                                <Box size={12} /> 3D View
+                              </button>
                             )}
                           </div>
                         </>
@@ -399,6 +413,15 @@ const IndustrialProjectsPage = () => {
           isOpen={!!lightbox}
           onClose={() => setLightbox(null)}
         />
+        {modelProject && getProjectModel(modelProject.id) && (
+          <Model3DViewer
+            url={getProjectModel(modelProject.id)!.url}
+            filename={getProjectModel(modelProject.id)!.filename}
+            title={modelProject.title}
+            isOpen={!!modelProject}
+            onClose={() => setModelProject(null)}
+          />
+        )}
         <LoginPopupModal
           isOpen={showLoginPopup}
           onClose={() => setShowLoginPopup(false)}
