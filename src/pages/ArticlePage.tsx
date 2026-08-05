@@ -8,6 +8,8 @@ import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
 import { engineeringProjects, itProjects, getAllProjects } from "@/data/projectsData";
 import ProjectDownloadDialog from "@/components/ProjectDownloadDialog";
+import Model3DViewer from "@/components/Model3DViewer";
+import { getProjectModel } from "@/data/projectModels";
 import { useDownloadCount } from "@/hooks/useDownloadCount";
 import { useProjectViewLikes } from "@/hooks/useProjectData";
 import { useAuth } from "@/contexts/AuthContext";
@@ -38,6 +40,8 @@ const ArticlePage = memo(() => {
   );
   
   const [commentCount, setCommentCount] = useState(0);
+  const [show3D, setShow3D] = useState(false);
+  const projectModel = getProjectModel(project?.id || article?.id);
   
   useEffect(() => {
     if (!project) return;
