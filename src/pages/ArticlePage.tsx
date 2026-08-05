@@ -616,6 +616,15 @@ const ArticlePage = memo(() => {
                     stepFileUrl={Number(project?.id || article.id) === 128 ? dispensingStepAsset.url : undefined}
                     onDownloaded={refreshProjectDownloads}
                   />
+                  {projectModel && (
+                    <button
+                      onClick={() => setShow3D(true)}
+                      className="mt-4 inline-flex items-center gap-2 px-6 py-3 border-2 border-primary text-primary font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+                    >
+                      <Box size={18} />
+                      3D View (Blender / GLB)
+                    </button>
+                  )}
                 </div>
               ) : project ? (
                 <div 
