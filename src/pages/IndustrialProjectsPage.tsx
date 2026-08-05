@@ -413,6 +413,15 @@ const IndustrialProjectsPage = () => {
           isOpen={!!lightbox}
           onClose={() => setLightbox(null)}
         />
+        {modelProject && getProjectModel(modelProject.id) && (
+          <Model3DViewer
+            url={getProjectModel(modelProject.id)!.url}
+            filename={getProjectModel(modelProject.id)!.filename}
+            title={modelProject.title}
+            isOpen={!!modelProject}
+            onClose={() => setModelProject(null)}
+          />
+        )}
         <LoginPopupModal
           isOpen={showLoginPopup}
           onClose={() => setShowLoginPopup(false)}
