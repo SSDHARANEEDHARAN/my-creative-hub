@@ -1,15 +1,16 @@
-import dispensingModel from "@/assets/compact-dispensing-module.glb.asset.json";
-
 /**
  * 3D model files (GLB) available for Industrial projects only.
+ * Files are served from the app's own /public folder so they resolve
+ * identically on localhost, preview and the published site.
  * Key = project id.
  */
 export const projectModels: Record<number, { url: string; filename: string }> = {
   128: {
-    url: dispensingModel.url,
+    url: "/models/compact-dispensing-module.glb",
     filename: "LA9598_AA_Compact_dispensing_module.glb",
   },
 };
+
 
 export const getProjectModel = (id: number | string | undefined) =>
   id === undefined ? undefined : projectModels[Number(id)];
