@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, ComponentType } from "react";
+import { Component, ReactNode, useEffect, useRef, useState, ComponentType } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +33,26 @@ type SceneModule = ComponentType<{
 }>;
 
 let cachedScene: SceneModule | null = null;
+
+/** Keeps a failed model load inside the popup instead of crashing the whole app. */
+class SceneErrorBoundary extends Component<
+  { onError: () => void; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error("3D model failed to load:", error);
+    this.props.onError();
+  }
+  render() {
+    return this.state.hasError ? null : this.props.children;
+  }
+}
+
+
 
 /** Animated hand hint that shows how to orbit the model, then fades out. */
 const HowToOverlay = ({ onDone }: { onDone: () => void }) => {
@@ -94,6 +114,7 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose }: Model3DViewerP
       setShowHint(true);
       setPreset("iso");
       setExploded(false);
+      setLoadError(false);
     }
   }, [isOpen]);
 
@@ -104,6 +125,7 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose }: Model3DViewerP
       <DialogContent
         className="max-w-5xl w-[96vw] p-0 gap-0 overflow-hidden"
         aria-label={`${title} interactive 3D model viewer`}
+        aria-describedby={undefined}
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           closeRef.current?.focus();
@@ -122,14 +144,17 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose }: Model3DViewerP
           aria-label="3D model canvas. Use the buttons below to change view, zoom and explode the assembly. Press Escape to close."
         >
           {isOpen && Scene && !loadError && (
-            <Scene
-              url={url}
-              preset={preset}
-              exploded={exploded}
-              zoomSignal={zoomSignal}
-              resetSignal={resetSignal}
-            />
+            <SceneErrorBoundary onError={() => setLoadError(true)}>
+              <Scene
+                url={url}
+                preset={preset}
+                exploded={exploded}
+                zoomSignal={zoomSignal}
+                resetSignal={resetSignal}
+              />
+            </SceneErrorBoundary>
           )}
+
 
           {isOpen && !Scene && !loadError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted-foreground" role="status" aria-live="polite">
