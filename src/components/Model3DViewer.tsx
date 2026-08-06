@@ -34,6 +34,26 @@ type SceneModule = ComponentType<{
 
 let cachedScene: SceneModule | null = null;
 
+/** Keeps a failed model load inside the popup instead of crashing the whole app. */
+class SceneErrorBoundary extends Component<
+  { onError: () => void; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown) {
+    console.error("3D model failed to load:", error);
+    this.props.onError();
+  }
+  render() {
+    return this.state.hasError ? null : this.props.children;
+  }
+}
+
+
+
 /** Animated hand hint that shows how to orbit the model, then fades out. */
 const HowToOverlay = ({ onDone }: { onDone: () => void }) => {
   useEffect(() => {
