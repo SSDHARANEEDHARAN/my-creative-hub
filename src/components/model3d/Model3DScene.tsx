@@ -219,8 +219,10 @@ const Model3DScene = ({
         </Stage>
         {!q.env && (
           <>
-            <ambientLight intensity={0.9} />
-            <directionalLight position={[3, 4, 2]} intensity={1.1} />
+            <ambientLight intensity={1.6} />
+            <hemisphereLight intensity={0.8} />
+            <directionalLight position={[3, 4, 2]} intensity={1.4} />
+            <directionalLight position={[-3, 2, -2]} intensity={0.8} />
           </>
         )}
       </Suspense>

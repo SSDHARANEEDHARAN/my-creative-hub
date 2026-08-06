@@ -191,6 +191,7 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose, projectId }: Mod
     setPoints([]);
     setNote("");
     setAutoDropped(false);
+    fallbackUsed.current = false;
     setPreset(savedView.preset ?? "iso");
     setQuality(savedView.quality ?? defaultQuality());
     setInitialCamera(savedView.camera ?? null);
@@ -228,10 +229,14 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose, projectId }: Mod
   const changeQuality = (q: ModelQuality) => {
     setQuality(q);
     setAutoDropped(false);
+    fallbackUsed.current = true;
     persistView({ quality: q });
   };
 
+  const fallbackUsed = useRef(false);
   const handleFallback = useCallback(() => {
+    if (fallbackUsed.current) return;
+    fallbackUsed.current = true;
     setQuality((q) => {
       if (q === "high") {
         setAutoDropped(true);
