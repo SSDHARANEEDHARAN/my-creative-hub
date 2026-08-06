@@ -727,6 +727,8 @@ const ArticlePage = memo(() => {
           <Model3DViewer
             url={projectModel.url}
             filename={projectModel.filename}
+            projectId={project?.id}
+
             title={project?.title || article.title}
             isOpen={show3D}
             onClose={() => setShow3D(false)}
