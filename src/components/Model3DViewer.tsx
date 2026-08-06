@@ -114,6 +114,7 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose }: Model3DViewerP
       setShowHint(true);
       setPreset("iso");
       setExploded(false);
+      setLoadError(false);
     }
   }, [isOpen]);
 
@@ -124,6 +125,7 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose }: Model3DViewerP
       <DialogContent
         className="max-w-5xl w-[96vw] p-0 gap-0 overflow-hidden"
         aria-label={`${title} interactive 3D model viewer`}
+        aria-describedby={undefined}
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           closeRef.current?.focus();
@@ -142,14 +144,17 @@ const Model3DViewer = ({ url, filename, title, isOpen, onClose }: Model3DViewerP
           aria-label="3D model canvas. Use the buttons below to change view, zoom and explode the assembly. Press Escape to close."
         >
           {isOpen && Scene && !loadError && (
-            <Scene
-              url={url}
-              preset={preset}
-              exploded={exploded}
-              zoomSignal={zoomSignal}
-              resetSignal={resetSignal}
-            />
+            <SceneErrorBoundary onError={() => setLoadError(true)}>
+              <Scene
+                url={url}
+                preset={preset}
+                exploded={exploded}
+                zoomSignal={zoomSignal}
+                resetSignal={resetSignal}
+              />
+            </SceneErrorBoundary>
           )}
+
 
           {isOpen && !Scene && !loadError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-muted-foreground" role="status" aria-live="polite">
