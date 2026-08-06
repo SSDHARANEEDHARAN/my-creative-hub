@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, ComponentType } from "react";
+import { Component, ReactNode, useEffect, useRef, useState, ComponentType } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
