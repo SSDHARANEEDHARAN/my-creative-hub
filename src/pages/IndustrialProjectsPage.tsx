@@ -421,7 +421,9 @@ const IndustrialProjectsPage = () => {
           <Model3DViewer
             url={getProjectModel(modelProject.id)!.url}
             filename={getProjectModel(modelProject.id)!.filename}
+            projectId={modelProject.id}
             title={modelProject.title}
+
             isOpen={!!modelProject}
             onClose={() => setModelProject(null)}
           />
