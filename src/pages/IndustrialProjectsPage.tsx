@@ -398,7 +398,7 @@ const IndustrialProjectsPage = () => {
                             )}
                           </div>
                         </>
-                      )}
+
                     </div>
                   </motion.div>
                 );
