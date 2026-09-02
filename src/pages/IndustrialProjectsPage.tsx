@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban, Box } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban, Box, ChevronDown } from "lucide-react";
 import Model3DViewer from "@/components/Model3DViewer";
 import { getProjectModel, preloadProjectModel } from "@/data/projectModels";
 import { Button } from "@/components/ui/button";
