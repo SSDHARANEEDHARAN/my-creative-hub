@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useEffect, useState, useRef, memo } from "react";
 import { Cpu, Cog } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import ConnectorSkills from "@/components/ConnectorSkills";
 import Footer from "@/components/Footer";
 
 const itSkills = [
@@ -228,6 +229,7 @@ const SkillsPage = () => {
               </div>
             </div>
           </section>
+          <ConnectorSkills />
         </main>
         <Footer />
       </div>
