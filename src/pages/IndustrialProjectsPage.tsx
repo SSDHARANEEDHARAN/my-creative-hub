@@ -23,6 +23,8 @@ const IndustrialProjectsPage = () => {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
   const [modelProject, setModelProject] = useState<{ id: number; title: string } | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
 
   const isApproved = isAdmin || userStatus === "approved";
   const isRejected = userStatus === "restricted" || userStatus === "rejected";
