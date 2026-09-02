@@ -277,6 +277,43 @@ const IndustrialProjectsPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {industrialProjects.map((project, index) => {
                 const pid = String(project.id);
+                if (!isApproved) {
+                  const isOpen = expandedId === project.id;
+                  return (
+                    <motion.div
+                      key={project.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="sharp-card overflow-hidden"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setExpandedId(isOpen ? null : project.id)}
+                        aria-expanded={isOpen}
+                        className="w-full flex items-center justify-between gap-4 p-5 text-left hover:text-primary transition-colors"
+                      >
+                        <h3 className="font-bold text-lg">{project.title}</h3>
+                        <ChevronDown
+                          size={18}
+                          className={`shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+                      {isOpen && (
+                        <div className="px-5 pb-5 border-t border-border pt-4 space-y-3">
+                          <p className="text-sm text-muted-foreground">{project.description}</p>
+                          <button
+                            type="button"
+                            onClick={() => setShowLoginPopup(true)}
+                            className="text-sm font-medium text-primary italic hover:underline"
+                          >
+                            Sign in to view full details
+                          </button>
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                }
                 return (
                   <motion.div
                     key={project.id}
@@ -284,12 +321,8 @@ const IndustrialProjectsPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
-                    onClick={() => {
-                      if (!isApproved) {
-                        setShowLoginPopup(true);
-                      }
-                    }}
                   >
+
                     {isApproved && (
                       <div
                         className="relative aspect-video overflow-hidden cursor-pointer"
