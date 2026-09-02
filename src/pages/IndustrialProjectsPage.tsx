@@ -302,13 +302,15 @@ const IndustrialProjectsPage = () => {
                       {isOpen && (
                         <div className="px-5 pb-5 border-t border-border pt-4 space-y-3">
                           <p className="text-sm text-muted-foreground">{project.description}</p>
-                          <button
-                            type="button"
-                            onClick={() => setShowLoginPopup(true)}
+                          <a
+                            href="https://www.janatics.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="text-sm font-medium text-primary italic hover:underline"
                           >
-                            Sign in to view full details
-                          </button>
+                            Want to know more? Visit Janatics
+                          </a>
+
                         </div>
                       )}
                     </motion.div>
