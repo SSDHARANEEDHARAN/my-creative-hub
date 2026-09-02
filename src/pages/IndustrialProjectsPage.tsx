@@ -331,12 +331,8 @@ const IndustrialProjectsPage = () => {
                         {project.title}
                       </h3>
 
-                      {!isApproved ? (
-                        <div className="mt-4 pt-4 border-t border-border">
-                          <p className="text-sm font-medium text-primary italic">
-                            “If you want to know more, please sign in to view full details”
-                          </p>
-                        </div>
+
+
                       <>
 
                           <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
