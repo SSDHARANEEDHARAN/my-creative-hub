@@ -38,13 +38,8 @@ const IndustrialProjectsPage = () => {
   const projectIds = useMemo(() => industrialProjects.map(p => String(p.id)), []);
   const { viewCounts, likeCounts, readCounts, commentCounts, refresh: refreshCounts } = useProjectListCounts(projectIds);
 
-  // Show login popup after loading if not logged in
-  useEffect(() => {
-    if (!authLoading && !user) {
-      const timer = setTimeout(() => setShowLoginPopup(true), 800);
-      return () => clearTimeout(timer);
-    }
-  }, [authLoading, user]);
+
+
 
   // Track views for each industrial project (approved users only, once per session)
   useEffect(() => {
