@@ -337,8 +337,8 @@ const IndustrialProjectsPage = () => {
                             “If you want to know more, please sign in to view full details”
                           </p>
                         </div>
-                      ) : (
-                        <>
+                      <>
+
                           <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                             {project.description}
                           </p>
