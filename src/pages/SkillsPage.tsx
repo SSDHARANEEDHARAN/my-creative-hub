@@ -229,6 +229,7 @@ const SkillsPage = () => {
               </div>
             </div>
           </section>
+          <ConnectorSkills />
         </main>
         <Footer />
       </div>
