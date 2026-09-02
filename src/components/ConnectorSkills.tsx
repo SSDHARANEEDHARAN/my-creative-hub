@@ -11,6 +11,8 @@ interface Connector {
 
 const connectors: Connector[] = [
   { name: "SolidWorks", description: "3D CAD modelling, assemblies and drawings", url: "https://www.solidworks.com/" },
+  { name: "Siemens NX CAD", description: "Advanced parametric 3D CAD & CAM design", url: "https://www.plm.automation.siemens.com/global/en/products/nx/", slug: "siemens" },
+  { name: "PTC Creo", description: "Parametric 3D CAD for product design", url: "https://www.ptc.com/en/products/creo" },
   { name: "Autodesk AutoCAD", description: "2D drafting and technical documentation", url: "https://www.autodesk.com/products/autocad/overview", slug: "autodesk" },
   { name: "Ansys", description: "FEA / structural and thermal simulation", url: "https://www.ansys.com/", slug: "ansys" },
   { name: "Factory I/O", description: "3D factory simulation for PLC training", url: "https://factoryio.com/" },
