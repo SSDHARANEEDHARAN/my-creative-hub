@@ -252,6 +252,32 @@ const IndustrialProjectsPage = () => {
     );
   }
 
+  if (!user) {
+    return (
+      <PageTransition>
+        <div className="min-h-screen bg-background">
+          <Navigation />
+          <main className="pt-24 pb-16">
+            <div className="container mx-auto px-4 flex items-center justify-center min-h-[60vh]">
+              <div className="bg-card border border-border p-8 text-center max-w-md">
+                <Factory className="w-10 h-10 text-primary mx-auto mb-4" />
+                <h2 className="text-xl font-bold mb-3">Sign In Required</h2>
+                <p className="text-muted-foreground mb-6">Sign in to view Industrial Projects.</p>
+                <Link
+                  to="/login?returnTo=/industrial-projects"
+                  className="inline-flex items-center justify-center px-5 py-2.5 bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Sign In to Access
+                </Link>
+              </div>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </PageTransition>
+    );
+  }
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background">

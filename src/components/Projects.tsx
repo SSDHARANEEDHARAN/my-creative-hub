@@ -226,18 +226,20 @@ const Projects = () => {
               <Cog size={16} />
               Engineering ({engineeringProjects.length})
             </button>
-            <button
-              onClick={handleIndustrialToggle}
-              className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
-                showIndustrial
-                  ? "bg-accent text-accent-foreground shadow-md"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Factory size={16} />
-              Industrial Projects
-              <ChevronDown size={16} className={`transition-transform ${showIndustrial ? "rotate-180" : ""}`} />
-            </button>
+            {user && (
+              <button
+                onClick={handleIndustrialToggle}
+                className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
+                  showIndustrial
+                    ? "bg-accent text-accent-foreground shadow-md"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Factory size={16} />
+                Industrial Projects
+                <ChevronDown size={16} className={`transition-transform ${showIndustrial ? "rotate-180" : ""}`} />
+              </button>
+            )}
           </div>
         </div>
 
@@ -385,7 +387,7 @@ const Projects = () => {
         </motion.div>
 
         {/* ========== INDUSTRIAL PROJECTS ========== */}
-        {showIndustrial && (
+        {user && showIndustrial && (
           <div className="mt-8 sm:mt-10 mb-8 sm:mb-10">
             <div className="mb-8">
               <div className="flex justify-center sm:justify-end mb-4">
@@ -406,15 +408,7 @@ const Projects = () => {
               </p>
             </div>
 
-            {!user ? (
-              <div className="bg-card border border-border p-8 text-center mb-8 max-w-md mx-auto">
-                <h3 className="text-xl font-bold mb-3">Sign In Required</h3>
-                <p className="text-muted-foreground mb-4">Sign in to view exclusive industrial projects.</p>
-                <Button variant="default" size="lg">
-                  Sign In to Access
-                </Button>
-              </div>
-            ) : isApproved ? (
+            {isApproved ? (
               <motion.div
                 variants={containerVariants}
                 initial="hidden"
