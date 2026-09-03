@@ -1,3 +1,5 @@
+import kinematicsDemoVideo from "@/assets/kinematics-lab-demo.mp4.asset.json";
+
 export interface ArticleSection {
   title: string;
   content: string;
@@ -1160,6 +1162,57 @@ export const articleContents: ArticleContent[] = [
     conclusionVideoUrls: [
       "https://drive.google.com/file/d/1SYaSRyS5WsnNyIz_yO0MMAlOkUjBQ9RX/preview"
     ]
+  },
+  {
+    id: 11,
+    slug: "kinematics-selfstudy-precisionlab",
+    title: "Kinematics.SelfStudy – PrecisionLab V3",
+    subtitle: "Interactive Robotics Kinematics Learning & Simulation Platform",
+    duration: "6 weeks",
+    client: "Personal Project – PrecisionLab",
+    role: "Robotics / Mechatronics Engineer & Full Stack Developer",
+    teamSize: "1 Developer",
+    industry: "Robotics · Engineering Education · Simulation",
+    overview: "Kinematics.SelfStudy – PrecisionLab V3 is an interactive robotics learning platform developed to make robot kinematics easier to understand through visualization, simulation, and hands-on experimentation. The platform allows learners to work with Forward Kinematics (FK), Inverse Kinematics (IK), and Denavit–Hartenberg (DH) parameters while observing the corresponding robot movement and end-effector position in real time. Instead of learning kinematics only through mathematical equations, users can change joint angles, link lengths, target positions, and DH parameters and immediately see their effect on the robotic mechanism. The platform is designed for engineering students, robotics learners, educators, and professionals who want an interactive environment for studying robotic motion and kinematic relationships.",
+    challenge: "Robot kinematics is often difficult for beginners because mathematical equations, coordinate transformations, joint configurations, and end-effector positions are typically taught separately from the physical movement of the robot. The platform needed to provide a way to understand FK and IK visually, experiment with different robot configurations, modify joint angles and link lengths, understand DH parameters, visualize coordinate frames and robot joints, validate calculated positions, identify reachable and unreachable target positions, practice robot movements through taught points, and learn through interactive exercises rather than static calculations. The goal was to create a virtual robotics laboratory where users could experiment with kinematics without requiring physical robotic hardware.",
+    solution: "Developed Kinematics.SelfStudy – PrecisionLab V3, an interactive simulation platform combining kinematic calculations, robotic visualization, parameter control, validation, and learning tools in a single interface. Forward Kinematics: users control joint angles and observe how the robot configuration changes, with the system calculating the resulting joint configuration, robot position, and end-effector position. Inverse Kinematics: users define an end-effector target position and the system calculates the required joint configuration, with target positioning, reachability detection, joint-angle calculation, position error, FK validation, and Valid / Out-of-Reach status. Denavit–Hartenberg Parameters: users can modify θ (joint angle), d (joint offset), a (link length), and α (link twist), with the resulting robotic configuration visualized in a 3D environment.",
+    process: [
+      { title: "UI/UX Design", content: "Designed a clean engineering-focused interface separating robot configuration, simulation workspace, validation information, and learning controls. The interface was designed to keep complex kinematic information understandable without overwhelming the learner." },
+      { title: "Forward Kinematics Module", content: "Implemented an interactive FK environment where users can modify individual joint angles and observe the resulting robot movement. The system continuously calculates the end-effector position and displays the corresponding X/Y coordinates." },
+      { title: "Inverse Kinematics Module", content: "Developed an interactive IK environment based on an analytical 2-link robotic mechanism. Users can drag the target position and observe the calculated joint configuration in real time. The system also identifies whether the requested position is within the robot's reachable workspace." },
+      { title: "DH Parameter Simulation", content: "Implemented a DH-parameter-based robotic chain allowing users to modify θ, d, a, α, joint angles, and link dimensions. The resulting robot is visualized in a 3D workspace with coordinate frames." },
+      { title: "Validation System", content: "Added real-time validation to compare calculated and forward-kinematic positions. The platform displays End X / End Y / End Z, position error, FK position, and system status, allowing learners to immediately verify whether their kinematic calculations are correct." },
+      { title: "Teach & Play System", content: "Implemented a basic robotic teaching workflow where users can record multiple robot positions (Step 1 → Step 2 → Step 3 → PLAY). This allows learners to understand how a robot can move through a sequence of taught positions." },
+      { title: "Learning & AI Features", content: "Created dedicated learning sections including Practice Quiz, Interactive Learning, AI Tutor, and Industrial Progress. These features extend the platform from a simple simulator into a self-learning robotics environment." }
+    ],
+    results: [
+      "Developed an interactive platform for learning FK, IK, and DH kinematics",
+      "Created both 2D and 3D robotic visualization environments",
+      "Enabled real-time modification of joint angles and robot parameters",
+      "Implemented target-based inverse kinematics interaction",
+      "Added automatic position-error validation",
+      "Added reachable / out-of-reach workspace indication",
+      "Implemented DH parameter manipulation and 3D visualization",
+      "Added Teach & Play functionality for robot motion sequences",
+      "Created an interactive learning structure with quizzes and AI tutoring",
+      "Designed the platform as a virtual robotics laboratory for self-study"
+    ],
+    technologies: ["React.js", "TypeScript", "JavaScript", "HTML5", "CSS", "2D Canvas", "3D Visualization", "Robotics Kinematics", "Mathematical Modeling", "Forward Kinematics (FK)", "Inverse Kinematics (IK)", "Denavit–Hartenberg Parameters", "Coordinate Transformations", "Workspace & Reachability", "Position Error Validation", "Robot Motion Teaching"],
+    toolsUsed: ["VS Code", "Git", "Browser DevTools", "CAD / Robotics Engineering Concepts", "AI-Assisted Development"],
+    keyMetrics: [
+      { value: "2D + 3D", label: "Interactive Simulation" },
+      { value: "3", label: "Core Kinematics Modes" },
+      { value: "6+", label: "Joint / Robot Parameters" },
+      { value: "Real-Time", label: "Validation & Visualization" }
+    ],
+    lessons: [
+      "Visual simulation makes mathematical robotics concepts significantly easier to understand",
+      "Real-time parameter manipulation helps learners connect equations with physical robot movement",
+      "FK and IK are easier to understand when their results can be immediately validated against the robot's actual configuration",
+      "DH parameters become more intuitive when coordinate frames and 3D robot transformations are visible",
+      "Combining simulation, validation, quizzes, and guided learning can turn a technical calculator into a complete engineering self-learning platform"
+    ],
+    conclusionVideoUrl: kinematicsDemoVideo.url
   },
 ];
 
