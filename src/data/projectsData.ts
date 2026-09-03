@@ -232,6 +232,7 @@ export interface Project {
   githubUrl?: string;
   liveUrl?: string;
   mediaFolderUrl?: string;
+  videoUrl?: string;
   featured: boolean;
   category: "it" | "engineering" | "industrial";
 }
@@ -551,13 +552,14 @@ export const engineeringProjects: Project[] = [
     title: "Inverted Pendulum Linear Cart Control System",
     description: "Real-time closed-loop stabilization platform using an ESP32, 2500 CPR rotary encoder, TMC5160 stepper driver, and PID/LQR control to balance an unstable inverted pendulum on a belt-driven linear cart.",
     images: [
-      "https://drive.google.com/thumbnail?id=1zgJZt01udpTLWDF5SNlSPc2xGFADEGf3&sz=w1600",
-      "https://drive.google.com/thumbnail?id=1irjh14Is6CyBddsg402zkjLWaAn2mk5Y&sz=w1600",
-      "https://drive.google.com/thumbnail?id=1i3nWEAbL-E7odthlb1vMUS-7ahHlQXWS&sz=w1600",
+      "https://lh3.googleusercontent.com/d/1zgJZt01udpTLWDF5SNlSPc2xGFADEGf3=w1600",
+      "https://lh3.googleusercontent.com/d/1irjh14Is6CyBddsg402zkjLWaAn2mk5Y=w1600",
+      "https://lh3.googleusercontent.com/d/1i3nWEAbL-E7odthlb1vMUS-7ahHlQXWS=w1600",
     ],
     tags: ["C++", "Embedded Systems", "Closed-Loop Control", "PID / LQR", "Mechatronics"],
     articleUrl: "/projects/article/inverted-pendulum-linear-cart",
     mediaFolderUrl: "https://drive.google.com/drive/folders/1SdCC5VZkRe2OOBu_3IzY9W8MHWLkdz0N?usp=drive_link",
+    videoUrl: "https://drive.usercontent.google.com/download?id=1QpsKFfYhkk_xR6drfJVlQoW_-sYphUqe&export=download&confirm=t",
     featured: true,
     category: "engineering",
     },
@@ -566,17 +568,18 @@ export const engineeringProjects: Project[] = [
       title: "Arduino Drawing Plotter",
       description: "Computer-controlled pen plotter that converts digital drawings into precise 2-axis motion using Arduino-based stepper control and a servo pen-lift mechanism.",
       images: [
-        "https://drive.google.com/thumbnail?id=1paigEUjDgk1PC6iVSKU3HTayePtXHZI1&sz=w1600",
-        "https://drive.google.com/thumbnail?id=1yJl_XSbp7m0qixrHdkj19uWYhAt8VSMv&sz=w1600",
-        "https://drive.google.com/thumbnail?id=1fEeH01Mbad_P1Z9LkQb6NLoKXjPQ-9Q9&sz=w1600",
-        "https://drive.google.com/thumbnail?id=1t40bVszcd323u_9wnlfil59px-RbZ1zt&sz=w1600",
-        "https://drive.google.com/thumbnail?id=1_J1_oexbve2vo4O58-36HDvzMMmmIXXx&sz=w1600",
-        "https://drive.google.com/thumbnail?id=1DigFoL884X6gneRein1U3hka-OlgIZm9&sz=w1600",
+        "https://lh3.googleusercontent.com/d/1paigEUjDgk1PC6iVSKU3HTayePtXHZI1=w1600",
+        "https://lh3.googleusercontent.com/d/1yJl_XSbp7m0qixrHdkj19uWYhAt8VSMv=w1600",
+        "https://lh3.googleusercontent.com/d/1fEeH01Mbad_P1Z9LkQb6NLoKXjPQ-9Q9=w1600",
+        "https://lh3.googleusercontent.com/d/1t40bVszcd323u_9wnlfil59px-RbZ1zt=w1600",
+        "https://lh3.googleusercontent.com/d/1_J1_oexbve2vo4O58-36HDvzMMmmIXXx=w1600",
+        "https://lh3.googleusercontent.com/d/1DigFoL884X6gneRein1U3hka-OlgIZm9=w1600",
       ],
       tags: ["Arduino", "C++", "Stepper Motors", "Servo Control", "Mechatronics"],
       articleUrl: "/projects/article/arduino-drawing-plotter",
       featured: true,
       category: "engineering",
+      videoUrl: "https://drive.usercontent.google.com/download?id=1WrhGGMJ9Az5C3tWdale2eHdiLw6ssHgn&export=download&confirm=t",
   },
 ];
 

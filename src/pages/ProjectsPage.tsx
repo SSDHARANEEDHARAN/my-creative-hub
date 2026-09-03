@@ -21,6 +21,23 @@ import {
   engineeringProjects as sharedEngineeringProjects,
 } from "@/data/projectsData";
 
+const ProjectVideo = ({ videoUrl }: { videoUrl?: string }) => {
+  if (!videoUrl) return null;
+
+  return (
+    <div className="border-t border-border bg-muted/30 p-3">
+      <video
+        className="w-full aspect-video object-cover"
+        src={videoUrl}
+        controls
+        preload="metadata"
+        playsInline
+        aria-label="Project demonstration video"
+      />
+    </div>
+  );
+};
+
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
@@ -537,13 +554,15 @@ const ProjectsPage = () => {
                 <Cog size={18} />
                 Engineering ({sharedEngineeringProjects.length})
               </button>
-              <button
-                onClick={() => navigate("/industrial-projects")}
-                className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"
-              >
-                <Factory size={18} />
-                Industrial
-              </button>
+              {user && (
+                <button
+                  onClick={() => navigate("/industrial-projects")}
+                  className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"
+                >
+                  <Factory size={18} />
+                  Industrial
+                </button>
+              )}
             </motion.div>
           </div>
         </section>
@@ -590,6 +609,7 @@ const ProjectsPage = () => {
                               </span>
                             </div>
                           </div>
+                          <ProjectVideo videoUrl={project.videoUrl} />
                           <div className="p-6">
                             <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                               {project.title}
@@ -673,6 +693,7 @@ const ProjectsPage = () => {
                             </div>
                           )}
                         </div>
+                        <ProjectVideo videoUrl={project.videoUrl} />
                         <div className="p-4">
                           <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
                             {project.title}
