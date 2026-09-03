@@ -217,6 +217,10 @@ import dispMod1 from "@/assets/projects/dispensing-module-1.jpg";
 import dispMod2 from "@/assets/projects/dispensing-module-2.jpg";
 import dispMod3 from "@/assets/projects/dispensing-module-3.jpg";
 import dispMod4 from "@/assets/projects/dispensing-module-4.jpg";
+import kinematicsLab1 from "@/assets/projects/kinematics-lab-1.png";
+import kinematicsLab2 from "@/assets/projects/kinematics-lab-2.png";
+import kinematicsLab3 from "@/assets/projects/kinematics-lab-3.png";
+import kinematicsLab4 from "@/assets/projects/kinematics-lab-4.png";
 
 export interface Project {
   id: number;
@@ -331,6 +335,16 @@ export const itProjects: Project[] = [
     articleUrl: "/projects/article/smart-agriculture",
     liveUrl: "https://smart-farm-ai-murex.vercel.app/",
     featured: false,
+    category: "it",
+  },
+  {
+    id: 11,
+    title: "Kinematics.SelfStudy – PrecisionLab V3",
+    description: "Interactive robotics kinematics learning and simulation platform for Forward Kinematics, Inverse Kinematics, and Denavit–Hartenberg parameters with real-time 2D and 3D robot visualization, validation, and teach & play motion sequences.",
+    images: [kinematicsLab1, kinematicsLab2, kinematicsLab3, kinematicsLab4],
+    tags: ["React.js", "TypeScript", "Interactive Simulation", "Robotics", "Kinematics"],
+    articleUrl: "/projects/article/kinematics-selfstudy-precisionlab",
+    featured: true,
     category: "it",
   },
   {
