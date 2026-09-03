@@ -1,0 +1,1 @@
+ALTER TABLE public.publish_notifications ADD COLUMN IF NOT EXISTS note text;

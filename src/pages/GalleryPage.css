@@ -1,0 +1,224 @@
+/* Scroll-pinned animated stacked-card gallery. */
+
+/* Tall wrapper provides the scroll distance; height is set inline per card count. */
+.gallery-scroll {
+  position: relative;
+  width: 100%;
+}
+
+/* Pin keeps the card box in view while the wrapper scrolls past.
+   position is toggled in JS (relative → fixed → absolute) — CSS sticky is
+   unreliable here because the site uses overflow-x:hidden on html/body. */
+.gallery-pin {
+  position: relative;
+  height: calc(100dvh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.gallery-pin > .container {
+  width: 100%;
+}
+
+/* The centered, contained animated box (bigger card). */
+.gallery-slider {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  height: min(820px, calc(100dvh - 120px));
+  overflow: hidden;
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  cursor: auto;
+}
+
+.gallery-slider__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px;
+  min-height: 0;
+  position: relative;
+  gap: 12px;
+}
+
+.gallery-slider__left {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 4;
+}
+
+.gallery-slider__title {
+  font-size: clamp(16px, 4.4vw, 22px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  position: relative;
+  /* never break mid-word — wrap whole words to the next line instead */
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.gallery-slider__title .gword {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.gallery-slider__title .gchar {
+  display: inline-block;
+  will-change: transform;
+}
+
+.gallery-slider__desc {
+  margin-top: 10px;
+  max-width: 40ch;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.gallery-slider__hint {
+  flex-shrink: 0;
+  margin-top: 12px;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.gallery-slider__cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  display: none; /* shown only on fine-pointer devices (see media query) */
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 60;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.gallery-slider__right {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.gallery-slider__images {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.gallery-slider__slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  aspect-ratio: 1.4;
+  overflow: hidden;
+  border-radius: 6px;
+  will-change: transform, filter, opacity;
+  contain: layout style;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.gallery-slider__slide img,
+.gallery-slider__slide video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.92);
+  display: block;
+}
+
+/* Tablet */
+@media screen and (min-width: 768px) {
+  .gallery-slider__body {
+    padding: 36px 40px;
+    gap: 16px;
+  }
+  .gallery-slider__title {
+    font-size: clamp(20px, 3.4vw, 30px);
+  }
+  .gallery-slider__desc {
+    font-size: 13px;
+  }
+  .gallery-slider__hint {
+    font-size: 10px;
+  }
+  .gallery-slider__slide {
+    width: 68%;
+  }
+}
+
+/* Desktop — title left, card stack right (inside the box) */
+@media screen and (min-width: 1024px) {
+  .gallery-slider__body {
+    flex-direction: row;
+    padding: 44px 52px;
+    align-items: stretch;
+  }
+  .gallery-slider__left {
+    width: 50%;
+    flex: 0 0 50%;
+    z-index: auto;
+  }
+  .gallery-slider__title {
+    font-size: clamp(24px, 2.2vw, 36px);
+    margin-top: auto;
+  }
+  .gallery-slider__desc {
+    font-size: 14px;
+    margin-bottom: auto;
+  }
+  .gallery-slider__hint {
+    margin-top: 24px;
+  }
+  .gallery-slider__right {
+    min-height: 0;
+  }
+  .gallery-slider__slide {
+    width: 78%;
+  }
+}
+
+/* Custom "+" cursor only on devices with a fine pointer (desktops) */
+@media (hover: hover) and (pointer: fine) {
+  .gallery-slider {
+    cursor: none;
+  }
+  .gallery-slider__cursor {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-slider__slide,
+  .gallery-slider__title .gchar {
+    will-change: auto;
+  }
+}

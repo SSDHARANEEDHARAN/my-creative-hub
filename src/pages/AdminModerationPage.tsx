@@ -1,0 +1,1882 @@
+import { useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
+import { motion } from "framer-motion";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import PageTransition from "@/components/PageTransition";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import ReactMarkdown from "react-markdown";
+import GalleryManager from "@/components/admin/GalleryManager";
+import {
+  Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
+  Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
+  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw, Globe,
+} from "lucide-react";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { blogPosts as staticBlogPosts } from "@/data/blogPostsData";
+
+// ─── Types ───────────────────────────────────────────────────────
+interface Comment {
+  id: string; post_id: string; name: string; email: string; content: string;
+  created_at: string; is_approved: boolean; is_spam: boolean; reply: string | null;
+}
+interface GuestVisitor { id: string; name: string; email: string; visited_at: string; ip_address?: string | null; user_agent?: string | null; }
+interface BlogPost {
+  id: string; title: string; slug: string; excerpt: string; content: string;
+  cover_image: string | null; category: string; read_time: string | null;
+  is_published: boolean; created_at: string;
+}
+interface Project {
+  id: string; title: string; description: string; category: string;
+  tech_stack: string[] | null; images: string[] | null; github_url: string | null;
+  live_url: string | null; article_slug: string | null; featured: boolean | null;
+  is_published: boolean; created_at: string;
+}
+interface Skill {
+  id: string; name: string; level: number; category: string;
+  skill_type: string; color_token: string; sort_order: number;
+}
+interface Certificate {
+  id: string; title: string; issuer: string; date: string;
+  image_url: string | null; category: string; sort_order: number;
+}
+interface AboutContent {
+  id: string; section_key: string; content: Record<string, any>;
+}
+interface WorkExperience {
+  id: string; title: string; company: string; location: string;
+  duration: string; description: string; skills: string[];
+  category: string; sort_order: number;
+}
+
+const emptyBlog: Partial<BlogPost> = {
+  title: "", slug: "", excerpt: "", content: "", cover_image: "", category: "tech", read_time: "5 min read", is_published: false,
+};
+const emptyProject: Partial<Project> = {
+  title: "", description: "", category: "it", tech_stack: [], images: [], github_url: "", live_url: "", article_slug: "", featured: false, is_published: false,
+};
+const emptySkill: Partial<Skill> = {
+  name: "", level: 50, category: "it", skill_type: "primary", color_token: "primary", sort_order: 0,
+};
+const emptyCert: Partial<Certificate> = {
+  title: "", issuer: "", date: "", image_url: "", category: "it", sort_order: 0,
+};
+const emptyExp: Partial<WorkExperience> = {
+  title: "", company: "", location: "", duration: "", description: "", skills: [], category: "it", sort_order: 0,
+};
+
+// ─── Main Component ──────────────────────────────────────────────
+const AdminModerationPage = () => {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [guests, setGuests] = useState<GuestVisitor[]>([]);
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [aboutContent, setAboutContent] = useState<AboutContent[]>([]);
+  const [workExps, setWorkExps] = useState<WorkExperience[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [blogViewCounts, setBlogViewCounts] = useState<Record<string, number>>({});
+  const [projectViewCounts, setProjectViewCounts] = useState<Record<string, number>>({});
+  const [hiddenStaticIds, setHiddenStaticIds] = useState<Set<string>>(new Set());
+  const [siteVisits, setSiteVisits] = useState<Array<{ id: string; path: string; ip: string | null; user_agent: string | null; user_email: string | null; referrer: string | null; created_at: string }>>([]);
+  const [visitsLoading, setVisitsLoading] = useState(false);
+  const [blockedIps, setBlockedIps] = useState<Record<string, { reason: string | null; expires_at: string | null }>>({});
+
+  const loadBlockedIps = async () => {
+    const { data } = await supabase.from("blocked_ips").select("ip,reason,expires_at");
+    const map: Record<string, { reason: string | null; expires_at: string | null }> = {};
+    (data || []).forEach((r: any) => { map[r.ip] = { reason: r.reason, expires_at: r.expires_at }; });
+    setBlockedIps(map);
+  };
+
+  const handleIpAction = async (ip: string, hoursOrNull: number | null) => {
+    if (!ip) return;
+    try {
+      if (hoursOrNull === -1) {
+        const { error } = await supabase.functions.invoke("manage-users", { body: { action: "unblock-ip", ip } });
+        if (error) throw error;
+        toast({ title: "IP unblocked", description: ip });
+      } else {
+        const { error } = await supabase.functions.invoke("manage-users", {
+          body: { action: "block-ip", ip, hours: hoursOrNull ?? undefined },
+        });
+        if (error) throw error;
+        toast({ title: hoursOrNull ? `IP locked for ${hoursOrNull}h` : "IP blocked permanently", description: ip });
+      }
+      await loadBlockedIps();
+    } catch (err: any) {
+      toast({ title: "Failed", description: err?.message || "Could not update IP", variant: "destructive" });
+    }
+  };
+
+  const loadSiteVisits = async () => {
+    setVisitsLoading(true);
+    const { data } = await supabase
+      .from("site_visits")
+      .select("id, path, ip, user_agent, user_email, referrer, created_at")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    setSiteVisits((data as any) || []);
+    setVisitsLoading(false);
+  };
+  useEffect(() => {
+    loadSiteVisits();
+    loadBlockedIps();
+    const ch = supabase
+      .channel("admin-site-visits")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "site_visits" }, () => loadSiteVisits())
+      .on("postgres_changes", { event: "*", schema: "public", table: "blocked_ips" }, () => loadBlockedIps())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
+  const loadLiveViewCounts = async () => {
+    const [bv, pv] = await Promise.all([
+      supabase.from("blog_views").select("post_id"),
+      supabase.from("project_views").select("project_id"),
+    ]);
+    const bc: Record<string, number> = {};
+    (bv.data || []).forEach((r: any) => { if (r.post_id) bc[r.post_id] = (bc[r.post_id] || 0) + 1; });
+    const pc: Record<string, number> = {};
+    (pv.data || []).forEach((r: any) => { if (r.project_id) pc[r.project_id] = (pc[r.project_id] || 0) + 1; });
+    setBlogViewCounts(bc);
+    setProjectViewCounts(pc);
+  };
+
+  useEffect(() => {
+    loadLiveViewCounts();
+    const channel = supabase
+      .channel("admin-live-views")
+      .on("postgres_changes", { event: "*", schema: "public", table: "blog_views" }, () => loadLiveViewCounts())
+      .on("postgres_changes", { event: "*", schema: "public", table: "project_views" }, () => loadLiveViewCounts())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  // Blog/Project form state
+  const [blogForm, setBlogForm] = useState<Partial<BlogPost>>(emptyBlog);
+  const [projectForm, setProjectForm] = useState<Partial<Project>>(emptyProject);
+  const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [showBlogDialog, setShowBlogDialog] = useState(false);
+  const [showProjectDialog, setShowProjectDialog] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [techInput, setTechInput] = useState("");
+
+  // Skill form state
+  const [skillForm, setSkillForm] = useState<Partial<Skill>>(emptySkill);
+  const [editingSkillId, setEditingSkillId] = useState<string | null>(null);
+  const [showSkillDialog, setShowSkillDialog] = useState(false);
+
+  // Certificate form state
+  const [certForm, setCertForm] = useState<Partial<Certificate>>(emptyCert);
+  const [editingCertId, setEditingCertId] = useState<string | null>(null);
+  const [showCertDialog, setShowCertDialog] = useState(false);
+
+  // About form state
+  const [aboutIntro, setAboutIntro] = useState({ title: "", paragraph1: "", paragraph2: "" });
+  
+
+  // Work experience form state
+  const [expForm, setExpForm] = useState<Partial<WorkExperience>>(emptyExp);
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [showExpDialog, setShowExpDialog] = useState(false);
+  const [expSkillInput, setExpSkillInput] = useState("");
+
+  // Subscriber audience preview + publish confirmation
+  interface AudienceStats {
+    active: number;
+    inactive: number;
+    total: number;
+    topDomains: { domain: string; count: number }[];
+  }
+  const [audience, setAudience] = useState<AudienceStats>({ active: 0, inactive: 0, total: 0, topDomains: [] });
+  const [audienceLoading, setAudienceLoading] = useState(false);
+  const [publishConfirm, setPublishConfirm] = useState<null | { kind: "blog" | "project"; title: string }>(null);
+  const [publishing, setPublishing] = useState(false);
+
+  // Notification history
+  interface PublishNotification {
+    id: string; kind: string; title: string; slug: string | null;
+    total_subscribers: number; sent_count: number; failed_count: number;
+    status: string; error_message: string | null; created_at: string;
+    note: string | null;
+  }
+  const [notifications, setNotifications] = useState<PublishNotification[]>([]);
+  const [publishNote, setPublishNote] = useState("");
+  const [retryingId, setRetryingId] = useState<string | null>(null);
+
+  // Delete confirmation
+  interface DeleteConfirm {
+    kind: "blog" | "project" | "comment" | "skill" | "cert" | "exp";
+    id: string;
+    label: string;
+    snapshot: any;
+    relatedCounts: Record<string, number>;
+    relatedSnapshot: Record<string, any>;
+    warnings: string[];
+    restorable: string[];
+  }
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // Audit log
+  interface AuditEntry {
+    id: string; action: string; entity_type: string; entity_id: string;
+    label: string | null; snapshot: any; related_snapshot: any;
+    related_counts: any; performed_by_email: string | null; created_at: string;
+  }
+  const [auditLog, setAuditLog] = useState<AuditEntry[]>([]);
+  const [viewAudit, setViewAudit] = useState<AuditEntry | null>(null);
+
+  const fetchAudience = async (): Promise<AudienceStats> => {
+    setAudienceLoading(true);
+    const { data } = await supabase.from("newsletter_subscribers").select("email, is_active");
+    const rows = data || [];
+    const active = rows.filter(r => r.is_active).length;
+    const inactive = rows.length - active;
+    const domainMap = new Map<string, number>();
+    rows.filter(r => r.is_active).forEach(r => {
+      const d = (r.email || "").split("@")[1]?.toLowerCase() || "unknown";
+      domainMap.set(d, (domainMap.get(d) || 0) + 1);
+    });
+    const topDomains = Array.from(domainMap.entries())
+      .map(([domain, count]) => ({ domain, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    const stats = { active, inactive, total: rows.length, topDomains };
+    setAudience(stats);
+    setAudienceLoading(false);
+    return stats;
+  };
+
+  const openPublishConfirm = async (kind: "blog" | "project", title: string) => {
+    setPublishNote("");
+    setPublishConfirm({ kind, title });
+    await fetchAudience(); // refresh right before showing the count
+  };
+
+  const exportAudienceCSV = () => {
+    const lines: string[] = [];
+    lines.push("section,key,value");
+    lines.push(`summary,total,${audience.total}`);
+    lines.push(`summary,active,${audience.active}`);
+    lines.push(`summary,inactive,${audience.inactive}`);
+    audience.topDomains.forEach(d => {
+      lines.push(`top_domain,${d.domain.replace(/,/g, "")},${d.count}`);
+    });
+    const csv = lines.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `audience-preview-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const loadData = async () => {
+    setIsLoading(true);
+    const [commentsRes, guestsRes, blogsRes, projectsRes, skillsRes, certsRes, aboutRes, expsRes, notifsRes, auditRes, hiddenRes] = await Promise.all([
+      supabase.from("blog_comments").select("*").order("created_at", { ascending: false }),
+      supabase.from("guest_visitors").select("*").order("visited_at", { ascending: false }),
+      supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
+      supabase.from("projects").select("*").order("created_at", { ascending: false }),
+      supabase.from("skills").select("*").order("sort_order", { ascending: true }),
+      supabase.from("certificates").select("*").order("sort_order", { ascending: true }),
+      supabase.from("about_content").select("*"),
+      supabase.from("work_experiences").select("*").order("sort_order", { ascending: true }),
+      supabase.from("publish_notifications").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100),
+      supabase.from("hidden_static_blog_posts").select("post_id"),
+    ]);
+    await fetchAudience();
+    setHiddenStaticIds(new Set((hiddenRes.data || []).map((r: any) => r.post_id)));
+    if (notifsRes.data) setNotifications(notifsRes.data as PublishNotification[]);
+    if (auditRes.data) setAuditLog(auditRes.data as AuditEntry[]);
+    if (commentsRes.data) setComments(commentsRes.data);
+    if (guestsRes.data) setGuests(guestsRes.data);
+    if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
+    if (projectsRes.data) setProjects(projectsRes.data as Project[]);
+    if (skillsRes.data) setSkills(skillsRes.data as Skill[]);
+    if (certsRes.data) setCertificates(certsRes.data as Certificate[]);
+    if (expsRes.data) setWorkExps(expsRes.data as WorkExperience[]);
+    if (aboutRes.data) {
+      setAboutContent(aboutRes.data as AboutContent[]);
+      const intro = (aboutRes.data as AboutContent[]).find(a => a.section_key === "intro");
+      if (intro) setAboutIntro(intro.content as any);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => { loadData(); }, []);
+
+  // ── Delete-with-audit helpers ──
+  const openDeleteConfirm = async (
+    kind: DeleteConfirm["kind"],
+    id: string,
+    label: string,
+  ) => {
+    setDeleteLoading(true);
+    setDeleteConfirm({
+      kind, id, label,
+      snapshot: null, relatedCounts: {}, relatedSnapshot: {},
+      warnings: [], restorable: [],
+    });
+    try {
+      let snapshot: any = null;
+      const relatedCounts: Record<string, number> = {};
+      const relatedSnapshot: Record<string, any> = {};
+      const warnings: string[] = [];
+      const restorable: string[] = [
+        "A full snapshot of this record is saved to the audit log and can be used to manually re-insert it.",
+      ];
+
+      if (kind === "blog") {
+        const { data: blog } = await supabase.from("blog_posts").select("*").eq("id", id).maybeSingle();
+        snapshot = blog;
+        const post_id = blog?.slug || id;
+        const [cmts, lks, vws] = await Promise.all([
+          supabase.from("blog_comments").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+          supabase.from("blog_likes").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+          supabase.from("blog_views").select("id", { count: "exact", head: true }).eq("post_id", post_id),
+        ]);
+        relatedCounts.comments = cmts.count || 0;
+        relatedCounts.likes = lks.count || 0;
+        relatedCounts.views = vws.count || 0;
+        warnings.push(`The blog post record itself (title, slug, content, cover image).`);
+        if (relatedCounts.comments) warnings.push(`${relatedCounts.comments} comment row(s) linked by post_id will become orphaned (not auto-deleted).`);
+        if (relatedCounts.likes) warnings.push(`${relatedCounts.likes} like(s) linked by post_id will become orphaned.`);
+        if (relatedCounts.views) warnings.push(`${relatedCounts.views} view record(s) linked by post_id will become orphaned.`);
+        warnings.push(`The post will immediately disappear from the public blog page.`);
+      } else if (kind === "project") {
+        const { data: project } = await supabase.from("projects").select("*").eq("id", id).maybeSingle();
+        snapshot = project;
+        const [cmts, lks, vws] = await Promise.all([
+          supabase.from("project_comments").select("id", { count: "exact", head: true }).eq("project_id", id),
+          supabase.from("project_likes").select("id", { count: "exact", head: true }).eq("project_id", id),
+          supabase.from("project_views").select("id", { count: "exact", head: true }).eq("project_id", id),
+        ]);
+        relatedCounts.comments = cmts.count || 0;
+        relatedCounts.likes = lks.count || 0;
+        relatedCounts.views = vws.count || 0;
+        warnings.push(`The project record itself (title, description, tech stack, images, URLs).`);
+        if (relatedCounts.comments) warnings.push(`${relatedCounts.comments} project comment(s) will become orphaned.`);
+        if (relatedCounts.likes) warnings.push(`${relatedCounts.likes} like(s) will become orphaned.`);
+        if (relatedCounts.views) warnings.push(`${relatedCounts.views} view record(s) will become orphaned.`);
+        warnings.push(`The project will immediately disappear from the public projects page.`);
+      } else if (kind === "comment") {
+        const { data: comment } = await supabase.from("blog_comments").select("*").eq("id", id).maybeSingle();
+        snapshot = comment;
+        relatedSnapshot.reply = comment?.reply || null;
+        warnings.push(`The comment text and the commenter's name and email.`);
+        if (comment?.reply) warnings.push(`Your reply ("${(comment.reply as string).slice(0, 60)}...") will also be lost.`);
+        warnings.push(`The comment will disappear from the public blog post immediately.`);
+        warnings.push(`No email notification is sent to the commenter.`);
+      }
+
+      setDeleteConfirm({
+        kind, id, label,
+        snapshot, relatedCounts, relatedSnapshot, warnings, restorable,
+      });
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const performDelete = async () => {
+    if (!deleteConfirm) return;
+    setDeleting(true);
+    try {
+      const { kind, id, label, snapshot, relatedCounts, relatedSnapshot } = deleteConfirm;
+      const tableMap: Record<string, string> = {
+        blog: "blog_posts",
+        project: "projects",
+        comment: "blog_comments",
+        skill: "skills",
+        cert: "certificates",
+        exp: "work_experiences",
+      };
+      const table = tableMap[kind];
+
+      // 1. Write audit BEFORE deleting (so failure leaves no orphan log)
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("admin_audit_log").insert({
+        action: "delete",
+        entity_type: kind,
+        entity_id: id,
+        label,
+        snapshot: snapshot ?? {},
+        related_snapshot: relatedSnapshot ?? {},
+        related_counts: relatedCounts ?? {},
+        performed_by: user?.id,
+        performed_by_email: user?.email,
+      });
+
+      // 2. Delete the record
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
+      if (error) {
+        toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+        return;
+      }
+
+      // 3. Update local state
+      if (kind === "blog") setBlogs(p => p.filter(b => b.id !== id));
+      else if (kind === "project") setProjects(p => p.filter(b => b.id !== id));
+      else if (kind === "comment") setComments(p => p.filter(b => b.id !== id));
+      else if (kind === "skill") setSkills(p => p.filter(b => b.id !== id));
+      else if (kind === "cert") setCertificates(p => p.filter(b => b.id !== id));
+      else if (kind === "exp") setWorkExps(p => p.filter(b => b.id !== id));
+
+      // 4. Refresh audit log
+      const { data: audit } = await supabase
+        .from("admin_audit_log").select("*").order("created_at", { ascending: false }).limit(100);
+      if (audit) setAuditLog(audit as AuditEntry[]);
+
+      toast({ title: `${kind.charAt(0).toUpperCase() + kind.slice(1)} deleted`, description: "Recorded in audit log." });
+      setDeleteConfirm(null);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // ── Comment actions ──
+  const approveComment = async (id: string) => {
+    const { error } = await supabase.from("blog_comments").update({ is_approved: true }).eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setComments(prev => prev.map(c => c.id === id ? { ...c, is_approved: true } : c));
+    toast({ title: "Comment approved" });
+  };
+  const markAsSpam = async (id: string) => {
+    const { error } = await supabase.from("blog_comments").update({ is_spam: true, is_approved: false }).eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setComments(prev => prev.map(c => c.id === id ? { ...c, is_spam: true, is_approved: false } : c));
+    toast({ title: "Marked as spam" });
+  };
+  const deleteComment = async (id: string) => {
+    const { error } = await supabase.from("blog_comments").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setComments(prev => prev.filter(c => c.id !== id));
+    toast({ title: "Comment deleted" });
+  };
+
+  // ── Image upload ──
+  const uploadImage = async (file: File, bucket: string): Promise<string | null> => {
+    setUploading(true);
+    const ext = file.name.split(".").pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await supabase.storage.from(bucket).upload(path, file);
+    setUploading(false);
+    if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return null; }
+    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
+    return urlData.publicUrl;
+  };
+
+  // ── Blog CRUD ──
+  const openBlogForm = (blog?: BlogPost) => {
+    if (blog) { setBlogForm(blog); setEditingBlogId(blog.id); }
+    else { setBlogForm({ ...emptyBlog }); setEditingBlogId(null); }
+    setShowPreview(false);
+    setShowBlogDialog(true);
+  };
+
+  const saveBlog = async (publish: boolean) => {
+    if (!blogForm.title || !blogForm.slug || !blogForm.content) {
+      toast({ title: "Missing fields", description: "Title, slug, and content are required", variant: "destructive" });
+      return;
+    }
+    if (publish) {
+      await openPublishConfirm("blog", blogForm.title);
+      return;
+    }
+    await doSaveBlog(false);
+  };
+
+  const logNotification = async (entry: {
+    kind: "blog" | "project"; title: string; slug?: string | null;
+    total_subscribers: number; sent_count: number; failed_count: number;
+    status: string; error_message?: string | null; note?: string | null;
+  }) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("publish_notifications").insert({
+        kind: entry.kind, title: entry.title, slug: entry.slug ?? null,
+        triggered_by: user?.id ?? null,
+        total_subscribers: entry.total_subscribers,
+        sent_count: entry.sent_count, failed_count: entry.failed_count,
+        status: entry.status, error_message: entry.error_message ?? null,
+        note: entry.note ?? null,
+      } as any);
+    } catch (e) { console.error("Failed to log notification", e); }
+  };
+
+  const retryNotification = async (n: PublishNotification) => {
+    setRetryingId(n.id);
+    try {
+      const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
+        body: {
+          type: n.kind === "blog" ? "post" : "project",
+          title: n.title,
+          description: "",
+          slug: n.slug || undefined,
+        },
+      });
+      if (invokeErr) throw invokeErr;
+      const sent = (data as any)?.sent ?? 0;
+      const total = (data as any)?.total ?? 0;
+      const failed = Math.max(0, total - sent);
+      const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+      await logNotification({
+        kind: n.kind as "blog" | "project", title: n.title, slug: n.slug,
+        total_subscribers: total, sent_count: sent, failed_count: failed, status,
+        note: `Retry of ${n.id}`,
+      });
+      toast({ title: "Retry complete", description: total === 0 ? "No active subscribers" : `Sent to ${sent}/${total}` });
+    } catch (e: any) {
+      await logNotification({
+        kind: n.kind as "blog" | "project", title: n.title, slug: n.slug,
+        total_subscribers: 0, sent_count: 0, failed_count: 0,
+        status: "failed", error_message: e?.message || "Retry failed",
+        note: `Retry of ${n.id}`,
+      });
+      toast({ title: "Retry failed", description: e?.message || "Unknown error", variant: "destructive" });
+    } finally {
+      setRetryingId(null);
+      loadData();
+    }
+  };
+
+  const doSaveBlog = async (publish: boolean) => {
+    const payload = {
+      title: blogForm.title!, slug: blogForm.slug!, excerpt: blogForm.excerpt || "",
+      content: blogForm.content!, cover_image: blogForm.cover_image || null,
+      category: blogForm.category || "tech", read_time: blogForm.read_time || "5 min read",
+      is_published: publish, ...(publish ? { published_at: new Date().toISOString() } : {}),
+    };
+    let error;
+    if (editingBlogId) { ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editingBlogId)); }
+    else { ({ error } = await supabase.from("blog_posts").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    if (publish) {
+      try {
+        const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
+          body: { type: "post", title: blogForm.title, description: blogForm.excerpt || "", slug: blogForm.slug },
+        });
+        if (invokeErr) throw invokeErr;
+        const sent = (data as any)?.sent ?? 0;
+        const total = (data as any)?.total ?? 0;
+        const failed = Math.max(0, total - sent);
+        const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: total, sent_count: sent, failed_count: failed, status, note: publishNote || null });
+        toast({ title: editingBlogId ? "Blog updated" : "Blog published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
+      } catch (e: any) {
+        await logNotification({ kind: "blog", title: blogForm.title!, slug: blogForm.slug, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error", note: publishNote || null });
+        toast({ title: editingBlogId ? "Blog updated" : "Blog created", description: "Notification failed — see history", variant: "destructive" });
+      }
+    } else {
+      toast({ title: editingBlogId ? "Blog saved as draft" : "Blog draft created" });
+    }
+    setShowBlogDialog(false);
+    loadData();
+  };
+
+  const deleteBlog = async (id: string) => {
+    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setBlogs(prev => prev.filter(b => b.id !== id));
+    toast({ title: "Blog deleted" });
+  };
+
+  // ── Project CRUD ──
+  const openProjectForm = (project?: Project) => {
+    if (project) { setProjectForm(project); setEditingProjectId(project.id); }
+    else { setProjectForm({ ...emptyProject }); setEditingProjectId(null); }
+    setTechInput("");
+    setShowProjectDialog(true);
+  };
+
+  const saveProject = async (publish: boolean) => {
+    if (!projectForm.title || !projectForm.description) {
+      toast({ title: "Missing fields", description: "Title and description are required", variant: "destructive" });
+      return;
+    }
+    if (publish) {
+      await openPublishConfirm("project", projectForm.title);
+      return;
+    }
+    await doSaveProject(false);
+  };
+
+  const doSaveProject = async (publish: boolean) => {
+    const payload = {
+      title: projectForm.title!, description: projectForm.description!,
+      category: projectForm.category || "it", tech_stack: projectForm.tech_stack || [],
+      images: projectForm.images || [], github_url: projectForm.github_url || null,
+      live_url: projectForm.live_url || null, article_slug: projectForm.article_slug || null,
+      featured: projectForm.featured || false, is_published: publish,
+    };
+    let error;
+    if (editingProjectId) { ({ error } = await supabase.from("projects").update(payload).eq("id", editingProjectId)); }
+    else { ({ error } = await supabase.from("projects").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    if (publish) {
+      try {
+        const { data, error: invokeErr } = await supabase.functions.invoke("notify-subscribers", {
+          body: { type: "project", title: projectForm.title, description: projectForm.description?.substring(0, 200) || "" },
+        });
+        if (invokeErr) throw invokeErr;
+        const sent = (data as any)?.sent ?? 0;
+        const total = (data as any)?.total ?? 0;
+        const failed = Math.max(0, total - sent);
+        const status = total === 0 ? "no_subscribers" : failed === 0 ? "success" : sent === 0 ? "failed" : "partial";
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: total, sent_count: sent, failed_count: failed, status, note: publishNote || null });
+        toast({ title: editingProjectId ? "Project updated" : "Project published", description: total === 0 ? "No active subscribers to notify" : `Sent to ${sent}/${total} subscribers` });
+      } catch (e: any) {
+        await logNotification({ kind: "project", title: projectForm.title!, total_subscribers: audience.active, sent_count: 0, failed_count: audience.active, status: "failed", error_message: e?.message || "Unknown error", note: publishNote || null });
+        toast({ title: editingProjectId ? "Project updated" : "Project created", description: "Notification failed — see history", variant: "destructive" });
+      }
+    } else {
+      toast({ title: editingProjectId ? "Project saved as draft" : "Project draft created" });
+    }
+    setShowProjectDialog(false);
+    loadData();
+  };
+
+
+  const deleteProject = async (id: string) => {
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setProjects(prev => prev.filter(p => p.id !== id));
+    toast({ title: "Project deleted" });
+  };
+
+  const addTechTag = () => {
+    if (techInput.trim()) {
+      setProjectForm(prev => ({ ...prev, tech_stack: [...(prev.tech_stack || []), techInput.trim()] }));
+      setTechInput("");
+    }
+  };
+  const removeTechTag = (idx: number) => {
+    setProjectForm(prev => ({ ...prev, tech_stack: (prev.tech_stack || []).filter((_, i) => i !== idx) }));
+  };
+
+  const handleProjectImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file, "project-images");
+    if (url) setProjectForm(prev => ({ ...prev, images: [...(prev.images || []), url] }));
+  };
+
+  const handleBlogImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file, "blog-images");
+    if (url) setBlogForm(prev => ({ ...prev, cover_image: url }));
+  };
+
+  // ── Skills CRUD ──
+  const openSkillForm = (skill?: Skill) => {
+    if (skill) { setSkillForm(skill); setEditingSkillId(skill.id); }
+    else { setSkillForm({ ...emptySkill }); setEditingSkillId(null); }
+    setShowSkillDialog(true);
+  };
+
+  const saveSkill = async () => {
+    if (!skillForm.name) {
+      toast({ title: "Missing fields", description: "Skill name is required", variant: "destructive" });
+      return;
+    }
+    const payload = {
+      name: skillForm.name!, level: skillForm.level || 50,
+      category: skillForm.category || "it", skill_type: skillForm.skill_type || "primary",
+      color_token: skillForm.color_token || "primary", sort_order: skillForm.sort_order || 0,
+    };
+    let error;
+    if (editingSkillId) { ({ error } = await supabase.from("skills").update(payload).eq("id", editingSkillId)); }
+    else { ({ error } = await supabase.from("skills").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: editingSkillId ? "Skill updated" : "Skill added" });
+    setShowSkillDialog(false);
+    loadData();
+  };
+
+  const deleteSkill = async (id: string) => {
+    const { error } = await supabase.from("skills").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setSkills(prev => prev.filter(s => s.id !== id));
+    toast({ title: "Skill deleted" });
+  };
+
+  // ── Certificate CRUD ──
+  const openCertForm = (cert?: Certificate) => {
+    if (cert) { setCertForm(cert); setEditingCertId(cert.id); }
+    else { setCertForm({ ...emptyCert }); setEditingCertId(null); }
+    setShowCertDialog(true);
+  };
+
+  const saveCert = async () => {
+    if (!certForm.title) {
+      toast({ title: "Missing fields", description: "Certificate title is required", variant: "destructive" });
+      return;
+    }
+    const payload = {
+      title: certForm.title!, issuer: certForm.issuer || "",
+      date: certForm.date || "", image_url: certForm.image_url || null,
+      category: certForm.category || "it", sort_order: certForm.sort_order || 0,
+    };
+    let error;
+    if (editingCertId) { ({ error } = await supabase.from("certificates").update(payload).eq("id", editingCertId)); }
+    else { ({ error } = await supabase.from("certificates").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: editingCertId ? "Certificate updated" : "Certificate added" });
+    setShowCertDialog(false);
+    loadData();
+  };
+
+  const deleteCert = async (id: string) => {
+    const { error } = await supabase.from("certificates").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setCertificates(prev => prev.filter(c => c.id !== id));
+    toast({ title: "Certificate deleted" });
+  };
+
+  const handleCertImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = await uploadImage(file, "certificates");
+    if (url) setCertForm(prev => ({ ...prev, image_url: url }));
+  };
+
+
+  // ── Work Experience CRUD ──
+  const openExpForm = (exp?: WorkExperience) => {
+    if (exp) { setExpForm(exp); setEditingExpId(exp.id); }
+    else { setExpForm({ ...emptyExp }); setEditingExpId(null); }
+    setExpSkillInput("");
+    setShowExpDialog(true);
+  };
+
+  const saveExp = async () => {
+    if (!expForm.title || !expForm.company) {
+      toast({ title: "Missing fields", description: "Title and company are required", variant: "destructive" });
+      return;
+    }
+    const payload = {
+      title: expForm.title!, company: expForm.company!,
+      location: expForm.location || "", duration: expForm.duration || "",
+      description: expForm.description || "", skills: expForm.skills || [],
+      category: expForm.category || "it", sort_order: expForm.sort_order || 0,
+    };
+    let error;
+    if (editingExpId) { ({ error } = await supabase.from("work_experiences").update(payload).eq("id", editingExpId)); }
+    else { ({ error } = await supabase.from("work_experiences").insert(payload)); }
+    if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
+    toast({ title: editingExpId ? "Experience updated" : "Experience added" });
+    setShowExpDialog(false);
+    loadData();
+  };
+
+  const deleteExp = async (id: string) => {
+    const { error } = await supabase.from("work_experiences").delete().eq("id", id);
+    if (error) { toast({ title: "Error", variant: "destructive" }); return; }
+    setWorkExps(prev => prev.filter(e => e.id !== id));
+    toast({ title: "Experience deleted" });
+  };
+
+  const addExpSkill = () => {
+    if (expSkillInput.trim()) {
+      setExpForm(prev => ({ ...prev, skills: [...(prev.skills || []), expSkillInput.trim()] }));
+      setExpSkillInput("");
+    }
+  };
+
+  const pendingComments = comments.filter(c => !c.is_approved && !c.is_spam);
+  const approvedComments = comments.filter(c => c.is_approved);
+
+  const itSkills = skills.filter(s => s.category === "it");
+  const engSkills = skills.filter(s => s.category === "engineering");
+
+  return (
+    <PageTransition>
+      <Helmet><title>Admin Dashboard | SS. Tharan</title></Helmet>
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <main className="pt-24 pb-16">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+                <p className="text-muted-foreground mt-1">Manage content, comments, and visitors</p>
+              </div>
+              <Button onClick={loadData} variant="outline" disabled={isLoading}>
+                <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} /> Refresh
+              </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+              {[
+                { val: blogs.length, label: "Blog Posts" },
+                { val: projects.length, label: "Projects" },
+                { val: skills.length, label: "Skills" },
+                { val: certificates.length, label: "Certificates" },
+                { val: workExps.length, label: "Experiences" },
+                { val: pendingComments.length, label: "Pending Comments" },
+                { val: guests.length, label: "Guest Visitors" },
+              ].map((s, i) => (
+                <Card key={i}><CardContent className="pt-6 text-center">
+                  <p className="text-3xl font-bold text-foreground">{s.val}</p>
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                </CardContent></Card>
+              ))}
+            </div>
+
+            <Tabs defaultValue="blogs" className="space-y-6">
+              <TabsList className="grid w-full grid-cols-3 md:grid-cols-12">
+                <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
+                <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
+                <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
+                <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
+                <TabsTrigger value="gallery"><Image className="w-4 h-4 mr-1" />Gallery</TabsTrigger>
+                <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
+                <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
+
+                <TabsTrigger value="pending" className="relative">
+                  Comments
+                  {pendingComments.length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]">
+                      {pendingComments.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="approved">Approved</TabsTrigger>
+                <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
+                <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
+                <TabsTrigger value="visits"><Globe className="w-4 h-4 mr-1" />Visits</TabsTrigger>
+              </TabsList>
+
+              {/* ── Blogs Tab ── */}
+              <TabsContent value="blogs" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openBlogForm()}><Plus className="w-4 h-4 mr-2" /> New Blog Post</Button>
+                </div>
+                {blogs.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No blog posts yet</CardContent></Card>
+                ) : (
+                  <div className="space-y-3">
+                    {blogs.map(blog => (
+                      <Card key={blog.id}>
+                        <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                          {blog.cover_image && <img src={blog.cover_image} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{blog.title}</p>
+                            <p className="text-xs text-muted-foreground">{blog.category} · {blog.read_time}</p>
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground" title="Live view count">
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="font-mono tabular-nums">{blogViewCounts[blog.id] || 0}</span>
+                          </div>
+                          <Badge variant={blog.is_published ? "default" : "secondary"}>{blog.is_published ? "Published" : "Draft"}</Badge>
+                          <div className="flex gap-1.5">
+                            <Button size="sm" variant="outline" onClick={() => openBlogForm(blog)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("blog", blog.id, blog.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+
+                {/* ── Built-in (Static) Blog Posts ── */}
+                <div className="pt-4 mt-4 border-t">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold">Built-in Blog Posts</h3>
+                      <p className="text-xs text-muted-foreground">Hide or restore the bundled posts shown on the public blog.</p>
+                    </div>
+                    <Badge variant="secondary">{staticBlogPosts.length} total · {hiddenStaticIds.size} hidden</Badge>
+                  </div>
+                  <div className="space-y-2">
+                    {staticBlogPosts.map(sp => {
+                      const isHidden = hiddenStaticIds.has(sp.id);
+                      return (
+                        <Card key={sp.id} className={isHidden ? "opacity-60" : ""}>
+                          <CardContent className="pt-3 pb-3 flex items-center gap-3">
+                            <img src={sp.image} alt="" className="w-12 h-12 rounded object-cover flex-shrink-0" onError={(e) => { (e.target as HTMLImageElement).style.visibility = "hidden"; }} />
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium truncate text-sm">{sp.title}</p>
+                              <p className="text-xs text-muted-foreground">{sp.category} · id: {sp.id}</p>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground" title="Live view count">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="font-mono tabular-nums">{blogViewCounts[sp.id] || 0}</span>
+                            </div>
+                            <Badge variant={isHidden ? "destructive" : "default"}>{isHidden ? "Hidden" : "Visible"}</Badge>
+                            {isHidden ? (
+                              <Button size="sm" variant="outline" onClick={async () => {
+                                const { error } = await supabase.from("hidden_static_blog_posts").delete().eq("post_id", sp.id);
+                                if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
+                                setHiddenStaticIds(prev => { const s = new Set(prev); s.delete(sp.id); return s; });
+                                toast({ title: "Restored", description: "Post is visible on the public blog again." });
+                              }}><RotateCw className="w-3.5 h-3.5 mr-1" />Restore</Button>
+                            ) : (
+                              <Button size="sm" variant="destructive" onClick={async () => {
+                                if (!confirm(`Hide "${sp.title}" from the public blog?\n\nThis is reversible — you can restore it later.`)) return;
+                                const { data: { user } } = await supabase.auth.getUser();
+                                const { error } = await supabase.from("hidden_static_blog_posts").insert({
+                                  post_id: sp.id, title: sp.title, hidden_by: user?.id, hidden_by_email: user?.email,
+                                });
+                                if (error) { toast({ title: "Failed", description: error.message, variant: "destructive" }); return; }
+                                await supabase.from("admin_audit_log").insert({
+                                  action: "hide", entity_type: "static_blog", entity_id: sp.id, label: sp.title,
+                                  snapshot: { id: sp.id, title: sp.title, category: sp.category, source: "static" },
+                                  related_counts: {}, performed_by: user?.id, performed_by_email: user?.email,
+                                });
+                                setHiddenStaticIds(prev => new Set([...prev, sp.id]));
+                                toast({ title: "Hidden", description: "Post is now hidden from the public blog. Recorded in audit log." });
+                              }}><Trash2 className="w-3.5 h-3.5 mr-1" />Hide</Button>
+                            )}
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* ── Projects Tab ── */}
+              <TabsContent value="projects" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openProjectForm()}><Plus className="w-4 h-4 mr-2" /> New Project</Button>
+                </div>
+                {projects.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No projects yet</CardContent></Card>
+                ) : (
+                  <div className="space-y-3">
+                    {projects.map(project => (
+                      <Card key={project.id}>
+                        <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                          {project.images?.[0] && <img src={project.images[0]} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{project.title}</p>
+                            <p className="text-xs text-muted-foreground">{project.category} · {(project.tech_stack || []).join(", ")}</p>
+                          </div>
+                          <div className="flex gap-1.5 items-center">
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground mr-1" title="Live view count">
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="font-mono tabular-nums">{projectViewCounts[project.id] || 0}</span>
+                            </div>
+                            {project.featured && <Badge variant="outline">Featured</Badge>}
+                            <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
+                            <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("project", project.id, project.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ── Skills Tab ── */}
+              <TabsContent value="skills" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openSkillForm()}><Plus className="w-4 h-4 mr-2" /> Add Skill</Button>
+                </div>
+                {["it", "engineering"].map(cat => (
+                  <div key={cat}>
+                    <h3 className="font-semibold text-lg mb-3 capitalize">{cat === "it" ? "IT & Software" : "Engineering & CAD"}</h3>
+                    <div className="space-y-2">
+                      {skills.filter(s => s.category === cat).map(skill => (
+                        <Card key={skill.id}>
+                          <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <p className="font-medium">{skill.name}</p>
+                                <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                              </div>
+                              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-primary" style={{ width: `${skill.level}%` }} />
+                              </div>
+                            </div>
+                            <div className="flex gap-1.5">
+                              <Button size="sm" variant="outline" onClick={() => openSkillForm(skill)}><Edit className="w-3.5 h-3.5" /></Button>
+                              <Button size="sm" variant="destructive" onClick={() => deleteSkill(skill.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                      {skills.filter(s => s.category === cat).length === 0 && (
+                        <p className="text-sm text-muted-foreground py-4 text-center">No {cat} skills yet</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+
+              {/* ── Certificates Tab ── */}
+              <TabsContent value="certificates" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openCertForm()}><Plus className="w-4 h-4 mr-2" /> Add Certificate</Button>
+                </div>
+                {certificates.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No certificates yet</CardContent></Card>
+                ) : (
+                  <div className="grid gap-3 md:grid-cols-2">
+                    {certificates.map(cert => (
+                      <Card key={cert.id}>
+                        <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                          {cert.image_url && <img src={cert.image_url} alt="" className="w-16 h-16 rounded object-cover flex-shrink-0" />}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{cert.title}</p>
+                            <p className="text-xs text-muted-foreground">{cert.issuer} {cert.date && `· ${cert.date}`}</p>
+                          </div>
+                          <div className="flex gap-1.5">
+                            <Button size="sm" variant="outline" onClick={() => openCertForm(cert)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteCert(cert.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ── Gallery Tab ── */}
+              <TabsContent value="gallery" className="space-y-4">
+                <GalleryManager />
+              </TabsContent>
+
+              {/* ── Experience Tab ── */}
+              <TabsContent value="experience" className="space-y-4">
+                <div className="flex justify-end">
+                  <Button onClick={() => openExpForm()}><Plus className="w-4 h-4 mr-2" /> Add Experience</Button>
+                </div>
+                {workExps.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No work experiences yet</CardContent></Card>
+                ) : (
+                  <div className="space-y-3">
+                    {workExps.map(exp => (
+                      <Card key={exp.id}>
+                        <CardContent className="pt-4 pb-4 flex items-center gap-4">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium">{exp.title}</p>
+                            <p className="text-sm text-primary">{exp.company}</p>
+                            <p className="text-xs text-muted-foreground">{exp.duration} · {exp.location}</p>
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {(exp.skills || []).map((s, i) => <Badge key={i} variant="secondary" className="text-xs">{s}</Badge>)}
+                            </div>
+                          </div>
+                          <Badge variant="outline">{exp.category}</Badge>
+                          <div className="flex gap-1.5">
+                            <Button size="sm" variant="outline" onClick={() => openExpForm(exp)}><Edit className="w-3.5 h-3.5" /></Button>
+                            <Button size="sm" variant="destructive" onClick={() => deleteExp(exp.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* ── Comments Tabs ── */}
+              <TabsContent value="pending" className="space-y-4">
+                {pendingComments.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">
+                    <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" /> No pending comments
+                  </CardContent></Card>
+                ) : pendingComments.map(c => (
+                  <CommentCard key={c.id} comment={c} onApprove={() => approveComment(c.id)} onSpam={() => markAsSpam(c.id)} onDelete={() => openDeleteConfirm("comment", c.id, c.content.slice(0, 60))} showActions />
+                ))}
+              </TabsContent>
+
+              <TabsContent value="approved" className="space-y-4">
+                {approvedComments.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">No approved comments</CardContent></Card>
+                ) : approvedComments.map(c => (
+                  <CommentCard key={c.id} comment={c} onDelete={() => openDeleteConfirm("comment", c.id, c.content.slice(0, 60))} />
+                ))}
+              </TabsContent>
+
+              <TabsContent value="guests" className="space-y-4">
+                {guests.length === 0 ? (
+                  <Card><CardContent className="py-8 text-center text-muted-foreground">
+                    <Users className="w-12 h-12 mx-auto mb-4 opacity-50" /> No guest visitors yet
+                  </CardContent></Card>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {guests.map(g => {
+                      const ip = g.ip_address || null;
+                      const ipInfo = ip ? blockedIps[ip] : undefined;
+                      const isBlocked = !!ipInfo;
+                      const isTemp = !!ipInfo?.expires_at;
+                      return (
+                        <Card key={g.id}><CardContent className="pt-6 space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div><p className="font-medium">{g.name}</p><p className="text-sm text-muted-foreground">{g.email}</p></div>
+                            <Badge variant="secondary">{new Date(g.visited_at).toLocaleDateString()}</Badge>
+                          </div>
+                          <div className="text-xs space-y-1">
+                            <p className="font-mono break-all">IP: {ip || "unknown"}</p>
+                            {isBlocked && (
+                              <Badge variant="destructive">{isTemp ? `Locked until ${new Date(ipInfo!.expires_at!).toLocaleString()}` : "Blocked"}</Badge>
+                            )}
+                          </div>
+                          {ip && (
+                            <div className="flex gap-2">
+                              {isBlocked ? (
+                                <Button size="sm" variant="outline" onClick={() => handleIpAction(ip, -1)}>Unblock IP</Button>
+                              ) : (
+                                <Select onValueChange={(val) => handleIpAction(ip, val === "perm" ? null : parseInt(val, 10))}>
+                                  <SelectTrigger className="h-8 w-[160px] text-xs"><SelectValue placeholder="Block / Lock IP" /></SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="1">Lock 1 hour</SelectItem>
+                                    <SelectItem value="24">Lock 24 hours</SelectItem>
+                                    <SelectItem value="48">Lock 48 hours</SelectItem>
+                                    <SelectItem value="perm">Block permanently</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
+                            </div>
+                          )}
+                        </CardContent></Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="notifications" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Send className="w-5 h-5" /> Publish Notification History
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Last email send status for every published blog and project. Most recent 50 events.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {notifications.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No publish notifications yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                              <th className="py-2 pr-3">When</th>
+                              <th className="py-2 pr-3">Type</th>
+                              <th className="py-2 pr-3">Title</th>
+                              <th className="py-2 pr-3">Status</th>
+                              <th className="py-2 pr-3 text-right">Sent / Total</th>
+                              <th className="py-2 pr-3 text-right">Failed</th>
+                              <th className="py-2 pr-3">Note</th>
+                              <th className="py-2 pr-3 text-right">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {notifications.map(n => {
+                              const canRetry = n.status === "failed" || n.status === "partial";
+                              return (
+                              <tr key={n.id} className="border-b border-border/40">
+                                <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(n.created_at).toLocaleString()}</td>
+                                <td className="py-2 pr-3"><Badge variant="outline">{n.kind}</Badge></td>
+                                <td className="py-2 pr-3 font-medium max-w-xs truncate" title={n.title}>{n.title}</td>
+                                <td className="py-2 pr-3">
+                                  <Badge variant={
+                                    n.status === "success" ? "default" :
+                                    n.status === "partial" ? "secondary" :
+                                    n.status === "no_subscribers" ? "outline" :
+                                    "destructive"
+                                  }>
+                                    {n.status}
+                                  </Badge>
+                                  {n.error_message && (
+                                    <p className="text-[11px] text-destructive mt-1 max-w-xs truncate" title={n.error_message}>{n.error_message}</p>
+                                  )}
+                                </td>
+                                <td className="py-2 pr-3 text-right tabular-nums">{n.sent_count} / {n.total_subscribers}</td>
+                                <td className="py-2 pr-3 text-right tabular-nums">{n.failed_count}</td>
+                                <td className="py-2 pr-3 text-xs text-muted-foreground max-w-[180px] truncate" title={n.note || ""}>{n.note || "—"}</td>
+                                <td className="py-2 pr-3 text-right">
+                                  {canRetry ? (
+                                    <Button size="sm" variant="outline" disabled={retryingId === n.id} onClick={() => retryNotification(n)}>
+                                      {retryingId === n.id ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <><RotateCw className="w-3.5 h-3.5 mr-1" />Retry</>}
+                                    </Button>
+                                  ) : <span className="text-xs text-muted-foreground">—</span>}
+                                </td>
+                              </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="audit" className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5" /> Admin Audit Log
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Every destructive admin action (delete) is recorded here with a full snapshot of the removed record so it can be manually restored. Most recent 100 entries.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    {auditLog.length === 0 ? (
+                      <p className="text-center text-muted-foreground py-8">No audit entries yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-left text-xs uppercase tracking-wider text-muted-foreground">
+                              <th className="py-2 pr-3">When</th>
+                              <th className="py-2 pr-3">Action</th>
+                              <th className="py-2 pr-3">Type</th>
+                              <th className="py-2 pr-3">Label</th>
+                              <th className="py-2 pr-3">By</th>
+                              <th className="py-2 pr-3">Related</th>
+                              <th className="py-2 pr-3 text-right">Snapshot</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {auditLog.map(a => (
+                              <tr key={a.id} className="border-b border-border/40">
+                                <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{new Date(a.created_at).toLocaleString()}</td>
+                                <td className="py-2 pr-3"><Badge variant="destructive">{a.action}</Badge></td>
+                                <td className="py-2 pr-3"><Badge variant="outline">{a.entity_type}</Badge></td>
+                                <td className="py-2 pr-3 max-w-xs truncate" title={a.label || ""}>{a.label || "—"}</td>
+                                <td className="py-2 pr-3 text-xs text-muted-foreground">{a.performed_by_email || "—"}</td>
+                                <td className="py-2 pr-3 text-xs">
+                                  {a.related_counts && Object.keys(a.related_counts).length > 0
+                                    ? Object.entries(a.related_counts).map(([k, v]) => `${k}:${v}`).join(" · ")
+                                    : "—"}
+                                </td>
+                                <td className="py-2 pr-3 text-right">
+                                  <Button size="sm" variant="outline" onClick={() => setViewAudit(a)}>
+                                    <Eye className="w-3.5 h-3.5 mr-1" />View
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="visits" className="space-y-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Globe className="w-5 h-5" /> Site Visits (live)
+                    </CardTitle>
+                    <Button variant="outline" size="sm" onClick={loadSiteVisits}>
+                      <RefreshCw className="w-4 h-4 mr-1" /> Refresh
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Total page views</div>
+                        <div className="text-2xl font-bold">{siteVisits.length}</div>
+                      </div>
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Unique IPs</div>
+                        <div className="text-2xl font-bold">{new Set(siteVisits.map(v => v.ip).filter(Boolean)).size}</div>
+                      </div>
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Signed-in viewers</div>
+                        <div className="text-2xl font-bold">{new Set(siteVisits.map(v => v.user_email).filter(Boolean)).size}</div>
+                      </div>
+                      <div className="p-3 bg-secondary border border-border">
+                        <div className="text-xs text-muted-foreground">Today</div>
+                        <div className="text-2xl font-bold">
+                          {siteVisits.filter(v => new Date(v.created_at).toDateString() === new Date().toDateString()).length}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-semibold mb-2">Top pages</div>
+                      <div className="overflow-x-auto border border-border">
+                        <table className="w-full text-sm">
+                          <thead className="bg-secondary">
+                            <tr>
+                              <th className="text-left p-2">Path</th>
+                              <th className="text-right p-2">Views</th>
+                              <th className="text-right p-2">Unique IPs</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.entries(
+                              siteVisits.reduce<Record<string, { views: number; ips: Set<string> }>>((acc, v) => {
+                                if (!acc[v.path]) acc[v.path] = { views: 0, ips: new Set() };
+                                acc[v.path].views += 1;
+                                if (v.ip) acc[v.path].ips.add(v.ip);
+                                return acc;
+                              }, {})
+                            )
+                              .sort((a, b) => b[1].views - a[1].views)
+                              .slice(0, 20)
+                              .map(([path, info]) => (
+                                <tr key={path} className="border-t border-border">
+                                  <td className="p-2 break-all">{path}</td>
+                                  <td className="p-2 text-right">{info.views}</td>
+                                  <td className="p-2 text-right">{info.ips.size}</td>
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-sm font-semibold mb-2">Recent visitors (last 500)</div>
+                      {visitsLoading ? (
+                        <div className="text-sm text-muted-foreground">Loading…</div>
+                      ) : (
+                        <div className="overflow-x-auto border border-border max-h-[480px] overflow-y-auto">
+                          <table className="w-full text-xs">
+                            <thead className="bg-secondary sticky top-0">
+                              <tr>
+                                <th className="text-left p-2">When</th>
+                                <th className="text-left p-2">IP</th>
+                                <th className="text-left p-2">Status</th>
+                                <th className="text-left p-2">Path</th>
+                                <th className="text-left p-2">User</th>
+                                <th className="text-left p-2">Browser</th>
+                                <th className="text-left p-2">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {siteVisits.map((v) => {
+                                const ipInfo = v.ip ? blockedIps[v.ip] : undefined;
+                                const isBlocked = !!ipInfo;
+                                const isTemp = !!ipInfo?.expires_at;
+                                return (
+                                  <tr key={v.id} className="border-t border-border">
+                                    <td className="p-2 whitespace-nowrap">{new Date(v.created_at).toLocaleString()}</td>
+                                    <td className="p-2 whitespace-nowrap font-mono">{v.ip || "—"}</td>
+                                    <td className="p-2 whitespace-nowrap">
+                                      {isBlocked ? (
+                                        <Badge variant="destructive">{isTemp ? `Locked until ${new Date(ipInfo!.expires_at!).toLocaleString()}` : "Blocked"}</Badge>
+                                      ) : <span className="text-muted-foreground">Active</span>}
+                                    </td>
+                                    <td className="p-2 break-all">{v.path}</td>
+                                    <td className="p-2 break-all">{v.user_email || "guest"}</td>
+                                    <td className="p-2 break-all max-w-[260px] truncate" title={v.user_agent || ""}>{v.user_agent || "—"}</td>
+                                    <td className="p-2 whitespace-nowrap">
+                                      {v.ip ? (
+                                        isBlocked ? (
+                                          <Button size="sm" variant="outline" onClick={() => handleIpAction(v.ip!, -1)}>Unblock</Button>
+                                        ) : (
+                                          <Select onValueChange={(val) => handleIpAction(v.ip!, val === "perm" ? null : parseInt(val, 10))}>
+                                            <SelectTrigger className="h-7 w-[120px] text-xs"><SelectValue placeholder="Block IP" /></SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="1">Lock 1 hour</SelectItem>
+                                              <SelectItem value="24">Lock 24 hours</SelectItem>
+                                              <SelectItem value="48">Lock 48 hours</SelectItem>
+                                              <SelectItem value="perm">Block permanently</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        )
+                                      ) : "—"}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        </main>
+        <Footer />
+      </div>
+
+      {/* ── Blog Dialog ── */}
+      <Dialog open={showBlogDialog} onOpenChange={setShowBlogDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editingBlogId ? "Edit Blog Post" : "New Blog Post"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Title" value={blogForm.title || ""} onChange={e => setBlogForm(p => ({ ...p, title: e.target.value }))} />
+            <Input placeholder="Slug (url-friendly)" value={blogForm.slug || ""} onChange={e => setBlogForm(p => ({ ...p, slug: e.target.value }))} />
+            <Input placeholder="Excerpt / Short description" value={blogForm.excerpt || ""} onChange={e => setBlogForm(p => ({ ...p, excerpt: e.target.value }))} />
+            <div className="grid grid-cols-2 gap-4">
+              <Select value={blogForm.category || "tech"} onValueChange={v => setBlogForm(p => ({ ...p, category: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tech">Technology</SelectItem>
+                  <SelectItem value="engineering">Engineering</SelectItem>
+                  <SelectItem value="design">Design</SelectItem>
+                  <SelectItem value="iot">IoT</SelectItem>
+                  <SelectItem value="career">Career</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input placeholder="Read time (e.g. 5 min read)" value={blogForm.read_time || ""} onChange={e => setBlogForm(p => ({ ...p, read_time: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Cover Image</label>
+              <div className="flex gap-2">
+                <Input placeholder="Image URL" value={blogForm.cover_image || ""} onChange={e => setBlogForm(p => ({ ...p, cover_image: e.target.value }))} className="flex-1" />
+                <label className="cursor-pointer">
+                  <Button variant="outline" asChild disabled={uploading}><span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span></Button>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleBlogImageUpload} />
+                </label>
+              </div>
+              {blogForm.cover_image && <img src={blogForm.cover_image} alt="Cover preview" className="w-full h-40 object-cover rounded" />}
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">Content (Markdown)</label>
+                <Button variant="ghost" size="sm" onClick={() => setShowPreview(!showPreview)}>
+                  <Eye className="w-4 h-4 mr-1" /> {showPreview ? "Edit" : "Preview"}
+                </Button>
+              </div>
+              {showPreview ? (
+                <div className="p-4 border rounded min-h-[200px] prose prose-sm dark:prose-invert max-w-none">
+                  <ReactMarkdown>{blogForm.content || "*Nothing to preview*"}</ReactMarkdown>
+                </div>
+              ) : (
+                <Textarea placeholder="Write your blog post in Markdown..." value={blogForm.content || ""} onChange={e => setBlogForm(p => ({ ...p, content: e.target.value }))} rows={12} className="font-mono text-sm" />
+              )}
+            </div>
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => saveBlog(false)}>Save as Draft</Button>
+              <Button onClick={() => saveBlog(true)}><Send className="w-4 h-4 mr-2" /> {editingBlogId ? "Update & Publish" : "Publish & Notify"}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Project Dialog ── */}
+      <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editingProjectId ? "Edit Project" : "New Project"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Project Title" value={projectForm.title || ""} onChange={e => setProjectForm(p => ({ ...p, title: e.target.value }))} />
+            <Textarea placeholder="Description" value={projectForm.description || ""} onChange={e => setProjectForm(p => ({ ...p, description: e.target.value }))} rows={4} />
+            <div className="grid grid-cols-2 gap-4">
+              <Select value={projectForm.category || "it"} onValueChange={v => setProjectForm(p => ({ ...p, category: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="it">IT</SelectItem>
+                  <SelectItem value="engineering">Engineering</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" checked={projectForm.featured || false} onChange={e => setProjectForm(p => ({ ...p, featured: e.target.checked }))} id="featured" />
+                <label htmlFor="featured" className="text-sm">Featured Project</label>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Input placeholder="GitHub URL" value={projectForm.github_url || ""} onChange={e => setProjectForm(p => ({ ...p, github_url: e.target.value }))} />
+              <Input placeholder="Live URL" value={projectForm.live_url || ""} onChange={e => setProjectForm(p => ({ ...p, live_url: e.target.value }))} />
+            </div>
+            <Input placeholder="Article Slug" value={projectForm.article_slug || ""} onChange={e => setProjectForm(p => ({ ...p, article_slug: e.target.value }))} />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tech Stack</label>
+              <div className="flex gap-2">
+                <Input placeholder="Add technology" value={techInput} onChange={e => setTechInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTechTag())} />
+                <Button variant="outline" onClick={addTechTag} type="button">Add</Button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(projectForm.tech_stack || []).map((tag, i) => (
+                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => removeTechTag(i)}>{tag} <X className="w-3 h-3 ml-1" /></Badge>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Images</label>
+              <div className="flex gap-2">
+                <Input placeholder="Add image URL" onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const val = (e.target as HTMLInputElement).value.trim();
+                    if (val) { setProjectForm(p => ({ ...p, images: [...(p.images || []), val] })); (e.target as HTMLInputElement).value = ""; }
+                  }
+                }} />
+                <label className="cursor-pointer">
+                  <Button variant="outline" asChild disabled={uploading}><span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span></Button>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleProjectImageUpload} />
+                </label>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {(projectForm.images || []).map((img, i) => (
+                  <div key={i} className="relative group w-20 h-20">
+                    <img src={img} alt="" className="w-full h-full object-cover rounded" />
+                    <button onClick={() => setProjectForm(p => ({ ...p, images: (p.images || []).filter((_, idx) => idx !== i) }))} className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => saveProject(false)}>Save as Draft</Button>
+              <Button onClick={() => saveProject(true)}><Send className="w-4 h-4 mr-2" /> {editingProjectId ? "Update & Publish" : "Publish & Notify"}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Skill Dialog ── */}
+      <Dialog open={showSkillDialog} onOpenChange={setShowSkillDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{editingSkillId ? "Edit Skill" : "Add Skill"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Skill Name (e.g. React)" value={skillForm.name || ""} onChange={e => setSkillForm(p => ({ ...p, name: e.target.value }))} />
+            <div>
+              <label className="text-sm font-medium mb-2 block">Proficiency: {skillForm.level || 50}%</label>
+              <Slider value={[skillForm.level || 50]} onValueChange={([v]) => setSkillForm(p => ({ ...p, level: v }))} min={0} max={100} step={1} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <Select value={skillForm.category || "it"} onValueChange={v => setSkillForm(p => ({ ...p, category: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="it">IT & Software</SelectItem>
+                  <SelectItem value="engineering">Engineering & CAD</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={skillForm.color_token || "primary"} onValueChange={v => setSkillForm(p => ({ ...p, color_token: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="primary">Primary</SelectItem>
+                  <SelectItem value="accent">Accent</SelectItem>
+                  <SelectItem value="secondary">Secondary</SelectItem>
+                  <SelectItem value="orange">Orange</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Input placeholder="Sort Order (0, 1, 2...)" type="number" value={skillForm.sort_order || 0} onChange={e => setSkillForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowSkillDialog(false)}>Cancel</Button>
+              <Button onClick={saveSkill}>{editingSkillId ? "Update" : "Add"} Skill</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Certificate Dialog ── */}
+      <Dialog open={showCertDialog} onOpenChange={setShowCertDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{editingCertId ? "Edit Certificate" : "Add Certificate"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Certificate Title" value={certForm.title || ""} onChange={e => setCertForm(p => ({ ...p, title: e.target.value }))} />
+            <Input placeholder="Issuer (e.g. Coursera, Google)" value={certForm.issuer || ""} onChange={e => setCertForm(p => ({ ...p, issuer: e.target.value }))} />
+            <Input placeholder="Date (e.g. Jan 2025)" value={certForm.date || ""} onChange={e => setCertForm(p => ({ ...p, date: e.target.value }))} />
+            <Select value={certForm.category || "it"} onValueChange={v => setCertForm(p => ({ ...p, category: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="it">IT</SelectItem>
+                <SelectItem value="engineering">Engineering</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Certificate Image</label>
+              <div className="flex gap-2">
+                <Input placeholder="Image URL" value={certForm.image_url || ""} onChange={e => setCertForm(p => ({ ...p, image_url: e.target.value }))} className="flex-1" />
+                <label className="cursor-pointer">
+                  <Button variant="outline" asChild disabled={uploading}><span><Upload className="w-4 h-4 mr-1" />{uploading ? "..." : "Upload"}</span></Button>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleCertImageUpload} />
+                </label>
+              </div>
+              {certForm.image_url && <img src={certForm.image_url} alt="Preview" className="w-full h-32 object-cover rounded" />}
+            </div>
+            <Input placeholder="Sort Order" type="number" value={certForm.sort_order || 0} onChange={e => setCertForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowCertDialog(false)}>Cancel</Button>
+              <Button onClick={saveCert}>{editingCertId ? "Update" : "Add"} Certificate</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
+      {/* ── Work Experience Dialog ── */}
+      <Dialog open={showExpDialog} onOpenChange={setShowExpDialog}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editingExpId ? "Edit Experience" : "Add Experience"}</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <Input placeholder="Job Title" value={expForm.title || ""} onChange={e => setExpForm(p => ({ ...p, title: e.target.value }))} />
+            <Input placeholder="Company" value={expForm.company || ""} onChange={e => setExpForm(p => ({ ...p, company: e.target.value }))} />
+            <div className="grid grid-cols-2 gap-4">
+              <Input placeholder="Duration (e.g. 2023 - Present)" value={expForm.duration || ""} onChange={e => setExpForm(p => ({ ...p, duration: e.target.value }))} />
+              <Input placeholder="Location" value={expForm.location || ""} onChange={e => setExpForm(p => ({ ...p, location: e.target.value }))} />
+            </div>
+            <Textarea placeholder="Description" value={expForm.description || ""} onChange={e => setExpForm(p => ({ ...p, description: e.target.value }))} rows={3} />
+            <Select value={expForm.category || "it"} onValueChange={v => setExpForm(p => ({ ...p, category: v }))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="it">IT</SelectItem>
+                <SelectItem value="engineering">Engineering</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Skills</label>
+              <div className="flex gap-2">
+                <Input placeholder="Add skill" value={expSkillInput} onChange={e => setExpSkillInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addExpSkill())} />
+                <Button variant="outline" onClick={addExpSkill} type="button">Add</Button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {(expForm.skills || []).map((s, i) => (
+                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => setExpForm(p => ({ ...p, skills: (p.skills || []).filter((_, idx) => idx !== i) }))}>{s} <X className="w-3 h-3 ml-1" /></Badge>
+                ))}
+              </div>
+            </div>
+            <Input placeholder="Sort Order" type="number" value={expForm.sort_order || 0} onChange={e => setExpForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} />
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setShowExpDialog(false)}>Cancel</Button>
+              <Button onClick={saveExp}>{editingExpId ? "Update" : "Add"} Experience</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Publish confirmation with subscriber count preview */}
+      <Dialog open={!!publishConfirm} onOpenChange={(o) => { if (!o && !publishing) setPublishConfirm(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm publish</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <p className="text-sm text-muted-foreground">
+              You are about to publish the {publishConfirm?.kind}:
+            </p>
+            <p className="font-medium text-foreground border-l-2 border-primary pl-3">
+              {publishConfirm?.title}
+            </p>
+            <div className="rounded-lg border border-border bg-muted/40 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">Audience preview</span>
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" disabled={audienceLoading || publishing || audience.total === 0} onClick={exportAudienceCSV} title="Export audience breakdown as CSV">
+                    <Download className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="sm" disabled={audienceLoading || publishing} onClick={() => fetchAudience()}>
+                    <RefreshCw className={`w-3.5 h-3.5 ${audienceLoading ? "animate-spin" : ""}`} />
+                  </Button>
+                </div>
+              </div>
+              {audienceLoading ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground py-3">
+                  <RefreshCw className="w-4 h-4 animate-spin" /> Refreshing audience…
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-2xl font-bold text-foreground leading-none">{audience.active}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        active {audience.active === 1 ? "subscriber" : "subscribers"} will receive email
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-muted-foreground/70 leading-none">{audience.inactive}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        inactive / unsubscribed (will be skipped)
+                      </p>
+                    </div>
+                  </div>
+                  {audience.topDomains.length > 0 && (
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">Top email domains</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {audience.topDomains.map(d => (
+                          <Badge key={d.domain} variant="secondary" className="text-[10px]">
+                            {d.domain} · {d.count}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs uppercase tracking-wider text-muted-foreground">Publish note (optional)</label>
+              <Textarea
+                placeholder="Add a comment for this publish event (saved with the notification log)…"
+                value={publishNote}
+                onChange={(e) => setPublishNote(e.target.value)}
+                disabled={publishing}
+                rows={2}
+                maxLength={500}
+              />
+              <p className="text-[10px] text-muted-foreground text-right">{publishNote.length}/500</p>
+            </div>
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" disabled={publishing} onClick={() => setPublishConfirm(null)}>Cancel</Button>
+              <Button
+                disabled={publishing || audienceLoading}
+                onClick={async () => {
+                  const kind = publishConfirm?.kind;
+                  setPublishing(true);
+                  try {
+                    if (kind === "blog") await doSaveBlog(true);
+                    else if (kind === "project") await doSaveProject(true);
+                  } finally {
+                    setPublishing(false);
+                    setPublishConfirm(null);
+                  }
+                }}
+              >
+                {publishing ? (
+                  <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Sending…</>
+                ) : (
+                  <><Send className="w-4 h-4 mr-2" /> Publish & notify</>
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Delete confirmation ── */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(o) => !o && !deleting && setDeleteConfirm(null)}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertTriangle className="w-5 h-5" /> Delete this {deleteConfirm?.kind}?
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-sm">
+                <p>
+                  You are about to permanently delete{" "}
+                  <span className="font-medium text-foreground">"{deleteConfirm?.label}"</span>.
+                  This action cannot be undone from the UI.
+                </p>
+                {deleteLoading ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <RefreshCw className="w-4 h-4 animate-spin" /> Checking what will be removed…
+                  </div>
+                ) : (
+                  <>
+                    <div className="rounded border border-destructive/30 bg-destructive/5 p-3">
+                      <p className="font-semibold text-destructive mb-2">What will be removed:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-foreground">
+                        {deleteConfirm?.warnings.map((w, i) => <li key={i}>{w}</li>)}
+                      </ul>
+                    </div>
+                    <div className="rounded border border-border bg-muted/30 p-3">
+                      <p className="font-semibold mb-1">Recovery options:</p>
+                      <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                        {deleteConfirm?.restorable.map((w, i) => <li key={i}>{w}</li>)}
+                        <li>Open the <span className="font-medium text-foreground">Audit</span> tab to view the saved snapshot of this record.</li>
+                      </ul>
+                    </div>
+                  </>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteLoading || deleting}
+              onClick={(e) => { e.preventDefault(); performDelete(); }}
+            >
+              {deleting ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" />Deleting…</> : "Delete & log"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Audit snapshot viewer ── */}
+      <Dialog open={!!viewAudit} onOpenChange={(o) => !o && setViewAudit(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Audit entry · {viewAudit?.entity_type} · {viewAudit?.action}</DialogTitle>
+          </DialogHeader>
+          {viewAudit && (
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-xs">
+                <div><span className="text-muted-foreground">When:</span> {new Date(viewAudit.created_at).toLocaleString()}</div>
+                <div><span className="text-muted-foreground">By:</span> {viewAudit.performed_by_email || "—"}</div>
+                <div className="col-span-2"><span className="text-muted-foreground">Label:</span> {viewAudit.label || "—"}</div>
+                <div className="col-span-2"><span className="text-muted-foreground">Entity ID:</span> <code className="text-xs">{viewAudit.entity_id}</code></div>
+              </div>
+              {viewAudit.related_counts && Object.keys(viewAudit.related_counts).length > 0 && (
+                <div>
+                  <p className="font-medium mb-1">Related rows at delete time:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(viewAudit.related_counts).map(([k, v]) => (
+                      <Badge key={k} variant="outline">{k}: {String(v)}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <p className="font-medium mb-1">Snapshot (use to manually restore):</p>
+                <pre className="bg-muted/40 border border-border rounded p-3 text-xs overflow-auto max-h-[40vh]">
+{JSON.stringify(viewAudit.snapshot, null, 2)}
+                </pre>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </PageTransition>
+  );
+};
+
+// ── Comment Card ─────────────────────────────────────────────────
+interface CommentCardProps {
+  comment: Comment; onApprove?: () => void; onSpam?: () => void; onDelete?: () => void; showActions?: boolean;
+}
+const CommentCard = ({ comment, onApprove, onSpam, onDelete, showActions }: CommentCardProps) => (
+  <Card>
+    <CardHeader className="pb-3">
+      <div className="flex items-start justify-between">
+        <div><CardTitle className="text-base">{comment.name}</CardTitle><p className="text-sm text-muted-foreground">{comment.email}</p></div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline">Post: {comment.post_id}</Badge>
+          <Badge variant={comment.is_spam ? "destructive" : comment.is_approved ? "default" : "secondary"}>
+            {comment.is_spam ? "Spam" : comment.is_approved ? "Approved" : "Pending"}
+          </Badge>
+        </div>
+      </div>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      <p className="text-foreground">{comment.content}</p>
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-muted-foreground">{new Date(comment.created_at).toLocaleString()}</span>
+        <div className="flex gap-2">
+          {showActions && onApprove && <Button size="sm" onClick={onApprove}><Check className="w-4 h-4 mr-1" />Approve</Button>}
+          {showActions && onSpam && <Button size="sm" variant="outline" onClick={onSpam}><AlertTriangle className="w-4 h-4 mr-1" />Spam</Button>}
+          {!showActions && onApprove && <Button size="sm" variant="outline" onClick={onApprove}><Check className="w-4 h-4 mr-1" />Restore</Button>}
+          {onDelete && <Button size="sm" variant="destructive" onClick={onDelete}><Trash2 className="w-4 h-4 mr-1" />Delete</Button>}
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
+export default AdminModerationPage;

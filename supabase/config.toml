@@ -1,0 +1,16 @@
+project_id = "nozvoldmqakrzlgxkmsa"
+
+[functions.unsubscribe]
+verify_jwt = false
+
+[functions.notify-subscribers]
+verify_jwt = false
+
+[functions.send-otp]
+verify_jwt = false
+
+[functions.verify-otp-reset]
+verify_jwt = false
+
+[functions.manage-users]
+verify_jwt = false
