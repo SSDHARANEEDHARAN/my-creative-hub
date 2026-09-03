@@ -19,6 +19,13 @@ import LazyImage from "@/components/LazyImage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
+const isGoogleDriveVideo = (videoUrl: string) => videoUrl.includes("drive.google.com") || videoUrl.includes("drive.usercontent.google.com");
+
+const getGoogleDrivePreviewUrl = (videoUrl: string) => {
+  const fileId = new URL(videoUrl).searchParams.get("id");
+  return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : videoUrl;
+};
+
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticleBySlug(slug) : undefined;
@@ -531,11 +538,12 @@ const ArticlePage = memo(() => {
                       {article.conclusionVideoUrls.map((videoUrl, idx) => (
                         <div key={idx} className="flex flex-col gap-3 max-w-[600px] w-full items-center">
                           <div className="rounded-[10px] overflow-hidden border border-border bg-black relative group/video shadow-lg w-full aspect-video">
-                            {videoUrl.includes('drive.google.com') ? (
+                            {isGoogleDriveVideo(videoUrl) ? (
                               <iframe
-                                src={videoUrl}
+                                src={getGoogleDrivePreviewUrl(videoUrl)}
                                 className="w-full h-full border-none"
-                                allow="encrypted-media; fullscreen"
+                                allow="autoplay; encrypted-media; fullscreen"
+                                title={`${article.title} project demonstration video ${idx + 1}`}
                                 style={{ borderRadius: '10px' }}
                               />
                             ) : (
@@ -550,9 +558,9 @@ const ArticlePage = memo(() => {
                           </div>
                           
                           <div className="flex flex-col gap-1 text-center w-full px-2">
-                            {videoUrl.includes('drive.google.com') && (
+                            {isGoogleDriveVideo(videoUrl) && (
                               <a 
-                                href={videoUrl.replace('/preview', '/view')} 
+                                href={getGoogleDrivePreviewUrl(videoUrl).replace('/preview', '/view')} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="text-xs text-primary hover:underline mb-1"
@@ -573,11 +581,12 @@ const ArticlePage = memo(() => {
                     </div>
                   ) : article.conclusionVideoUrl ? (
                     <div className="rounded-xl overflow-hidden border border-border bg-muted animate-pulse relative">
-                      {article.conclusionVideoUrl.includes('drive.google.com') ? (
+                      {isGoogleDriveVideo(article.conclusionVideoUrl) ? (
                         <iframe
-                          src={article.conclusionVideoUrl}
+                          src={getGoogleDrivePreviewUrl(article.conclusionVideoUrl)}
                           className="w-full aspect-video border-0"
-                          allow="autoplay"
+                          allow="autoplay; encrypted-media; fullscreen"
+                          title={`${article.title} project demonstration video`}
                           onLoad={(e) => {
                             (e.currentTarget.parentElement as HTMLElement)?.classList.remove('animate-pulse');
                           }}

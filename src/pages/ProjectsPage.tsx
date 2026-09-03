@@ -21,23 +21,6 @@ import {
   engineeringProjects as sharedEngineeringProjects,
 } from "@/data/projectsData";
 
-const ProjectVideo = ({ videoUrl }: { videoUrl?: string }) => {
-  if (!videoUrl) return null;
-
-  return (
-    <div className="border-t border-border bg-muted/30 p-3">
-      <video
-        className="w-full aspect-video object-cover"
-        src={videoUrl}
-        controls
-        preload="metadata"
-        playsInline
-        aria-label="Project demonstration video"
-      />
-    </div>
-  );
-};
-
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
@@ -609,7 +592,6 @@ const ProjectsPage = () => {
                               </span>
                             </div>
                           </div>
-                          <ProjectVideo videoUrl={project.videoUrl} />
                           <div className="p-6">
                             <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                               {project.title}
@@ -693,7 +675,6 @@ const ProjectsPage = () => {
                             </div>
                           )}
                         </div>
-                        <ProjectVideo videoUrl={project.videoUrl} />
                         <div className="p-4">
                           <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
                             {project.title}
