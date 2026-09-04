@@ -19,11 +19,25 @@ import LazyImage from "@/components/LazyImage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-const isGoogleDriveVideo = (videoUrl: string) => videoUrl.includes("drive.google.com") || videoUrl.includes("drive.usercontent.google.com");
+const getGoogleDriveFileId = (videoUrl: string) => {
+  try {
+    const url = new URL(videoUrl);
+    return url.searchParams.get("id") ?? url.pathname.match(/\/file\/d\/([^/]+)/)?.[1] ?? null;
+  } catch {
+    return null;
+  }
+};
+
+const isGoogleDriveVideo = (videoUrl: string) => getGoogleDriveFileId(videoUrl) !== null;
 
 const getGoogleDrivePreviewUrl = (videoUrl: string) => {
-  const fileId = new URL(videoUrl).searchParams.get("id");
+  const fileId = getGoogleDriveFileId(videoUrl);
   return fileId ? `https://drive.google.com/file/d/${fileId}/preview` : videoUrl;
+};
+
+const getGoogleDriveViewUrl = (videoUrl: string) => {
+  const fileId = getGoogleDriveFileId(videoUrl);
+  return fileId ? `https://drive.google.com/file/d/${fileId}/view` : videoUrl;
 };
 
 const ArticlePage = memo(() => {
@@ -583,7 +597,7 @@ const ArticlePage = memo(() => {
                           <div className="flex flex-col gap-1 text-center w-full px-2">
                             {isGoogleDriveVideo(videoUrl) && (
                               <a 
-                                href={getGoogleDrivePreviewUrl(videoUrl).replace('/preview', '/view')} 
+                                href={getGoogleDriveViewUrl(videoUrl)} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="text-xs text-primary hover:underline mb-1"

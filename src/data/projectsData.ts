@@ -221,11 +221,6 @@ import kinematicsLab1 from "@/assets/projects/kinematics-lab-1.png";
 import kinematicsLab2 from "@/assets/projects/kinematics-lab-2.png";
 import kinematicsLab3 from "@/assets/projects/kinematics-lab-3.png";
 import kinematicsLab4 from "@/assets/projects/kinematics-lab-4.png";
-import plcMotorSensorVideo from "@/assets/gallery/plc based motor & sensor control.mp4";
-import plcSensorVideo from "@/assets/gallery/plc based sensor control.mp4";
-import dolThreePhaseVideo from "@/assets/gallery/dol 3 phase circuite.mp4";
-import sensorSimulationsVideo from "@/assets/gallery/sensor simulations.mp4";
-import warehouseSimulationsVideo from "@/assets/gallery/warehouse simulations.mp4";
 
 export interface Project {
   id: number;
@@ -564,8 +559,7 @@ export const engineeringProjects: Project[] = [
     ],
     tags: ["C++", "Embedded Systems", "Closed-Loop Control", "PID / LQR", "Mechatronics"],
     articleUrl: "/projects/article/inverted-pendulum-linear-cart",
-    videoUrl: "https://drive.usercontent.google.com/download?id=1QpsKFfYhkk_xR6drfJVlQoW_-sYphUqe&export=download&confirm=t",
-    videoUrls: [plcMotorSensorVideo, plcSensorVideo, dolThreePhaseVideo, sensorSimulationsVideo, warehouseSimulationsVideo],
+    videoUrl: "https://drive.google.com/file/d/1QpsKFfYhkk_xR6drfJVlQoW_-sYphUqe/preview",
     featured: true,
     category: "engineering",
     },

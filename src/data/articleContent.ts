@@ -1255,7 +1255,7 @@ export const articleContents: ArticleContent[] = [
       "PID and LQR tuning must account for both responsiveness and physical resonance",
       "A well-designed recovery response is critical when balancing systems face external disturbances"
     ],
-    conclusionVideoUrl: "https://drive.usercontent.google.com/download?id=1QpsKFfYhkk_xR6drfJVlQoW_-sYphUqe&export=download&confirm=t"
+    conclusionVideoUrl: "https://drive.google.com/file/d/1QpsKFfYhkk_xR6drfJVlQoW_-sYphUqe/preview"
   },
   {
     id: 130,
