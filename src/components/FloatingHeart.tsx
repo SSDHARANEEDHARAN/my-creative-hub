@@ -1,4 +1,4 @@
-import { Heart } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useState, useImperativeHandle, forwardRef, useRef } from "react";
 
 export interface FloatingHeartHandle {
@@ -37,11 +37,11 @@ const FloatingHeart = forwardRef<FloatingHeartHandle>((_, ref) => {
             pointerEvents: "none",
             zIndex: 9999,
           }}
-          className="floating-heart-anim"
+          className="floating-favorite-anim"
         >
-          <Heart
+          <Sparkles
             size={96}
-            className="text-red-500 drop-shadow-[0_6px_16px_rgba(239,68,68,0.55)]"
+            className="text-primary drop-shadow-[0_6px_16px_hsl(var(--primary)/0.55)]"
             fill="currentColor"
             strokeWidth={1.5}
           />

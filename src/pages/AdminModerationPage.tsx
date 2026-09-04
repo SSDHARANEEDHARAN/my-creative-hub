@@ -1,3 +1,4 @@
+import { getAllProjects, Project as StaticProject } from "@/data/projectsData";
 import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
@@ -44,6 +45,7 @@ interface Project {
   tech_stack: string[] | null; images: string[] | null; github_url: string | null;
   live_url: string | null; article_slug: string | null; featured: boolean | null;
   is_published: boolean; created_at: string;
+  source?: "database" | "static";
 }
 interface Skill {
   id: string; name: string; level: number; category: string;
@@ -68,6 +70,21 @@ const emptyBlog: Partial<BlogPost> = {
 const emptyProject: Partial<Project> = {
   title: "", description: "", category: "it", tech_stack: [], images: [], github_url: "", live_url: "", article_slug: "", featured: false, is_published: false,
 };
+const staticCatalogProjects: Project[] = getAllProjects().map((project: StaticProject) => ({
+  id: `static-${project.id}`,
+  title: project.title,
+  description: project.description,
+  category: project.category,
+  tech_stack: project.tags,
+  images: project.images,
+  github_url: project.githubUrl || null,
+  live_url: project.liveUrl || null,
+  article_slug: project.articleUrl?.split("/").pop() || null,
+  featured: project.featured,
+  is_published: true,
+  created_at: "",
+  source: "static",
+}));
 const emptySkill: Partial<Skill> = {
   name: "", level: 50, category: "it", skill_type: "primary", color_token: "primary", sort_order: 0,
 };
@@ -313,7 +330,12 @@ const AdminModerationPage = () => {
     if (commentsRes.data) setComments(commentsRes.data);
     if (guestsRes.data) setGuests(guestsRes.data);
     if (blogsRes.data) setBlogs(blogsRes.data as BlogPost[]);
-    if (projectsRes.data) setProjects(projectsRes.data as Project[]);
+    const databaseProjects = ((projectsRes.data || []) as Project[]).map(project => ({ ...project, source: "database" as const }));
+    const databaseTitles = new Set(databaseProjects.map(project => project.title.trim().toLowerCase()));
+    setProjects([
+      ...databaseProjects,
+      ...staticCatalogProjects.filter(project => !databaseTitles.has(project.title.trim().toLowerCase())),
+    ]);
     if (skillsRes.data) setSkills(skillsRes.data as Skill[]);
     if (certsRes.data) setCertificates(certsRes.data as Certificate[]);
     if (expsRes.data) setWorkExps(expsRes.data as WorkExperience[]);
@@ -605,7 +627,8 @@ const AdminModerationPage = () => {
 
   // ── Project CRUD ──
   const openProjectForm = (project?: Project) => {
-    if (project) { setProjectForm(project); setEditingProjectId(project.id); }
+    if (project?.source === "static") { setProjectForm({ ...project, id: undefined, source: undefined }); setEditingProjectId(null); }
+    else if (project) { setProjectForm(project); setEditingProjectId(project.id); }
     else { setProjectForm({ ...emptyProject }); setEditingProjectId(null); }
     setTechInput("");
     setShowProjectDialog(true);
@@ -655,6 +678,27 @@ const AdminModerationPage = () => {
       toast({ title: editingProjectId ? "Project saved as draft" : "Project draft created" });
     }
     setShowProjectDialog(false);
+    loadData();
+  };
+
+  const addStaticProjectToDatabase = async (project: Project) => {
+    const { error } = await supabase.from("projects").insert({
+      title: project.title,
+      description: project.description,
+      category: project.category,
+      tech_stack: project.tech_stack || [],
+      images: project.images || [],
+      github_url: project.github_url,
+      live_url: project.live_url,
+      article_slug: project.article_slug,
+      featured: project.featured || false,
+      is_published: true,
+    });
+    if (error) {
+      toast({ title: "Could not add project", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: `${project.title} added to backend` });
     loadData();
   };
 
@@ -982,10 +1026,17 @@ const AdminModerationPage = () => {
                               <Eye className="w-3.5 h-3.5" />
                               <span className="font-mono tabular-nums">{projectViewCounts[project.id] || 0}</span>
                             </div>
+                            {project.source === "static" && <Badge variant="outline">Catalog</Badge>}
                             {project.featured && <Badge variant="outline">Featured</Badge>}
                             <Badge variant={project.is_published ? "default" : "secondary"}>{project.is_published ? "Published" : "Draft"}</Badge>
                             <Button size="sm" variant="outline" onClick={() => openProjectForm(project)}><Edit className="w-3.5 h-3.5" /></Button>
-                            <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("project", project.id, project.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            {project.source === "static" ? (
+                              <Button size="sm" onClick={() => addStaticProjectToDatabase(project)}>
+                                <Upload className="w-3.5 h-3.5 mr-1" /> Add to database
+                              </Button>
+                            ) : (
+                              <Button size="sm" variant="destructive" onClick={() => openDeleteConfirm("project", project.id, project.title)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                            )}
                           </div>
                         </CardContent>
                       </Card>

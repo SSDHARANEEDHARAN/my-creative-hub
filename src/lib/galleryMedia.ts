@@ -27,6 +27,11 @@ export const MEDIA_INFO: Record<string, { title: string; description?: string }>
     title: "Humanoid Robot – Expo CODISSIA",
     description: "Presented by Unitree.",
   },
+  "plc based motor & sensor control": { title: "PLC Based Motor & Sensor Control" },
+  "plc based sensor control": { title: "PLC Based Sensor Control" },
+  "dol 3 phase circuite": { title: "DOL 3 Phase Circuit" },
+  "sensor simulations": { title: "Sensor Simulations" },
+  "warehouse simulations": { title: "Warehouse Simulations" },
   // Images
   "01.1": { title: "FANUC Robot Cell" },
   "01.2": { title: "FANUC Robot Cell" },

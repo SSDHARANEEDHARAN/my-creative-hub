@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import dispensingStepAsset from "@/assets/compact-dispensing-module.step.asset.json";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
-import { Box, ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Heart, MessageSquare, BookOpen } from "lucide-react";
+import { Box, ArrowLeft, Clock, User, Briefcase, CheckCircle, Lightbulb, Wrench, Users, Building, Target, ExternalLink, Eye, Sparkles, MessageSquare, BookOpen } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { getArticleBySlug } from "@/data/articleContent";
@@ -168,7 +168,7 @@ const ArticlePage = memo(() => {
                       onClick={handleLike}
                       className={`flex items-center gap-1.5 transition-colors whitespace-nowrap ${hasLiked ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
                     >
-                      <Heart size={16} fill={hasLiked ? "currentColor" : "none"} />
+                      <Sparkles size={16} fill={hasLiked ? "currentColor" : "none"} />
                       <span className="font-medium text-foreground">{likeCount}</span> Likes
                     </button>
                     <div className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
@@ -281,7 +281,7 @@ const ArticlePage = memo(() => {
                     onClick={handleLike}
                     className={`flex items-center gap-1.5 transition-colors ${hasLiked ? 'text-primary' : 'hover:text-primary'}`}
                   >
-                    <Heart size={16} className={hasLiked ? 'fill-primary' : ''} />
+                    <Sparkles size={16} className={hasLiked ? 'fill-primary' : ''} />
                     {likeCount} likes
                   </button>
                   <span className="flex items-center gap-1.5">
@@ -519,6 +519,29 @@ const ArticlePage = memo(() => {
                     />
                   ))}
                 </div>
+                {project?.videoUrls && project.videoUrls.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    {project.videoUrls.map((videoUrl, index) => (
+                      <div key={videoUrl} className="rounded-xl overflow-hidden border border-border bg-black shadow-lg">
+                        <video
+                          src={videoUrl}
+                          controls
+                          playsInline
+                          preload="metadata"
+                          className="w-full aspect-video object-cover"
+                          title={`${article.title} project video ${index + 1}`}
+                        />
+                        <a
+                          href={videoUrl}
+                          download
+                          className="flex items-center justify-center gap-2 px-4 py-3 text-sm text-primary hover:underline"
+                        >
+                          Download project video {index + 1}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Conclusion Videos */}

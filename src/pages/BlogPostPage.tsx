@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Clock, ArrowLeft, Send, User, Calendar, Tag, Eye, Share2, Twitter, Linkedin, Link2, Facebook, Download } from "lucide-react";
+import { Sparkles, MessageCircle, Clock, ArrowLeft, Send, User, Calendar, Tag, Eye, Share2, Twitter, Linkedin, Link2, Facebook, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
@@ -219,7 +219,7 @@ const BlogPostPage = () => {
                           aria-label={userHasLiked ? "Unlike post" : "Like post"}
                           className={`flex items-center gap-2 px-4 py-2 transition-all duration-200 active:scale-95 ${userHasLiked ? "bg-destructive/10 text-destructive border border-destructive/20" : "bg-secondary text-muted-foreground hover:text-foreground"}`}
                         >
-                          <Heart size={22} fill={userHasLiked ? "currentColor" : "none"} strokeWidth={2} />
+                          <Sparkles size={22} fill={userHasLiked ? "currentColor" : "none"} strokeWidth={2} />
                           {isAdmin && <span className="text-sm font-medium">{likeCount}</span>}
                           {!isAdmin && <span className="text-sm font-medium">{userHasLiked ? "Liked" : "Like"}</span>}
                         </button>

@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye, Download } from "lucide-react";
+import { Sparkles, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
@@ -217,7 +217,7 @@ const BlogPage = () => {
                                   onClick={(e) => handleLike(featuredPost.id, e)}
                                   className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
                                 >
-                                  <Heart size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
+                                  <Sparkles size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
                                   {likeCounts[featuredPost.id] || 0}
                                 </button>
                                 <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
@@ -274,7 +274,7 @@ const BlogPage = () => {
                                   onClick={(e) => handleLike(post.id, e)}
                                   className={`flex items-center gap-1 text-xs sm:text-sm transition-colors ${userLikes.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
                                 >
-                                  <Heart size={14} fill={userLikes.has(post.id) ? "currentColor" : "none"} />
+                                  <Sparkles size={14} fill={userLikes.has(post.id) ? "currentColor" : "none"} />
                                   {likeCounts[post.id] || 0}
                                 </button>
                                 <span className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">

@@ -1,8 +1,10 @@
 import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
-import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
+import { Download, fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
+import GalleryConnectorDownloads from "@/components/GalleryConnectorDownloads";
+import GalleryHobbyConnectors from "@/components/GalleryHobbyConnectors";
 import "./GalleryPage.css";
 
 /**
@@ -178,6 +180,15 @@ class GallerySlider {
         { once: true }
       );
       div.appendChild(video);
+
+      const download = document.createElement("a");
+      download.href = item.src;
+      download.download = `${item.title}.mp4`;
+      download.className = "gallery-slider__download";
+      download.title = `Download ${item.title}`;
+      download.setAttribute("aria-label", `Download ${item.title}`);
+      download.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" /></svg>`;
+      div.appendChild(download);
 
       div.style.cursor = "pointer";
       const playWithSound = () => {
@@ -585,6 +596,9 @@ const GalleryPage = () => {
               </div>
             </div>
           )}
+
+          <GalleryConnectorDownloads />
+          <GalleryHobbyConnectors />
         </main>
       </div>
     </>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessageCircle, Reply, Trash2, Send, Loader2, ArrowLeft, Heart, RefreshCw } from "lucide-react";
+import { MessageCircle, Reply, Trash2, Send, Loader2, ArrowLeft, Sparkles, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -190,7 +190,7 @@ const BlogCommentsPage = () => {
               onClick={() => setActiveTab("likes")}
               className="gap-2"
             >
-              <Heart size={16} />
+              <Sparkles size={16} />
               Likes ({likes.length})
             </Button>
           </div>
@@ -271,7 +271,7 @@ const BlogCommentsPage = () => {
             <div className="space-y-4">
               {likes.length === 0 ? (
                 <div className="text-center py-12 bg-card rounded-xl border border-border">
-                  <Heart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-muted-foreground">No likes yet</p>
                 </div>
               ) : (
@@ -280,7 +280,7 @@ const BlogCommentsPage = () => {
                     <div key={like.id} className="bg-card rounded-xl border border-border p-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center">
-                          <Heart size={18} className="text-red-500" fill="currentColor" />
+                          <Sparkles size={18} className="text-primary" fill="currentColor" />
                         </div>
                         <div>
                           <p className="font-medium">{like.name}</p>

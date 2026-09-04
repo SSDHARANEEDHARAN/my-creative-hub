@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Heart, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Send, Loader2 } from "lucide-react";
+import { Sparkles, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Send, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -373,7 +373,7 @@ const Blog = () => {
                     onClick={(e) => handleLikeClick(featuredPost.id, e)}
                     className={`flex items-center gap-1.5 text-sm transition-colors ${likedPosts.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-red-500"}`}
                   >
-                    <Heart size={18} fill={likedPosts.has(featuredPost.id) ? "currentColor" : "none"} />
+                    <Sparkles size={18} fill={likedPosts.has(featuredPost.id) ? "currentColor" : "none"} />
                     {featuredPost.likes}
                   </button>
                   <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -435,7 +435,7 @@ const Blog = () => {
                       onClick={(e) => handleLikeClick(post.id, e)}
                       className={`flex items-center gap-1 text-sm transition-colors ${likedPosts.has(post.id) ? "text-red-500" : "text-muted-foreground hover:text-red-500"}`}
                     >
-                      <Heart size={16} fill={likedPosts.has(post.id) ? "currentColor" : "none"} />
+                      <Sparkles size={16} fill={likedPosts.has(post.id) ? "currentColor" : "none"} />
                       {post.likes}
                     </button>
                     <span className="flex items-center gap-1 text-sm text-muted-foreground">
@@ -518,7 +518,7 @@ const Blog = () => {
                   onClick={() => handleLikeClick(selectedPost.id)}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors font-medium ${likedPosts.has(selectedPost.id) ? "bg-red-500/10 text-red-500" : "bg-secondary text-muted-foreground hover:text-red-500"}`}
                 >
-                  <Heart size={18} fill={likedPosts.has(selectedPost.id) ? "currentColor" : "none"} />
+                  <Sparkles size={18} fill={likedPosts.has(selectedPost.id) ? "currentColor" : "none"} />
                   {posts.find((p) => p.id === selectedPost.id)?.likes} Likes
                 </button>
                 <button
@@ -572,7 +572,7 @@ const Blog = () => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Heart className="text-red-500" size={20} />
+              <Sparkles className="text-primary" size={20} />
               Like this article
             </DialogTitle>
           </DialogHeader>
@@ -601,7 +601,7 @@ const Blog = () => {
               {isSubmitting ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : (
-                <Heart className="w-4 h-4 mr-2" />
+                <Sparkles className="w-4 h-4 mr-2" />
               )}
               Like Article
             </Button>

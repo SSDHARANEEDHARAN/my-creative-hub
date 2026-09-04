@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, FileText, Code2, Cog, Eye, Heart, MessageSquare, Factory } from "lucide-react";
+import { ExternalLink, FileText, Code2, Cog, Eye, Sparkles, MessageSquare, Factory } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
 import ImageLightbox from "@/components/ImageLightbox";
@@ -613,7 +613,7 @@ const ProjectsPage = () => {
                               <div className="flex items-center gap-3 mb-3 text-xs text-muted-foreground">
                                 <span className="flex items-center gap-1"><Eye size={13} /> {viewCounts[String(project.id)] || 0} views</span>
                                 <button onClick={(e) => { e.stopPropagation(); handleLikeProject(project.id); }} className="flex items-center gap-1 hover:text-primary transition-colors">
-                                  <Heart size={13} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0} likes
+                                  <Sparkles size={13} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0} likes
                                 </button>
                                 <span className="flex items-center gap-1"><MessageSquare size={13} /> {commentCounts[String(project.id)] || 0}</span>
                               </div>
@@ -696,7 +696,7 @@ const ProjectsPage = () => {
                             <div className="flex items-center gap-3 mb-2 text-xs text-muted-foreground relative">
                               <span className="flex items-center gap-1"><Eye size={12} /> {viewCounts[String(project.id)] || 0}</span>
                               <button onClick={(e) => { e.stopPropagation(); handleLikeProject(project.id); }} className="flex items-center gap-1 hover:text-primary transition-colors">
-                                <Heart size={12} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0}
+                                <Sparkles size={12} fill={likedIds.has(String(project.id)) ? "currentColor" : "none"} /> {likeCounts[String(project.id)] || 0}
                               </button>
                               <span className="flex items-center gap-1"><MessageSquare size={12} /> {commentCounts[String(project.id)] || 0}</span>
                             </div>

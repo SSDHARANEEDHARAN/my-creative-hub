@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Heart, BookOpen, MessageSquare, Ban, Box, ChevronDown } from "lucide-react";
+import { Factory, Loader2, ShieldX, Clock3, Mail, FileText, Eye, Sparkles, BookOpen, MessageSquare, Ban, Box, ChevronDown } from "lucide-react";
 import Model3DViewer from "@/components/Model3DViewer";
 import { getProjectModel, preloadProjectModel } from "@/data/projectModels";
 import { Button } from "@/components/ui/button";
@@ -411,7 +411,7 @@ const IndustrialProjectsPage = () => {
                               }}
                               className="flex items-center gap-1 whitespace-nowrap hover:text-primary transition-colors"
                             >
-                              <Heart
+                              <Sparkles
                                 size={12}
                                 className={userLikes[String(project.id)] ? "text-red-500 fill-red-500" : "text-primary/70"}
                               />
