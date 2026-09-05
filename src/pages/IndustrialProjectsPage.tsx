@@ -19,14 +19,14 @@ import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const IndustrialProjectsPage = () => {
-  const { user, isAdmin, userStatus, isLoading: authLoading } = useAuth();
+  const { user, isAdmin, userStatus, industrialAccess, isLoading: authLoading } = useAuth();
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [lightbox, setLightbox] = useState<{ images: { src: string; alt: string }[]; index: number } | null>(null);
   const [modelProject, setModelProject] = useState<{ id: number; title: string } | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
 
-  const isApproved = isAdmin || userStatus === "approved";
+  const isApproved = isAdmin || (userStatus === "approved" && industrialAccess);
   const isRejected = userStatus === "restricted" || userStatus === "rejected";
   const isPending = userStatus === "pending";
   const isTemporaryLocked = userStatus === "temporary_locked";

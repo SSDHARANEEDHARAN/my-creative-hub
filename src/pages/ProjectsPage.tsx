@@ -404,7 +404,7 @@ const ProjectsPage = () => {
   const [showAccessModal, setShowAccessModal] = useState(false);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
 
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, industrialAccess } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || guest?.name || null;
@@ -537,7 +537,7 @@ const ProjectsPage = () => {
                 <Cog size={18} />
                 Engineering ({sharedEngineeringProjects.length})
               </button>
-              {user && (
+              {user && industrialAccess && (
                 <button
                   onClick={() => navigate("/industrial-projects")}
                   className="flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 font-medium transition-all duration-300 border-2 text-sm sm:text-base bg-card text-muted-foreground hover:bg-muted border-border hover:border-foreground"

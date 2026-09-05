@@ -147,7 +147,7 @@ SmallProjectLinks.displayName = "SmallProjectLinks";
 /* ------------------------------------------------------------------ */
 const Projects = () => {
   const navigate = useNavigate();
-  const { user, isAdmin, userStatus } = useAuth();
+  const { user, isAdmin, userStatus, industrialAccess } = useAuth();
   const [activeTab, setActiveTab] = useState<"it" | "engineering">("it");
   const [showIndustrial, setShowIndustrial] = useState(false);
   const projects = activeTab === "it" ? itProjects : engineeringProjects;
@@ -226,7 +226,7 @@ const Projects = () => {
               <Cog size={16} />
               Engineering ({engineeringProjects.length})
             </button>
-            {user && (
+            {user && industrialAccess && (
               <button
                 onClick={handleIndustrialToggle}
                 className={`flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 font-medium transition-all duration-200 w-full sm:w-auto text-sm sm:text-base ${
@@ -387,7 +387,7 @@ const Projects = () => {
         </motion.div>
 
         {/* ========== INDUSTRIAL PROJECTS ========== */}
-        {user && showIndustrial && (
+        {user && industrialAccess && showIndustrial && (
           <div className="mt-8 sm:mt-10 mb-8 sm:mb-10">
             <div className="mb-8">
               <div className="flex justify-center sm:justify-end mb-4">
