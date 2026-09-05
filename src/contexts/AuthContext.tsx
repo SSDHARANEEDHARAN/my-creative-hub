@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   userStatus: string | null;
+  industrialAccess: boolean;
   blockedIp: string | null;
   tempLockedIp: string | null;
   lockedAt: string | null;
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStatus, setUserStatus] = useState<string | null>(null);
+  const [industrialAccess, setIndustrialAccess] = useState(false);
   const [blockedIp, setBlockedIp] = useState<string | null>(null);
   const [tempLockedIp, setTempLockedIp] = useState<string | null>(null);
   const [lockedAt, setLockedAt] = useState<string | null>(null);
@@ -57,18 +59,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const checkUserStatus = useCallback(async (userId: string): Promise<string> => {
+  const checkUserStatus = useCallback(async (userId: string): Promise<{ status: string; industrialAccess: boolean }> => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("status")
+        .select("status, industrial_access")
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (error || !data) return "pending";
-      return data.status || "pending";
+      if (error || !data) return { status: "pending", industrialAccess: false };
+      return { status: data.status || "pending", industrialAccess: !!(data as any).industrial_access };
     } catch {
-      return "pending";
+      return { status: "pending", industrialAccess: false };
     }
   }, []);
 
@@ -147,7 +149,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     ]);
 
     setIsAdmin(adminStatus || isOwnerAdmin);
-    setUserStatus(adminStatus || isOwnerAdmin ? "approved" : status);
+    setUserStatus(adminStatus || isOwnerAdmin ? "approved" : status.status);
+    setIndustrialAccess(adminStatus || isOwnerAdmin ? true : status.industrialAccess);
   }, [checkAdminRole, checkUserStatus, syncUserRole]);
 
   useEffect(() => {
@@ -162,6 +165,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!nextSession?.user) {
         setIsAdmin(false);
         setUserStatus(null);
+        setIndustrialAccess(false);
         setIsLoading(false);
         return;
       }
@@ -204,6 +208,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         setIsAdmin(false);
         setUserStatus(null);
+        setIndustrialAccess(false);
         setIsLoading(false);
       });
 
@@ -285,6 +290,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         isAdmin,
         userStatus,
+        industrialAccess,
         blockedIp,
         tempLockedIp,
         lockedAt,

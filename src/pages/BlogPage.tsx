@@ -11,6 +11,7 @@ import { Sparkles, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye, 
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
+import ExplorationSection from "@/components/ExplorationSection";
 import { useBlogListCounts } from "@/hooks/useBlogData";
 import { useDownloadCounts } from "@/hooks/useDownloadCount";
 
@@ -306,6 +307,8 @@ const BlogPage = () => {
               )}
             </div>
           </section>
+
+          <ExplorationSection />
         </main>
         <Footer />
 

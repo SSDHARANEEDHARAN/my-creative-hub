@@ -305,6 +305,48 @@ export type Database = {
         }
         Relationships: []
       }
+      explorations: {
+        Row: {
+          contact_note: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          is_visible: boolean
+          sort_order: number
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          contact_note?: string | null
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          is_visible?: boolean
+          sort_order?: number
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          contact_note?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          is_visible?: boolean
+          sort_order?: number
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       guest_visitors: {
         Row: {
           email: string
@@ -455,6 +497,7 @@ export type Database = {
           display_name: string | null
           email: string | null
           id: string
+          industrial_access: boolean
           last_ip: string | null
           locked_at: string | null
           status: string
@@ -466,6 +509,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          industrial_access?: boolean
           last_ip?: string | null
           locked_at?: string | null
           status?: string
@@ -477,6 +521,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           id?: string
+          industrial_access?: boolean
           last_ip?: string | null
           locked_at?: string | null
           status?: string
