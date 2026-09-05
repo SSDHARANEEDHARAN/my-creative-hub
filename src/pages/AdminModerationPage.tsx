@@ -18,10 +18,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import ReactMarkdown from "react-markdown";
 import GalleryManager from "@/components/admin/GalleryManager";
+import ExplorationManager from "@/components/admin/ExplorationManager";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
-  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw, Globe,
+  Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw, Globe, Compass,
 } from "lucide-react";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -913,6 +914,7 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="guests"><Users className="w-4 h-4 mr-1" />Guests</TabsTrigger>
                 <TabsTrigger value="notifications"><Send className="w-4 h-4 mr-1" />Notifications</TabsTrigger>
                 <TabsTrigger value="visits"><Globe className="w-4 h-4 mr-1" />Visits</TabsTrigger>
+                <TabsTrigger value="explorations"><Compass className="w-4 h-4 mr-1" />Explorations</TabsTrigger>
               </TabsList>
 
               {/* ── Blogs Tab ── */}
@@ -1336,6 +1338,10 @@ const AdminModerationPage = () => {
                     )}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="explorations" className="space-y-4">
+                <ExplorationManager />
               </TabsContent>
 
               <TabsContent value="visits" className="space-y-4">
