@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
-import { Download, fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
+import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
 import GalleryConnectorDownloads from "@/components/GalleryConnectorDownloads";
 import GalleryHobbyConnectors from "@/components/GalleryHobbyConnectors";
