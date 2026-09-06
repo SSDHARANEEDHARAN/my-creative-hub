@@ -567,19 +567,12 @@ export const engineeringProjects: Project[] = [
       id: 130,
       title: "Arduino Drawing Plotter",
       description: "Computer-controlled pen plotter that converts digital drawings into precise 2-axis motion using Arduino-based stepper control and a servo pen-lift mechanism.",
-      images: [
-        "https://lh3.googleusercontent.com/d/1paigEUjDgk1PC6iVSKU3HTayePtXHZI1=w1600",
-        "https://lh3.googleusercontent.com/d/1yJl_XSbp7m0qixrHdkj19uWYhAt8VSMv=w1600",
-        "https://lh3.googleusercontent.com/d/1fEeH01Mbad_P1Z9LkQb6NLoKXjPQ-9Q9=w1600",
-        "https://lh3.googleusercontent.com/d/1t40bVszcd323u_9wnlfil59px-RbZ1zt=w1600",
-        "https://lh3.googleusercontent.com/d/1_J1_oexbve2vo4O58-36HDvzMMmmIXXx=w1600",
-        "https://lh3.googleusercontent.com/d/1DigFoL884X6gneRein1U3hka-OlgIZm9=w1600",
-      ],
-      tags: ["Arduino", "C++", "Stepper Motors", "Servo Control", "Mechatronics"],
+      images: [cncPlotter1, cncPlotter2, cncPlotter3, cncPlotter4, cncPlotter5, cncPlotter6],
+      tags: ["Arduino", "CNC G-Code", "Stepper Motors", "Servo Motor", "Hardware Prototyping"],
       articleUrl: "/projects/article/arduino-drawing-plotter",
       featured: true,
       category: "engineering",
-      videoUrl: "https://drive.usercontent.google.com/download?id=1WrhGGMJ9Az5C3tWdale2eHdiLw6ssHgn&export=download&confirm=t",
+      videoUrl: "https://drive.google.com/file/d/1WrhGGMJ9Az5C3tWdale2eHdiLw6ssHgn/view",
   },
 ];
 
