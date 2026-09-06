@@ -609,8 +609,8 @@ const ArticlePage = memo(() => {
                               className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed italic opacity-80 transition-all duration-300 group-hover/video:text-red-600 group-hover/video:not-italic group-hover/video:opacity-100"
                               style={{ fontFamily: '"Times New Roman", Times, serif' }}
                             >
-                              Disclaimer: This video is presented exclusively for portfolio self-achievement purposes. 
-                              The product and content are officially for Janatics India Pvt Ltd client use.
+                              Disclaimer: This video is presented exclusively for portfolio self-achievement purposes.
+                              {project?.category === "industrial" && " The product and content are officially for Janatics India Pvt Ltd client use."}
                             </p>
                           </div>
                         </div>
