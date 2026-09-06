@@ -644,6 +644,27 @@ const ArticlePage = memo(() => {
                       )}
                     </div>
                   ) : null}
+                  {article.conclusionVideoUrl && !article.conclusionVideoUrls?.length && (
+                    <div className="mt-3 flex flex-col gap-1 text-center px-2">
+                      {isGoogleDriveVideo(article.conclusionVideoUrl) && (
+                        <a
+                          href={getGoogleDriveViewUrl(article.conclusionVideoUrl)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline"
+                        >
+                          Trouble loading? View on Google Drive
+                        </a>
+                      )}
+                      <p
+                        className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed italic opacity-80"
+                        style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                      >
+                        Disclaimer: This video is presented exclusively for portfolio self-achievement purposes.
+                        {project?.category === "industrial" && " The product and content are officially for Janatics India Pvt Ltd client use."}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
