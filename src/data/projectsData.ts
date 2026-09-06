@@ -59,6 +59,12 @@ import codeflowLearn1 from "@/assets/projects/codeflow-learn-1.png";
 import codeflowLearn2 from "@/assets/projects/codeflow-learn-2.png";
 import codeflowLearn3 from "@/assets/projects/codeflow-learn-3.png";
 import codeflowLearn4 from "@/assets/projects/codeflow-learn-4.png";
+import cncPlotter1 from "@/assets/projects/cnc-plotter-1.jpg";
+import cncPlotter2 from "@/assets/projects/cnc-plotter-2.jpg";
+import cncPlotter3 from "@/assets/projects/cnc-plotter-3.jpg";
+import cncPlotter4 from "@/assets/projects/cnc-plotter-4.jpg";
+import cncPlotter5 from "@/assets/projects/cnc-plotter-5.jpg";
+import cncPlotter6 from "@/assets/projects/cnc-plotter-6.jpg";
 import mazeRobot1 from "@/assets/projects/maze-robot-1.jpg";
 import mazeRobot2 from "@/assets/projects/maze-robot-2.jpg";
 import mazeRobot3 from "@/assets/projects/maze-robot-3.jpg";
@@ -567,19 +573,12 @@ export const engineeringProjects: Project[] = [
       id: 130,
       title: "Arduino Drawing Plotter",
       description: "Computer-controlled pen plotter that converts digital drawings into precise 2-axis motion using Arduino-based stepper control and a servo pen-lift mechanism.",
-      images: [
-        "https://lh3.googleusercontent.com/d/1paigEUjDgk1PC6iVSKU3HTayePtXHZI1=w1600",
-        "https://lh3.googleusercontent.com/d/1yJl_XSbp7m0qixrHdkj19uWYhAt8VSMv=w1600",
-        "https://lh3.googleusercontent.com/d/1fEeH01Mbad_P1Z9LkQb6NLoKXjPQ-9Q9=w1600",
-        "https://lh3.googleusercontent.com/d/1t40bVszcd323u_9wnlfil59px-RbZ1zt=w1600",
-        "https://lh3.googleusercontent.com/d/1_J1_oexbve2vo4O58-36HDvzMMmmIXXx=w1600",
-        "https://lh3.googleusercontent.com/d/1DigFoL884X6gneRein1U3hka-OlgIZm9=w1600",
-      ],
-      tags: ["Arduino", "C++", "Stepper Motors", "Servo Control", "Mechatronics"],
+      images: [cncPlotter1, cncPlotter2, cncPlotter3, cncPlotter4, cncPlotter5, cncPlotter6],
+      tags: ["Arduino", "CNC G-Code", "Stepper Motors", "Servo Motor", "Hardware Prototyping"],
       articleUrl: "/projects/article/arduino-drawing-plotter",
       featured: true,
       category: "engineering",
-      videoUrl: "https://drive.usercontent.google.com/download?id=1WrhGGMJ9Az5C3tWdale2eHdiLw6ssHgn&export=download&confirm=t",
+      videoUrl: "https://drive.google.com/file/d/1WrhGGMJ9Az5C3tWdale2eHdiLw6ssHgn/view",
   },
 ];
 
