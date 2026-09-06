@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download, FileText } from "lucide-react";
+import { Factory, Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download, FileText } from "lucide-react";
 import AboutResumeManager from "@/components/admin/AboutResumeManager";
 
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ interface UserProfile {
   lastLogout: string | null;
   activityCount: number;
   last_ip: string | null;
+  industrial_access?: boolean;
 }
 
 const AdminDashboardPage = () => {
@@ -112,6 +113,27 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const toggleIndustrialAccess = async (u: UserProfile) => {
+    setActionLoading(`ind-${u.user_id}`);
+    try {
+      const next = !u.industrial_access;
+      const { error } = await supabase
+        .from("profiles")
+        .update({ industrial_access: next })
+        .eq("user_id", u.user_id);
+      if (error) throw error;
+      setUsers((prev) => prev.map((p) => (p.user_id === u.user_id ? { ...p, industrial_access: next } : p)));
+      toast({
+        title: next ? "Industrial access approved" : "Industrial access removed",
+        description: u.email || u.user_id,
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Could not update access.", variant: "destructive" });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const fetchUserHistory = async (u: UserProfile) => {
     setHistoryUser(u);
     setHistoryLoading(true);
@@ -168,6 +190,7 @@ const AdminDashboardPage = () => {
             <TableHead>IP Address</TableHead>
             <TableHead>Verification Status</TableHead>
             <TableHead>Role</TableHead>
+            <TableHead>Industrial Access</TableHead>
             <TableHead>Last Login</TableHead>
             <TableHead>Joined</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -176,7 +199,7 @@ const AdminDashboardPage = () => {
         <TableBody>
           {userList.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+              <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
                 No users found
               </TableCell>
             </TableRow>
@@ -193,6 +216,23 @@ const AdminDashboardPage = () => {
                   ) : (
                     <Badge variant="outline">User</Badge>
                   )}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={`h-7 text-xs ${u.industrial_access ? "text-green-600 hover:text-green-700" : "text-muted-foreground"}`}
+                    onClick={() => toggleIndustrialAccess(u)}
+                    disabled={actionLoading === `ind-${u.user_id}`}
+                  >
+                    {actionLoading === `ind-${u.user_id}` ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : u.industrial_access ? (
+                      <><Factory className="w-3 h-3 mr-1" />Approved</>
+                    ) : (
+                      <><Factory className="w-3 h-3 mr-1" />Not allowed</>
+                    )}
+                  </Button>
                 </TableCell>
                 <TableCell className="text-xs">{formatDate(u.lastLogin)}</TableCell>
                 <TableCell className="text-xs">{formatDate(u.created_at)}</TableCell>
