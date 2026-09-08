@@ -57,6 +57,7 @@ const connectors: Connector[] = [
   { name: "Gemini", description: "Google AI for multimodal generation", url: "https://gemini.google.com/", slug: "googlegemini" },
   { name: "Kimi", description: "Moonshot AI long-context assistant", url: "https://kimi.moonshot.cn/" },
   { name: "DeepSeek", description: "Open-source reasoning & code AI", url: "https://www.deepseek.com/", slug: "deepseek" },
+  { name: "GPT-6 Astra", description: "OpenAI's most capable model — reasoning, coding & agentic tasks", url: "https://openai.com/index/gpt-6-astra/", slug: "openai" },
   { name: "Ollama", description: "Local LLM runtime for on-device models", url: "https://ollama.com/", slug: "ollama" },
   { name: "n8n", description: "Self-hostable workflow & automation engine", url: "https://n8n.io/", slug: "n8n" },
 ];
