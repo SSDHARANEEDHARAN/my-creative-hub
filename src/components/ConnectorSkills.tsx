@@ -15,6 +15,9 @@ const connectors: Connector[] = [
   { name: "PTC Creo", description: "Parametric 3D CAD for product design", url: "https://www.ptc.com/en/products/creo" },
   { name: "Autodesk AutoCAD", description: "2D drafting and technical documentation", url: "https://www.autodesk.com/products/autocad/overview", slug: "autodesk" },
   { name: "Ansys", description: "FEA / structural and thermal simulation", url: "https://www.ansys.com/", slug: "ansys" },
+  { name: "Leo AI", description: "AI co-pilot for mechanical engineers — parts, concept design & 3D models", url: "https://www.getleo.ai/downloads" },
+  { name: "MecAgent", description: "AI CAD copilot to automate SolidWorks, CATIA & Inventor tasks", url: "https://mecagent.com/" },
+  { name: "Creality", description: "Consumer 3D printers, laser engravers & 3D scanners", url: "https://www.creality.com/" },
   { name: "Factory I/O", description: "3D factory simulation for PLC training", url: "https://factoryio.com/" },
   { name: "Siemens TIA Portal", description: "S7 PLC & HMI programming environment", url: "https://www.siemens.com/global/en/products/automation/industry-software/automation-software/tia-portal.html", slug: "siemens" },
   { name: "GX / GT Works3", description: "Mitsubishi PLC & GOT HMI programming", url: "https://www.mitsubishielectric.com/fa/products/software/gx-works3/index.html" },
@@ -54,6 +57,7 @@ const connectors: Connector[] = [
   { name: "Gemini", description: "Google AI for multimodal generation", url: "https://gemini.google.com/", slug: "googlegemini" },
   { name: "Kimi", description: "Moonshot AI long-context assistant", url: "https://kimi.moonshot.cn/" },
   { name: "DeepSeek", description: "Open-source reasoning & code AI", url: "https://www.deepseek.com/", slug: "deepseek" },
+  { name: "GPT-6 Astra", description: "OpenAI's most capable model — reasoning, coding & agentic tasks", url: "https://openai.com/index/gpt-6-astra/", slug: "openai" },
   { name: "Ollama", description: "Local LLM runtime for on-device models", url: "https://ollama.com/", slug: "ollama" },
   { name: "n8n", description: "Self-hostable workflow & automation engine", url: "https://n8n.io/", slug: "n8n" },
 ];
