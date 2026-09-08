@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 import { ExternalLink } from "lucide-react";
 
 interface Connector {
@@ -71,44 +71,64 @@ const initials = (name: string) =>
     .map((w) => w[0].toUpperCase())
     .join("");
 
-const ConnectorCard = memo(({ c, index }: { c: Connector; index: number }) => (
-  <a
-    href={c.url}
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label={`${c.name} — open official site`}
-    className="group flex items-start gap-3 p-4 bg-card border-2 border-border hover:border-foreground transition-all duration-300"
-    style={{ animationDelay: `${index * 40}ms` }}
-  >
-    <span className="shrink-0 w-10 h-10 border-2 border-border group-hover:border-foreground flex items-center justify-center bg-background">
-      {c.slug ? (
-        <img
-          src={`https://cdn.simpleicons.org/${c.slug}/currentColor`}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          width={20}
-          height={20}
-          className="w-5 h-5 text-foreground"
-          onError={(e) => {
-            const el = e.currentTarget;
-            el.style.display = "none";
-            el.parentElement?.setAttribute("data-fallback", initials(c.name));
-          }}
-        />
-      ) : (
-        <span className="text-xs font-bold text-foreground">{initials(c.name)}</span>
-      )}
-    </span>
-    <span className="min-w-0 flex-1">
-      <span className="flex items-center gap-1.5">
-        <span className="font-semibold text-sm sm:text-base text-foreground truncate">{c.name}</span>
-        <ExternalLink size={13} className="shrink-0 text-muted-foreground group-hover:text-foreground" />
+const domainOf = (url: string) => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return "";
+  }
+};
+
+const ConnectorCard = memo(({ c, index }: { c: Connector; index: number }) => {
+  // Logo sources tried in order: Simple Icons (monochrome, on-brand) → site favicon → initials
+  const sources = useMemo(() => {
+    const list: string[] = [];
+    if (c.slug) list.push(`https://cdn.simpleicons.org/${c.slug}/currentColor`);
+    const domain = domainOf(c.url);
+    if (domain) {
+      list.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=128`);
+      list.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+    }
+    return list;
+  }, [c.slug, c.url]);
+
+  const [srcIndex, setSrcIndex] = useState(0);
+  const src = sources[srcIndex];
+
+  return (
+    <a
+      href={c.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${c.name} — open official site`}
+      className="group flex items-start gap-3 p-4 bg-card border-2 border-border hover:border-foreground transition-all duration-300"
+      style={{ animationDelay: `${index * 40}ms` }}
+    >
+      <span className="shrink-0 w-10 h-10 border-2 border-border group-hover:border-foreground flex items-center justify-center bg-background overflow-hidden">
+        {src ? (
+          <img
+            src={src}
+            alt={`${c.name} logo`}
+            loading="lazy"
+            width={20}
+            height={20}
+            className="w-5 h-5 object-contain text-foreground"
+            onError={() => setSrcIndex((i) => i + 1)}
+          />
+        ) : (
+          <span className="text-xs font-bold text-foreground">{initials(c.name)}</span>
+        )}
       </span>
-      <span className="block text-xs sm:text-sm text-muted-foreground mt-1">{c.description}</span>
-    </span>
-  </a>
-));
+      <span className="min-w-0 flex-1">
+        <span className="flex items-center gap-1.5">
+          <span className="font-semibold text-sm sm:text-base text-foreground truncate">{c.name}</span>
+          <ExternalLink size={13} className="shrink-0 text-muted-foreground group-hover:text-foreground" />
+        </span>
+        <span className="block text-xs sm:text-sm text-muted-foreground mt-1">{c.description}</span>
+      </span>
+    </a>
+  );
+});
 
 ConnectorCard.displayName = "ConnectorCard";
 
