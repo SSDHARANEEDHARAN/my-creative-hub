@@ -13,6 +13,11 @@ const VIDEO_EXTENSIONS = ["mp4", "webm", "mov"];
 
 export const MEDIA_INFO: Record<string, { title: string; description?: string }> = {
   // Videos
+  "gallery-drive-video": {
+    title: "Sweet Memories — We Made the Day (2023)",
+    description:
+      "A day we made memorable in 2023 — a sweet little frame of moments worth keeping forever.",
+  },
   "1-nova": { title: "Personal AI – Assistance" },
   "2-nova": {
     title: "AI NOVA – Personal & Task Assistive",
