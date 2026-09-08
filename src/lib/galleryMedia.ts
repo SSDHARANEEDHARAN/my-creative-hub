@@ -2,6 +2,8 @@
 // titles/descriptions. Shared by the public Gallery page (fallback) and the admin
 // "import into database" action.
 
+import driveVideoAsset from "../assets/gallery-drive-video.mp4.asset.json";
+
 const mediaModules = import.meta.glob(
   "../assets/gallery/*.{jpg,jpeg,png,webp,avif,gif,mp4,webm,mov,JPG,JPEG,PNG,WEBP,AVIF,GIF,MP4,WEBM,MOV}",
   { eager: true, import: "default", query: "?url" }
@@ -87,6 +89,15 @@ export const BUNDLED_MEDIA: BundledMedia[] = (() => {
       title: m.info?.title ?? fileNameToTitle(m.base).toUpperCase() ?? "VIDEO",
       description: m.info?.description,
     })),
+    // CDN-hosted video (too large for the repo)
+    {
+      src: driveVideoAsset.url,
+      base: "gallery-drive-video",
+      ext: "mp4",
+      type: "video" as const,
+      title: MEDIA_INFO["gallery-drive-video"]?.title ?? "GALLERY VIDEO",
+      description: MEDIA_INFO["gallery-drive-video"]?.description,
+    },
     ...images.map((m, i) => ({
       src: m.src,
       base: m.base,
