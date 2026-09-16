@@ -41,7 +41,7 @@ const connectors: Connector[] = [
   { name: "Google Docs", description: "Collaborative documentation & writing", url: "https://docs.google.com/", slug: "googledocs" },
   { name: "Airtable", description: "Low-code database & project tracking", url: "https://www.airtable.com/", slug: "airtable" },
   { name: "Microsoft Outlook", description: "Email & calendar productivity suite", url: "https://outlook.live.com/", slug: "microsoftoutlook" },
-  { name: "GitHub API", description: "Version control & code collaboration", url: "https://github.com/", slug: "github" },
+  { name: "GitHub", description: "Version control, code hosting & collaboration", url: "https://github.com/", slug: "github" },
   { name: "Google Slides", description: "Presentation & pitch deck creation", url: "https://slides.google.com/", slug: "googleslides" },
   { name: "Microsoft Excel", description: "Advanced data analysis & reporting", url: "https://www.microsoft.com/microsoft-365/excel", slug: "microsoftexcel" },
   { name: "Microsoft OneDrive", description: "Cloud file storage & sharing", url: "https://onedrive.live.com/", slug: "microsoftonedrive" },
@@ -61,6 +61,17 @@ const connectors: Connector[] = [
   { name: "GPT-6 Astra", description: "OpenAI's most capable model — reasoning, coding & agentic tasks", url: "https://openai.com/index/gpt-6-astra/", slug: "openai" },
   { name: "Ollama", description: "Local LLM runtime for on-device models", url: "https://ollama.com/", slug: "ollama" },
   { name: "n8n", description: "Self-hostable workflow & automation engine", url: "https://n8n.io/", slug: "n8n" },
+  { name: "Vercel", description: "Frontend hosting & serverless deployment platform", url: "https://vercel.com/", slug: "vercel" },
+  { name: "Hostinger", description: "Web hosting, domains & cloud infrastructure", url: "https://www.hostinger.com/", slug: "hostinger" },
+  { name: "Firebase", description: "Google's app platform — auth, realtime DB & hosting", url: "https://firebase.google.com/", slug: "firebase" },
+  { name: "MongoDB", description: "NoSQL document database for modern applications", url: "https://www.mongodb.com/", slug: "mongodb" },
+  { name: "Universal Gcode Sender", description: "Open-source CNC controller for GRBL & G-code streaming", url: "https://winder.github.io/ugs_website/" },
+  { name: "ThingSpeak", description: "IoT analytics platform for sensor data & visualization", url: "https://thingspeak.mathworks.com/", slug: "thingspeak" },
+  { name: "Blynk", description: "No-code IoT app builder for hardware dashboards", url: "https://blynk.io/", slug: "blynk" },
+  { name: "Node-RED", description: "Flow-based programming for IoT wiring & automation", url: "https://nodered.org/", slug: "nodered" },
+  { name: "InfluxDB & Grafana", description: "Time-series storage & observability dashboards", url: "https://grafana.com/", slug: "grafana" },
+  { name: "Ubidots", description: "IoT platform for device data & visualization", url: "https://ubidots.com/" },
+  { name: "AWS IoT Core", description: "Managed cloud service for IoT device connectivity", url: "https://aws.amazon.com/iot-core/", slug: "amazonaws" },
 ];
 
 const initials = (name: string) =>
