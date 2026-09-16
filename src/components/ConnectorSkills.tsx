@@ -17,6 +17,7 @@ const connectors: Connector[] = [
   { name: "Ansys", description: "FEA / structural and thermal simulation", url: "https://www.ansys.com/", slug: "ansys" },
   { name: "Leo AI", description: "AI co-pilot for mechanical engineers — parts, concept design & 3D models", url: "https://www.getleo.ai/downloads" },
   { name: "MecAgent", description: "AI CAD copilot to automate SolidWorks, CATIA & Inventor tasks", url: "https://mecagent.com/" },
+  { name: "YouExec", description: "Professional business presentations & spreadsheet templates library", url: "https://youexec.com/library" },
   { name: "Creality", description: "Consumer 3D printers, laser engravers & 3D scanners", url: "https://www.creality.com/" },
   { name: "Factory I/O", description: "3D factory simulation for PLC training", url: "https://factoryio.com/" },
   { name: "Siemens TIA Portal", description: "S7 PLC & HMI programming environment", url: "https://www.siemens.com/global/en/products/automation/industry-software/automation-software/tia-portal.html", slug: "siemens" },
