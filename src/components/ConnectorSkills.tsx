@@ -72,6 +72,12 @@ const connectors: Connector[] = [
   { name: "InfluxDB & Grafana", description: "Time-series storage & observability dashboards", url: "https://grafana.com/", slug: "grafana" },
   { name: "Ubidots", description: "IoT platform for device data & visualization", url: "https://ubidots.com/" },
   { name: "AWS IoT Core", description: "Managed cloud service for IoT device connectivity", url: "https://aws.amazon.com/iot-core/", slug: "amazonaws" },
+  { name: "ROS 1", description: "Robot Operating System — robotics middleware framework", url: "https://wiki.ros.org/", slug: "ros" },
+  { name: "ROS 2", description: "Next-gen robotics middleware for distributed & real-time systems", url: "https://docs.ros.org/en/rolling/", slug: "ros" },
+  { name: "Raspberry Pi", description: "Single-board computer for embedded, IoT & robotics projects", url: "https://www.raspberrypi.com/", slug: "raspberrypi" },
+  { name: "PuTTY", description: "Free SSH & Telnet client for remote device access", url: "https://www.putty.org/" },
+  { name: "Ubuntu", description: "Debian-based Linux distribution for development & servers", url: "https://ubuntu.com/", slug: "ubuntu" },
+  { name: "Debian", description: "Stable free Linux distribution for servers & embedded use", url: "https://www.debian.org/", slug: "debian" },
 ];
 
 const initials = (name: string) =>
