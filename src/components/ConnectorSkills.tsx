@@ -15,7 +15,7 @@ const connectors: Connector[] = [
   { name: "PTC Creo", description: "Parametric 3D CAD for product design", url: "https://www.ptc.com/en/products/creo" },
   { name: "Autodesk AutoCAD", description: "2D drafting and technical documentation", url: "https://www.autodesk.com/products/autocad/overview", slug: "autodesk" },
   { name: "Ansys", description: "FEA / structural and thermal simulation", url: "https://www.ansys.com/", slug: "ansys" },
-  { name: "Leo AI", description: "AI co-pilot for mechanical engineers — parts, concept design & 3D models", url: "https://www.getleo.ai/downloads" },
+  { name: "Leo AI", description: "AI co-pilot for mechanical engineers — parts, concept design & 3D models", url: "https://www.getleo.ai/getting-started" },
   { name: "MecAgent", description: "AI CAD copilot to automate SolidWorks, CATIA & Inventor tasks", url: "https://mecagent.com/" },
   { name: "YouExec", description: "Professional business presentations & spreadsheet templates library", url: "https://youexec.com/library" },
   { name: "Creality", description: "Consumer 3D printers, laser engravers & 3D scanners", url: "https://www.creality.com/" },
