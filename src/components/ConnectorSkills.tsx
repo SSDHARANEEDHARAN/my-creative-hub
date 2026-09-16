@@ -41,7 +41,7 @@ const connectors: Connector[] = [
   { name: "Google Docs", description: "Collaborative documentation & writing", url: "https://docs.google.com/", slug: "googledocs" },
   { name: "Airtable", description: "Low-code database & project tracking", url: "https://www.airtable.com/", slug: "airtable" },
   { name: "Microsoft Outlook", description: "Email & calendar productivity suite", url: "https://outlook.live.com/", slug: "microsoftoutlook" },
-  { name: "GitHub API", description: "Version control & code collaboration", url: "https://github.com/", slug: "github" },
+  { name: "GitHub", description: "Version control, code hosting & collaboration", url: "https://github.com/", slug: "github" },
   { name: "Google Slides", description: "Presentation & pitch deck creation", url: "https://slides.google.com/", slug: "googleslides" },
   { name: "Microsoft Excel", description: "Advanced data analysis & reporting", url: "https://www.microsoft.com/microsoft-365/excel", slug: "microsoftexcel" },
   { name: "Microsoft OneDrive", description: "Cloud file storage & sharing", url: "https://onedrive.live.com/", slug: "microsoftonedrive" },
