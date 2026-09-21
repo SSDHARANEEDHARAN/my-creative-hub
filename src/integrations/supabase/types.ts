@@ -275,6 +275,54 @@ export type Database = {
         }
         Relationships: []
       }
+      connector_files: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          downloadable: boolean
+          enabled: boolean
+          extension: string
+          file_name: string
+          group_description: string | null
+          group_name: string
+          id: string
+          kind: string
+          size_bytes: number
+          sort_order: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          downloadable?: boolean
+          enabled?: boolean
+          extension: string
+          file_name: string
+          group_description?: string | null
+          group_name: string
+          id?: string
+          kind?: string
+          size_bytes?: number
+          sort_order?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          downloadable?: boolean
+          enabled?: boolean
+          extension?: string
+          file_name?: string
+          group_description?: string | null
+          group_name?: string
+          id?: string
+          kind?: string
+          size_bytes?: number
+          sort_order?: number
+          storage_path?: string
+        }
+        Relationships: []
+      }
       download_tracking: {
         Row: {
           content_id: string
