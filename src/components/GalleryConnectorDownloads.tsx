@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Download, FolderOpen, Package } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Download, FolderOpen, Package, Play } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -7,11 +7,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  ConnectorFileRow,
+  fetchVisibleConnectorFiles,
+  signedConnectorUrl,
+  formatBytes,
+} from "@/lib/connectorFiles";
 
 interface ConnectorFile {
   name: string;
   src: string;
   extension: string;
+  storagePath?: string;
+  downloadable: boolean;
+  isVideo: boolean;
+  size?: number;
 }
 
 interface ConnectorDownloadGroup {
@@ -27,7 +37,7 @@ const connectorModules = import.meta.glob(
 
 const fileName = (path: string) => decodeURIComponent(path.split("/").pop() ?? path);
 
-const connectorGroups: ConnectorDownloadGroup[] = [
+const bundledGroups: ConnectorDownloadGroup[] = [
   {
     name: "Eduvolt",
     description: "Electrical and PLC trainer source files",
@@ -50,10 +60,13 @@ const connectorGroups: ConnectorDownloadGroup[] = [
     .sort(([left], [right]) => left.localeCompare(right, undefined, { numeric: true }))
     .map(([path, src]) => {
       const name = fileName(path);
+      const extension = name.split(".").pop()?.toUpperCase() ?? "FILE";
       return {
         name,
         src,
-        extension: name.split(".").pop()?.toUpperCase() ?? "FILE",
+        extension,
+        downloadable: true,
+        isVideo: ["MP4", "WEBM", "MOV"].includes(extension),
       };
     }),
 }));
@@ -62,7 +75,63 @@ const downloadName = (name: string) => name.replace(/[<>:"/\\|?*]+/g, "-");
 
 const GalleryConnectorDownloads = () => {
   const [selected, setSelected] = useState<ConnectorDownloadGroup | null>(null);
-  const availableGroups = useMemo(() => connectorGroups.filter((group) => group.files.length > 0), []);
+  const [cloudRows, setCloudRows] = useState<ConnectorFileRow[]>([]);
+  const [preview, setPreview] = useState<{ name: string; url: string } | null>(null);
+
+  useEffect(() => {
+    fetchVisibleConnectorFiles()
+      .then(setCloudRows)
+      .catch(() => setCloudRows([]));
+  }, []);
+
+  const cloudGroups = useMemo<ConnectorDownloadGroup[]>(() => {
+    const map = new Map<string, ConnectorDownloadGroup>();
+    cloudRows.forEach((row) => {
+      const group = map.get(row.group_name) ?? {
+        name: row.group_name,
+        description: row.group_description ?? "Cloud hosted source files",
+        files: [],
+      };
+      group.files.push({
+        name: row.file_name,
+        src: "",
+        extension: row.extension,
+        storagePath: row.storage_path,
+        downloadable: row.downloadable,
+        isVideo: row.kind === "video",
+        size: row.size_bytes,
+      });
+      map.set(row.group_name, group);
+    });
+    return Array.from(map.values());
+  }, [cloudRows]);
+
+  const availableGroups = useMemo(
+    () => [...cloudGroups, ...bundledGroups].filter((group) => group.files.length > 0),
+    [cloudGroups]
+  );
+
+  const openFile = async (file: ConnectorFile, asDownload: boolean) => {
+    let url = file.src;
+    if (file.storagePath) {
+      url =
+        (await signedConnectorUrl(
+          file.storagePath,
+          asDownload ? downloadName(file.name) : undefined
+        )) ?? "";
+    }
+    if (!url) return;
+    if (asDownload) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = downloadName(file.name);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      return;
+    }
+    setPreview({ name: file.name, url });
+  };
 
   return (
     <section className="gallery-connectors border-t-2 border-border bg-background">
@@ -111,7 +180,7 @@ const GalleryConnectorDownloads = () => {
           <div className="space-y-2">
             {selected?.files.map((file) => (
               <div
-                key={file.src}
+                key={file.storagePath ?? file.src}
                 className="flex items-center gap-3 border border-border bg-card p-3 sm:p-4"
               >
                 <span className="shrink-0 border border-border px-2 py-1 text-[10px] font-bold text-muted-foreground">
@@ -119,19 +188,50 @@ const GalleryConnectorDownloads = () => {
                 </span>
                 <span className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">
                   {file.name}
+                  {file.size ? (
+                    <span className="block text-xs text-muted-foreground">{formatBytes(file.size)}</span>
+                  ) : null}
                 </span>
-                <a
-                  href={file.src}
-                  download={downloadName(file.name)}
-                  className="shrink-0 rounded-sm border border-border p-2 text-foreground transition-colors hover:bg-secondary"
-                  aria-label={`Download ${file.name}`}
-                  title={`Download ${file.name}`}
-                >
-                  <Download className="h-4 w-4" />
-                </a>
+                {file.isVideo && (
+                  <button
+                    type="button"
+                    onClick={() => openFile(file, false)}
+                    className="shrink-0 border border-border p-2 text-foreground transition-colors hover:bg-secondary"
+                    aria-label={`Play ${file.name}`}
+                    title={`Play ${file.name}`}
+                  >
+                    <Play className="h-4 w-4" />
+                  </button>
+                )}
+                {file.downloadable ? (
+                  <button
+                    type="button"
+                    onClick={() => openFile(file, true)}
+                    className="shrink-0 border border-border p-2 text-foreground transition-colors hover:bg-secondary"
+                    aria-label={`Download ${file.name}`}
+                    title={`Download ${file.name}`}
+                  >
+                    <Download className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <span className="shrink-0 border border-border px-2 py-1 text-[10px] font-semibold uppercase text-muted-foreground">
+                    View only
+                  </span>
+                )}
               </div>
             ))}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={preview !== null} onOpenChange={(open) => !open && setPreview(null)}>
+        <DialogContent className="sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{preview?.name}</DialogTitle>
+          </DialogHeader>
+          {preview && (
+            <video src={preview.url} controls autoPlay className="w-full border border-border" />
+          )}
         </DialogContent>
       </Dialog>
     </section>

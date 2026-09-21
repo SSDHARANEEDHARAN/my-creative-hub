@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import GalleryManager from "@/components/admin/GalleryManager";
+import ConnectorFilesManager from "@/components/admin/ConnectorFilesManager";
 
 const AdminGalleryPage = () => {
   return (
@@ -13,8 +14,11 @@ const AdminGalleryPage = () => {
       <div className="min-h-screen bg-background">
         <Navigation persisted />
         <PageTransition>
-          <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16 max-w-5xl">
+          <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16 max-w-5xl space-y-12">
             <GalleryManager />
+            <div className="border-t-2 border-border pt-10">
+              <ConnectorFilesManager />
+            </div>
           </main>
         </PageTransition>
         <Footer persisted />
