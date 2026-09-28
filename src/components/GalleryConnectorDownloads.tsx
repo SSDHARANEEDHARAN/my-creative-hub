@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, FolderOpen, Package, Play } from "lucide-react";
+import { Download, ExternalLink, FolderOpen, Package, Play } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -178,6 +178,17 @@ const GalleryConnectorDownloads = () => {
           <DialogHeader>
             <DialogTitle>{selected?.name} files</DialogTitle>
             <DialogDescription>{selected?.description}</DialogDescription>
+            {selected?.link && (
+              <a
+                href={selected.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary underline underline-offset-4"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Get the {selected.name} app
+              </a>
+            )}
           </DialogHeader>
           <div className="space-y-2">
             {selected?.files.map((file) => (
