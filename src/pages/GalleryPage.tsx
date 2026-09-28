@@ -521,6 +521,9 @@ const GalleryPage = () => {
     };
   }, []);
 
+  // True once the visitor has scrolled into/past the connector section area.
+  const [reachedConnectors, setReachedConnectors] = useState(false);
+
   useEffect(() => {
     if (!rootRef.current || slides.length === 0) return;
     const raf = requestAnimationFrame(() => {
@@ -534,6 +537,29 @@ const GalleryPage = () => {
       if (node) node.__slider = undefined;
     };
   }, [slides]);
+
+  // Track whether the connector section is on screen so the floating
+  // button can flip between "jump down" and "back to gallery".
+  useEffect(() => {
+    const target = document.getElementById("connector-downloads");
+    if (!target || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setReachedConnectors(entry.isIntersecting),
+      { rootMargin: "-20% 0px -20% 0px" }
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
+  const scrollToConnectors = () => {
+    document
+      .getElementById("connector-downloads")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // Scroll distance that the pinned section consumes before releasing to the footer
   const scrollWrapHeight = `calc(100vh + ${Math.max(0, slides.length - 1) * SCROLL_PER_CARD_VH}vh)`;
