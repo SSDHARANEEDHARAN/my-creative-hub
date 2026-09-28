@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowUp, Package } from "lucide-react";
 import gsap from "gsap";
 import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
@@ -634,6 +635,30 @@ const GalleryPage = () => {
           <GalleryConnectorDownloads />
           <GalleryHobbyConnectors />
         </main>
+
+        {/* Floating quick-jump: reach the connector files without scrolling
+            through the whole gallery; flips to "back to gallery" once there. */}
+        <div className="fixed bottom-6 right-4 z-50 flex flex-col items-end gap-2 sm:bottom-8 sm:right-6">
+          {reachedConnectors && (
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="inline-flex items-center gap-2 border-2 border-border bg-background px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm transition-colors hover:bg-secondary"
+              aria-label="Back to gallery top"
+            >
+              <ArrowUp className="h-4 w-4" aria-hidden="true" />
+              Back to Gallery
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={reachedConnectors ? scrollToTop : scrollToConnectors}
+            className="inline-flex items-center gap-2 border-2 border-border bg-background px-4 py-2.5 text-xs font-semibold uppercase tracking-widest text-foreground shadow-sm transition-colors hover:bg-secondary"
+          >
+            <Package className="h-4 w-4" aria-hidden="true" />
+            {reachedConnectors ? "Connector Files" : "Connector Downloads"}
+          </button>
+        </div>
       </div>
     </>
   );
