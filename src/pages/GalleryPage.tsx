@@ -588,6 +588,14 @@ const GalleryPage = () => {
               A few moments from the things I design and build — robotics, CAD, simulation,
               and the ideas in between. Hover any video to bring it to life.
             </p>
+            <button
+              type="button"
+              onClick={scrollToConnectors}
+              className="mt-6 inline-flex items-center gap-2 border-2 border-border bg-background px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-foreground transition-colors hover:bg-secondary sm:text-sm"
+            >
+              <Package className="h-4 w-4" aria-hidden="true" />
+              Skip to Connector Downloads
+            </button>
           </div>
 
           {/* Scroll-pinned animated gallery (centered, with left/right gaps) */}
