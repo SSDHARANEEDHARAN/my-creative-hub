@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUp, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import gsap from "gsap";
 import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
@@ -523,7 +523,6 @@ const GalleryPage = () => {
   }, []);
 
   // True once the visitor has scrolled into/past the connector section area.
-  const [reachedConnectors, setReachedConnectors] = useState(false);
 
   useEffect(() => {
     if (!rootRef.current || slides.length === 0) return;
