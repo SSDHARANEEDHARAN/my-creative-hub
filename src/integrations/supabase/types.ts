@@ -275,10 +275,53 @@ export type Database = {
         }
         Relationships: []
       }
-      connector_files: {
+      connector_file_downloads: {
         Row: {
           created_at: string
+          file_id: string | null
+          file_name: string
+          group_name: string
+          id: string
+          user_email: string | null
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_id?: string | null
+          file_name: string
+          group_name: string
+          id?: string
+          user_email?: string | null
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_id?: string | null
+          file_name?: string
+          group_name?: string
+          id?: string
+          user_email?: string | null
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connector_file_downloads_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "connector_files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      connector_files: {
+        Row: {
+          blocked_until: string | null
+          created_at: string
           created_by: string | null
+          description: string | null
           downloadable: boolean
           enabled: boolean
           extension: string
@@ -291,10 +334,13 @@ export type Database = {
           size_bytes: number
           sort_order: number
           storage_path: string
+          tags: string[]
         }
         Insert: {
+          blocked_until?: string | null
           created_at?: string
           created_by?: string | null
+          description?: string | null
           downloadable?: boolean
           enabled?: boolean
           extension: string
@@ -307,10 +353,13 @@ export type Database = {
           size_bytes?: number
           sort_order?: number
           storage_path: string
+          tags?: string[]
         }
         Update: {
+          blocked_until?: string | null
           created_at?: string
           created_by?: string | null
+          description?: string | null
           downloadable?: boolean
           enabled?: boolean
           extension?: string
@@ -323,6 +372,7 @@ export type Database = {
           size_bytes?: number
           sort_order?: number
           storage_path?: string
+          tags?: string[]
         }
         Relationships: []
       }

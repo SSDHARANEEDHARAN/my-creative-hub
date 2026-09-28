@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Loader2, Trash2, Upload, Eye, EyeOff, Download, AlertTriangle } from "lucide-react";
+import { Loader2, Trash2, Upload, Eye, EyeOff, Download, AlertTriangle, Pencil, Sparkles, Ban } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +23,8 @@ import {
   deleteConnectorFile,
   addConnectorFile,
   formatBytes,
+  isBlocked,
+  generateConnectorMetadata,
 } from "@/lib/connectorFiles";
 
 const ConnectorFilesManager = () => {
@@ -35,6 +39,62 @@ const ConnectorFilesManager = () => {
   const [groupDescription, setGroupDescription] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [editing, setEditing] = useState<ConnectorFileRow | null>(null);
+  const [details, setDetails] = useState("");
+  const [desc, setDesc] = useState("");
+  const [tagText, setTagText] = useState("");
+  const [blockHours, setBlockHours] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const openEdit = (row: ConnectorFileRow) => {
+    setEditing(row);
+    setDetails("");
+    setDesc(row.description ?? "");
+    setTagText((row.tags ?? []).join(", "));
+    setBlockHours("");
+  };
+
+  const runAi = async () => {
+    if (!editing) return;
+    setAiBusy(true);
+    try {
+      const r = await generateConnectorMetadata({
+        fileName: editing.file_name,
+        folder: editing.group_name,
+        extension: editing.extension,
+        details,
+      });
+      setDesc(r.description);
+      setTagText(r.tags.join(", "));
+    } catch (err) {
+      toast({ title: "AI couldn't generate", description: err instanceof Error ? err.message : "", variant: "destructive" });
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+  const saveEdit = async (clearBlock = false) => {
+    if (!editing) return;
+    setSaving(true);
+    const hours = Number(blockHours);
+    const next: Partial<ConnectorFileRow> = {
+      description: desc.trim() || null,
+      tags: tagText.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean),
+    };
+    if (clearBlock) next.blocked_until = null;
+    else if (hours > 0) next.blocked_until = new Date(Date.now() + hours * 3600_000).toISOString();
+    try {
+      await updateConnectorFile(editing.id, next);
+      setRows((prev) => prev.map((r) => (r.id === editing.id ? { ...r, ...next } : r)));
+      toast({ title: "Saved" });
+      setEditing(null);
+    } catch {
+      toast({ title: "Save failed", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -198,6 +258,15 @@ const ConnectorFilesManager = () => {
                     <Badge variant="secondary" className="mt-1">
                       {row.extension}
                     </Badge>
+                    {isBlocked(row) && (
+                      <Badge variant="destructive" className="mt-1 ml-1">
+                        Blocked until {new Date(row.blocked_until!).toLocaleString()}
+                      </Badge>
+                    )}
+                    {row.description && <p className="text-xs text-muted-foreground mt-1">{row.description}</p>}
+                    {row.tags?.length > 0 && (
+                      <p className="text-[10px] text-muted-foreground mt-1">{row.tags.map((t) => `#${t}`).join(" ")}</p>
+                    )}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">{formatBytes(row.size_bytes)}</TableCell>
                   <TableCell>
@@ -226,7 +295,10 @@ const ConnectorFilesManager = () => {
                       <Download size={14} className="text-muted-foreground" />
                     </div>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right whitespace-nowrap">
+                    <Button variant="ghost" size="sm" onClick={() => openEdit(row)} aria-label="Edit details">
+                      <Pencil className="w-4 h-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -247,6 +319,44 @@ const ConnectorFilesManager = () => {
           </Table>
         </div>
       )}
+
+      <Dialog open={editing !== null} onOpenChange={(o) => !o && setEditing(null)}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="break-all">{editing?.file_name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label>File details for AI (what it is, software, purpose)</Label>
+              <Textarea value={details} onChange={(e) => setDetails(e.target.value)} rows={3} />
+              <Button type="button" variant="outline" size="sm" onClick={runAi} disabled={aiBusy}>
+                {aiBusy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                Generate description & tags
+              </Button>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Description</Label>
+              <Textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Tags (comma separated)</Label>
+              <Input value={tagText} onChange={(e) => setTagText(e.target.value)} />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="flex items-center gap-1"><Ban size={14} /> Temporarily block (hours)</Label>
+              <Input type="number" min={0} value={blockHours} onChange={(e) => setBlockHours(e.target.value)} placeholder="e.g. 24" />
+            </div>
+          </div>
+          <DialogFooter className="gap-2">
+            {editing && isBlocked(editing) && (
+              <Button variant="outline" onClick={() => saveEdit(true)} disabled={saving}>Unblock</Button>
+            )}
+            <Button variant="hero" onClick={() => saveEdit(false)} disabled={saving}>
+              {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

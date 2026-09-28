@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import GalleryManager from "@/components/admin/GalleryManager";
 import ConnectorFilesManager from "@/components/admin/ConnectorFilesManager";
+import ConnectorDownloadAnalytics from "@/components/admin/ConnectorDownloadAnalytics";
 
 const AdminGalleryPage = () => {
   return (
@@ -18,6 +19,9 @@ const AdminGalleryPage = () => {
             <GalleryManager />
             <div className="border-t-2 border-border pt-10">
               <ConnectorFilesManager />
+            </div>
+            <div className="border-t-2 border-border pt-10">
+              <ConnectorDownloadAnalytics />
             </div>
           </main>
         </PageTransition>

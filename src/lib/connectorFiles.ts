@@ -14,6 +14,9 @@ export interface ConnectorFileRow {
   downloadable: boolean;
   sort_order: number;
   created_at: string;
+  description: string | null;
+  tags: string[];
+  blocked_until: string | null;
 }
 
 export const CONNECTOR_BUCKET = "connector-files";
@@ -30,7 +33,7 @@ export async function fetchVisibleConnectorFiles(): Promise<ConnectorFileRow[]> 
     .order("group_name", { ascending: true })
     .order("sort_order", { ascending: true });
   if (error) throw error;
-  return (data ?? []) as ConnectorFileRow[];
+  return ((data ?? []) as ConnectorFileRow[]).filter((r) => !isBlocked(r));
 }
 
 export async function fetchAllConnectorFiles(): Promise<ConnectorFileRow[]> {
@@ -53,7 +56,7 @@ export async function signedConnectorUrl(path: string, download?: string): Promi
 
 export async function updateConnectorFile(
   id: string,
-  patch: Partial<Pick<ConnectorFileRow, "enabled" | "downloadable" | "file_name" | "group_description" | "sort_order">>
+  patch: Partial<Pick<ConnectorFileRow, "enabled" | "downloadable" | "file_name" | "group_description" | "sort_order" | "description" | "tags" | "blocked_until">>
 ): Promise<void> {
   const { error } = await db.from("connector_files").update(patch).eq("id", id);
   if (error) throw error;
@@ -109,3 +112,58 @@ export const formatBytes = (bytes: number) => {
   }
   return `${value.toFixed(value < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
 };
+
+export const isBlocked = (row: Pick<ConnectorFileRow, "blocked_until">) =>
+  !!row.blocked_until && new Date(row.blocked_until).getTime() > Date.now();
+
+export interface ConnectorDownloadRow {
+  id: string;
+  file_id: string | null;
+  file_name: string;
+  group_name: string;
+  user_email: string | null;
+  user_name: string | null;
+  created_at: string;
+}
+
+export async function logConnectorDownload(fileId: string | null, fileName: string, groupName: string) {
+  const { data } = await supabase.auth.getUser();
+  const u = data.user;
+  await db.from("connector_file_downloads").insert({
+    file_id: fileId,
+    file_name: fileName,
+    group_name: groupName,
+    user_id: u?.id ?? null,
+    user_email: u?.email ?? null,
+    user_name: (u?.user_metadata?.display_name as string | undefined) ?? null,
+  });
+}
+
+export async function fetchConnectorDownloads(): Promise<ConnectorDownloadRow[]> {
+  const { data, error } = await db
+    .from("connector_file_downloads")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(5000);
+  if (error) throw error;
+  return (data ?? []) as ConnectorDownloadRow[];
+}
+
+export async function generateConnectorMetadata(input: {
+  fileName: string;
+  folder: string;
+  extension: string;
+  details: string;
+}): Promise<{ description: string; tags: string[] }> {
+  const { data, error } = await supabase.functions.invoke("describe-connector-file", { body: input });
+  if (error) {
+    let msg = error.message;
+    try {
+      const body = await (error as { context?: Response }).context?.json();
+      if (body?.error) msg = typeof body.error === "string" ? body.error : JSON.stringify(body.error);
+    } catch { /* ignore */ }
+    throw new Error(msg);
+  }
+  if (data?.error) throw new Error(data.error);
+  return data;
+}

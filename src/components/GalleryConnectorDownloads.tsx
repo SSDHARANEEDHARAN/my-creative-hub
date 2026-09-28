@@ -12,6 +12,7 @@ import {
   fetchVisibleConnectorFiles,
   signedConnectorUrl,
   formatBytes,
+  logConnectorDownload,
 } from "@/lib/connectorFiles";
 
 interface ConnectorFile {
@@ -19,6 +20,9 @@ interface ConnectorFile {
   src: string;
   extension: string;
   storagePath?: string;
+  id?: string;
+  description?: string | null;
+  tags?: string[];
   downloadable: boolean;
   isVideo: boolean;
   size?: number;
@@ -99,6 +103,9 @@ const GalleryConnectorDownloads = () => {
         src: "",
         extension: row.extension,
         storagePath: row.storage_path,
+        id: row.id,
+        description: row.description,
+        tags: row.tags,
         downloadable: row.downloadable,
         isVideo: row.kind === "video",
         size: row.size_bytes,
@@ -114,6 +121,9 @@ const GalleryConnectorDownloads = () => {
   );
 
   const openFile = async (file: ConnectorFile, asDownload: boolean) => {
+    if (asDownload) {
+      logConnectorDownload(file.id ?? null, file.name, selected?.name ?? "").catch(() => {});
+    }
     let url = file.src;
     if (file.storagePath) {
       url =
@@ -203,6 +213,18 @@ const GalleryConnectorDownloads = () => {
                   {file.name}
                   {file.size ? (
                     <span className="block text-xs text-muted-foreground">{formatBytes(file.size)}</span>
+                  ) : null}
+                  {file.description ? (
+                    <span className="mt-1 block text-xs text-muted-foreground">{file.description}</span>
+                  ) : null}
+                  {file.tags && file.tags.length > 0 ? (
+                    <span className="mt-1.5 flex flex-wrap gap-1">
+                      {file.tags.map((t) => (
+                        <span key={t} className="border border-border px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                          #{t}
+                        </span>
+                      ))}
+                    </span>
                   ) : null}
                 </span>
                 {file.isVideo && (
