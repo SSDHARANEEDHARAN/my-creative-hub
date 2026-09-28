@@ -146,7 +146,7 @@ const GalleryConnectorDownloads = () => {
   };
 
   return (
-    <section className="gallery-connectors border-t-2 border-border bg-background">
+    <section id="connector-downloads" className="gallery-connectors border-t-2 border-border bg-background scroll-mt-24">
       <div className="container mx-auto px-4 py-16 sm:px-6 sm:py-20">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <span className="text-primary text-xs font-medium uppercase tracking-widest sm:text-sm">
