@@ -284,6 +284,7 @@ export type Database = {
           extension: string
           file_name: string
           group_description: string | null
+          group_link: string | null
           group_name: string
           id: string
           kind: string
@@ -299,6 +300,7 @@ export type Database = {
           extension: string
           file_name: string
           group_description?: string | null
+          group_link?: string | null
           group_name: string
           id?: string
           kind?: string
@@ -314,6 +316,7 @@ export type Database = {
           extension?: string
           file_name?: string
           group_description?: string | null
+          group_link?: string | null
           group_name?: string
           id?: string
           kind?: string
