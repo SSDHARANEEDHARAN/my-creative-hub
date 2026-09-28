@@ -27,6 +27,7 @@ interface ConnectorFile {
 interface ConnectorDownloadGroup {
   name: string;
   description: string;
+  link?: string | null;
   files: ConnectorFile[];
 }
 
@@ -90,6 +91,7 @@ const GalleryConnectorDownloads = () => {
       const group = map.get(row.group_name) ?? {
         name: row.group_name,
         description: row.group_description ?? "Cloud hosted source files",
+        link: row.group_link,
         files: [],
       };
       group.files.push({
