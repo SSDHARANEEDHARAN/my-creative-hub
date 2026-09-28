@@ -4,6 +4,7 @@ export interface ConnectorFileRow {
   id: string;
   group_name: string;
   group_description: string | null;
+  group_link: string | null;
   file_name: string;
   storage_path: string;
   extension: string;
