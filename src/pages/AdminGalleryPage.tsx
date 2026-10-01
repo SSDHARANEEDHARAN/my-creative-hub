@@ -13,7 +13,7 @@ const AdminGalleryPage = () => {
         <title>Gallery Admin | SS. Tharan</title>
       </Helmet>
       <div className="min-h-screen bg-background">
-        <Navigation persisted />
+        <Navigation />
         <PageTransition>
           <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16 max-w-5xl space-y-12">
             <GalleryManager />
@@ -25,7 +25,7 @@ const AdminGalleryPage = () => {
             </div>
           </main>
         </PageTransition>
-        <Footer persisted />
+        <Footer />
       </div>
     </>
   );
