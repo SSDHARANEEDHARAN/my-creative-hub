@@ -376,6 +376,30 @@ export type Database = {
         }
         Relationships: []
       }
+      content_overrides: {
+        Row: {
+          data: Json
+          item_id: string
+          kind: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          data?: Json
+          item_id: string
+          kind: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          data?: Json
+          item_id?: string
+          kind?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       download_tracking: {
         Row: {
           content_id: string
