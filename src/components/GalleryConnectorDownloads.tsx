@@ -1,3 +1,4 @@
+import { toast } from "@/hooks/use-toast";
 import { useEffect, useMemo, useState } from "react";
 import { Download, ExternalLink, FolderOpen, Package, Play } from "lucide-react";
 import {
@@ -13,6 +14,7 @@ import {
   signedConnectorUrl,
   formatBytes,
   logConnectorDownload,
+  checkDownloadAllowed,
 } from "@/lib/connectorFiles";
 
 interface ConnectorFile {
@@ -122,6 +124,11 @@ const GalleryConnectorDownloads = () => {
 
   const openFile = async (file: ConnectorFile, asDownload: boolean) => {
     if (asDownload) {
+      const blocked = await checkDownloadAllowed().catch(() => null);
+      if (blocked) {
+        toast({ description: blocked, variant: "destructive" });
+        return;
+      }
       logConnectorDownload(file.id ?? null, file.name, selected?.name ?? "").catch(() => {});
     }
     let url = file.src;

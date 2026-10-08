@@ -126,6 +126,33 @@ export interface ConnectorDownloadRow {
   created_at: string;
 }
 
+/** Per-user admin limits: returns an error message when the signed-in user may not download. */
+export async function checkDownloadAllowed(): Promise<string | null> {
+  const { data } = await supabase.auth.getUser();
+  const u = data.user;
+  if (!u) return null;
+  const { data: prof } = await db
+    .from("profiles")
+    .select("can_download, daily_download_limit, access_expires_at")
+    .eq("user_id", u.id)
+    .maybeSingle();
+  if (!prof) return null;
+  if (prof.access_expires_at && new Date(prof.access_expires_at) < new Date())
+    return "Your access period has ended. Contact the administrator.";
+  if (prof.can_download === false) return "Downloads are turned off for your account.";
+  if (prof.daily_download_limit != null) {
+    const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    const { count } = await db
+      .from("connector_file_downloads")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", u.id)
+      .gte("created_at", since);
+    if ((count ?? 0) >= prof.daily_download_limit)
+      return `Daily download limit reached (${prof.daily_download_limit} per 24 hours).`;
+  }
+  return null;
+}
+
 export async function logConnectorDownload(fileId: string | null, fileName: string, groupName: string) {
   const { data } = await supabase.auth.getUser();
   const u = data.user;
