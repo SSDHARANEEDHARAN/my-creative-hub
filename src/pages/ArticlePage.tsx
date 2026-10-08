@@ -147,7 +147,7 @@ const ArticlePage = memo(() => {
             <div className="container mx-auto px-4 sm:px-6">
               <Link 
                 to="/projects" 
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
+                className="inline-flex items-center gap-2 min-h-11 text-muted-foreground hover:text-primary transition-colors mb-8"
               >
                 <ArrowLeft size={18} />
                 Back to List
