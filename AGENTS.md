@@ -1,0 +1,1 @@
+- AuthContext only enters loading when the signed-in user changes, never on token refresh for the same user — re-entering loading unmounts protected pages and their open dialogs (e.g. the admin preview iframe triggers session events).
