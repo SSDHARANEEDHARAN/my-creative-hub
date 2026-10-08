@@ -8,6 +8,13 @@
       "when": 1791428437060,
       "tag": "0000_content_overrides",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791429907118,
+      "tag": "0001_admin_site_controls",
+      "breakpoints": true
     }
   ]
 }

@@ -472,6 +472,33 @@ export type Database = {
         }
         Relationships: []
       }
+      gallery_overrides: {
+        Row: {
+          base: string
+          description: string | null
+          hidden: boolean
+          sort_order: number | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          base: string
+          description?: string | null
+          hidden?: boolean
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          base?: string
+          description?: string | null
+          hidden?: boolean
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       guest_visitors: {
         Row: {
           email: string
@@ -618,7 +645,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_expires_at: string | null
+          can_download: boolean
           created_at: string
+          daily_download_limit: number | null
           display_name: string | null
           email: string | null
           id: string
@@ -630,7 +660,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          access_expires_at?: string | null
+          can_download?: boolean
           created_at?: string
+          daily_download_limit?: number | null
           display_name?: string | null
           email?: string | null
           id?: string
@@ -642,7 +675,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          access_expires_at?: string | null
+          can_download?: boolean
           created_at?: string
+          daily_download_limit?: number | null
           display_name?: string | null
           email?: string | null
           id?: string
@@ -928,6 +964,33 @@ export type Database = {
           skill_type?: string
           sort_order?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      toolchain_overrides: {
+        Row: {
+          description: string | null
+          hidden: boolean
+          logo_url: string | null
+          name: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          description?: string | null
+          hidden?: boolean
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          description?: string | null
+          hidden?: boolean
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          url?: string | null
         }
         Relationships: []
       }
