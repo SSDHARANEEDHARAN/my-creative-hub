@@ -176,7 +176,7 @@ const AdminContentPage = () => {
             <h1 className="font-display text-2xl sm:text-3xl font-bold">Projects &amp; Blog Content</h1>
             <p className="text-sm text-muted-foreground">Click any item to preview and edit it. Saving updates the live site.</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="outline" onClick={() => { pc.refresh(); bc.refresh(); }}>
               <RefreshCw className="h-4 w-4 mr-2" /> Refresh counts
             </Button>
@@ -203,7 +203,7 @@ const AdminContentPage = () => {
               <TabsTrigger value="blog">Blog ({blogPosts.length})</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Input placeholder="Search by title…" value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-xs" />
+          <Input placeholder="Search by title…" value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-xs" />
         </div>
 
         <div className="border-2 border-border divide-y-2 divide-border">
@@ -216,7 +216,7 @@ const AdminContentPage = () => {
                   <div className="font-medium truncate">{it.title}</div>
                   <div className="text-xs text-muted-foreground capitalize">{it.sub}</div>
                 </div>
-                <div className="flex gap-4 text-xs text-muted-foreground shrink-0">
+                <div className="hidden sm:flex gap-4 text-xs text-muted-foreground shrink-0">
                   <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{c.views}</span>
                   <span className="flex items-center gap-1"><Heart className="h-3.5 w-3.5" />{c.likes}</span>
                   <span className="flex items-center gap-1"><MessageCircle className="h-3.5 w-3.5" />{c.comments}</span>
