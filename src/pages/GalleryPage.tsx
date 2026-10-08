@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
+import { fetchGalleryOverrides } from "@/lib/siteOverrides";
 import "./GalleryPage.css";
 
 /**
@@ -492,28 +493,26 @@ const GalleryPage = () => {
     []
   );
 
-  // Admin-managed gallery comes from the database; fall back to bundled media until populated.
+  // Bundled media with admin edits (title/description/hidden/order) from the database.
   const [slides, setSlides] = useState<Slide[]>(localSlides);
   useEffect(() => {
     let cancelled = false;
-    fetchPublicGallery()
-      .then((items) => {
-        if (cancelled || items.length === 0) return;
-        setSlides(
-          items.map((item, i) => ({
-            src: galleryPublicUrl(item.media_path),
-            title:
-              item.title ||
-              (item.media_type === "video" ? "VIDEO" : String(i + 1).padStart(2, "0")),
-            description: item.description ?? undefined,
-            type: item.media_type,
+    fetchGalleryOverrides()
+      .then((ov) => {
+        if (cancelled || Object.keys(ov).length === 0) return;
+        const next = BUNDLED_MEDIA.map((m, i) => ({ m, i, o: ov[m.base] }))
+          .filter((x) => !x.o?.hidden)
+          .sort((a, b) => (a.o?.sort_order ?? a.i) - (b.o?.sort_order ?? b.i))
+          .map(({ m, i, o }) => ({
+            src: m.src,
+            title: o?.title || m.title,
+            description: o?.description || m.description,
+            type: m.type,
             color: COLORS[i % COLORS.length],
-          }))
-        );
+          }));
+        if (next.length) setSlides(next);
       })
-      .catch(() => {
-        /* gallery_items table/bucket not set up yet — keep the local fallback */
-      });
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
