@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Eye, Heart, MessageCircle, BookOpen, RefreshCw, Save, RotateCcw, ExternalLink, Database } from "lucide-react";
+import { Eye, Heart, MessageCircle, BookOpen, RefreshCw, Save, RotateCcw, ExternalLink, Database, Monitor, Tablet, Smartphone, Sparkles, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +36,10 @@ const AdminContentPage = () => {
   const [saving, setSaving] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [draft, setDraft] = useState("");
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggestions, setSuggestions] = useState<{ titles: string[]; description: string; missing: string[] } | null>(null);
 
   const projects = getAllProjects();
   const projectIds = useMemo(() => projects.map((p) => String(p.id)), [projects.length]);
@@ -97,6 +102,27 @@ const AdminContentPage = () => {
     if (typeof out.tags === "string") out.tags = out.tags.split(",").map((s: string) => s.trim()).filter(Boolean);
     Object.keys(out).forEach((k) => out[k] === "" && (out[k] = null));
     return out;
+  };
+
+  const suggest = async () => {
+    if (!editing) return;
+    setSuggesting(true);
+    setSuggestions(null);
+    const { data, error } = await supabase.functions.invoke("suggest-content", {
+      body: {
+        kind: editing.kind,
+        title: String(form.title ?? ""),
+        description: String((editing.kind === "project" ? form.description : form.excerpt) ?? ""),
+        draft: draft || String(form.content ?? "").slice(0, 8000),
+      },
+    });
+    setSuggesting(false);
+    if (error || data?.error) {
+      let msg = data?.error ?? error?.message ?? "AI request failed.";
+      try { const b = await (error as any)?.context?.json?.(); if (b?.error) msg = b.error; } catch { /* ignore */ }
+      return toast({ title: "AI suggestions failed", description: String(msg), variant: "destructive" });
+    }
+    setSuggestions(data);
   };
 
   const save = async () => {
@@ -220,9 +246,51 @@ const AdminContentPage = () => {
             </DialogTitle>
           </DialogHeader>
           {editing && (
-            <div className="flex-1 grid lg:grid-cols-[1fr_380px] gap-4 min-h-0">
-              <iframe ref={iframeRef} src={editing.url} title="Live preview" className="w-full h-full border-2 border-border bg-background" />
-              <div className="overflow-y-auto space-y-3 pr-1">
+            <div className="flex-1 grid lg:grid-cols-[1fr_380px] gap-4 min-h-0 overflow-y-auto lg:overflow-hidden">
+              <div className="flex flex-col min-h-[60vh] lg:min-h-0 gap-2">
+                <div className="flex flex-wrap gap-1">
+                  {([["desktop", "Desktop", Monitor], ["tablet", "Tablet", Tablet], ["mobile", "Mobile", Smartphone]] as const).map(([k, l, I]) => (
+                    <Button key={k} size="sm" variant={device === k ? "default" : "outline"} onClick={() => setDevice(k)}>
+                      <I className="h-4 w-4 mr-1" />{l}
+                    </Button>
+                  ))}
+                </div>
+                <div className="flex-1 min-h-0 bg-muted flex justify-center overflow-auto">
+                  <iframe
+                    ref={iframeRef}
+                    src={editing.url}
+                    title="Live preview"
+                    style={{ width: device === "desktop" ? "100%" : device === "tablet" ? 768 : 390, maxWidth: device === "desktop" ? "100%" : undefined }}
+                    className="h-full shrink-0 border-2 border-border bg-background"
+                  />
+                </div>
+              </div>
+              <div className="lg:overflow-y-auto space-y-3 pr-1">
+                <div className="border-2 border-border p-3 space-y-2">
+                  <Label className="text-xs uppercase tracking-wide flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" />AI suggestions</Label>
+                  <Textarea rows={3} placeholder="Paste a draft or notes (optional)…" value={draft} onChange={(e) => setDraft(e.target.value)} />
+                  <Button size="sm" variant="outline" className="w-full" onClick={suggest} disabled={suggesting}>
+                    {suggesting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+                    {suggesting ? "Thinking…" : "Suggest improvements"}
+                  </Button>
+                  {suggestions && (
+                    <div className="space-y-2 text-sm">
+                      <div className="text-xs text-muted-foreground">Titles — click to use</div>
+                      {suggestions.titles.map((t) => (
+                        <button key={t} onClick={() => setForm((f) => ({ ...f, title: t }))} className="block w-full text-left border border-border p-2 hover:bg-secondary">{t}</button>
+                      ))}
+                      <div className="text-xs text-muted-foreground">Description</div>
+                      <p className="border border-border p-2">{suggestions.description}</p>
+                      <Button size="sm" variant="secondary" onClick={() => setForm((f) => ({ ...f, [editing.kind === "project" ? "description" : "excerpt"]: suggestions.description }))}>Use description</Button>
+                      {suggestions.missing.length > 0 && (
+                        <>
+                          <div className="text-xs text-muted-foreground">Missing details to add</div>
+                          <ul className="list-disc pl-5 space-y-1">{suggestions.missing.map((m) => <li key={m}>{m}</li>)}</ul>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
                 {editing.kind === "project" ? (
                   <>
                     {field("title", "Title")}
