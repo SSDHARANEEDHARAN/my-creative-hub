@@ -22,6 +22,7 @@ import SubscribersPage from "./pages/SubscribersPage";
 import BlogCommentsPage from "./pages/BlogCommentsPage";
 import AdminModerationPage from "./pages/AdminModerationPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminContentPage from "./pages/AdminContentPage";
 import AdminGalleryPage from "./pages/AdminGalleryPage";
 import IndustrialProjectsPage from "./pages/IndustrialProjectsPage";
 import LoginPage from "./pages/LoginPage";
@@ -96,6 +97,14 @@ const AnimatedRoutes = () => {
           element={
             <ProtectedRoute requireAdmin>
               <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/content"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminContentPage />
             </ProtectedRoute>
           }
         />
