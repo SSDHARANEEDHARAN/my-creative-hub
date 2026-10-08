@@ -203,7 +203,12 @@ const AdminContentPage = () => {
       </main>
 
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
-        <DialogContent className="max-w-[95vw] w-[95vw] h-[90vh] flex flex-col p-4">
+        <DialogContent
+          className="max-w-[95vw] w-[95vw] h-[90vh] flex flex-col p-4"
+          onInteractOutside={(e) => e.preventDefault()}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onFocusOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               Edit: {editing?.title}
