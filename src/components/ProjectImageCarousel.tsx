@@ -84,18 +84,16 @@ const ProjectImageCarousel = memo(({ images, title, onImageClick }: ProjectImage
 
       {/* Dots Indicator */}
       {images.length > 1 && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex z-10 bg-foreground/40 px-1">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={(e) => handleDotClick(e, index)}
-              className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                index === currentIndex
-                  ? "bg-primary w-4"
-                  : "bg-background/70 hover:bg-background"
-              }`}
+              className="group/dot min-w-8 min-h-8 inline-flex items-center justify-center"
               aria-label={`Go to image ${index + 1}`}
-            />
+            >
+              <span className={`block h-2 transition-all duration-200 ${index === currentIndex ? "w-5 bg-background" : "w-2 bg-background/60 group-hover/dot:bg-background"}`} />
+            </button>
           ))}
         </div>
       )}

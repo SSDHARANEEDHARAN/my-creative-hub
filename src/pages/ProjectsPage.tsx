@@ -618,7 +618,7 @@ const ProjectsPage = () => {
                                 <span className="flex items-center gap-1"><MessageSquare size={13} /> {commentCounts[String(project.id)] || 0}</span>
                               </div>
                             ) : (
-                              <div className="mb-3 text-xs text-muted-foreground/70">Double-tap to like</div>
+                              <div className="mb-3 text-xs md:text-sm text-muted-foreground">Double-tap to like</div>
                             )}
                             {isAdmin && <ProjectComments projectId={String(project.id)} />}
                             <div className="flex items-center gap-4">
@@ -701,7 +701,7 @@ const ProjectsPage = () => {
                               <span className="flex items-center gap-1"><MessageSquare size={12} /> {commentCounts[String(project.id)] || 0}</span>
                             </div>
                           ) : (
-                            <div className="mb-2 text-xs text-muted-foreground/70">Double-tap to like</div>
+                            <div className="mb-2 text-xs md:text-sm text-muted-foreground">Double-tap to like</div>
                           )}
                           <div className="flex items-center gap-3">
                             {project.liveUrl && (
