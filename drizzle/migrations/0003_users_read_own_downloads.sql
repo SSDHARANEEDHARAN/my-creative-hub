@@ -1,0 +1,1 @@
+CREATE POLICY "Users read own connector downloads" ON public.connector_file_downloads FOR SELECT TO authenticated USING (auth.uid() = user_id);
