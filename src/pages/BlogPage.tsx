@@ -169,7 +169,7 @@ const BlogPage = () => {
                     <button
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
-                      className={`px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200 ${
+                      className={`min-h-11 inline-flex items-center justify-center px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200 ${
                         activeCategory === cat
                           ? "bg-foreground text-background"
                           : "bg-secondary text-muted-foreground hover:text-foreground hover:bg-secondary/80"
@@ -188,7 +188,7 @@ const BlogPage = () => {
                     className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group select-none"
                     onClick={(e) => handleCardActivate(featuredPost.id, e)}
                   >
-                    <div className="grid md:grid-cols-2 gap-0">
+                    <div className="grid lg:grid-cols-2 gap-0">
                       <div className="relative overflow-hidden aspect-[4/3] md:aspect-auto">
                         <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" />
                         <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex gap-2">
@@ -198,7 +198,7 @@ const BlogPage = () => {
                           <span className="px-2 sm:px-3 py-1 bg-card/90 backdrop-blur-sm text-foreground text-xs font-medium">{featuredPost.category}</span>
                         </div>
                       </div>
-                      <div className="p-6 sm:p-8 md:p-12 flex flex-col justify-center">
+                      <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
                         <div className="flex items-center gap-3 mb-3 sm:mb-4">
                           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center">
                             <span className="text-background font-bold text-xs sm:text-sm">DS</span>
@@ -291,7 +291,7 @@ const BlogPage = () => {
                                 </span>
                               </>
                             ) : (
-                              <span className="text-xs text-muted-foreground/70">Double-tap to like</span>
+                              <span className="text-xs md:text-sm text-muted-foreground">Double-tap to like</span>
                             )}
                           </div>
                           <ArrowRight size={14} className="text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />

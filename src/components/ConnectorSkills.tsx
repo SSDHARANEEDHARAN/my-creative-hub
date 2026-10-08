@@ -1,15 +1,18 @@
-import { memo, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
+import { fetchToolchainOverrides, type ToolchainOverride } from "@/lib/siteOverrides";
 import { ExternalLink } from "lucide-react";
 
-interface Connector {
+export interface Connector {
   name: string;
   description: string;
   url: string;
   /** simpleicons.org slug — falls back to initials tile when omitted */
   slug?: string;
+  /** admin-set logo URL, tried first */
+  logo?: string;
 }
 
-const connectors: Connector[] = [
+export const connectors: Connector[] = [
   { name: "SolidWorks", description: "3D CAD modelling, assemblies and drawings", url: "https://www.solidworks.com/" },
   { name: "Siemens NX CAD", description: "Advanced parametric 3D CAD & CAM design", url: "https://www.plm.automation.siemens.com/global/en/products/nx/", slug: "siemens" },
   { name: "PTC Creo", description: "Parametric 3D CAD for product design", url: "https://www.ptc.com/en/products/creo" },
@@ -101,6 +104,7 @@ const ConnectorCard = memo(({ c, index }: { c: Connector; index: number }) => {
   // Logo sources tried in order: Simple Icons (monochrome, on-brand) → site favicon → initials
   const sources = useMemo(() => {
     const list: string[] = [];
+    if (c.logo) list.push(c.logo);
     if (c.slug) list.push(`https://cdn.simpleicons.org/${c.slug}/currentColor`);
     const domain = domainOf(c.url);
     if (domain) {
@@ -108,7 +112,7 @@ const ConnectorCard = memo(({ c, index }: { c: Connector; index: number }) => {
       list.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
     }
     return list;
-  }, [c.slug, c.url]);
+  }, [c.slug, c.url, c.logo]);
 
   const [srcIndex, setSrcIndex] = useState(0);
   const src = sources[srcIndex];
@@ -150,7 +154,18 @@ const ConnectorCard = memo(({ c, index }: { c: Connector; index: number }) => {
 
 ConnectorCard.displayName = "ConnectorCard";
 
-const ConnectorSkills = () => (
+const ConnectorSkills = () => {
+  const [ov, setOv] = useState<Record<string, ToolchainOverride>>({});
+  useEffect(() => {
+    fetchToolchainOverrides().then(setOv).catch(() => {});
+  }, []);
+  const list = connectors
+    .filter((c) => !ov[c.name]?.hidden)
+    .map((c) => {
+      const o = ov[c.name];
+      return o ? { ...c, logo: o.logo_url || undefined, description: o.description || c.description, url: o.url || c.url } : c;
+    });
+  return (
   <section className="py-12 sm:py-16 border-t-2 border-border bg-background">
     <div className="container mx-auto px-4 sm:px-6">
       <div className="text-center mb-8 sm:mb-12">
@@ -167,12 +182,13 @@ const ConnectorSkills = () => (
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-5xl mx-auto">
-        {connectors.map((c, i) => (
-          <ConnectorCard key={c.name} c={c} index={i} />
+        {list.map((c, i) => (
+          <ConnectorCard key={`${c.name}-${c.logo ?? ""}`} c={c} index={i} />
         ))}
       </div>
     </div>
   </section>
-);
+  );
+};
 
 export default ConnectorSkills;

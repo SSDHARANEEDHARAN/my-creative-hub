@@ -1,1 +1,3 @@
 - AuthContext only enters loading when the signed-in user changes, never on token refresh for the same user — re-entering loading unmounts protected pages and their open dialogs (e.g. the admin preview iframe triggers session events).
+- Bundled gallery media and toolchain tiles stay in code; admin edits live in gallery_overrides / toolchain_overrides keyed by media base name / tile name and are merged at render — avoids re-uploading large files.
+- Admin-only profile fields (status, access limits) are protected by the protect_profile_admin_fields trigger because users may update their own profile row.

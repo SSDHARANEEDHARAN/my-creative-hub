@@ -94,8 +94,8 @@ const Hero = () => {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6"
           >
-            <Zap className="text-muted-foreground" size={18} />
-            <p className="text-lg sm:text-2xl md:text-3xl font-display font-semibold text-foreground uppercase tracking-widest">
+            <p className="text-center text-lg sm:text-2xl md:text-3xl font-display font-semibold text-foreground uppercase tracking-widest">
+              <Zap className="inline-block align-middle mr-2 -mt-1 text-muted-foreground" size={18} />
               Mechatronics Design Engineer
             </p>
           </motion.div>

@@ -63,11 +63,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("status, industrial_access")
+        .select("status, industrial_access, access_expires_at")
         .eq("user_id", userId)
         .maybeSingle();
 
       if (error || !data) return { status: "pending", industrialAccess: false };
+      const expired = !!(data as any).access_expires_at && new Date((data as any).access_expires_at) < new Date();
+      if (expired) return { status: "restricted", industrialAccess: false };
       return { status: data.status || "pending", industrialAccess: !!(data as any).industrial_access };
     } catch {
       return { status: "pending", industrialAccess: false };

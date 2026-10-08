@@ -17,6 +17,7 @@ import {
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import UserAccessLimits from "@/components/admin/UserAccessLimits";
 import {
   Table,
   TableBody,
@@ -517,6 +518,7 @@ const AdminDashboardPage = () => {
                     <TabsTrigger value="restricted">Restricted ({restrictedUsers.length})</TabsTrigger>
                     <TabsTrigger value="temporary_locked">Temp Locked ({temporaryLockedUsers.length})</TabsTrigger>
                     <TabsTrigger value="blocked">Blocked ({blockedUsers.length})</TabsTrigger>
+                    <TabsTrigger value="limits">Access limits</TabsTrigger>
                   </TabsList>
                   <TabsContent value="all">{renderUserTable(users)}</TabsContent>
                   <TabsContent value="admins" className="space-y-3">
@@ -530,6 +532,7 @@ const AdminDashboardPage = () => {
                   <TabsContent value="restricted">{renderUserTable(restrictedUsers)}</TabsContent>
                   <TabsContent value="temporary_locked">{renderUserTable(temporaryLockedUsers)}</TabsContent>
                   <TabsContent value="blocked">{renderUserTable(blockedUsers)}</TabsContent>
+                  <TabsContent value="limits"><UserAccessLimits /></TabsContent>
                 </Tabs>
 
               </motion.div>
