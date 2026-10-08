@@ -155,6 +155,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     let isActive = true;
+    let loadedUserId: string | null = null;
 
     const handleSession = (nextSession: Session | null) => {
       if (!isActive) return;
@@ -167,9 +168,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUserStatus(null);
         setIndustrialAccess(false);
         setIsLoading(false);
+        loadedUserId = null;
         return;
       }
 
+      // Token refreshes / cross-tab or preview-iframe session events for the same user
+      // must not flip the app back into loading — that unmounts protected pages (and open dialogs).
+      if (loadedUserId === nextSession.user.id) return;
+      loadedUserId = nextSession.user.id;
       setIsLoading(true);
 
       void Promise.all([

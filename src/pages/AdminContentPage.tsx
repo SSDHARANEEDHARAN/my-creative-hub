@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Eye, Heart, MessageCircle, BookOpen, RefreshCw, Save, RotateCcw, ExternalLink, Database, Monitor, Tablet, Smartphone, Sparkles, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import LayoutReviewPanel from "@/components/admin/LayoutReviewPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -266,6 +267,7 @@ const AdminContentPage = () => {
                 </div>
               </div>
               <div className="lg:overflow-y-auto space-y-3 pr-1">
+                <LayoutReviewPanel key={`${editing.kind}-${editing.id}`} page={editing.url} />
                 <div className="border-2 border-border p-3 space-y-2">
                   <Label className="text-xs uppercase tracking-wide flex items-center gap-1"><Sparkles className="h-3.5 w-3.5" />AI suggestions</Label>
                   <Textarea rows={3} placeholder="Paste a draft or notes (optional)…" value={draft} onChange={(e) => setDraft(e.target.value)} />
