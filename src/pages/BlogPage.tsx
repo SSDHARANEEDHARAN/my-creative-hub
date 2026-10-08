@@ -12,6 +12,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
 import ExplorationSection from "@/components/ExplorationSection";
+import GalleryConnectorDownloads from "@/components/GalleryConnectorDownloads";
+import GalleryHobbyConnectors from "@/components/GalleryHobbyConnectors";
 import { useBlogListCounts } from "@/hooks/useBlogData";
 import { useDownloadCounts } from "@/hooks/useDownloadCount";
 
@@ -309,6 +311,8 @@ const BlogPage = () => {
           </section>
 
           <ExplorationSection />
+          <GalleryConnectorDownloads />
+          <GalleryHobbyConnectors />
         </main>
         <Footer />
 

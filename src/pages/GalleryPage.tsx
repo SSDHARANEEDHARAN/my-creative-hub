@@ -1,11 +1,8 @@
 import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Package } from "lucide-react";
 import gsap from "gsap";
 import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
-import GalleryConnectorDownloads from "@/components/GalleryConnectorDownloads";
-import GalleryHobbyConnectors from "@/components/GalleryHobbyConnectors";
 import "./GalleryPage.css";
 
 /**
@@ -538,11 +535,6 @@ const GalleryPage = () => {
     };
   }, [slides]);
 
-  const scrollToConnectors = () => {
-    document
-      .getElementById("connector-downloads")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
 
   // Scroll distance that the pinned section consumes before releasing to the footer
   const scrollWrapHeight = `calc(100vh + ${Math.max(0, slides.length - 1) * SCROLL_PER_CARD_VH}vh)`;
@@ -571,14 +563,6 @@ const GalleryPage = () => {
               A few moments from the things I design and build — robotics, CAD, simulation,
               and the ideas in between. Hover any video to bring it to life.
             </p>
-            <button
-              type="button"
-              onClick={scrollToConnectors}
-              className="mt-6 inline-flex items-center gap-2 border-2 border-border bg-background px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-foreground transition-colors hover:bg-secondary sm:text-sm"
-            >
-              <Package className="h-4 w-4" aria-hidden="true" />
-              Skip to Connector Downloads
-            </button>
           </div>
 
           {/* Scroll-pinned animated gallery (centered, with left/right gaps) */}
@@ -614,8 +598,6 @@ const GalleryPage = () => {
             </div>
           )}
 
-          <GalleryConnectorDownloads />
-          <GalleryHobbyConnectors />
         </main>
 
       </div>

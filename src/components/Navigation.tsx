@@ -167,6 +167,12 @@ const Navigation = ({ persisted }: NavigationProps) => {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
+                        <Link to="/admin/content" className="cursor-pointer">
+                          <Images className="mr-2 h-4 w-4" />
+                          <span>Content</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link to="/admin/gallery" className="cursor-pointer">
                           <Images className="mr-2 h-4 w-4" />
                           <span>Gallery</span>
@@ -258,6 +264,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
                             <Shield className="w-4 h-4" />
                             Moderation
                           </Link>
+                          <Link to="/admin/content" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors"><Images className="h-4 w-4" />Content</Link>
                           <Link to="/admin/gallery" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
                             <Images className="w-4 h-4" />
                             Gallery
