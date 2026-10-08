@@ -15,6 +15,13 @@
       "when": 1791429907118,
       "tag": "0001_admin_site_controls",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791429926670,
+      "tag": "0002_protect_profile_admin_fields",
+      "breakpoints": true
     }
   ]
 }
