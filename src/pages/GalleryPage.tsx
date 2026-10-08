@@ -1,6 +1,5 @@
 import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Package } from "lucide-react";
 import gsap from "gsap";
 import { fetchPublicGallery, galleryPublicUrl } from "@/lib/gallery";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
