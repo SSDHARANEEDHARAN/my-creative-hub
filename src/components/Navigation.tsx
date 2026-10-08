@@ -200,7 +200,8 @@ const Navigation = ({ persisted }: NavigationProps) => {
             <ThemeToggle />
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="text-foreground p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors"
+              className="text-foreground min-w-11 min-h-11 inline-flex items-center justify-center p-2 hover:bg-secondary border-2 border-transparent hover:border-border transition-colors"
+              aria-label={isOpen ? "Close menu" : "Open menu"}
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X size={22} /> : <Menu size={22} />}

@@ -12,7 +12,7 @@ const ThemeToggle = () => {
 
   if (!mounted) {
     return (
-      <button className="p-2 rounded-xl bg-secondary/50 text-muted-foreground">
+      <button className="min-w-11 min-h-11 inline-flex items-center justify-center p-2 rounded-xl bg-secondary/50 text-muted-foreground">
         <Sun size={20} />
       </button>
     );
@@ -21,7 +21,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="p-2 rounded-xl bg-secondary/50 hover:bg-secondary text-foreground 
+      className="min-w-11 min-h-11 inline-flex items-center justify-center p-2 rounded-xl bg-secondary/50 hover:bg-secondary text-foreground 
                  transition-all duration-300 hover:scale-110"
       aria-label="Toggle theme"
     >
