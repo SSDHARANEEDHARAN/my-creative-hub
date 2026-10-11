@@ -28,13 +28,30 @@ const EDITABLE: Record<ContentKind, string[]> = {
   blog: ["title", "excerpt", "content", "image", "date", "readTime", "category"],
 };
 
+// Image URLs differ per build (dev: /src/assets/x.png, prod: /assets/x-<hash>.png).
+// Match stored URLs to the current build's originals by file name so a value
+// saved in one environment never 404s in the other.
+const baseName = (u: string) => (u.split("/").pop() || u).replace(/-[A-Za-z0-9_-]{6,}(\.[^.]+)$/, "$1");
+
+const resolveImageUrl = (orig: any, field: "image" | "images", stored: string): string => {
+  if (!orig) return stored;
+  const candidates: string[] = field === "images" ? orig.images ?? [] : [orig.image].filter(Boolean);
+  const match = candidates.find((o) => typeof o === "string" && baseName(o) === baseName(stored));
+  return match ?? stored;
+};
+
 const applyRow = (kind: ContentKind, id: string, data: Record<string, any> | null) => {
   const target = targetFor(kind, id);
   if (!target) return;
   const orig = originals.get(key(kind, id));
   for (const f of EDITABLE[kind]) {
-    if (data && f in data && data[f] !== undefined && data[f] !== null) target[f] = data[f];
-    else if (orig) target[f] = orig[f];
+    if (data && f in data && data[f] !== undefined && data[f] !== null) {
+      let v = data[f];
+      // Empty string means the admin cleared the field on purpose — keep it cleared.
+      if (f === "images" && Array.isArray(v)) v = v.map((u: string) => resolveImageUrl(orig, "images", u));
+      else if (f === "image" && typeof v === "string" && v) v = resolveImageUrl(orig, "image", v);
+      target[f] = v;
+    } else if (orig) target[f] = orig[f];
   }
 };
 

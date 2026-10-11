@@ -101,7 +101,8 @@ const AdminContentPage = () => {
     const out = { ...form };
     if (typeof out.images === "string") out.images = out.images.split("\n").map((s: string) => s.trim()).filter(Boolean);
     if (typeof out.tags === "string") out.tags = out.tags.split(",").map((s: string) => s.trim()).filter(Boolean);
-    Object.keys(out).forEach((k) => out[k] === "" && (out[k] = null));
+    // Keep "" for cleared fields: applyRow treats "" as intentionally cleared,
+    // while null/undefined means "use the original value".
     return out;
   };
 
