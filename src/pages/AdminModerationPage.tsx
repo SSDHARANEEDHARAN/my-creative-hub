@@ -893,7 +893,7 @@ const AdminModerationPage = () => {
             </div>
 
             <Tabs defaultValue="blogs" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-3 md:grid-cols-12">
+              <TabsList className="flex w-full flex-wrap h-auto gap-1 p-1">
                 <TabsTrigger value="blogs"><FileText className="w-4 h-4 mr-1" />Blogs</TabsTrigger>
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
