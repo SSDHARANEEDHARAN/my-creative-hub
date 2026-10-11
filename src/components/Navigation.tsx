@@ -160,24 +160,6 @@ const Navigation = ({ persisted }: NavigationProps) => {
                           <span>Dashboard</span>
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/moderation" className="cursor-pointer">
-                          <Shield className="mr-2 h-4 w-4" />
-                          <span>Moderation</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/content" className="cursor-pointer">
-                          <Images className="mr-2 h-4 w-4" />
-                          <span>Content</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/gallery" className="cursor-pointer">
-                          <Images className="mr-2 h-4 w-4" />
-                          <span>Gallery</span>
-                        </Link>
-                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
                   )}
@@ -260,15 +242,6 @@ const Navigation = ({ persisted }: NavigationProps) => {
                           <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
                             <LayoutDashboard className="w-4 h-4" />
                             Dashboard
-                          </Link>
-                          <Link to="/admin/moderation" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
-                            <Shield className="w-4 h-4" />
-                            Moderation
-                          </Link>
-                          <Link to="/admin/content" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors"><Images className="h-4 w-4" />Content</Link>
-                          <Link to="/admin/gallery" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary rounded-md transition-colors">
-                            <Images className="w-4 h-4" />
-                            Gallery
                           </Link>
                         </div>
                       )}

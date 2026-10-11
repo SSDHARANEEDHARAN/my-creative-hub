@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, MapPin, Phone, Send, CheckCircle, Clock, MessageSquare } from "lucide-react";
+import { Mail, MapPin, Phone, Send, CheckCircle, Clock, MessageSquare, Linkedin } from "lucide-react";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
