@@ -53,6 +53,7 @@ const ContactPage = () => {
     { icon: <Mail size={18} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
     { icon: <Phone size={18} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
     { icon: <MapPin size={18} />, label: "Location", value: "Namakkal, India", link: null },
+    { icon: <Linkedin size={18} />, label: "LinkedIn", value: "SS.DHARANEE DHARAN", link: "https://www.linkedin.com/in/dharaneedharan-ss-70941a211/" },
   ];
 
   const benefits = [
