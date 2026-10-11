@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Shield, FileText, Images, Eye, Monitor, Tablet, Smartphone, RefreshCw, ExternalLink, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import DraftApprovals from "./DraftApprovals";
 
 const SECTIONS = [
   { to: "/admin/moderation", icon: Shield, title: "Moderation & approvals", desc: "Blog, projects, skills, certificates, experience, comments, guests, visits, notifications, audit." },
@@ -37,6 +38,8 @@ const AdminControlCenter = () => {
           </Link>
         ))}
       </div>
+
+      <DraftApprovals />
 
       <div className="bg-card border border-border p-4 sm:p-6">
         <div className="flex flex-wrap items-center gap-2 mb-4">
