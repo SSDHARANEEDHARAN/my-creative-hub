@@ -18,6 +18,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import UserAccessLimits from "@/components/admin/UserAccessLimits";
+import AdminControlCenter from "@/components/admin/AdminControlCenter";
 import {
   Table,
   TableBody,
@@ -469,6 +470,8 @@ const AdminDashboardPage = () => {
               </div>
               <p className="text-muted-foreground">Manage users, approvals, and activity tracking</p>
             </motion.div>
+
+            <AdminControlCenter />
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 mb-8">

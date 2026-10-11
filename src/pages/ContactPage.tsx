@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, MapPin, Phone, Send, CheckCircle, Clock, MessageSquare } from "lucide-react";
+import { Mail, MapPin, Phone, Send, CheckCircle, Clock, MessageSquare, Linkedin } from "lucide-react";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -53,6 +53,7 @@ const ContactPage = () => {
     { icon: <Mail size={18} />, label: "Email", value: "tharaneetharanss@gmail.com", link: "mailto:tharaneetharanss@gmail.com" },
     { icon: <Phone size={18} />, label: "Phone", value: "+91 8870086023", link: "tel:+918870086023" },
     { icon: <MapPin size={18} />, label: "Location", value: "Namakkal, India", link: null },
+    { icon: <Linkedin size={18} />, label: "LinkedIn", value: "SS.DHARANEE DHARAN", link: "https://www.linkedin.com/in/dharaneedharan-ss-70941a211/" },
   ];
 
   const benefits = [

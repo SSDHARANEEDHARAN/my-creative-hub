@@ -123,8 +123,8 @@ const AboutPage = () => {
   return (
     <>
       <Helmet>
-        <title>About | SS. Tharan - Mechatronics Design Engineer & Full Stack Developer</title>
-        <meta name="description" content="Learn more about SS. Tharan, a versatile professional with expertise in IT development and CAD engineering." />
+        <title>About | SS.DHARANEE DHARAN - Mechatronics Design Engineer</title>
+        <meta name="description" content="Learn more about SS.DHARANEE DHARAN, a versatile professional with expertise in IT development and CAD engineering." />
       </Helmet>
       
       <div className="min-h-screen bg-background transition-colors duration-300">
@@ -149,8 +149,8 @@ const AboutPage = () => {
                     </div>
                     
                     <div className="flex-1">
-                       <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">SS. Dharanee Dharan</h1>
-                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Mechatronics Design Engineer & Full Stack Developer</p>
+                       <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold mb-2">SS.DHARANEE DHARAN</h1>
+                      <p className="text-base sm:text-lg md:text-xl text-primary font-semibold mb-3 sm:mb-4">Mechatronics Design Engineer</p>
                       
                        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 text-muted-foreground text-xs sm:text-sm mb-4 sm:mb-6">
                         <span className="flex items-center gap-1"><MapPin size={14} className="text-primary" />Namakkal, India</span>
