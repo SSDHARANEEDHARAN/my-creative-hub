@@ -17,6 +17,7 @@ import {
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import AdminBackButton from "@/components/admin/AdminBackButton";
 import UserAccessLimits from "@/components/admin/UserAccessLimits";
 import AdminControlCenter from "@/components/admin/AdminControlCenter";
 import {
@@ -459,6 +460,9 @@ const AdminDashboardPage = () => {
         <Navigation />
         <main className="pt-24 pb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-end mb-2">
+              <AdminBackButton to="/" label="Back to site" />
+            </div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
