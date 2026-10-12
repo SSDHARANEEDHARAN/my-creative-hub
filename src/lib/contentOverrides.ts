@@ -31,11 +31,16 @@ const EDITABLE: Record<ContentKind, string[]> = {
 // Image URLs differ per build (dev: /src/assets/x.png, prod: /assets/x-<hash>.png).
 // Match stored URLs to the current build's originals by file name so a value
 // saved in one environment never 404s in the other.
-const baseName = (u: string) => (u.split("/").pop() || u).replace(/-[A-Za-z0-9_-]{6,}(\.[^.]+)$/, "$1");
+const fileName = (u: string) => u.split("/").pop() || u;
+// Strip only a trailing Vite-style hash segment (alphanumeric, 8+ chars, no
+// hyphens/underscores) so multi-word names like cobot-trainer-2.jpg stay intact.
+const baseName = (u: string) => fileName(u).replace(/-[A-Za-z0-9]{8,}(\.[^.]+)$/, "$1");
 
 const resolveImageUrl = (orig: any, field: "image" | "images", stored: string): string => {
   if (!orig) return stored;
   const candidates: string[] = field === "images" ? orig.images ?? [] : [orig.image].filter(Boolean);
+  const exact = candidates.find((o) => typeof o === "string" && fileName(o) === fileName(stored));
+  if (exact) return exact;
   const match = candidates.find((o) => typeof o === "string" && baseName(o) === baseName(stored));
   return match ?? stored;
 };
