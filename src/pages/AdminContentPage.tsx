@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Eye, Heart, MessageCircle, BookOpen, RefreshCw, Save, RotateCcw, ExternalLink, Database, Monitor, Tablet, Smartphone, Sparkles, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import AdminBackButton from "@/components/admin/AdminBackButton";
 import LayoutReviewPanel from "@/components/admin/LayoutReviewPanel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -173,6 +174,9 @@ const AdminContentPage = () => {
         <title>Content Admin | SS. Tharan</title>
       </Helmet>
       <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-16 max-w-6xl">
+        <div className="mb-4">
+          <AdminBackButton />
+        </div>
         <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-bold">Projects &amp; Blog Content</h1>
