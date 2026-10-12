@@ -437,6 +437,7 @@ export type Database = {
           created_by: string | null
           description: string
           id: string
+          images: string[]
           is_visible: boolean
           sort_order: number
           status: string
@@ -450,6 +451,7 @@ export type Database = {
           created_by?: string | null
           description: string
           id?: string
+          images?: string[]
           is_visible?: boolean
           sort_order?: number
           status?: string
@@ -463,6 +465,7 @@ export type Database = {
           created_by?: string | null
           description?: string
           id?: string
+          images?: string[]
           is_visible?: boolean
           sort_order?: number
           status?: string

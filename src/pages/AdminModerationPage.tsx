@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import ReactMarkdown from "react-markdown";
@@ -1515,12 +1516,18 @@ const AdminModerationPage = () => {
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium">Content (Markdown)</label>
                 <Button variant="ghost" size="sm" onClick={() => setShowPreview(!showPreview)}>
-                  <Eye className="w-4 h-4 mr-1" /> {showPreview ? "Edit" : "Preview"}
+                  <Eye className="w-4 h-4 mr-1" /> {showPreview ? "Back to edit" : "Full post preview"}
                 </Button>
               </div>
               {showPreview ? (
-                <div className="p-4 border rounded min-h-[200px] prose prose-sm dark:prose-invert max-w-none">
-                  <ReactMarkdown>{blogForm.content || "*Nothing to preview*"}</ReactMarkdown>
+                <div className="border border-border bg-background p-4 sm:p-8 max-h-[60vh] overflow-y-auto">
+                  <article className="max-w-3xl mx-auto">
+                    {blogForm.cover_image && <img src={blogForm.cover_image} alt={blogForm.title || "Cover"} className="w-full max-h-80 object-cover mb-6" />}
+                    <p className="text-xs uppercase tracking-wide text-primary">{blogForm.category || "tech"}{blogForm.read_time ? ` · ${blogForm.read_time}` : ""}</p>
+                    <h1 className="font-display text-2xl sm:text-3xl font-bold mt-2 mb-3 text-foreground">{blogForm.title || "Untitled post"}</h1>
+                    {blogForm.excerpt && <p className="text-muted-foreground mb-6">{blogForm.excerpt}</p>}
+                    {blogForm.content ? <StyledArticleRenderer content={blogForm.content} /> : <p className="text-sm text-muted-foreground">Nothing to preview yet.</p>}
+                  </article>
                 </div>
               ) : (
                 <Textarea placeholder="Write your blog post in Markdown..." value={blogForm.content || ""} onChange={e => setBlogForm(p => ({ ...p, content: e.target.value }))} rows={12} className="font-mono text-sm" />

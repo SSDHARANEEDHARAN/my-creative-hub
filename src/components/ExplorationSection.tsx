@@ -13,6 +13,7 @@ export interface Exploration {
   contact_note: string | null;
   is_visible: boolean;
   sort_order: number;
+  images?: string[] | null;
 }
 
 const ExplorationSection = () => {
@@ -64,6 +65,18 @@ const ExplorationSection = () => {
               transition={{ duration: 0.35, delay: index * 0.05 }}
               className="bg-card border border-border p-5 flex flex-col h-full"
             >
+              {item.images && item.images.length > 0 && (
+                <div className="-mx-5 -mt-5 mb-4">
+                  <img src={item.images[0]} alt={item.title} loading="lazy" className="w-full aspect-video object-cover" />
+                  {item.images.length > 1 && (
+                    <div className="flex gap-1 p-1 overflow-x-auto">
+                      {item.images.slice(1).map((u) => (
+                        <a key={u} href={u} target="_blank" rel="noreferrer"><img src={u} alt="" loading="lazy" className="w-16 h-12 object-cover flex-shrink-0" /></a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               <span className="self-start px-2 py-1 text-[11px] uppercase tracking-wide bg-muted text-muted-foreground mb-3">
                 {item.status}
               </span>
