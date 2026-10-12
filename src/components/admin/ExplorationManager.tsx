@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import ExplorationCard from "@/components/ExplorationCard";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -38,6 +39,15 @@ const ExplorationManager = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...empty });
   const [uploading, setUploading] = useState(false);
+  const previewItem = {
+    ...form,
+    id: editingId || "preview",
+    title: form.title.trim() || "Untitled exploration",
+    description: form.description.trim(),
+    status: form.status.trim() || "exploring",
+    tags: form.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+    contact_note: form.contact_note.trim() || null,
+  };
 
   const uploadPhotos = async (files: FileList | null) => {
     if (!files?.length) return;
@@ -133,7 +143,8 @@ const ExplorationManager = () => {
 
   return (
     <div className="space-y-6">
-      <div className="border border-border p-4 sm:p-6 bg-card space-y-3">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
+      <div className="min-w-0 space-y-3">
         <h3 className="font-semibold">{editingId ? "Edit exploration" : "Add new exploration"}</h3>
         <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         <Textarea rows={4} placeholder="What are you exploring right now?" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
@@ -146,16 +157,16 @@ const ExplorationManager = () => {
         <div className="space-y-2">
           <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add photos
-            <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { uploadPhotos(e.target.files); e.target.value = ""; }} />
+            <input type="file" aria-label="Add exploration photos" accept="image/*" multiple disabled={uploading || saving} className="hidden" onChange={(e) => { uploadPhotos(e.target.files); e.target.value = ""; }} />
           </label>
           {form.images.length > 0 && (
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {form.images.map((url) => (
                 <div key={url} className="relative">
                   <img src={url} alt="" className="w-full aspect-square object-cover border border-border" />
-                  <button type="button" aria-label="Remove photo" className="absolute top-1 right-1 bg-background/90 p-1" onClick={() => setForm((f) => ({ ...f, images: f.images.filter((u) => u !== url) }))}>
+                  <Button type="button" size="icon" variant="ghost" aria-label="Remove photo" disabled={saving || uploading} className="absolute top-1 right-1 bg-background/90 h-8 w-8" onClick={() => setForm((f) => ({ ...f, images: f.images.filter((u) => u !== url) }))}>
                     <Trash2 className="w-3 h-3 text-destructive" />
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -172,6 +183,14 @@ const ExplorationManager = () => {
           </Button>
           {editingId && <Button variant="outline" onClick={reset}>Cancel</Button>}
         </div>
+      </div>
+      <aside aria-label="Exploration card preview" className="min-w-0 self-start xl:sticky xl:top-24">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <h3 className="font-semibold flex items-center gap-2"><Eye className="w-4 h-4" /> Live preview</h3>
+          <Badge variant={form.is_visible ? "outline" : "secondary"}>{form.is_visible ? "Visible after save" : "Hidden"}</Badge>
+        </div>
+        <ExplorationCard item={previewItem} preview />
+      </aside>
       </div>
 
       {loading ? (
@@ -198,11 +217,11 @@ const ExplorationManager = () => {
                 )}
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => toggleVisible(item)}>
+                <Button size="sm" variant="outline" aria-label={item.is_visible ? `Hide ${item.title}` : `Show ${item.title}`} onClick={() => toggleVisible(item)}>
                   {item.is_visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => edit(item)}><Edit className="w-4 h-4" /></Button>
-                <Button size="sm" variant="outline" className="text-destructive" onClick={() => remove(item)}><Trash2 className="w-4 h-4" /></Button>
+                <Button size="sm" variant="outline" aria-label={`Edit ${item.title}`} onClick={() => edit(item)}><Edit className="w-4 h-4" /></Button>
+                <Button size="sm" variant="outline" className="text-destructive" aria-label={`Delete ${item.title}`} onClick={() => remove(item)}><Trash2 className="w-4 h-4" /></Button>
               </div>
             </div>
           ))}

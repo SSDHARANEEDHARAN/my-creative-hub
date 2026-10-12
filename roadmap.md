@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Add and verify live exploration card preview in Moderation; temporary real-photo save appeared on Blog without refresh and was cleaned up
+- [ ] Add user's real explorations and verify public cards — blocked: waiting for project descriptions and matching photo choices
 - [x] Admin content editor: device preview, AI copy suggestions, AI screenshot layout check
 - [x] Fix editor auto-closing
 - [x] Connector file AI description verified working
