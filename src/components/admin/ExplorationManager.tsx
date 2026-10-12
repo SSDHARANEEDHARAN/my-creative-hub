@@ -16,6 +16,7 @@ interface Exploration {
   contact_note: string | null;
   is_visible: boolean;
   sort_order: number;
+  images: string[] | null;
   created_at: string;
 }
 
@@ -27,6 +28,7 @@ const empty = {
   contact_note: "",
   sort_order: 0,
   is_visible: true,
+  images: [] as string[],
 };
 
 const ExplorationManager = () => {
@@ -35,6 +37,21 @@ const ExplorationManager = () => {
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...empty });
+  const [uploading, setUploading] = useState(false);
+
+  const uploadPhotos = async (files: FileList | null) => {
+    if (!files?.length) return;
+    setUploading(true);
+    const urls: string[] = [];
+    for (const file of Array.from(files)) {
+      const path = `explorations/${Date.now()}-${Math.random().toString(36).slice(2)}.${file.name.split(".").pop()}`;
+      const { error } = await supabase.storage.from("project-images").upload(path, file);
+      if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); continue; }
+      urls.push(supabase.storage.from("project-images").getPublicUrl(path).data.publicUrl);
+    }
+    setForm((f) => ({ ...f, images: [...f.images, ...urls] }));
+    setUploading(false);
+  };
 
   const load = async () => {
     const { data, error } = await supabase
@@ -72,6 +89,7 @@ const ExplorationManager = () => {
       contact_note: form.contact_note.trim() || null,
       sort_order: Number(form.sort_order) || 0,
       is_visible: form.is_visible,
+      images: form.images,
     };
     const { error } = editingId
       ? await supabase.from("explorations").update(payload).eq("id", editingId)
@@ -109,6 +127,7 @@ const ExplorationManager = () => {
       contact_note: item.contact_note || "",
       sort_order: item.sort_order,
       is_visible: item.is_visible,
+      images: item.images || [],
     });
   };
 
@@ -124,12 +143,30 @@ const ExplorationManager = () => {
           <Input type="number" placeholder="Sort order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} />
         </div>
         <Input placeholder="Contact line shown under the card" value={form.contact_note} onChange={(e) => setForm({ ...form, contact_note: e.target.value })} />
+        <div className="space-y-2">
+          <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
+            {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add photos
+            <input type="file" accept="image/*" multiple className="hidden" onChange={(e) => { uploadPhotos(e.target.files); e.target.value = ""; }} />
+          </label>
+          {form.images.length > 0 && (
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+              {form.images.map((url) => (
+                <div key={url} className="relative">
+                  <img src={url} alt="" className="w-full aspect-square object-cover border border-border" />
+                  <button type="button" aria-label="Remove photo" className="absolute top-1 right-1 bg-background/90 p-1" onClick={() => setForm((f) => ({ ...f, images: f.images.filter((u) => u !== url) }))}>
+                    <Trash2 className="w-3 h-3 text-destructive" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <label className="flex items-center gap-2 text-sm text-muted-foreground">
           <input type="checkbox" checked={form.is_visible} onChange={(e) => setForm({ ...form, is_visible: e.target.checked })} />
           Visible on the blog page
         </label>
         <div className="flex gap-2">
-          <Button onClick={save} disabled={saving}>
+          <Button onClick={save} disabled={saving || uploading}>
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
             {editingId ? "Update" : "Add"}
           </Button>
@@ -145,6 +182,7 @@ const ExplorationManager = () => {
         <div className="space-y-3">
           {items.map((item) => (
             <div key={item.id} className="border border-border p-4 bg-card flex flex-col sm:flex-row sm:items-start gap-3">
+              {item.images?.[0] && <img src={item.images[0]} alt="" className="w-full sm:w-24 h-32 sm:h-24 object-cover border border-border" />}
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <span className="font-medium">{item.title}</span>
