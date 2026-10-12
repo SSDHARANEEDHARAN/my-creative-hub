@@ -20,6 +20,7 @@ import { Slider } from "@/components/ui/slider";
 import ReactMarkdown from "react-markdown";
 import GalleryManager from "@/components/admin/GalleryManager";
 import ExplorationManager from "@/components/admin/ExplorationManager";
+import AdminBackButton from "@/components/admin/AdminBackButton";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
   Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
@@ -865,6 +866,9 @@ const AdminModerationPage = () => {
         <Navigation />
         <main className="pt-24 pb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between gap-4 flex-wrap mb-2">
+              <AdminBackButton />
+            </div>
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
