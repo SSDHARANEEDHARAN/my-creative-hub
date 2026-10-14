@@ -1,5 +1,6 @@
 import kinematicsDemoVideo from "@/assets/kinematics-lab-demo.mp4.asset.json";
 import { smartManufacturingArticle } from "@/data/smartManufacturingProject";
+import { amrCobotDevelopmentArticle } from "@/data/amrCobotDevelopmentProject";
 
 export interface ArticleSection {
   title: string;
@@ -35,6 +36,7 @@ export interface ArticleContent {
 }
 
 export const articleContents: ArticleContent[] = [
+  amrCobotDevelopmentArticle,
   smartManufacturingArticle,
   // ==================== IT PROJECTS ====================
   {

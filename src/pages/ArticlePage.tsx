@@ -107,7 +107,7 @@ const ArticlePage = memo(() => {
     return () => observer.disconnect();
   }, [project, hasRead, trackRead]);
 
-  if (project?.id === 131 && !isAdmin && !(userStatus === "approved" && industrialAccess)) {
+  if ((project?.id === 131 || project?.id === 132) && !isAdmin && !(userStatus === "approved" && industrialAccess)) {
     return <IndustrialProjectsPage />;
   }
 
@@ -516,7 +516,7 @@ const ArticlePage = memo(() => {
                 }}
               >
                 <h2 className="font-display text-2xl font-bold mb-6">Project Gallery</h2>
-                {project?.id === 131 && (
+                {(project?.id === 131 || project?.id === 132) && (
                   <p className="text-sm text-muted-foreground border-l-2 border-border pl-4 mb-6">
                     This content (images/videos) is from projects developed during my tenure at Janatics. Shared for demonstration purposes only. All rights and intellectual property belong to Janatics. No unauthorized use or reproduction permitted.
                   </p>
