@@ -1,4 +1,5 @@
 import { smartManufacturingProject } from "@/data/smartManufacturingProject";
+import { amrCobotDevelopmentProject } from "@/data/amrCobotDevelopmentProject";
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
@@ -371,6 +372,7 @@ export const itProjects: Project[] = [
 
 // Industrial Projects (restricted access)
 export const industrialProjects: Project[] = [
+  amrCobotDevelopmentProject,
   smartManufacturingProject,
   {
     id: 122,
