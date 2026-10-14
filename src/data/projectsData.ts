@@ -1,3 +1,4 @@
+import { smartManufacturingProject } from "@/data/smartManufacturingProject";
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
@@ -370,6 +371,7 @@ export const itProjects: Project[] = [
 
 // Industrial Projects (restricted access)
 export const industrialProjects: Project[] = [
+  smartManufacturingProject,
   {
     id: 122,
     title: "Cobot Trainer Kit with ATC – Industrial Didactic Robotics",
