@@ -1,5 +1,6 @@
 import { smartManufacturingProject } from "@/data/smartManufacturingProject";
 import { amrCobotDevelopmentProject } from "@/data/amrCobotDevelopmentProject";
+import { axisMmsProject } from "@/data/axisMmsProject";
 // Import project images
 import ecommerceImg from "@/assets/project-ecommerce.jpg";
 import iotImg from "@/assets/project-iot.jpg";
@@ -372,6 +373,7 @@ export const itProjects: Project[] = [
 
 // Industrial Projects (restricted access)
 export const industrialProjects: Project[] = [
+  axisMmsProject,
   amrCobotDevelopmentProject,
   smartManufacturingProject,
   {
