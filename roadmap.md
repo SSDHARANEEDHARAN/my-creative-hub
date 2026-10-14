@@ -1,7 +1,7 @@
 # Roadmap
 - [x] Add Smart Manufacturing System – AMR with Cobot industrial project: case study, 52 photos, seven videos, Cloud content record, verified admin save and Moderation listing; all hosted media responds successfully (sandbox Chromium lacks H.264 playback support)
 - [x] Add and verify live exploration card preview in Moderation; temporary real-photo save appeared on Blog without refresh and was cleaned up
-- [ ] Add user's real explorations and verify public cards — blocked: waiting for project descriptions and matching photo choices
+- [x] Add supplied real explorations: CARTIZION BOT and LoRa Smart Keychain; keychain saved through Moderation with eight album photos and verified on public Blog
 - [x] Admin content editor: device preview, AI copy suggestions, AI screenshot layout check
 - [x] Fix editor auto-closing
 - [x] Connector file AI description verified working
