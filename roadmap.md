@@ -1,5 +1,5 @@
 # Roadmap
-- [ ] Add AMR with Cobot – End-to-End Product Development as a separate industrial project with supplied album media, case study and Cloud/admin record; preserve existing projects
+- [x] Add AMR with Cobot – End-to-End Product Development separately: 112 photos, one video, case study and Cloud record; verified admin preview/save, Moderation listing, industrial card and all 113 hosted media URLs; existing projects preserved
 - [x] Add Smart Manufacturing System – AMR with Cobot industrial project: case study, 52 photos, seven videos, Cloud content record, verified admin save and Moderation listing; all hosted media responds successfully (sandbox Chromium lacks H.264 playback support)
 - [x] Add and verify live exploration card preview in Moderation; temporary real-photo save appeared on Blog without refresh and was cleaned up
 - [x] Add supplied real explorations: CARTIZION BOT and LoRa Smart Keychain; keychain saved through Moderation with eight album photos and verified on public Blog
