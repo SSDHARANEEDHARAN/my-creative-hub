@@ -24,7 +24,7 @@ const targetFor = (kind: ContentKind, id: string): any =>
     : blogPosts.find((b) => b.id === id);
 
 const EDITABLE: Record<ContentKind, string[]> = {
-  project: ["title", "description", "images", "tags", "articleUrl", "githubUrl", "liveUrl", "videoUrl", "featured"],
+  project: ["title", "description", "images", "tags", "articleUrl", "githubUrl", "liveUrl", "videoUrl", "videoUrls", "featured"],
   blog: ["title", "excerpt", "content", "image", "date", "readTime", "category"],
 };
 

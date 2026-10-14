@@ -27,7 +27,7 @@ import {
 
 type Item = { kind: ContentKind; id: string; title: string; sub: string; image?: string; url: string; raw: any };
 
-const LIST_FIELDS = ["images", "tags"];
+const LIST_FIELDS = ["images", "tags", "videoUrls"];
 
 const AdminContentPage = () => {
   const version = useContentVersion();
@@ -92,7 +92,7 @@ const AdminContentPage = () => {
   const open = (it: Item) => {
     const data = pickEditable(it.kind, it.raw);
     LIST_FIELDS.forEach((f) => {
-      if (Array.isArray(data[f])) data[f] = data[f].join(f === "images" ? "\n" : ", ");
+      if (Array.isArray(data[f])) data[f] = data[f].join(f === "tags" ? ", " : "\n");
     });
     setForm(data);
     setEditing(it);
@@ -101,6 +101,7 @@ const AdminContentPage = () => {
   const buildPayload = () => {
     const out = { ...form };
     if (typeof out.images === "string") out.images = out.images.split("\n").map((s: string) => s.trim()).filter(Boolean);
+    if (typeof out.videoUrls === "string") out.videoUrls = out.videoUrls.split("\n").map((s: string) => s.trim()).filter(Boolean);
     if (typeof out.tags === "string") out.tags = out.tags.split(",").map((s: string) => s.trim()).filter(Boolean);
     // Keep "" for cleared fields: applyRow treats "" as intentionally cleared,
     // while null/undefined means "use the original value".
@@ -307,6 +308,7 @@ const AdminContentPage = () => {
                     {field("liveUrl", "Live demo link")}
                     {field("githubUrl", "GitHub link")}
                     {field("videoUrl", "Video link")}
+                    {field("videoUrls", "Project videos (one URL per line)", "textarea", 4)}
                     {field("articleUrl", "Case study link")}
                     {field("featured", "Featured", "switch")}
                   </>

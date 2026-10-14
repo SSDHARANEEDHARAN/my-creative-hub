@@ -18,6 +18,7 @@ import ProjectComments from "@/components/ProjectComments";
 import LazyImage from "@/components/LazyImage";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import IndustrialProjectsPage from "@/pages/IndustrialProjectsPage";
 
 const getGoogleDriveFileId = (videoUrl: string) => {
   try {
@@ -43,13 +44,13 @@ const getGoogleDriveViewUrl = (videoUrl: string) => {
 const ArticlePage = memo(() => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticleBySlug(slug) : undefined;
-  const project = article ? getAllProjects().find(p => p.id === article.id || p.articleUrl?.includes(slug!)) : undefined;
+  const project = article ? getAllProjects().find(p => p.id === article.id || (slug && p.articleUrl?.includes(slug))) : undefined;
   const galleryImages = project?.images?.slice(1) ?? [];
   const [isVisible, setIsVisible] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const { count: projectDownloadCount, refresh: refreshProjectDownloads } = useDownloadCount("project", project ? String(project.id) : "");
   
-  const { user } = useAuth();
+  const { user, isAdmin, userStatus, industrialAccess } = useAuth();
   const { guest } = useGuest();
   const currentUserEmail = user?.email || guest?.email || null;
   const currentUserName = user?.user_metadata?.display_name || guest?.name || null;
@@ -105,6 +106,10 @@ const ArticlePage = memo(() => {
 
     return () => observer.disconnect();
   }, [project, hasRead, trackRead]);
+
+  if (project?.id === 131 && !isAdmin && !(userStatus === "approved" && industrialAccess)) {
+    return <IndustrialProjectsPage />;
+  }
 
   if (!article) {
     return (
@@ -511,6 +516,11 @@ const ArticlePage = memo(() => {
                 }}
               >
                 <h2 className="font-display text-2xl font-bold mb-6">Project Gallery</h2>
+                {project?.id === 131 && (
+                  <p className="text-sm text-muted-foreground border-l-2 border-border pl-4 mb-6">
+                    This content (images/videos) is from projects developed during my tenure at Janatics. Shared for demonstration purposes only. All rights and intellectual property belong to Janatics. No unauthorized use or reproduction permitted.
+                  </p>
+                )}
                 {project?.mediaFolderUrl && (
                   <div className="mb-6 rounded-xl overflow-hidden border border-border bg-card shadow-lg aspect-video">
                     <iframe
