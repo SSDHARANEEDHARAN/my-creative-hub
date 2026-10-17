@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
 - [x] Add AXIS GLOBAL 4-Station MMS: supplied case study, four photos, two videos and Cloud record; verified admin preview/save, Moderation listing, industrial card, article and all hosted media; existing projects preserved
 - [x] Add AMR with Cobot – End-to-End Product Development separately: 112 photos, one video, case study and Cloud record; verified admin preview/save, Moderation listing, industrial card and all 113 hosted media URLs; existing projects preserved
 - [x] Add Smart Manufacturing System – AMR with Cobot industrial project: case study, 52 photos, seven videos, Cloud content record, verified admin save and Moderation listing; all hosted media responds successfully (sandbox Chromium lacks H.264 playback support)

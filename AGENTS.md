@@ -3,3 +3,4 @@
 - Admin-only profile fields (status, access limits) are protected by the protect_profile_admin_fields trigger because users may update their own profile row.
 - Exploration previews and public exploration cards use the same ExplorationCard renderer so unsaved edits match the saved frontend presentation.
 - Industrial case studies use unique numeric catalog IDs and shared project/article data; imported media uses asset pointers and editable video arrays persist through content_overrides to keep admin and frontend aligned.
+- Imported industrial photo pointers resolve through the shared public-host URL helper, including saved image overrides, so photos do not depend on a preview origin or computer-local cache.

@@ -1,4 +1,5 @@
 import type { Project } from "@/data/projectsData";
+import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
 import type { ArticleContent } from "@/data/articleContent";
 import photo1 from "@/assets/projects/smart-manufacturing/photo-01.jpg.asset.json";
 import photo2 from "@/assets/projects/smart-manufacturing/photo-02.jpg.asset.json";
@@ -77,7 +78,7 @@ export const smartManufacturingProject: Project = {
   "articleUrl": "/projects/article/smart-manufacturing-amr-cobot",
   "featured": true,
   "category": "industrial",
-  images: [photo1.url, photo2.url, photo3.url, photo4.url, photo5.url, photo6.url, photo7.url, photo8.url, photo9.url, photo10.url, photo11.url, photo12.url, photo13.url, photo14.url, photo15.url, photo16.url, photo17.url, photo18.url, photo19.url, photo20.url, photo21.url, photo22.url, photo23.url, photo24.url, photo25.url, photo26.url, photo27.url, photo28.url, photo29.url, photo30.url, photo31.url, photo32.url, photo33.url, photo34.url, photo35.url, photo36.url, photo37.url, photo38.url, photo39.url, photo40.url, photo41.url, photo42.url, photo43.url, photo44.url, photo45.url, photo46.url, photo47.url, photo48.url, photo49.url, photo50.url, photo51.url, photo52.url],
+  images: [photo1.url, photo2.url, photo3.url, photo4.url, photo5.url, photo6.url, photo7.url, photo8.url, photo9.url, photo10.url, photo11.url, photo12.url, photo13.url, photo14.url, photo15.url, photo16.url, photo17.url, photo18.url, photo19.url, photo20.url, photo21.url, photo22.url, photo23.url, photo24.url, photo25.url, photo26.url, photo27.url, photo28.url, photo29.url, photo30.url, photo31.url, photo32.url, photo33.url, photo34.url, photo35.url, photo36.url, photo37.url, photo38.url, photo39.url, photo40.url, photo41.url, photo42.url, photo43.url, photo44.url, photo45.url, photo46.url, photo47.url, photo48.url, photo49.url, photo50.url, photo51.url, photo52.url].map(resolveProjectPhotoUrl),
   videoUrls: [video1.url, video2.url, video3.url, video4.url, video5.url, video6.url, video7.url],
 };
 
