@@ -3,6 +3,7 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const OWNER_EMAIL = "tharaneetharanss@gmail.com";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.lovable.app";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,12 +20,14 @@ const ContactEmailSchema = z.object({
   budget: z.string().optional(),
   timeline: z.string().optional(),
   requirements: z.string().optional(),
-  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding"]).optional(),
+  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding", "exploration_inquiry"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
   originalComment: z.string().optional(),
   replyContent: z.string().optional(),
+  explorationId: z.string().uuid().optional(),
+  explorationTitle: z.string().max(300).optional(),
 });
 
 type ContactEmailRequest = z.infer<typeof ContactEmailSchema>;
