@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { resolveProjectPhotoUrl } from "./projectPhotoUrl";
+import { resolveProjectPhotoUrl } from "../src/lib/projectPhotoUrl";
 
 describe("industrial project photo portability", () => {
   test("uses a public host independent of the computer or preview origin", () => {
