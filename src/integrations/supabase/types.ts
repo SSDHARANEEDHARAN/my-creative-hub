@@ -430,6 +430,36 @@ export type Database = {
         }
         Relationships: []
       }
+      exploration_inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          exploration_id: string | null
+          exploration_title: string | null
+          id: string
+          message: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          exploration_id?: string | null
+          exploration_title?: string | null
+          id?: string
+          message: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          exploration_id?: string | null
+          exploration_title?: string | null
+          id?: string
+          message?: string
+          name?: string
+        }
+        Relationships: []
+      }
       explorations: {
         Row: {
           contact_note: string | null
