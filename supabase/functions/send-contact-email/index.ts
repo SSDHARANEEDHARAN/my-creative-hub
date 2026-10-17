@@ -220,6 +220,37 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
+    // ─── Exploration Inquiry ───
+    if (type === "exploration_inquiry") {
+      const sT = d.explorationTitle ? escapeHtml(d.explorationTitle) : "an exploration";
+
+      // Store the inquiry so nothing is lost even if email delivery fails.
+      try {
+        const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+        const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        await fetch(`${SUPABASE_URL}/rest/v1/exploration_inquiries`, {
+          method: "POST",
+          headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+          body: JSON.stringify({
+            exploration_id: d.explorationId || null,
+            exploration_title: d.explorationTitle || null,
+            name: d.name,
+            email: d.email,
+            message: d.message,
+          }),
+        });
+      } catch (e) { console.error("Inquiry insert failed:", e); }
+
+      await sendEmail(OWNER_EMAIL, `Exploration Inquiry: ${sT}`, buildEmail({
+        headline: "New Exploration Inquiry",
+        body: `${card(`<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#111;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Exploration", sT)}${infoRow("Time", new Date().toLocaleString())}</table>`)}
+        ${quoteBlock(sM, "Message")}`,
+        footerText: `Reply directly to respond to ${sN}.`,
+      }), d.email);
+
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
+
     // ─── Guest Welcome ───
     if (type === "guest_welcome") {
       await sendEmail(OWNER_EMAIL, `New Guest: ${sN}`, buildEmail({
