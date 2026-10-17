@@ -2,6 +2,7 @@ import { useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getAllProjects, Project } from "@/data/projectsData";
 import { blogPosts, BlogPost } from "@/data/blogPostsData";
+import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
 
 export type ContentKind = "project" | "blog";
 
@@ -37,12 +38,12 @@ const fileName = (u: string) => u.split("/").pop() || u;
 const baseName = (u: string) => fileName(u).replace(/-[A-Za-z0-9]{8,}(\.[^.]+)$/, "$1");
 
 const resolveImageUrl = (orig: any, field: "image" | "images", stored: string): string => {
-  if (!orig) return stored;
+  if (!orig) return resolveProjectPhotoUrl(stored);
   const candidates: string[] = field === "images" ? orig.images ?? [] : [orig.image].filter(Boolean);
   const exact = candidates.find((o) => typeof o === "string" && fileName(o) === fileName(stored));
-  if (exact) return exact;
+  if (exact) return resolveProjectPhotoUrl(exact);
   const match = candidates.find((o) => typeof o === "string" && baseName(o) === baseName(stored));
-  return match ?? stored;
+  return resolveProjectPhotoUrl(match ?? stored);
 };
 
 const applyRow = (kind: ContentKind, id: string, data: Record<string, any> | null) => {
