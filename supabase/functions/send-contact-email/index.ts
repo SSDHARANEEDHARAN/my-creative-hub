@@ -2,8 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const OWNER_EMAIL = "contact@example.com";
-const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.vercel.app";
+const OWNER_EMAIL = "tharaneetharanss@gmail.com";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
