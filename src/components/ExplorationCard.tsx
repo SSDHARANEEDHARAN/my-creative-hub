@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
+import ExplorationInquiryModal from "./ExplorationInquiryModal";
 
 export interface Exploration {
   id: string;
@@ -13,7 +14,10 @@ export interface Exploration {
   images?: string[] | null;
 }
 
-const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => (
+const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+
+  return (
   <article className="group relative bg-card border border-border flex flex-col h-full min-w-0 break-words transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_0_0_hsl(var(--foreground))]">
     {/* corner ticks */}
     <span aria-hidden className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-foreground z-10" />
@@ -62,12 +66,25 @@ const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview
       )}
       <div className="mt-4 pt-4 border-t border-dashed border-border">
         <p className="text-xs text-muted-foreground mb-3">{item.contact_note || "Interested in this work? Get in touch and let's talk about it."}</p>
-        <Link to="/contact" tabIndex={preview ? -1 : undefined} onClick={preview ? (event) => event.preventDefault() : undefined} className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:gap-3 transition-all">
+        <button
+          type="button"
+          tabIndex={preview ? -1 : undefined}
+          onClick={preview ? undefined : () => setInquiryOpen(true)}
+          className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:gap-3 transition-all cursor-pointer"
+        >
           <Mail size={14} /> Contact about this <ArrowRight size={14} />
-        </Link>
+        </button>
       </div>
     </div>
+    {!preview && (
+      <ExplorationInquiryModal
+        isOpen={inquiryOpen}
+        onClose={() => setInquiryOpen(false)}
+        exploration={{ id: item.id, title: item.title }}
+      />
+    )}
   </article>
-);
+  );
+};
 
 export default ExplorationCard;

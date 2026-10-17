@@ -2,8 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-const OWNER_EMAIL = "contact@example.com";
-const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.vercel.app";
+const OWNER_EMAIL = "tharaneetharanss@gmail.com";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://story-and-more.lovable.app";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,12 +20,14 @@ const ContactEmailSchema = z.object({
   budget: z.string().optional(),
   timeline: z.string().optional(),
   requirements: z.string().optional(),
-  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding"]).optional(),
+  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding", "exploration_inquiry"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
   originalComment: z.string().optional(),
   replyContent: z.string().optional(),
+  explorationId: z.string().uuid().optional(),
+  explorationTitle: z.string().max(300).optional(),
 });
 
 type ContactEmailRequest = z.infer<typeof ContactEmailSchema>;
@@ -215,6 +217,37 @@ const handler = async (req: Request): Promise<Response> => {
         </div>`,
         ctaUrl: `${SITE_URL}/blog`, ctaLabel: "View Blog",
       }));
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
+
+    // ─── Exploration Inquiry ───
+    if (type === "exploration_inquiry") {
+      const sT = d.explorationTitle ? escapeHtml(d.explorationTitle) : "an exploration";
+
+      // Store the inquiry so nothing is lost even if email delivery fails.
+      try {
+        const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+        const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        await fetch(`${SUPABASE_URL}/rest/v1/exploration_inquiries`, {
+          method: "POST",
+          headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+          body: JSON.stringify({
+            exploration_id: d.explorationId || null,
+            exploration_title: d.explorationTitle || null,
+            name: d.name,
+            email: d.email,
+            message: d.message,
+          }),
+        });
+      } catch (e) { console.error("Inquiry insert failed:", e); }
+
+      await sendEmail(OWNER_EMAIL, `Exploration Inquiry: ${sT}`, buildEmail({
+        headline: "New Exploration Inquiry",
+        body: `${card(`<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", `<a href="mailto:${sE}" style="color:#111;font-weight:600;text-decoration:none;">${sE}</a>`)}${infoRow("Exploration", sT)}${infoRow("Time", new Date().toLocaleString())}</table>`)}
+        ${quoteBlock(sM, "Message")}`,
+        footerText: `Reply directly to respond to ${sN}.`,
+      }), d.email);
+
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 
