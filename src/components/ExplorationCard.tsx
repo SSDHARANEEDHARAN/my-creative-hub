@@ -14,7 +14,10 @@ export interface Exploration {
   images?: string[] | null;
 }
 
-const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => (
+const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+
+  return (
   <article className="group relative bg-card border border-border flex flex-col h-full min-w-0 break-words transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_0_0_hsl(var(--foreground))]">
     {/* corner ticks */}
     <span aria-hidden className="absolute -top-px -left-px w-3 h-3 border-t-2 border-l-2 border-foreground z-10" />
