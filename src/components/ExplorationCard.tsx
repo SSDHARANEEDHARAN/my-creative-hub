@@ -66,12 +66,25 @@ const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview
       )}
       <div className="mt-4 pt-4 border-t border-dashed border-border">
         <p className="text-xs text-muted-foreground mb-3">{item.contact_note || "Interested in this work? Get in touch and let's talk about it."}</p>
-        <Link to="/contact" tabIndex={preview ? -1 : undefined} onClick={preview ? (event) => event.preventDefault() : undefined} className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:gap-3 transition-all">
+        <button
+          type="button"
+          tabIndex={preview ? -1 : undefined}
+          onClick={preview ? undefined : () => setInquiryOpen(true)}
+          className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:gap-3 transition-all cursor-pointer"
+        >
           <Mail size={14} /> Contact about this <ArrowRight size={14} />
-        </Link>
+        </button>
       </div>
     </div>
+    {!preview && (
+      <ExplorationInquiryModal
+        isOpen={inquiryOpen}
+        onClose={() => setInquiryOpen(false)}
+        exploration={{ id: item.id, title: item.title }}
+      />
+    )}
   </article>
-);
+  );
+};
 
 export default ExplorationCard;
