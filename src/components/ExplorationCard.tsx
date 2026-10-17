@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
+import ExplorationInquiryModal from "./ExplorationInquiryModal";
 
 export interface Exploration {
   id: string;
