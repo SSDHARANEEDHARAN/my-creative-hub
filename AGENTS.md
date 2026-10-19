@@ -4,5 +4,6 @@
 - Exploration previews and public exploration cards use the same ExplorationCard renderer so unsaved edits match the saved frontend presentation.
 - Exploration detail pages and admin full previews share ExplorationDetails and database technical_content; engagement uses exploration-specific storage with unique authenticated likes and admin-only view analytics to avoid contaminating blog counts.
 - Paid exploration files must stay unavailable until a supported payment provider and server-verified purchase entitlement exist; client-side locks alone never authorize downloads.
+- Exploration part files use a private storage bucket and admin-only file records until payment entitlement is implemented; never upload purchased files to public photo storage.
 - Industrial case studies use unique numeric catalog IDs and shared project/article data; imported media uses asset pointers and editable video arrays persist through content_overrides to keep admin and frontend aligned.
 - Imported industrial photo pointers resolve through the shared public-host URL helper, including saved image overrides, so photos do not depend on a preview origin or computer-local cache.

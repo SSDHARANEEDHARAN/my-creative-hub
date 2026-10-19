@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import ExplorationCard from "@/components/ExplorationCard";
 import ExplorationDetails from "@/components/ExplorationDetails";
+import ExplorationPartsManager from "@/components/admin/ExplorationPartsManager";
+import { parseExplorationPrice } from "@/lib/explorationPrice";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -98,6 +100,9 @@ const ExplorationManager = () => {
       toast({ title: "Title and description are required", variant: "destructive" });
       return;
     }
+    let price: number | null;
+    try { price = parseExplorationPrice(form.product_price_inr); }
+    catch (error) { toast({ title: "Invalid price", description: error instanceof Error ? error.message : "Check the price", variant: "destructive" }); return; }
     setSaving(true);
     const payload = {
       title: form.title.trim(),
@@ -110,7 +115,7 @@ const ExplorationManager = () => {
       images: form.images,
       technical_content: form.technical_content,
       paid_parts: form.paid_parts,
-      product_price_inr: form.product_price_inr ? Number(form.product_price_inr) : null,
+      product_price_inr: price,
     };
     const { error } = editingId
       ? await supabase.from("explorations").update(payload).eq("id", editingId)
@@ -170,8 +175,10 @@ const ExplorationManager = () => {
         <Input placeholder="Contact note on detail page" value={form.contact_note} onChange={(e) => setForm({ ...form, contact_note: e.target.value })} />
         <label className="block text-sm font-medium">Specifications, dimensions & BOM</label>
         <Textarea aria-label="Specifications, dimensions and BOM" rows={12} placeholder="Full technical content (Markdown)" value={form.technical_content} onChange={e => setForm({ ...form, technical_content: e.target.value })} />
-        <Input aria-label="Complete bot price in INR" type="number" min="0" placeholder="Complete bot price (INR)" value={form.product_price_inr} onChange={e => setForm({ ...form, product_price_inr: e.target.value })} />
+        <label className="block text-sm font-medium">Bot price including purchased part files (INR)</label>
+        <Input aria-label="Complete bot price in INR" type="number" min="0" step="0.01" placeholder="Complete bot price (INR)" value={form.product_price_inr} onChange={e => setForm({ ...form, product_price_inr: e.target.value })} />
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.paid_parts} onChange={e => setForm({ ...form, paid_parts: e.target.checked })} /> Part files require payment</label>
+        {editingId ? <ExplorationPartsManager key={editingId} explorationId={editingId} /> : <p className="text-sm text-muted-foreground">Save the exploration before adding private part files.</p>}
         <div className="space-y-2">
           <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add photos

@@ -15,7 +15,7 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
       <h2 className="font-display text-2xl font-semibold">Part files</h2>
       <p className="text-muted-foreground flex items-center gap-2"><Lock size={16} /> Paid access only · Downloads not yet available</p>
       {item.product_price_inr != null && <p className="font-medium">Complete bot: {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(item.product_price_inr)}</p>}
-      <p className="text-sm text-muted-foreground">Digital part-file pricing will be listed separately.</p>
+      <p className="text-sm text-muted-foreground">Part files are included with the bot purchase once secure checkout is available.</p>
       <Button variant="outline" disabled><Lock size={16} className="mr-2" /> Download part files</Button>
     </section>}
     <section className="border-t border-border pt-6"><p className="text-sm text-muted-foreground mb-3">{item.contact_note || "Interested in this exploration?"}</p><Button disabled={preview} onClick={() => setInquiryOpen(true)}><Mail size={16} className="mr-2" /> Contact about this</Button></section>
