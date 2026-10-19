@@ -8,7 +8,7 @@ const HomePage = () => {
   return (
     <>
       <Helmet>
-        <title>SS. Tharan | Mechatronics Design Engineer</title>
+        <title>Tharanee | Mechatronics Design Engineer</title>
         <meta name="description" content="Mechatronics Design Engineer skilled in Robotics, Automation, Embedded Systems, SolidWorks, FlexSim, NX, siemens nx, and PTC Windchill." />
       </Helmet>
       

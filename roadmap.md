@@ -1,4 +1,6 @@
 # Roadmap
+- [ ] Replace visible platform branding and shared-link/browser identity with Tharanee; hide hosting badge
+- [ ] Set up eligible real payment provider for INR 59,000 bot with purchased files; add admin price and private file controls
 - [x] Simplify exploration cards; add detail pages, persistent likes and admin-only views, editable technical details and full preview; verify CARTIZION Read more, photos, specifications, inquiry dialog and locked downloads
 - [ ] CARTIZION paid part downloads — built-in payments unavailable for this India-based project; waiting for supported payment setup, digital-file price and uploaded part files (complete bot price confirmed INR 59,000)
 - [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
