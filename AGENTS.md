@@ -2,5 +2,7 @@
 - Bundled gallery media and toolchain tiles stay in code; admin edits live in gallery_overrides / toolchain_overrides keyed by media base name / tile name and are merged at render — avoids re-uploading large files.
 - Admin-only profile fields (status, access limits) are protected by the protect_profile_admin_fields trigger because users may update their own profile row.
 - Exploration previews and public exploration cards use the same ExplorationCard renderer so unsaved edits match the saved frontend presentation.
+- Exploration detail pages and admin full previews share ExplorationDetails and database technical_content; engagement uses exploration-specific storage with unique authenticated likes and admin-only view analytics to avoid contaminating blog counts.
+- Paid exploration files must stay unavailable until a supported payment provider and server-verified purchase entitlement exist; client-side locks alone never authorize downloads.
 - Industrial case studies use unique numeric catalog IDs and shared project/article data; imported media uses asset pointers and editable video arrays persist through content_overrides to keep admin and frontend aligned.
 - Imported industrial photo pointers resolve through the shared public-host URL helper, including saved image overrides, so photos do not depend on a preview origin or computer-local cache.
