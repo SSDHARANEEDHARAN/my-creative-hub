@@ -1,6 +1,6 @@
 # Roadmap
-- [ ] Simplify exploration cards; add detail pages, likes and views, editable specifications and BOM; verify CARTIZION
-- [ ] CARTIZION paid part downloads — waiting for payment confirmation, price/currency and part files
+- [x] Simplify exploration cards; add detail pages, persistent likes and admin-only views, editable technical details and full preview; verify CARTIZION Read more, photos, specifications, inquiry dialog and locked downloads
+- [ ] CARTIZION paid part downloads — built-in payments unavailable for this India-based project; waiting for supported payment setup, digital-file price and uploaded part files (complete bot price confirmed INR 59,000)
 - [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
 - [x] Add AXIS GLOBAL 4-Station MMS: supplied case study, four photos, two videos and Cloud record; verified admin preview/save, Moderation listing, industrial card, article and all hosted media; existing projects preserved
 - [x] Add AMR with Cobot – End-to-End Product Development separately: 112 photos, one video, case study and Cloud record; verified admin preview/save, Moderation listing, industrial card and all 113 hosted media URLs; existing projects preserved
