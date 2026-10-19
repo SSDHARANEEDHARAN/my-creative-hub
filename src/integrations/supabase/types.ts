@@ -486,6 +486,47 @@ export type Database = {
           },
         ]
       }
+      exploration_parts: {
+        Row: {
+          created_at: string
+          description: string
+          enabled: boolean
+          exploration_id: string
+          file_name: string
+          id: string
+          size_bytes: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          exploration_id: string
+          file_name: string
+          id?: string
+          size_bytes?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          exploration_id?: string
+          file_name?: string
+          id?: string
+          size_bytes?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exploration_parts_exploration_id_fkey"
+            columns: ["exploration_id"]
+            isOneToOne: false
+            referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exploration_views: {
         Row: {
           created_at: string
