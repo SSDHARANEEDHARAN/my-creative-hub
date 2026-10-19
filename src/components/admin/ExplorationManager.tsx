@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import ExplorationCard from "@/components/ExplorationCard";
+import ExplorationDetails from "@/components/ExplorationDetails";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -19,9 +20,15 @@ interface Exploration {
   sort_order: number;
   images: string[] | null;
   created_at: string;
+  technical_content: string;
+  product_price_inr: number | null;
+  paid_parts: boolean;
 }
 
 const empty = {
+  technical_content: "",
+  product_price_inr: "",
+  paid_parts: false,
   title: "",
   description: "",
   status: "exploring",
@@ -41,6 +48,7 @@ const ExplorationManager = () => {
   const [uploading, setUploading] = useState(false);
   const previewItem = {
     ...form,
+    product_price_inr: form.product_price_inr ? Number(form.product_price_inr) : null,
     id: editingId || "preview",
     title: form.title.trim() || "Untitled exploration",
     description: form.description.trim(),
@@ -100,6 +108,9 @@ const ExplorationManager = () => {
       sort_order: Number(form.sort_order) || 0,
       is_visible: form.is_visible,
       images: form.images,
+      technical_content: form.technical_content,
+      paid_parts: form.paid_parts,
+      product_price_inr: form.product_price_inr ? Number(form.product_price_inr) : null,
     };
     const { error } = editingId
       ? await supabase.from("explorations").update(payload).eq("id", editingId)
@@ -138,6 +149,9 @@ const ExplorationManager = () => {
       sort_order: item.sort_order,
       is_visible: item.is_visible,
       images: item.images || [],
+      technical_content: item.technical_content || "",
+      paid_parts: item.paid_parts || false,
+      product_price_inr: item.product_price_inr != null ? String(item.product_price_inr) : "",
     });
   };
 
@@ -153,7 +167,11 @@ const ExplorationManager = () => {
           <Input placeholder="Tags (comma separated)" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} />
           <Input type="number" placeholder="Sort order" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: Number(e.target.value) })} />
         </div>
-        <Input placeholder="Contact line shown under the card" value={form.contact_note} onChange={(e) => setForm({ ...form, contact_note: e.target.value })} />
+        <Input placeholder="Contact note on detail page" value={form.contact_note} onChange={(e) => setForm({ ...form, contact_note: e.target.value })} />
+        <label className="block text-sm font-medium">Specifications, dimensions & BOM</label>
+        <Textarea aria-label="Specifications, dimensions and BOM" rows={12} placeholder="Full technical content (Markdown)" value={form.technical_content} onChange={e => setForm({ ...form, technical_content: e.target.value })} />
+        <Input aria-label="Complete bot price in INR" type="number" min="0" placeholder="Complete bot price (INR)" value={form.product_price_inr} onChange={e => setForm({ ...form, product_price_inr: e.target.value })} />
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.paid_parts} onChange={e => setForm({ ...form, paid_parts: e.target.checked })} /> Part files require payment</label>
         <div className="space-y-2">
           <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add photos
@@ -190,6 +208,7 @@ const ExplorationManager = () => {
           <Badge variant={form.is_visible ? "outline" : "secondary"}>{form.is_visible ? "Visible after save" : "Hidden"}</Badge>
         </div>
         <ExplorationCard item={previewItem} preview />
+        <details className="mt-4 border-t border-border pt-4"><summary className="cursor-pointer font-medium">Full detail preview</summary><div className="mt-4"><ExplorationDetails item={previewItem} preview /></div></details>
       </aside>
       </div>
 
