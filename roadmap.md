@@ -1,4 +1,6 @@
 # Roadmap
+- [ ] Simplify exploration cards; add detail pages, likes and views, editable specifications and BOM; verify CARTIZION
+- [ ] CARTIZION paid part downloads — waiting for payment confirmation, price/currency and part files
 - [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
 - [x] Add AXIS GLOBAL 4-Station MMS: supplied case study, four photos, two videos and Cloud record; verified admin preview/save, Moderation listing, industrial card, article and all hosted media; existing projects preserved
 - [x] Add AMR with Cobot – End-to-End Product Development separately: 112 photos, one video, case study and Cloud record; verified admin preview/save, Moderation listing, industrial card and all 113 hosted media URLs; existing projects preserved
