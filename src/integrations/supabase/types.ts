@@ -460,6 +460,58 @@ export type Database = {
         }
         Relationships: []
       }
+      exploration_likes: {
+        Row: {
+          created_at: string
+          exploration_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exploration_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exploration_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exploration_likes_exploration_id_fkey"
+            columns: ["exploration_id"]
+            isOneToOne: false
+            referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exploration_views: {
+        Row: {
+          created_at: string
+          exploration_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          exploration_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          exploration_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exploration_views_exploration_id_fkey"
+            columns: ["exploration_id"]
+            isOneToOne: false
+            referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       explorations: {
         Row: {
           contact_note: string | null
@@ -469,9 +521,12 @@ export type Database = {
           id: string
           images: string[]
           is_visible: boolean
+          paid_parts: boolean
+          product_price_inr: number | null
           sort_order: number
           status: string
           tags: string[]
+          technical_content: string
           title: string
           updated_at: string
         }
@@ -483,9 +538,12 @@ export type Database = {
           id?: string
           images?: string[]
           is_visible?: boolean
+          paid_parts?: boolean
+          product_price_inr?: number | null
           sort_order?: number
           status?: string
           tags?: string[]
+          technical_content?: string
           title: string
           updated_at?: string
         }
@@ -497,9 +555,12 @@ export type Database = {
           id?: string
           images?: string[]
           is_visible?: boolean
+          paid_parts?: boolean
+          product_price_inr?: number | null
           sort_order?: number
           status?: string
           tags?: string[]
+          technical_content?: string
           title?: string
           updated_at?: string
         }
@@ -1240,6 +1301,7 @@ export type Database = {
       }
     }
     Functions: {
+      exploration_like_count: { Args: { p_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1247,6 +1309,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_exploration_view: { Args: { p_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"

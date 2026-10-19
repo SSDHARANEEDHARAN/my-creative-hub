@@ -18,6 +18,7 @@ import ContactPage from "./pages/ContactPage";
 import BlogPage from "./pages/BlogPage";
 import ArticlePage from "./pages/ArticlePage";
 import BlogPostPage from "./pages/BlogPostPage";
+import ExplorationPage from "./pages/ExplorationPage";
 import SubscribersPage from "./pages/SubscribersPage";
 import BlogCommentsPage from "./pages/BlogCommentsPage";
 import AdminModerationPage from "./pages/AdminModerationPage";
@@ -62,6 +63,7 @@ const AnimatedRoutes = () => {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:id" element={<BlogPostPage />} />
+        <Route path="/explorations/:id" element={<ExplorationPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />

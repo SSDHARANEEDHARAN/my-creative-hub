@@ -57,6 +57,13 @@
       "when": 1792255630808,
       "tag": "0007_create_exploration_inquiries",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792423910170,
+      "tag": "0008_exploration_details_engagement",
+      "breakpoints": true
     }
   ]
 }
