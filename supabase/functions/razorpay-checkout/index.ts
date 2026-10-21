@@ -74,6 +74,9 @@ Deno.serve(async req => {
       return reply({ paid: (count || 0) > 0 });
     }
     if (input.action === "files") {
+      const { count: offers, error: offersError } = await db.from("exploration_offers").select("id", { count: "exact", head: true }).eq("exploration_id", input.explorationId);
+      if (offersError) throw new Error("Could not check purchase options");
+      if (offers) return reply({ error: "Legacy ₹5 trials do not unlock these product or file purchases." }, 403);
       const { count } = await db.from("razorpay_payment_tests").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id).eq("exploration_id", input.explorationId).eq("status", "paid");
       if (!count) return reply({ error: "Payment required to download files" }, 403);
       const { data: parts } = await db.from("exploration_parts").select("file_name,storage_path,description").eq("exploration_id", input.explorationId).eq("enabled", true).is("offer_id", null);

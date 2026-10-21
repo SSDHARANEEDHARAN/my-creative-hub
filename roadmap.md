@@ -1,11 +1,12 @@
 # Roadmap
-- [ ] Add CARTIZION three product prices and separate design/configuration purchases, admin offer/file controls, secure per-offer checkout and verification.
+- [x] Add CARTIZION product prices ₹89,000/₹12,500/₹29,000 and design/configuration ₹10,000/₹7,000; Cloud offer/file controls and separate authenticated purchases implemented; all three real-price Razorpay screens opened and order amounts read back; 47 tests pass; phone layout checked.
+- [ ] Confirm completed new-price purchase and download — waiting for buyer payment and real seller files; no charge made during verification. Admin controls implemented; signed-in admin save not exercised this turn.
 - [x] Add separate INR 5 Razorpay checkout; real order and modal verified signed in, invalid signature and signed-out requests rejected, 31 tests pass; actual payment completion awaits user payment
 - [x] Replace visible platform branding and shared-link/browser identity with Tharanee; hosting badge hidden; live head changes require next publish
 - [x] Add admin purchase price and private part-file upload, description, include/exclude, admin download and removal; verified saved private file and cleaned up test
-- [ ] INR 59,000 bot purchase and files — Razorpay credentials configured for separate INR 5 checkout; full-bot purchase awaits buyer files and confirmation after checkout trial
+- [x] Replace former single ₹59,000 bot price with the three supplied product variants.
 - [x] Simplify exploration cards; add detail pages, persistent likes and admin-only views, editable technical details and full preview; verify CARTIZION Read more, photos, specifications, inquiry dialog and locked downloads
-- [ ] CARTIZION paid part downloads — waiting for uploaded buyer files and full-bot entitlement flow; INR 5 trial never unlocks files
+- [ ] CARTIZION paid part downloads — waiting for real seller uploads assigned to each option; secure per-offer entitlement implemented and legacy ₹5 access rejected.
 - [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
 - [x] Add AXIS GLOBAL 4-Station MMS: supplied case study, four photos, two videos and Cloud record; verified admin preview/save, Moderation listing, industrial card, article and all hosted media; existing projects preserved
 - [x] Add AMR with Cobot – End-to-End Product Development separately: 112 photos, one video, case study and Cloud record; verified admin preview/save, Moderation listing, industrial card and all 113 hosted media URLs; existing projects preserved

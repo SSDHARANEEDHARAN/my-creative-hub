@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3";
-import { offerAmountPaise, matchesPurchase } from "./rules.ts";
+import { offerAmountPaise, matchesPurchase, canAccessOffer } from "./rules.ts";
 
 const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), offerId: z.string().uuid() }),
@@ -71,6 +71,7 @@ Deno.serve(async req => {
     // Re-check captured payment and refunds before granting downloads, including existing purchases.
     let paid = false;
     for (const row of paidRows || []) {
+      if (!canAccessOffer(row, auth.user.id, offer.id)) continue;
       const payment = await api(`payments/${row.payment_id}`);
       if (matchesPurchase(payment, row.order_id, row.amount_paise) && !(payment.amount_refunded > 0)) paid = true;
       else if (payment.amount_refunded > 0 || payment.status === "refunded") {
