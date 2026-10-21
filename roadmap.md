@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add CARTIZION three product prices and separate design/configuration purchases, admin offer/file controls, secure per-offer checkout and verification.
 - [x] Add separate INR 5 Razorpay checkout; real order and modal verified signed in, invalid signature and signed-out requests rejected, 31 tests pass; actual payment completion awaits user payment
 - [x] Replace visible platform branding and shared-link/browser identity with Tharanee; hosting badge hidden; live head changes require next publish
 - [x] Add admin purchase price and private part-file upload, description, include/exclude, admin download and removal; verified saved private file and cleaned up test
