@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Combine exploration purchase offers into one selector card; add LoRa product ₹6,999 and program files ₹1,999 in Cloud and admin; verify selection and checkout.
 - [x] Add separate ₹59,000 full physical CARTIZION bot offer; simulated-phone touch opens Razorpay with server-created 5,900,000-paise order; 39 relevant tests pass; existing prices preserved.
 - [ ] Real-phone purchase/download confirmation — blocked on user-operated phone, actual buyer payment and real seller uploads; no payment made during checks.
 - [x] Add CARTIZION product prices ₹89,000/₹12,500/₹29,000 and design/configuration ₹10,000/₹7,000; Cloud offer/file controls and separate authenticated purchases implemented; all three real-price Razorpay screens opened and order amounts read back; 47 tests pass; phone layout checked.
