@@ -41,8 +41,8 @@ Deno.serve(async req => {
     };
     const input = parsed.data;
     if (input.action === "create") {
-      const { data: exploration, error } = await db.from("explorations").select("id,visible,paid_parts").eq("id", input.explorationId).single();
-      if (error || !exploration?.visible || !exploration.paid_parts) return reply({ error: "Payment unavailable for this exploration" }, 404);
+      const { data: exploration, error } = await db.from("explorations").select("id,is_visible,paid_parts").eq("id", input.explorationId).single();
+      if (error || !exploration?.is_visible || !exploration.paid_parts) return reply({ error: "Payment unavailable for this exploration" }, 404);
       const { count, error: limitError } = await db.from("razorpay_payment_tests").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id).gte("created_at", new Date(Date.now() - 3600000).toISOString());
       if (limitError) throw new Error("Could not check payment availability");
       if ((count || 0) >= 10) return reply({ error: "Too many payment attempts. Try again later." }, 429);
