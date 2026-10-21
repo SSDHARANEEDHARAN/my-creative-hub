@@ -48,6 +48,9 @@ Deno.serve(async req => {
     if (input.action === "create") {
       const { data: exploration, error } = await db.from("explorations").select("id,is_visible,paid_parts").eq("id", input.explorationId).single();
       if (error || !exploration?.is_visible || !exploration.paid_parts) return reply({ error: "Payment unavailable for this exploration" }, 404);
+      const { count: offers, error: offersError } = await db.from("exploration_offers").select("id", { count: "exact", head: true }).eq("exploration_id", input.explorationId);
+      if (offersError) throw new Error("Could not check purchase options");
+      if (offers) return reply({ error: "Choose a product or file purchase option on this page instead of the legacy ₹5 trial." }, 409);
       const { count, error: limitError } = await db.from("razorpay_payment_tests").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id).gte("created_at", new Date(Date.now() - 3600000).toISOString());
       if (limitError) throw new Error("Could not check payment availability");
       if ((count || 0) >= 10) return reply({ error: "Too many payment attempts. Try again later." }, 429);
@@ -73,7 +76,7 @@ Deno.serve(async req => {
     if (input.action === "files") {
       const { count } = await db.from("razorpay_payment_tests").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id).eq("exploration_id", input.explorationId).eq("status", "paid");
       if (!count) return reply({ error: "Payment required to download files" }, 403);
-      const { data: parts } = await db.from("exploration_parts").select("file_name,storage_path,description").eq("exploration_id", input.explorationId).eq("enabled", true);
+      const { data: parts } = await db.from("exploration_parts").select("file_name,storage_path,description").eq("exploration_id", input.explorationId).eq("enabled", true).is("offer_id", null);
       const files = [];
       for (const p of parts || []) {
         const { data: signed } = await db.storage.from("exploration-parts").createSignedUrl(p.storage_path, 300, { download: p.file_name });
