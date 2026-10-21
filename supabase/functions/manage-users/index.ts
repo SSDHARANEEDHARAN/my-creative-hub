@@ -97,7 +97,7 @@ Deno.serve(async (req) => {
       });
       const { data: claimsData, error: userError } = await authClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ""));
       const user = claimsData?.claims ? { id: claimsData.claims.sub as string, email: claimsData.claims.email as string | undefined } : null;
-      if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
+      if (userError || !user) return jsonResponse({ success: false, skipped: true });
 
       try {
         await adminClient
