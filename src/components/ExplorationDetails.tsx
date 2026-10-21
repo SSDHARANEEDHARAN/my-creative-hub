@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, BookOpen, LayoutDashboard } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CARTIZION_ID } from "@/lib/buyerPurchases";
 import { Button } from "@/components/ui/button";
 import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import ExplorationInquiryModal from "@/components/ExplorationInquiryModal";
@@ -17,6 +19,10 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
       <p className="text-muted-foreground flex items-center gap-2"><Lock size={16} /> Paid access only</p>
       {item.product_price_inr != null && <p className="font-medium">Complete bot: {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(item.product_price_inr)}</p>}
       <ExplorationOffers key={item.id} explorationId={item.id} preview={preview} />
+      {!preview && <div className="flex flex-wrap gap-3 pt-3">
+        <Button asChild variant="outline"><Link to="/buyer/dashboard"><LayoutDashboard size={16} className="mr-2" />My purchases</Link></Button>
+        {item.id === CARTIZION_ID && <Button asChild variant="outline"><Link to="/cartizion/build-guide"><BookOpen size={16} className="mr-2" />Assembly guide</Link></Button>}
+      </div>}
     </section>}
     <section className="border-t border-border pt-6"><p className="text-sm text-muted-foreground mb-3">{item.contact_note || "Interested in this exploration?"}</p><Button disabled={preview} onClick={() => setInquiryOpen(true)}><Mail size={16} className="mr-2" /> Contact about this</Button></section>
     {!preview && <ExplorationInquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} exploration={{ id: item.id, title: item.title }} />}
