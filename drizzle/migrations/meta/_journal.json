@@ -78,6 +78,13 @@
       "when": 1792596451634,
       "tag": "0010_razorpay_payment_tests",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1792600268926,
+      "tag": "0011_exploration_purchase_offers",
+      "breakpoints": true
     }
   ]
 }

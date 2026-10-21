@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import ExplorationCard from "@/components/ExplorationCard";
 import ExplorationDetails from "@/components/ExplorationDetails";
 import ExplorationPartsManager from "@/components/admin/ExplorationPartsManager";
+import ExplorationOffersManager from "@/components/admin/ExplorationOffersManager";
 import { parseExplorationPrice } from "@/lib/explorationPrice";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, Eye, EyeOff, Loader2 } from "lucide-react";
@@ -178,7 +179,7 @@ const ExplorationManager = () => {
         <label className="block text-sm font-medium">Bot price including purchased part files (INR)</label>
         <Input aria-label="Complete bot price in INR" type="number" min="0" step="0.01" placeholder="Complete bot price (INR)" value={form.product_price_inr} onChange={e => setForm({ ...form, product_price_inr: e.target.value })} />
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.paid_parts} onChange={e => setForm({ ...form, paid_parts: e.target.checked })} /> Part files require payment</label>
-        {editingId ? <ExplorationPartsManager key={editingId} explorationId={editingId} /> : <p className="text-sm text-muted-foreground">Save the exploration before adding private part files.</p>}
+        {editingId ? <><ExplorationOffersManager key={`offers-${editingId}`} explorationId={editingId} /><ExplorationPartsManager key={editingId} explorationId={editingId} /></> : <p className="text-sm text-muted-foreground">Save the exploration before adding purchase options and private part files.</p>}
         <div className="space-y-2">
           <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add photos

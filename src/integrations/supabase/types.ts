@@ -486,6 +486,50 @@ export type Database = {
           },
         ]
       }
+      exploration_offers: {
+        Row: {
+          created_at: string
+          description: string
+          enabled: boolean
+          exploration_id: string
+          id: string
+          kind: string
+          price_inr: number
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          exploration_id: string
+          id?: string
+          kind: string
+          price_inr: number
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          enabled?: boolean
+          exploration_id?: string
+          id?: string
+          kind?: string
+          price_inr?: number
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exploration_offers_exploration_id_fkey"
+            columns: ["exploration_id"]
+            isOneToOne: false
+            referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exploration_parts: {
         Row: {
           created_at: string
@@ -494,6 +538,7 @@ export type Database = {
           exploration_id: string
           file_name: string
           id: string
+          offer_id: string | null
           size_bytes: number
           storage_path: string
         }
@@ -504,6 +549,7 @@ export type Database = {
           exploration_id: string
           file_name: string
           id?: string
+          offer_id?: string | null
           size_bytes?: number
           storage_path: string
         }
@@ -514,6 +560,7 @@ export type Database = {
           exploration_id?: string
           file_name?: string
           id?: string
+          offer_id?: string | null
           size_bytes?: number
           storage_path?: string
         }
@@ -523,6 +570,73 @@ export type Database = {
             columns: ["exploration_id"]
             isOneToOne: false
             referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exploration_parts_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "exploration_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exploration_purchases: {
+        Row: {
+          amount_paise: number
+          created_at: string
+          currency: string
+          exploration_id: string
+          id: string
+          offer_id: string
+          offer_title: string
+          order_id: string
+          paid_at: string | null
+          payment_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_paise: number
+          created_at?: string
+          currency?: string
+          exploration_id: string
+          id?: string
+          offer_id: string
+          offer_title: string
+          order_id: string
+          paid_at?: string | null
+          payment_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_paise?: number
+          created_at?: string
+          currency?: string
+          exploration_id?: string
+          id?: string
+          offer_id?: string
+          offer_title?: string
+          order_id?: string
+          paid_at?: string | null
+          payment_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exploration_purchases_exploration_id_fkey"
+            columns: ["exploration_id"]
+            isOneToOne: false
+            referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exploration_purchases_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "exploration_offers"
             referencedColumns: ["id"]
           },
         ]
