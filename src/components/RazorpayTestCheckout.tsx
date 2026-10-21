@@ -28,6 +28,8 @@ export default function RazorpayTestCheckout({ explorationId, preview = false }:
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState<PaymentResult | null>(null);
   const [paid, setPaid] = useState(false);
+  // Preload checkout so phones open it immediately after the tap (slow mobile networks otherwise feel unresponsive).
+  useEffect(() => { if (!preview) void loadCheckout().catch(() => undefined); }, [preview]);
   useEffect(() => {
     setPaid(false); setMessage(""); setPending(null);
     if (!user || preview) return;
