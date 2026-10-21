@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CreditCard, Loader2, RefreshCw } from "lucide-react";
+import { CreditCard, Download, Loader2, RefreshCw } from "lucide-react";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,14 +30,26 @@ export default function RazorpayTestCheckout({ explorationId, preview = false }:
   const [paid, setPaid] = useState(false);
   // Preload checkout so phones open it immediately after the tap (slow mobile networks otherwise feel unresponsive).
   useEffect(() => { if (!preview) void loadCheckout().catch(() => undefined); }, [preview]);
+  const [files, setFiles] = useState<{ name: string; url: string; description?: string | null }[] | null>(null);
+  const sync = async () => {
+    try { const data = await invoke({ action: "sync", explorationId }); if (data?.paid) { setPaid(true); setPending(null); setBusy(false); } } catch { /* keep current state */ }
+  };
   useEffect(() => {
-    setPaid(false); setMessage(""); setPending(null);
+    setPaid(false); setMessage(""); setPending(null); setFiles(null);
     if (!user || preview) return;
-    let active = true;
-    void supabase.from("razorpay_payment_tests").select("id").eq("user_id", user.id).eq("exploration_id", explorationId).eq("status", "paid").limit(1).then(({ data }) => { if (active) setPaid(Boolean(data?.length)); });
-    return () => { active = false; };
+    void sync();
+    // Returning from a UPI app on a phone: re-check with Razorpay.
+    const onVisible = () => { if (document.visibilityState === "visible") void sync(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [user?.id, explorationId, preview]);
-  const invoke = async (body: Record<string, unknown>) => {
+  const loadFiles = async () => {
+    setBusy(true);
+    try { const data = await invoke({ action: "files", explorationId }); setFiles(data.files || []); if (!data.files?.length) setMessage("Payment confirmed. Files will appear here once the seller uploads them."); }
+    catch (error) { setMessage(error instanceof Error ? error.message : "Could not load files"); }
+    finally { setBusy(false); }
+  };
+  async function invoke(body: Record<string, unknown>) {
     const { data, error } = await supabase.functions.invoke("razorpay-checkout", { body });
     if (error) {
       let text = "Payment request failed. Please try again.";
@@ -66,8 +78,10 @@ export default function RazorpayTestCheckout({ explorationId, preview = false }:
     } catch (error) { setBusy(false); setMessage(error instanceof Error ? error.message : "Could not open checkout"); }
   };
   return <div className="space-y-3 pt-3">
-    <p className="text-sm text-muted-foreground">₹5 checkout trial · Not a bot purchase and does not unlock files. Your Razorpay account determines whether money is charged.</p>
-    {pending ? <Button variant="outline" disabled={busy || preview} onClick={() => void verify(pending)}><RefreshCw size={16} className="mr-2" />Retry payment verification</Button> : <Button disabled={busy || preview || paid} onClick={() => void start()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin" /> : <CreditCard size={16} className="mr-2" />}{paid ? "₹5 payment confirmed" : "Pay ₹5"}</Button>}
+    <p className="text-sm text-muted-foreground">Pay ₹5 to unlock the part files. After paying in your UPI app, come back to this page — payment is confirmed automatically.</p>
+    {pending ? <Button variant="outline" disabled={busy || preview} onClick={() => void verify(pending)}><RefreshCw size={16} className="mr-2" />Retry payment verification</Button> : paid ? <Button disabled={busy || preview} onClick={() => void loadFiles()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin" /> : <Download size={16} className="mr-2" />}Get part files</Button> : <Button disabled={busy || preview} onClick={() => void start()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin" /> : <CreditCard size={16} className="mr-2" />}Pay ₹5</Button>}
+    {paid && <p className="text-sm font-medium">₹5 payment confirmed</p>}
+    {files && files.length > 0 && <ul className="space-y-2">{files.map(f => <li key={f.url}><a className="underline" href={f.url}>{f.name}</a>{f.description && <span className="text-sm text-muted-foreground"> — {f.description}</span>}</li>)}</ul>}
     {message && <p role="status" className="text-sm">{message}</p>}
     <LoginPopupModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
   </div>;
