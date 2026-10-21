@@ -1033,6 +1033,53 @@ export type Database = {
         }
         Relationships: []
       }
+      razorpay_payment_tests: {
+        Row: {
+          amount_paise: number
+          created_at: string
+          currency: string
+          exploration_id: string
+          id: string
+          order_id: string
+          paid_at: string | null
+          payment_id: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount_paise?: number
+          created_at?: string
+          currency?: string
+          exploration_id: string
+          id?: string
+          order_id: string
+          paid_at?: string | null
+          payment_id?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount_paise?: number
+          created_at?: string
+          currency?: string
+          exploration_id?: string
+          id?: string
+          order_id?: string
+          paid_at?: string | null
+          payment_id?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "razorpay_payment_tests_exploration_id_fkey"
+            columns: ["exploration_id"]
+            isOneToOne: false
+            referencedRelation: "explorations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_visits: {
         Row: {
           created_at: string
