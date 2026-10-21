@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -41,11 +41,13 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: { user }, error: userError } = await authClient.auth.getUser();
+    const { data: claimsData, error: userError } = await authClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ""));
+    const user = claimsData?.claims?.sub ? { id: claimsData.claims.sub as string, email: claimsData.claims.email as string | undefined } : null;
 
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+      // Not signed in (or session still refreshing): nothing to sync.
+      return new Response(JSON.stringify({ success: false, skipped: true }), {
+        status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
