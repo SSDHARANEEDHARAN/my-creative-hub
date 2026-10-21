@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add a separate INR 5 Razorpay checkout with authenticated orders and server verification; do not change bot pricing or unlock buyer files for a test payment
 - [x] Replace visible platform branding and shared-link/browser identity with Tharanee; hosting badge hidden; live head changes require next publish
 - [x] Add admin purchase price and private part-file upload, description, include/exclude, admin download and removal; verified saved private file and cleaned up test
 - [ ] Connect Razorpay for INR 59,000 bot with purchased files — user approved Razorpay but declined the secure key form; waiting for provider credentials/activation and real buyer files
