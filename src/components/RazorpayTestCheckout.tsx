@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CreditCard, Loader2, RefreshCw } from "lucide-react";
+import { CreditCard, Download, Loader2, RefreshCw } from "lucide-react";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
