@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -95,7 +95,8 @@ Deno.serve(async (req) => {
       const authClient = createClient(supabaseUrl, supabaseAnonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-      const { data: { user }, error: userError } = await authClient.auth.getUser();
+      const { data: claimsData, error: userError } = await authClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ""));
+      const user = claimsData?.claims ? { id: claimsData.claims.sub as string, email: claimsData.claims.email as string | undefined } : null;
       if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
 
       try {
@@ -119,7 +120,8 @@ Deno.serve(async (req) => {
       const authClient = createClient(supabaseUrl, supabaseAnonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-      const { data: { user }, error: userError } = await authClient.auth.getUser();
+      const { data: claimsData, error: userError } = await authClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ""));
+      const user = claimsData?.claims ? { id: claimsData.claims.sub as string, email: claimsData.claims.email as string | undefined } : null;
       if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
 
       const { data: roleData } = await adminClient
@@ -167,7 +169,8 @@ Deno.serve(async (req) => {
     const authClient = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-    const { data: { user }, error: userError } = await authClient.auth.getUser();
+    const { data: claimsData, error: userError } = await authClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ""));
+      const user = claimsData?.claims ? { id: claimsData.claims.sub as string, email: claimsData.claims.email as string | undefined } : null;
     if (userError || !user) return jsonResponse({ error: "Unauthorized" }, 401);
 
     const { data: roleData } = await adminClient
@@ -346,7 +349,8 @@ Deno.serve(async (req) => {
       const authClient = createClient(supabaseUrl, supabaseAnonKey, {
         global: { headers: { Authorization: authHeader } },
       });
-      const { data: { user: caller } } = await authClient.auth.getUser();
+      const { data: callerClaims } = await authClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ""));
+      const caller = callerClaims?.claims ? { id: callerClaims.claims.sub as string, email: callerClaims.claims.email as string | undefined } : null;
       if (!caller) return jsonResponse({ error: "Unauthorized" }, 401);
 
       const { data: roleRow } = await adminClient
