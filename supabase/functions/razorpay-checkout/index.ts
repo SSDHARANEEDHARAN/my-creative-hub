@@ -5,6 +5,8 @@ import { PAYMENT_TEST_AMOUNT_PAISE, isMatchingPayment } from "./rules.ts";
 
 const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), explorationId: z.string().uuid() }),
+  z.object({ action: z.literal("sync"), explorationId: z.string().uuid() }),
+  z.object({ action: z.literal("files"), explorationId: z.string().uuid() }),
   z.object({ action: z.literal("verify"), razorpay_order_id: z.string().regex(/^order_[A-Za-z0-9]+$/), razorpay_payment_id: z.string().regex(/^pay_[A-Za-z0-9]+$/), razorpay_signature: z.string().regex(/^[a-f0-9]{64}$/i) }),
 ]);
 Deno.serve(async req => {
@@ -54,6 +56,30 @@ Deno.serve(async req => {
       const { error: saveError } = await db.from("razorpay_payment_tests").insert({ user_id: auth.user.id, exploration_id: exploration.id, order_id: order.id, amount_paise: PAYMENT_TEST_AMOUNT_PAISE, currency: "INR" });
       if (saveError) throw new Error("Could not save the payment order. No payment was taken.");
       return reply({ order_id: order.id, amount: order.amount, currency: order.currency, key_id: keyId });
+    }
+    if (input.action === "sync") {
+      // UPI app switches on phones often lose the browser callback; ask Razorpay directly about this buyer's open orders.
+      const { data: open } = await db.from("razorpay_payment_tests").select("id,order_id").eq("user_id", auth.user.id).eq("exploration_id", input.explorationId).neq("status", "paid").gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString());
+      for (const row of open || []) {
+        const items = ((await api(`orders/${row.order_id}/payments`)).items || []) as any[];
+        let hit = items.find(p => isMatchingPayment(p, row.order_id));
+        const authorized = items.find(p => p.status === "authorized" && p.amount === PAYMENT_TEST_AMOUNT_PAISE);
+        if (!hit && authorized) { const cap = await api(`payments/${authorized.id}/capture`, { amount: PAYMENT_TEST_AMOUNT_PAISE, currency: "INR" }); if (isMatchingPayment(cap, row.order_id)) hit = cap; }
+        if (hit) await db.from("razorpay_payment_tests").update({ status: "paid", payment_id: hit.id, paid_at: new Date().toISOString() }).eq("id", row.id);
+      }
+      const { count } = await db.from("razorpay_payment_tests").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id).eq("exploration_id", input.explorationId).eq("status", "paid");
+      return reply({ paid: (count || 0) > 0 });
+    }
+    if (input.action === "files") {
+      const { count } = await db.from("razorpay_payment_tests").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id).eq("exploration_id", input.explorationId).eq("status", "paid");
+      if (!count) return reply({ error: "Payment required to download files" }, 403);
+      const { data: parts } = await db.from("exploration_parts").select("file_name,storage_path,description").eq("exploration_id", input.explorationId).eq("enabled", true);
+      const files = [];
+      for (const p of parts || []) {
+        const { data: signed } = await db.storage.from("exploration-parts").createSignedUrl(p.storage_path, 300, { download: p.file_name });
+        if (signed?.signedUrl) files.push({ name: p.file_name, description: p.description, url: signed.signedUrl });
+      }
+      return reply({ files });
     }
     const { data: order } = await db.from("razorpay_payment_tests").select("*").eq("order_id", input.razorpay_order_id).eq("user_id", auth.user.id).single();
     if (!order) return reply({ error: "Payment order not found" }, 404);
