@@ -8,7 +8,11 @@ describe("Supplied CARTIZION specifications", () => {
   test("lead wires", () => expect(s.leadWires).toBe(4));
   test("shaft diameter", () => expect(s.shaftDiameter).toBe("5 mm"));
   test("step angle", () => expect(s.stepAngle).toBe("1.8°"));
-  test("complete physical bot price, not digital files", () => expect(s.completeBotPriceInr).toBe(59000));
+  test("aluminium XYZ costs ₹89,000", () => expect(s.productPricesInr.aluminium).toBe(89000));
+  test("3D printed with servo Z costs ₹12,500", () => expect(s.productPricesInr.printedServoZ).toBe(12500));
+  test("hybrid Z-axis type costs ₹29,000", () => expect(s.productPricesInr.hybridZ).toBe(29000));
+  test("design files cost ₹10,000", () => expect(s.designFilesPriceInr).toBe(10000));
+  test("configuration files cost ₹7,000", () => expect(s.configurationFilesPriceInr).toBe(7000));
   for (const [quantity, part] of [[2, "Nema 17 Stepper Motors"], [2, "M8 × 450 mm linear bearing rods — X axis"], [2, "M8 × 350 mm linear bearing rods — Y axis"], [2, "M3 × 80 mm linear rods — Z axis"], [1, "M8 × 480 mm threaded rod"], [8, "LM8UU linear bearings"], [1, "SG90 servo"], [2, "GT2 pulleys, 16 teeth"], [1, "2000 mm GT2 belt"], [4, "M8 nuts"]] as const) {
     test(part, () => expect(s.hardware.find(row => row[1] === part)?.[0]).toBe(quantity));
   }

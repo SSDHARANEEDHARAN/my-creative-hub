@@ -18,7 +18,9 @@ export const cartizionSpecifications = {
     [4, "M8 nuts"],
   ] as const,
   electronics: [[1, "Arduino Nano"], [2, "A4988 stepper drivers"], [1, "12 V 2 A wall power adapter"], [1, "USB cable"]] as const,
-  completeBotPriceInr: 59000,
+  productPricesInr: { aluminium: 89000, printedServoZ: 12500, hybridZ: 29000 },
+  designFilesPriceInr: 10000,
+  configurationFilesPriceInr: 7000,
 };
 
 const s = cartizionSpecifications;
