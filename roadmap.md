@@ -1,7 +1,7 @@
 # Roadmap
 - [x] Replace visible platform branding and shared-link/browser identity with Tharanee; hosting badge hidden; live head changes require next publish
 - [x] Add admin purchase price and private part-file upload, description, include/exclude, admin download and removal; verified saved private file and cleaned up test
-- [ ] Connect Razorpay for INR 59,000 bot with purchased files — awaiting user confirmation and provider credentials/activation; real buyer files also required
+- [ ] Connect Razorpay for INR 59,000 bot with purchased files — user approved Razorpay but declined the secure key form; waiting for provider credentials/activation and real buyer files
 - [x] Simplify exploration cards; add detail pages, persistent likes and admin-only views, editable technical details and full preview; verify CARTIZION Read more, photos, specifications, inquiry dialog and locked downloads
 - [ ] CARTIZION paid part downloads — built-in payments unavailable for this India-based project; waiting for Razorpay connection and uploaded buyer files (bot plus included files INR 59,000)
 - [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
