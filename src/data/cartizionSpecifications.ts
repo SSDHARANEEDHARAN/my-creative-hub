@@ -21,6 +21,7 @@ export const cartizionSpecifications = {
   productPricesInr: { aluminium: 89000, printedServoZ: 12500, hybridZ: 29000 },
   designFilesPriceInr: 10000,
   configurationFilesPriceInr: 7000,
+  completeBotPriceInr: 59000,
 };
 
 const s = cartizionSpecifications;
