@@ -1,0 +1,16 @@
+CREATE TABLE public.exploration_offers (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), exploration_id uuid NOT NULL REFERENCES public.explorations(id) ON DELETE CASCADE, title text NOT NULL, description text NOT NULL DEFAULT '', kind text NOT NULL CHECK (kind IN ('product','design','configuration')), price_inr numeric NOT NULL CHECK (price_inr > 0 AND price_inr <= 1000000 AND price_inr = round(price_inr,2)), enabled boolean NOT NULL DEFAULT true, sort_order integer NOT NULL DEFAULT 0, created_at timestamptz NOT NULL DEFAULT now());
+GRANT SELECT ON public.exploration_offers TO anon, authenticated;
+GRANT INSERT, UPDATE, DELETE ON public.exploration_offers TO authenticated;
+GRANT ALL ON public.exploration_offers TO service_role;
+ALTER TABLE public.exploration_offers ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Visible offers" ON public.exploration_offers FOR SELECT USING (EXISTS (SELECT 1 FROM public.explorations e WHERE e.id=exploration_id AND e.is_visible) OR public.has_role(auth.uid(),'admin'));
+CREATE POLICY "Admin offers" ON public.exploration_offers FOR ALL TO authenticated USING (public.has_role(auth.uid(),'admin')) WITH CHECK (public.has_role(auth.uid(),'admin'));
+ALTER TABLE public.exploration_parts ADD COLUMN offer_id uuid REFERENCES public.exploration_offers(id) ON DELETE SET NULL;
+CREATE TABLE public.exploration_purchases (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL, exploration_id uuid NOT NULL REFERENCES public.explorations(id), offer_id uuid NOT NULL REFERENCES public.exploration_offers(id), offer_title text NOT NULL, order_id text NOT NULL UNIQUE, payment_id text UNIQUE, amount_paise integer NOT NULL CHECK (amount_paise > 0), currency text NOT NULL DEFAULT 'INR' CHECK (currency='INR'), status text NOT NULL DEFAULT 'created' CHECK (status IN ('created','paid','refunded')), created_at timestamptz NOT NULL DEFAULT now(), paid_at timestamptz);
+GRANT SELECT ON public.exploration_purchases TO authenticated;
+GRANT ALL ON public.exploration_purchases TO service_role;
+ALTER TABLE public.exploration_purchases ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own purchase status or admin" ON public.exploration_purchases FOR SELECT TO authenticated USING (user_id=auth.uid() OR public.has_role(auth.uid(),'admin'));
+CREATE INDEX exploration_purchases_buyer_offer ON public.exploration_purchases(user_id,offer_id);
+ALTER PUBLICATION supabase_realtime ADD TABLE public.exploration_offers;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.exploration_purchases;
