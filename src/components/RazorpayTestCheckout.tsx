@@ -78,8 +78,10 @@ export default function RazorpayTestCheckout({ explorationId, preview = false }:
     } catch (error) { setBusy(false); setMessage(error instanceof Error ? error.message : "Could not open checkout"); }
   };
   return <div className="space-y-3 pt-3">
-    <p className="text-sm text-muted-foreground">₹5 checkout trial · Not a bot purchase and does not unlock files. Your Razorpay account determines whether money is charged.</p>
-    {pending ? <Button variant="outline" disabled={busy || preview} onClick={() => void verify(pending)}><RefreshCw size={16} className="mr-2" />Retry payment verification</Button> : <Button disabled={busy || preview || paid} onClick={() => void start()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin" /> : <CreditCard size={16} className="mr-2" />}{paid ? "₹5 payment confirmed" : "Pay ₹5"}</Button>}
+    <p className="text-sm text-muted-foreground">Pay ₹5 to unlock the part files. After paying in your UPI app, come back to this page — payment is confirmed automatically.</p>
+    {pending ? <Button variant="outline" disabled={busy || preview} onClick={() => void verify(pending)}><RefreshCw size={16} className="mr-2" />Retry payment verification</Button> : paid ? <Button disabled={busy || preview} onClick={() => void loadFiles()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin" /> : <Download size={16} className="mr-2" />}Get part files</Button> : <Button disabled={busy || preview} onClick={() => void start()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin" /> : <CreditCard size={16} className="mr-2" />}Pay ₹5</Button>}
+    {paid && <p className="text-sm font-medium">₹5 payment confirmed</p>}
+    {files && files.length > 0 && <ul className="space-y-2">{files.map(f => <li key={f.url}><a className="underline" href={f.url}>{f.name}</a>{f.description && <span className="text-sm text-muted-foreground"> — {f.description}</span>}</li>)}</ul>}
     {message && <p role="status" className="text-sm">{message}</p>}
     <LoginPopupModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
   </div>;
