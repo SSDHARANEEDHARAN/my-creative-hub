@@ -16,7 +16,10 @@ Deno.serve(async req => {
   if (origin) {
     try {
       const url = new URL(origin);
-      if (!(url.hostname === "localhost" || url.hostname.endsWith(".lovable.app") || origin === Deno.env.get("SITE_URL"))) return reply({ error: "Origin not allowed" }, 403);
+      const extra = (Deno.env.get("ALLOWED_ORIGINS") || "").split(",").map(s => s.trim()).filter(Boolean);
+      const h = url.hostname;
+      const allowed = h === "localhost" || h === "127.0.0.1" || h.endsWith(".lovable.app") || h.endsWith(".lovableproject.com") || h.endsWith(".vercel.app") || origin === Deno.env.get("SITE_URL") || extra.includes(origin);
+      if (!allowed) { console.warn("Blocked origin", origin); return reply({ error: "Origin not allowed" }, 403); }
     } catch { return reply({ error: "Invalid origin" }, 403); }
   }
   try {
