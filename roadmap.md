@@ -1,4 +1,5 @@
 # Roadmap
+- [ ] Add separate ₹59,000 full physical CARTIZION bot offer and verify real-price checkout without charging; real-phone payment/download confirmation requires the buyer and real files.
 - [x] Add CARTIZION product prices ₹89,000/₹12,500/₹29,000 and design/configuration ₹10,000/₹7,000; Cloud offer/file controls and separate authenticated purchases implemented; all three real-price Razorpay screens opened and order amounts read back; 47 tests pass; phone layout checked.
 - [ ] Confirm completed new-price purchase and download — waiting for buyer payment and real seller files; no charge made during verification. Admin controls implemented; signed-in admin save not exercised this turn.
 - [x] Add separate INR 5 Razorpay checkout; real order and modal verified signed in, invalid signature and signed-out requests rejected, 31 tests pass; actual payment completion awaits user payment

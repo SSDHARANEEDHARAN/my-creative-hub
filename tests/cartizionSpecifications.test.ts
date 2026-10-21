@@ -13,6 +13,7 @@ describe("Supplied CARTIZION specifications", () => {
   test("hybrid Z-axis type costs ₹29,000", () => expect(s.productPricesInr.hybridZ).toBe(29000));
   test("design files cost ₹10,000", () => expect(s.designFilesPriceInr).toBe(10000));
   test("configuration files cost ₹7,000", () => expect(s.configurationFilesPriceInr).toBe(7000));
+  test("separate full physical bot costs ₹59,000", () => expect(s.completeBotPriceInr).toBe(59000));
   for (const [quantity, part] of [[2, "Nema 17 Stepper Motors"], [2, "M8 × 450 mm linear bearing rods — X axis"], [2, "M8 × 350 mm linear bearing rods — Y axis"], [2, "M3 × 80 mm linear rods — Z axis"], [1, "M8 × 480 mm threaded rod"], [8, "LM8UU linear bearings"], [1, "SG90 servo"], [2, "GT2 pulleys, 16 teeth"], [1, "2000 mm GT2 belt"], [4, "M8 nuts"]] as const) {
     test(part, () => expect(s.hardware.find(row => row[1] === part)?.[0]).toBe(quantity));
   }

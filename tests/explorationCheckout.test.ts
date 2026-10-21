@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
 import { offerAmountPaise, matchesPurchase, canAccessOffer } from "../supabase/functions/exploration-checkout/rules";
-for (const [price, paise] of [[89000,8900000],[12500,1250000],[29000,2900000],[10000,1000000],[7000,700000]]) {
+for (const [price, paise] of [[89000,8900000],[12500,1250000],[29000,2900000],[10000,1000000],[7000,700000],[59000,5900000]]) {
   test(`server order for ₹${price}`, () => expect(offerAmountPaise(price)).toBe(paise));
 }
 test("invalid price rejected", () => { expect(() => offerAmountPaise(0)).toThrow(); expect(() => offerAmountPaise(NaN)).toThrow(); expect(() => offerAmountPaise(0.001)).toThrow(); });
