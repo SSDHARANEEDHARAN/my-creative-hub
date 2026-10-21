@@ -1,5 +1,6 @@
 # Roadmap
-- [ ] Add CARTIZION step-by-step build guide and buyer dashboard with own confirmed payments and offer-scoped downloads; verify signed-in flow.
+- [x] Add preliminary 10-step CARTIZION guide with supplied BOM/photo and buyer dashboard using own purchase records and server-gated offer downloads; signed-in pending history/refresh, signed-out redirect and simulated-phone ₹59,000 checkout verified; 42 tests pass. Confirmed/download flow awaits actual captured purchase and uploads.
+- [ ] Finalize CARTIZION assembly instructions — waiting for seller-approved variant drawings, wiring/pin assignments, driver current settings and calibration instructions; preliminary guide clearly labelled.
 - [x] Combine exploration purchase offers into one selector card; add LoRa product ₹6,999 and program files ₹1,999 in Cloud with existing admin controls; all eight selections verified signed in, ₹6,999 Razorpay order opened without payment, missing program files block checkout; phone-width layout checked; 41 tests pass.
 - [x] Add separate ₹59,000 full physical CARTIZION bot offer; simulated-phone touch opens Razorpay with server-created 5,900,000-paise order; 39 relevant tests pass; existing prices preserved.
 - [ ] Real-phone purchase/download confirmation — blocked on user-operated phone, actual buyer payment and real seller uploads; no payment made during checks.
