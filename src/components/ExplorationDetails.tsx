@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import ExplorationInquiryModal from "@/components/ExplorationInquiryModal";
 import type { Exploration } from "@/components/ExplorationCard";
+import RazorpayTestCheckout from "@/components/RazorpayTestCheckout";
 
 const ExplorationDetails = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
   const [inquiryOpen, setInquiryOpen] = useState(false);
@@ -17,6 +18,7 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
       {item.product_price_inr != null && <p className="font-medium">Complete bot: {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(item.product_price_inr)}</p>}
       <p className="text-sm text-muted-foreground">Part files are included with the bot purchase once secure checkout is available.</p>
       <Button variant="outline" disabled><Lock size={16} className="mr-2" /> Download part files</Button>
+      <RazorpayTestCheckout key={item.id} explorationId={item.id} preview={preview} />
     </section>}
     <section className="border-t border-border pt-6"><p className="text-sm text-muted-foreground mb-3">{item.contact_note || "Interested in this exploration?"}</p><Button disabled={preview} onClick={() => setInquiryOpen(true)}><Mail size={16} className="mr-2" /> Contact about this</Button></section>
     {!preview && <ExplorationInquiryModal isOpen={inquiryOpen} onClose={() => setInquiryOpen(false)} exploration={{ id: item.id, title: item.title }} />}
