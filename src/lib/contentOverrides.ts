@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getAllProjects, Project } from "@/data/projectsData";
 import { blogPosts, BlogPost } from "@/data/blogPostsData";
 import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
+import { matchBundledImage } from "@/lib/bundledImageMatch";
 
 export type ContentKind = "project" | "blog";
 
@@ -42,6 +43,8 @@ const resolveImageUrl = (orig: any, field: "image" | "images", stored: string): 
   const candidates: string[] = field === "images" ? orig.images ?? [] : [orig.image].filter(Boolean);
   const exact = candidates.find((o) => typeof o === "string" && fileName(o) === fileName(stored));
   if (exact) return resolveProjectPhotoUrl(exact);
+  const bundled = matchBundledImage(stored, candidates);
+  if (bundled) return resolveProjectPhotoUrl(bundled);
   const match = candidates.find((o) => typeof o === "string" && baseName(o) === baseName(stored));
   return resolveProjectPhotoUrl(match ?? stored);
 };
