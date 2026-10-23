@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Download, Loader2, Trash2, Upload } from "lucide-react";
+import { FilePreviewIcon } from "@/components/ui/glass-folder-cards";
 
 export default function ExplorationPartsManager({ explorationId }: { explorationId: string }) {
   const [parts, setParts] = useState<Tables<"exploration_parts">[]>([]);
@@ -67,7 +68,7 @@ export default function ExplorationPartsManager({ explorationId }: { exploration
       <input aria-label="Add exploration part files" type="file" multiple disabled={busy} className="hidden" onChange={e => { void upload(e.target.files); e.target.value = ""; }} />
     </label>
     {parts.map(part => <div key={part.id} className="space-y-2 border-b border-border pb-3">
-      <p className="text-sm font-medium break-all">{part.file_name} <span className="text-muted-foreground">({(part.size_bytes / 1024).toFixed(1)} KB)</span></p>
+      <div className="flex items-center gap-3"><FilePreviewIcon name={part.file_name} /><p className="text-sm font-medium break-all">{part.file_name} <span className="text-muted-foreground">({(part.size_bytes / 1024).toFixed(1)} KB)</span></p></div>
       <Input aria-label={`Description for ${part.file_name}`} value={part.description} onChange={e => setParts(list => list.map(p => p.id === part.id ? { ...p, description: e.target.value } : p))} />
       {offers.length > 0 && <select aria-label={`Purchase option for ${part.file_name}`} className="w-full h-10 border border-input bg-background px-3 text-sm" value={part.offer_id || ""} onChange={e => void update(part, { offer_id: e.target.value || null })}><option value="">Unassigned — not sold with new options</option>{offers.map(o => <option key={o.id} value={o.id}>{o.title}</option>)}</select>}
       <div className="flex flex-wrap items-center gap-2">

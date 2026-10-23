@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
+import { FilePreviewIcon } from "@/components/ui/glass-folder-cards";
 
 interface BlogDownloadButtonProps {
   postId: string;
@@ -296,8 +297,8 @@ const BlogDownloadButton = ({ postId, title, content, author, date, category, do
   };
 
   return (
-    <Button onClick={generatePDF} disabled={isDownloading} variant="outline" className="gap-2">
-      <Download size={16} />
+    <Button onClick={generatePDF} disabled={isDownloading} variant="outline" className="gap-3 h-auto min-h-12 whitespace-normal">
+      <FilePreviewIcon name="article.pdf" className="border-0" />
       {isDownloading ? "Generating..." : "Download PDF"}
       {downloadCount > 0 && (
         <span className="ml-1 px-1.5 py-0.5 bg-secondary text-secondary-foreground text-xs">

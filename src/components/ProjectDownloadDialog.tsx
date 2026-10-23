@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
+import { FilePreviewIcon } from "@/components/ui/glass-folder-cards";
 
 interface ProjectDownloadDialogProps {
   projectId: number;
@@ -384,44 +385,38 @@ END-ISO-10303-21;`;
           </DialogHeader>
 
           <div className="grid gap-4 mt-4">
-            <button
+            <Button variant="ghost"
               onClick={() => handleDownload("pdf")}
               disabled={isDownloading}
-              className="flex items-center gap-4 p-4 border border-border hover:border-primary/50 hover:bg-secondary/50 transition-all text-left group"
+              className="h-auto whitespace-normal justify-start flex items-center gap-4 p-4 border border-border hover:border-primary/50 hover:bg-secondary/50 transition-all text-left group"
             >
-              <div className="w-12 h-12 bg-red-500/10 flex items-center justify-center">
-                <FileText size={24} className="text-red-500" />
-              </div>
+              <FilePreviewIcon name="case-study.pdf" />
               <div>
                 <p className="font-semibold text-foreground group-hover:text-primary transition-colors">PDF Document</p>
                 <p className="text-sm text-muted-foreground">Case study with images, drawings & specifications</p>
               </div>
-            </button>
+            </Button>
 
             {stepComingSoon ? (
               <div className="flex items-center gap-4 p-4 border border-dashed border-border opacity-70 cursor-not-allowed text-left">
-                <div className="w-12 h-12 bg-blue-500/10 flex items-center justify-center">
-                  <Box size={24} className="text-blue-500" />
-                </div>
+                <FilePreviewIcon name="model.step" />
                 <div>
                   <p className="font-semibold text-foreground">SolidWorks / STEP File — Coming Soon</p>
                   <p className="text-sm text-muted-foreground">STEP files for this project will be added shortly.</p>
                 </div>
               </div>
             ) : (
-            <button
+            <Button variant="ghost"
                 onClick={() => handleDownload("step")}
                 disabled={isDownloading}
-                className="flex items-center gap-4 p-4 border border-border hover:border-primary/50 hover:bg-secondary/50 transition-all text-left group"
+                className="h-auto whitespace-normal justify-start flex items-center gap-4 p-4 border border-border hover:border-primary/50 hover:bg-secondary/50 transition-all text-left group"
               >
-                <div className="w-12 h-12 bg-blue-500/10 flex items-center justify-center">
-                  <Box size={24} className="text-blue-500" />
-                </div>
+                <FilePreviewIcon name="model.step" />
                 <div>
                   <p className="font-semibold text-foreground group-hover:text-primary transition-colors">SolidWorks / STEP File</p>
                   <p className="text-sm text-muted-foreground">3D CAD model in STEP format (.step)</p>
                 </div>
-              </button>
+              </Button>
             )}
           </div>
 
