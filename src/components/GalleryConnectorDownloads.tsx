@@ -1,4 +1,6 @@
 import { toast } from "@/hooks/use-toast";
+import GlassFolder, { FilePreviewIcon } from "@/components/ui/glass-folder-cards";
+import { Button } from "@/components/ui/button";
 import { useEffect, useMemo, useState } from "react";
 import { Download, ExternalLink, FolderOpen, Package, Play } from "lucide-react";
 import {
@@ -169,23 +171,7 @@ const GalleryConnectorDownloads = () => {
 
         <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
           {availableGroups.map((group) => (
-            <button
-              key={group.name}
-              type="button"
-              onClick={() => setSelected(group)}
-              className="gallery-connector-card group text-left"
-              aria-label={`Open ${group.name} connector files`}
-            >
-              <span className="gallery-connector-card__icon" aria-hidden="true">
-                <FolderOpen className="h-6 w-6" />
-              </span>
-              <span className="mt-5 block text-lg font-semibold text-foreground">{group.name}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">{group.description}</span>
-              <span className="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                <Package className="h-4 w-4" />
-                {group.files.length} {group.files.length === 1 ? "file" : "files"}
-              </span>
-            </button>
+            <GlassFolder key={group.name} label={group.name} files={group.files.map(file => ({ name: file.name, meta: file.description || undefined }))} onOpen={() => setSelected(group)} />
           ))}
         </div>
       </div>
@@ -213,9 +199,7 @@ const GalleryConnectorDownloads = () => {
                 key={file.storagePath ?? file.src}
                 className="flex items-center gap-3 border border-border bg-card p-3 sm:p-4"
               >
-                <span className="shrink-0 border border-border px-2 py-1 text-[10px] font-bold text-muted-foreground">
-                  {file.extension}
-                </span>
+                <FilePreviewIcon name={file.name} />
                 <span className="min-w-0 flex-1 break-words text-sm font-medium text-foreground">
                   {file.name}
                   {file.size ? (
@@ -235,26 +219,28 @@ const GalleryConnectorDownloads = () => {
                   ) : null}
                 </span>
                 {file.isVideo && (
-                  <button
+                  <Button
                     type="button"
+                    size="icon" variant="outline"
                     onClick={() => openFile(file, false)}
                     className="shrink-0 border border-border p-2 text-foreground transition-colors hover:bg-secondary"
                     aria-label={`Play ${file.name}`}
                     title={`Play ${file.name}`}
                   >
                     <Play className="h-4 w-4" />
-                  </button>
+                  </Button>
                 )}
                 {file.downloadable ? (
-                  <button
+                  <Button
                     type="button"
+                    size="icon" variant="outline"
                     onClick={() => openFile(file, true)}
                     className="shrink-0 border border-border p-2 text-foreground transition-colors hover:bg-secondary"
                     aria-label={`Download ${file.name}`}
                     title={`Download ${file.name}`}
                   >
                     <Download className="h-4 w-4" />
-                  </button>
+                  </Button>
                 ) : (
                   <span className="shrink-0 border border-border px-2 py-1 text-[10px] font-semibold uppercase text-muted-foreground">
                     View only

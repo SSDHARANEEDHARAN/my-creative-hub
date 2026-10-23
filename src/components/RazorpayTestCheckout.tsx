@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginPopupModal from "@/components/LoginPopupModal";
 import type { Tables } from "@/integrations/supabase/types";
+import GlassFolder from "@/components/ui/glass-folder-cards";
 
 type PaymentResult = { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string };
 type Checkout = { open: () => void; on: (event: string, handler: () => void) => void };
@@ -85,7 +86,7 @@ export default function RazorpayTestCheckout({ explorationId, offer, preview = f
     {pending ? <Button variant="outline" className="h-auto min-h-10 whitespace-normal" disabled={busy || preview} onClick={() => void verify(pending)}><RefreshCw size={16} className="mr-2 shrink-0" />Retry verification</Button> : paid ? <Button className="h-auto min-h-10 whitespace-normal" disabled={busy || preview} onClick={() => void loadFiles()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin shrink-0" /> : <Download size={16} className="mr-2 shrink-0" />}Get purchased files</Button> : <Button className="h-auto min-h-10 whitespace-normal" disabled={busy || preview || offer?.enabled === false} onClick={() => void start()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin shrink-0" /> : <CreditCard size={16} className="mr-2 shrink-0" />}{offer?.enabled === false ? "Unavailable" : `Buy · ${priceLabel}`}</Button>}
     {paid && <p className="text-sm font-medium">Purchase confirmed</p>}
     {user && !preview && <Button size="sm" variant="ghost" disabled={busy} onClick={() => void sync()}><RefreshCw size={14} className="mr-2" />Check payment</Button>}
-    {files && files.length > 0 && <ul className="space-y-2">{files.map(f => <li key={f.url}><a className="underline" href={f.url}>{f.name}</a>{f.description && <span className="text-sm text-muted-foreground"> — {f.description}</span>}</li>)}</ul>}
+    {files && files.length > 0 && <GlassFolder label="Purchased files" files={files.map(f => ({ name: f.name, href: f.url, meta: f.description || undefined }))} />}
     {message && <p role="status" className="text-sm">{message}</p>}
     <LoginPopupModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
   </div>;

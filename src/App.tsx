@@ -21,6 +21,7 @@ import BlogPostPage from "./pages/BlogPostPage";
 import ExplorationPage from "./pages/ExplorationPage";
 import BuyerDashboardPage from "./pages/BuyerDashboardPage";
 import CartizionBuildGuidePage from "./pages/CartizionBuildGuidePage";
+import LoraBuildGuidePage from "./pages/LoraBuildGuidePage";
 import SubscribersPage from "./pages/SubscribersPage";
 import BlogCommentsPage from "./pages/BlogCommentsPage";
 import AdminModerationPage from "./pages/AdminModerationPage";
@@ -68,6 +69,7 @@ const AnimatedRoutes = () => {
         <Route path="/explorations/:id" element={<ExplorationPage />} />
         <Route path="/buyer/dashboard" element={<ProtectedRoute><BuyerDashboardPage /></ProtectedRoute>} />
         <Route path="/cartizion/build-guide" element={<CartizionBuildGuidePage />} />
+        <Route path="/lora-keychain/build-guide" element={<LoraBuildGuidePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
