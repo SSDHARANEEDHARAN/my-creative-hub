@@ -173,7 +173,6 @@ const GalleryConnectorDownloads = () => {
             const folderItems: FolderItem[] = group.files.map((file, index) => ({
               id: file.id ?? file.storagePath ?? `${group.name}-${index}`,
               title: file.name,
-              image: file.isVideo ? undefined : undefined,
               badge: file.extension,
             }));
             return (
