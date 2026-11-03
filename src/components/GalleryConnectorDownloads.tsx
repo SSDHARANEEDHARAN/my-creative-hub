@@ -1,6 +1,7 @@
 import { toast } from "@/hooks/use-toast";
 import { useEffect, useMemo, useState } from "react";
-import { Download, ExternalLink, FolderOpen, Package, Play } from "lucide-react";
+import { Download, ExternalLink, Play } from "lucide-react";
+import { AnimatedFolder, type FolderItem } from "@/components/ui/3d-folder";
 import {
   Dialog,
   DialogContent,
@@ -167,26 +168,24 @@ const GalleryConnectorDownloads = () => {
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
-          {availableGroups.map((group) => (
-            <button
-              key={group.name}
-              type="button"
-              onClick={() => setSelected(group)}
-              className="gallery-connector-card group text-left"
-              aria-label={`Open ${group.name} connector files`}
-            >
-              <span className="gallery-connector-card__icon" aria-hidden="true">
-                <FolderOpen className="h-6 w-6" />
-              </span>
-              <span className="mt-5 block text-lg font-semibold text-foreground">{group.name}</span>
-              <span className="mt-1 block text-sm text-muted-foreground">{group.description}</span>
-              <span className="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
-                <Package className="h-4 w-4" />
-                {group.files.length} {group.files.length === 1 ? "file" : "files"}
-              </span>
-            </button>
-          ))}
+        <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {availableGroups.map((group) => {
+            const folderItems: FolderItem[] = group.files.map((file, index) => ({
+              id: file.id ?? file.storagePath ?? `${group.name}-${index}`,
+              title: file.name,
+              image: file.isVideo ? undefined : undefined,
+              badge: file.extension,
+            }));
+            return (
+              <AnimatedFolder
+                key={group.name}
+                title={group.name}
+                description={group.description}
+                items={folderItems}
+                onOpen={() => setSelected(group)}
+              />
+            );
+          })}
         </div>
       </div>
 
