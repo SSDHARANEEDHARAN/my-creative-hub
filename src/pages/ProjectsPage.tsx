@@ -515,11 +515,11 @@ const ProjectsPage = () => {
                 >
                   <Link
                     to="/login"
-                    className="inline-flex flex-wrap items-center justify-center gap-2 border-2 border-foreground bg-card px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-medium text-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] transition-transform hover:-translate-y-0.5"
+                    className="inline-flex flex-wrap items-center justify-center gap-2.5 border border-border bg-muted/40 px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm text-muted-foreground transition-colors hover:border-foreground/40 hover:text-foreground"
                   >
-                    <span className="relative flex h-2.5 w-2.5 shrink-0">
-                      <span className="absolute inline-flex h-full w-full animate-ping bg-foreground opacity-60" />
-                      <span className="relative inline-flex h-2.5 w-2.5 bg-foreground" />
+                    <span className="relative flex h-2 w-2 shrink-0">
+                      <span className="absolute inline-flex h-full w-full animate-ping bg-foreground opacity-50" />
+                      <span className="relative inline-flex h-2 w-2 bg-foreground" />
                     </span>
                     <span className="animate-pulse text-center leading-snug">
                       Want to see my Industrial Projects? Kindly log in — we'll acknowledge you shortly, then you can view the SPM with surveillance.
