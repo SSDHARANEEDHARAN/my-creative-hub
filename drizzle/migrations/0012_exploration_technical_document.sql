@@ -1,0 +1,1 @@
+ALTER TABLE public.explorations ADD COLUMN IF NOT EXISTS technical_document_url text, ADD COLUMN IF NOT EXISTS technical_document_name text;

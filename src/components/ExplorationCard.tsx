@@ -19,6 +19,8 @@ export interface Exploration {
   technical_content?: string;
   product_price_inr?: number | null;
   paid_parts?: boolean;
+  technical_document_url?: string | null;
+  technical_document_name?: string | null;
 }
 
 const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, Mail, BookOpen, LayoutDashboard } from "lucide-react";
+import { Lock, Mail, BookOpen, LayoutDashboard, FileText, Download, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CARTIZION_ID } from "@/lib/buyerPurchases";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,15 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
   return <div className="min-w-0 space-y-8">
     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span className="border border-border px-2 py-1">{item.status}</span>{item.tags?.map(tag => <span key={tag} className="px-2 py-1">#{tag}</span>)}</div>
     <section><h2 className="font-display text-2xl font-semibold mb-4">About this exploration</h2><p className="whitespace-pre-line text-muted-foreground leading-relaxed">{item.description}</p></section>
+    {item.technical_document_url && <section className="border border-border p-4 space-y-3">
+      <h2 className="font-display text-2xl font-semibold flex items-center gap-2"><FileText size={20} /> Technical document</h2>
+      <p className="text-sm text-muted-foreground break-all">{item.technical_document_name || "Product technical document (PDF)"}</p>
+      <iframe title="Technical document preview" src={item.technical_document_url} className="w-full h-[70vh] border border-border bg-muted" />
+      <div className="flex flex-wrap gap-3">
+        <Button asChild variant="outline"><a href={item.technical_document_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={16} className="mr-2" />Open full screen</a></Button>
+        <Button asChild><a href={item.technical_document_url} download target="_blank" rel="noopener noreferrer"><Download size={16} className="mr-2" />Download PDF</a></Button>
+      </div>
+    </section>}
     {item.technical_content && <StyledArticleRenderer content={item.technical_content} />}
     {item.paid_parts && <section className="border-y border-border py-6 space-y-3">
       <h2 className="font-display text-2xl font-semibold">Products & purchased files</h2>

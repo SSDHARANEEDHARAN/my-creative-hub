@@ -85,6 +85,13 @@
       "when": 1792600268926,
       "tag": "0011_exploration_purchase_offers",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793987302332,
+      "tag": "0012_exploration_technical_document",
+      "breakpoints": true
     }
   ]
 }

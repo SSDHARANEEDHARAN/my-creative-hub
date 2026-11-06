@@ -26,9 +26,13 @@ interface Exploration {
   technical_content: string;
   product_price_inr: number | null;
   paid_parts: boolean;
+  technical_document_url: string | null;
+  technical_document_name: string | null;
 }
 
 const empty = {
+  technical_document_url: "",
+  technical_document_name: "",
   technical_content: "",
   product_price_inr: "",
   paid_parts: false,
@@ -74,6 +78,21 @@ const ExplorationManager = () => {
     setUploading(false);
   };
 
+  const [docUploading, setDocUploading] = useState(false);
+  const uploadDocument = async (file: File | undefined) => {
+    if (!file) return;
+    if (file.size > 50 * 1024 * 1024) { toast({ title: "File too large", description: "Max 50 MB", variant: "destructive" }); return; }
+    setDocUploading(true);
+    const safe = file.name.replace(/[^A-Za-z0-9._-]+/g, "_");
+    const path = `explorations/documents/${Date.now()}-${safe}`;
+    const { error } = await supabase.storage.from("content").upload(path, file, { contentType: file.type || "application/pdf" });
+    setDocUploading(false);
+    if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return; }
+    const url = supabase.storage.from("content").getPublicUrl(path).data.publicUrl;
+    setForm((f) => ({ ...f, technical_document_url: url, technical_document_name: f.technical_document_name || file.name }));
+    toast({ title: "Document uploaded", description: "Click Update to publish it." });
+  };
+
   const load = async () => {
     const { data, error } = await supabase
       .from("explorations")
@@ -117,6 +136,8 @@ const ExplorationManager = () => {
       technical_content: form.technical_content,
       paid_parts: form.paid_parts,
       product_price_inr: price,
+      technical_document_url: form.technical_document_url.trim() || null,
+      technical_document_name: form.technical_document_url.trim() ? (form.technical_document_name.trim() || null) : null,
     };
     const { error } = editingId
       ? await supabase.from("explorations").update(payload).eq("id", editingId)
@@ -158,6 +179,8 @@ const ExplorationManager = () => {
       technical_content: item.technical_content || "",
       paid_parts: item.paid_parts || false,
       product_price_inr: item.product_price_inr != null ? String(item.product_price_inr) : "",
+      technical_document_url: item.technical_document_url || "",
+      technical_document_name: item.technical_document_name || "",
     });
   };
 
@@ -176,6 +199,20 @@ const ExplorationManager = () => {
         <Input placeholder="Contact note on detail page" value={form.contact_note} onChange={(e) => setForm({ ...form, contact_note: e.target.value })} />
         <label className="block text-sm font-medium">Specifications, dimensions & BOM</label>
         <Textarea aria-label="Specifications, dimensions and BOM" rows={12} placeholder="Full technical content (Markdown)" value={form.technical_content} onChange={e => setForm({ ...form, technical_content: e.target.value })} />
+        <div className="border border-border p-3 space-y-2">
+          <label className="block text-sm font-medium">Technical document (PDF, shown to visitors)</label>
+          {form.technical_document_url ? (
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <a href={form.technical_document_url} target="_blank" rel="noopener noreferrer" className="underline break-all">{form.technical_document_name || "View document"}</a>
+              <Button type="button" size="sm" variant="outline" className="text-destructive" aria-label="Delete technical document" onClick={() => setForm((f) => ({ ...f, technical_document_url: "", technical_document_name: "" }))}><Trash2 className="w-3 h-3 mr-1" />Delete</Button>
+            </div>
+          ) : <p className="text-xs text-muted-foreground">No document attached.</p>}
+          <Input aria-label="Technical document title" placeholder="Document title" value={form.technical_document_name} onChange={(e) => setForm({ ...form, technical_document_name: e.target.value })} />
+          <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
+            {docUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} {form.technical_document_url ? "Replace document" : "Upload document"}
+            <input type="file" aria-label="Upload technical document" accept="application/pdf,.pdf" disabled={docUploading || saving} className="hidden" onChange={(e) => { uploadDocument(e.target.files?.[0]); e.target.value = ""; }} />
+          </label>
+        </div>
         <label className="block text-sm font-medium">Bot price including purchased part files (INR)</label>
         <Input aria-label="Complete bot price in INR" type="number" min="0" step="0.01" placeholder="Complete bot price (INR)" value={form.product_price_inr} onChange={e => setForm({ ...form, product_price_inr: e.target.value })} />
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.paid_parts} onChange={e => setForm({ ...form, paid_parts: e.target.checked })} /> Part files require payment</label>
@@ -203,7 +240,7 @@ const ExplorationManager = () => {
           Visible on the blog page
         </label>
         <div className="flex gap-2">
-          <Button onClick={save} disabled={saving || uploading}>
+          <Button onClick={save} disabled={saving || uploading || docUploading}>
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
             {editingId ? "Update" : "Add"}
           </Button>
