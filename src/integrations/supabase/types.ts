@@ -682,6 +682,8 @@ export type Database = {
           status: string
           tags: string[]
           technical_content: string
+          technical_document_name: string | null
+          technical_document_url: string | null
           title: string
           updated_at: string
         }
@@ -699,6 +701,8 @@ export type Database = {
           status?: string
           tags?: string[]
           technical_content?: string
+          technical_document_name?: string | null
+          technical_document_url?: string | null
           title: string
           updated_at?: string
         }
@@ -716,6 +720,8 @@ export type Database = {
           status?: string
           tags?: string[]
           technical_content?: string
+          technical_document_name?: string | null
+          technical_document_url?: string | null
           title?: string
           updated_at?: string
         }
