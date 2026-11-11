@@ -1,7 +1,6 @@
 import { toast } from "@/hooks/use-toast";
 import { useEffect, useMemo, useState } from "react";
 import { Download, ExternalLink, Play } from "lucide-react";
-import { AnimatedFolder, type FolderItem } from "@/components/ui/3d-folder";
 import {
   Dialog,
   DialogContent,
@@ -169,20 +168,49 @@ const GalleryConnectorDownloads = () => {
         </div>
 
         <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {availableGroups.map((group) => {
-            const folderItems: FolderItem[] = group.files.map((file, index) => ({
-              id: file.id ?? file.storagePath ?? `${group.name}-${index}`,
-              title: file.name,
-              badge: file.extension,
-            }));
+          {availableGroups.map((group, index) => {
+            const extensions = Array.from(new Set(group.files.map((f) => f.extension)));
+            const unit = `U-${String(index + 1).padStart(2, "0")}`;
             return (
-              <AnimatedFolder
+              <button
                 key={group.name}
-                title={group.name}
-                description={group.description}
-                items={folderItems}
-                onOpen={() => setSelected(group)}
-              />
+                type="button"
+                onClick={() => setSelected(group)}
+                className="group flex flex-col border-2 border-border bg-card text-left transition-colors hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <div className="flex items-center justify-between border-b-2 border-border bg-muted px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 animate-pulse bg-primary" aria-hidden />
+                    Online
+                  </span>
+                  <span>{unit}</span>
+                </div>
+                <div className="flex flex-1 flex-col gap-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-display text-lg font-bold text-foreground break-words">{group.name}</h3>
+                    <span className="shrink-0 border border-border px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                      {group.files.length} {group.files.length === 1 ? "FILE" : "FILES"}
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{group.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {extensions.map((ext) => (
+                      <span key={ext} className="border border-border bg-background px-2 py-0.5 font-mono text-[10px] font-bold text-foreground">
+                        .{ext}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-auto grid grid-cols-6 gap-1 pt-2" aria-hidden>
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <span key={i} className="h-1 bg-border transition-colors group-hover:bg-foreground" style={{ transitionDelay: `${i * 40}ms` }} />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between border-t-2 border-border px-4 py-3 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">
+                  <span>Open module</span>
+                  <Download className="h-4 w-4" />
+                </div>
+              </button>
             );
           })}
         </div>
