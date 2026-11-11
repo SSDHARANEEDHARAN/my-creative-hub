@@ -21,7 +21,14 @@ export interface Exploration {
   paid_parts?: boolean;
   technical_document_url?: string | null;
   technical_document_name?: string | null;
+  technical_documents?: { name: string; url: string }[] | null;
 }
+
+export const explorationDocuments = (item: Exploration): { name: string; url: string }[] => {
+  const docs = Array.isArray(item.technical_documents) ? item.technical_documents.filter((d) => d?.url) : [];
+  if (docs.length) return docs;
+  return item.technical_document_url ? [{ name: item.technical_document_name || "Product technical document", url: item.technical_document_url }] : [];
+};
 
 const ExplorationCard = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);

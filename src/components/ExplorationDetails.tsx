@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Lock, Mail, BookOpen, LayoutDashboard, FileText, Download, ExternalLink } from "lucide-react";
+import { Lock, Mail, BookOpen, LayoutDashboard, FileText, Download, ExternalLink, CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CARTIZION_ID } from "@/lib/buyerPurchases";
 import { Button } from "@/components/ui/button";
 import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import ExplorationInquiryModal from "@/components/ExplorationInquiryModal";
 import type { Exploration } from "@/components/ExplorationCard";
+import { explorationDocuments } from "@/components/ExplorationCard";
 import ExplorationOffers from "@/components/ExplorationOffers";
 
 const ExplorationDetails = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
@@ -13,13 +14,35 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
   return <div className="min-w-0 space-y-8">
     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span className="border border-border px-2 py-1">{item.status}</span>{item.tags?.map(tag => <span key={tag} className="px-2 py-1">#{tag}</span>)}</div>
     <section><h2 className="font-display text-2xl font-semibold mb-4">About this exploration</h2><p className="whitespace-pre-line text-muted-foreground leading-relaxed">{item.description}</p></section>
-    {item.technical_document_url && <section className="border border-border p-4 space-y-3">
-      <h2 className="font-display text-2xl font-semibold flex items-center gap-2"><FileText size={20} /> Technical document</h2>
-      <p className="text-sm text-muted-foreground break-all">{item.technical_document_name || "Product technical document (PDF)"}</p>
-      <iframe title="Technical document preview" src={item.technical_document_url} className="w-full h-[70vh] border border-border bg-muted" />
-      <div className="flex flex-wrap gap-3">
-        <Button asChild variant="outline"><a href={item.technical_document_url} target="_blank" rel="noopener noreferrer"><ExternalLink size={16} className="mr-2" />Open full screen</a></Button>
-        <Button asChild><a href={item.technical_document_url} download target="_blank" rel="noopener noreferrer"><Download size={16} className="mr-2" />Download PDF</a></Button>
+    {explorationDocuments(item).length > 0 && <section aria-labelledby="technical-documents-title" className="border border-border p-5 sm:p-8">
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Documentation</p>
+          <h2 id="technical-documents-title" className="mt-3 font-display text-2xl font-semibold flex items-center gap-2"><FileText size={20} /> Technical documents</h2>
+          <p className="mt-4 text-sm leading-6 text-muted-foreground">Official reference files for this exploration. Open a document to read it, or use the download icon to save a copy.</p>
+          <ul className="mt-5 space-y-2">
+            {explorationDocuments(item).map((doc) => (
+              <li key={doc.url} className="flex items-start gap-2 text-sm"><CheckCircle2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" /><span>{doc.name}</span></li>
+            ))}
+          </ul>
+        </div>
+        <ol className="relative space-y-4 border-l-2 border-foreground pl-6 sm:pl-8">
+          {explorationDocuments(item).map((doc, index) => (
+            <li key={doc.url} className="relative border border-border bg-muted/40 p-4">
+              <span className="absolute -left-[2.35rem] sm:-left-[2.85rem] top-4 grid h-8 w-8 place-items-center bg-foreground text-sm font-bold text-background ring-4 ring-background">{index + 1}</span>
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold break-words">{doc.name}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">PDF document</p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <Button asChild variant="outline" size="icon" aria-label={`Open ${doc.name} full screen`}><a href={doc.url} target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /></a></Button>
+                  <Button asChild size="icon" aria-label={`Download ${doc.name}`}><a href={doc.url} download target="_blank" rel="noopener noreferrer"><Download size={16} /></a></Button>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>}
     {item.technical_content && <StyledArticleRenderer content={item.technical_content} />}

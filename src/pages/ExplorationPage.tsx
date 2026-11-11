@@ -24,7 +24,7 @@ const ExplorationPage = () => {
     const load = async () => {
       const { data, error } = await supabase.from("explorations").select("*").eq("id", id).maybeSingle();
       if (!active) return;
-      setItem(data); setFailed(Boolean(error)); setLoading(false);
+      setItem(data as unknown as Exploration | null); setFailed(Boolean(error)); setLoading(false);
       if (data && recorded.current !== id) {
         recorded.current = id;
         await supabase.rpc("record_exploration_view", { p_id: id });

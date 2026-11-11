@@ -28,11 +28,11 @@ interface Exploration {
   paid_parts: boolean;
   technical_document_url: string | null;
   technical_document_name: string | null;
+  technical_documents: { name: string; url: string }[] | null;
 }
 
 const empty = {
-  technical_document_url: "",
-  technical_document_name: "",
+  technical_documents: [] as { name: string; url: string }[],
   technical_content: "",
   product_price_inr: "",
   paid_parts: false,
@@ -89,7 +89,7 @@ const ExplorationManager = () => {
     setDocUploading(false);
     if (error) { toast({ title: "Upload failed", description: error.message, variant: "destructive" }); return; }
     const url = supabase.storage.from("content").getPublicUrl(path).data.publicUrl;
-    setForm((f) => ({ ...f, technical_document_url: url, technical_document_name: f.technical_document_name || file.name }));
+    setForm((f) => ({ ...f, technical_documents: [...f.technical_documents, { name: file.name, url }] }));
     toast({ title: "Document uploaded", description: "Click Update to publish it." });
   };
 
@@ -136,8 +136,9 @@ const ExplorationManager = () => {
       technical_content: form.technical_content,
       paid_parts: form.paid_parts,
       product_price_inr: price,
-      technical_document_url: form.technical_document_url.trim() || null,
-      technical_document_name: form.technical_document_url.trim() ? (form.technical_document_name.trim() || null) : null,
+      technical_documents: form.technical_documents.filter((d) => d.url.trim()),
+      technical_document_url: null,
+      technical_document_name: null,
     };
     const { error } = editingId
       ? await supabase.from("explorations").update(payload).eq("id", editingId)
@@ -179,8 +180,11 @@ const ExplorationManager = () => {
       technical_content: item.technical_content || "",
       paid_parts: item.paid_parts || false,
       product_price_inr: item.product_price_inr != null ? String(item.product_price_inr) : "",
-      technical_document_url: item.technical_document_url || "",
-      technical_document_name: item.technical_document_name || "",
+      technical_documents: item.technical_documents?.length
+        ? item.technical_documents
+        : item.technical_document_url
+          ? [{ name: item.technical_document_name || "Product technical document", url: item.technical_document_url }]
+          : [],
     });
   };
 
@@ -200,16 +204,21 @@ const ExplorationManager = () => {
         <label className="block text-sm font-medium">Specifications, dimensions & BOM</label>
         <Textarea aria-label="Specifications, dimensions and BOM" rows={12} placeholder="Full technical content (Markdown)" value={form.technical_content} onChange={e => setForm({ ...form, technical_content: e.target.value })} />
         <div className="border border-border p-3 space-y-2">
-          <label className="block text-sm font-medium">Technical document (PDF, shown to visitors)</label>
-          {form.technical_document_url ? (
-            <div className="flex flex-wrap items-center gap-2 text-sm">
-              <a href={form.technical_document_url} target="_blank" rel="noopener noreferrer" className="underline break-all">{form.technical_document_name || "View document"}</a>
-              <Button type="button" size="sm" variant="outline" className="text-destructive" aria-label="Delete technical document" onClick={() => setForm((f) => ({ ...f, technical_document_url: "", technical_document_name: "" }))}><Trash2 className="w-3 h-3 mr-1" />Delete</Button>
+          <label className="block text-sm font-medium">Technical documents (PDF, shown to visitors)</label>
+          {form.technical_documents.length ? (
+            <div className="space-y-2">
+              {form.technical_documents.map((doc, index) => (
+                <div key={doc.url} className="flex flex-wrap items-center gap-2 text-sm">
+                  <span className="text-xs text-muted-foreground">{index + 1}.</span>
+                  <Input aria-label={`Document ${index + 1} title`} placeholder="Document title" value={doc.name} className="flex-1 min-w-40" onChange={(e) => setForm((f) => ({ ...f, technical_documents: f.technical_documents.map((d, i) => i === index ? { ...d, name: e.target.value } : d) }))} />
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="underline">View</a>
+                  <Button type="button" size="sm" variant="outline" className="text-destructive" aria-label={`Delete document ${doc.name}`} onClick={() => setForm((f) => ({ ...f, technical_documents: f.technical_documents.filter((_, i) => i !== index) }))}><Trash2 className="w-3 h-3 mr-1" />Delete</Button>
+                </div>
+              ))}
             </div>
-          ) : <p className="text-xs text-muted-foreground">No document attached.</p>}
-          <Input aria-label="Technical document title" placeholder="Document title" value={form.technical_document_name} onChange={(e) => setForm({ ...form, technical_document_name: e.target.value })} />
+          ) : <p className="text-xs text-muted-foreground">No documents attached.</p>}
           <label className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer border border-border px-3 py-2 hover:bg-muted">
-            {docUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} {form.technical_document_url ? "Replace document" : "Upload document"}
+            {docUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add document
             <input type="file" aria-label="Upload technical document" accept="application/pdf,.pdf" disabled={docUploading || saving} className="hidden" onChange={(e) => { uploadDocument(e.target.files?.[0]); e.target.value = ""; }} />
           </label>
         </div>

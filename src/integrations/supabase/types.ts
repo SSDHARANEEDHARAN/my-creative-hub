@@ -684,6 +684,7 @@ export type Database = {
           technical_content: string
           technical_document_name: string | null
           technical_document_url: string | null
+          technical_documents: Json
           title: string
           updated_at: string
         }
@@ -703,6 +704,7 @@ export type Database = {
           technical_content?: string
           technical_document_name?: string | null
           technical_document_url?: string | null
+          technical_documents?: Json
           title: string
           updated_at?: string
         }
@@ -722,6 +724,7 @@ export type Database = {
           technical_content?: string
           technical_document_name?: string | null
           technical_document_url?: string | null
+          technical_documents?: Json
           title?: string
           updated_at?: string
         }
