@@ -92,6 +92,13 @@
       "when": 1793987302332,
       "tag": "0012_exploration_technical_document",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794420976226,
+      "tag": "0013_create_mind_messages",
+      "breakpoints": true
     }
   ]
 }

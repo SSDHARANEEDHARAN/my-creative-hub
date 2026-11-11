@@ -20,6 +20,7 @@ import PageTransition from "@/components/PageTransition";
 import AdminBackButton from "@/components/admin/AdminBackButton";
 import UserAccessLimits from "@/components/admin/UserAccessLimits";
 import AdminControlCenter from "@/components/admin/AdminControlCenter";
+import NewPageAdmin from "@/components/admin/NewPageAdmin";
 import SalesDashboard from "@/components/admin/SalesDashboard";
 import {
   Table,
@@ -478,6 +479,7 @@ const AdminDashboardPage = () => {
 
             <AdminControlCenter />
             <SalesDashboard />
+            <NewPageAdmin />
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-6 gap-4 mb-8">

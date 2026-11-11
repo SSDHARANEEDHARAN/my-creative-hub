@@ -20,7 +20,7 @@ const ContactEmailSchema = z.object({
   budget: z.string().optional(),
   timeline: z.string().optional(),
   requirements: z.string().optional(),
-  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding", "exploration_inquiry"]).optional(),
+  type: z.enum(["contact", "service", "blog_like", "blog_comment", "newsletter", "comment_reply", "guest_welcome", "user_onboarding", "exploration_inquiry", "mind_message"]).optional(),
   blogTitle: z.string().optional(),
   blogUrl: z.string().optional(),
   comment: z.string().optional(),
@@ -217,6 +217,34 @@ const handler = async (req: Request): Promise<Response> => {
         </div>`,
         ctaUrl: `${SITE_URL}/blog`, ctaLabel: "View Blog",
       }));
+      return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
+
+    // ─── What's on your mind (signed-in visitors only) ───
+    if (type === "mind_message") {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const authHeader = req.headers.get("Authorization") || "";
+      const ures = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY, Authorization: authHeader } });
+      const u = ures.ok ? await ures.json() : null;
+      if (!u?.id) return new Response(JSON.stringify({ error: "Please sign in to send a message." }), { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } });
+      const BLOCKED = ["viagra","casino","porn","sex","xxx","bitcoin","crypto giveaway","lottery","loan offer","click here","free money","earn money fast","fuck","shit","bitch","bastard","asshole","hack","password","otp","<script","javascript:"];
+      const t = d.message.trim(); const low = t.toLowerCase();
+      const letters = t.replace(/[^a-z]/gi, "");
+      if (t.length < 5 || t.length > 1000 || /(https?:\/\/|www\.)\S+/i.test(t) || BLOCKED.some((w) => low.includes(w)) || /(.)\1{7,}/.test(t) || (letters.length >= 10 && letters === letters.toUpperCase() && t.length > 20)) {
+        return new Response(JSON.stringify({ error: "This message looks unwanted or suspicious, so it can't be sent." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } });
+      }
+      await fetch(`${SUPABASE_URL}/rest/v1/mind_messages`, {
+        method: "POST",
+        headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: JSON.stringify({ user_id: u.id, name: d.name, email: d.email, message: t }),
+      });
+      await sendEmail(OWNER_EMAIL, `New thought from ${sN}`, buildEmail({
+        headline: "What's on your mind — new message",
+        body: `${card(`<table style="width:100%;border-collapse:collapse;">${infoRow("From", sN)}${infoRow("Email", sE)}${infoRow("Time", new Date().toLocaleString())}</table>`)}
+        ${quoteBlock(sM, "Message")}`,
+        footerText: `Reply directly to respond to ${sN}.`,
+      }), d.email);
       return new Response(JSON.stringify({ success: true }), { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } });
     }
 

@@ -72,6 +72,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
     { name: "Projects", href: "/projects" },
     { name: "Gallery", href: "/gallery" },
     { name: "Blog", href: "/blog" },
+    { name: "New", href: "/new" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -117,6 +118,9 @@ const Navigation = ({ persisted }: NavigationProps) => {
                 >
                   {link.name}
                 </span>
+                {link.href === "/new" && (
+                  <span aria-label="New" className="absolute top-1 right-1 z-20 h-2 w-2 bg-destructive animate-pulse" />
+                )}
                 {location.pathname === link.href && (
                   <motion.div
                     layoutId="navIndicator"
@@ -220,7 +224,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
                           : "text-muted-foreground hover:text-foreground hover:bg-secondary border-l-4 border-transparent"
                       }`}
                     >
-                      {link.name}
+                      <span className="inline-flex items-center gap-2">{link.name}{link.href === "/new" && <span aria-label="New" className="h-2 w-2 bg-destructive animate-pulse" />}</span>
                     </Link>
                   </motion.div>
                 ))}
