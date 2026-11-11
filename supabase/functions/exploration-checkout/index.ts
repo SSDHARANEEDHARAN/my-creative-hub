@@ -37,11 +37,25 @@ Deno.serve(async req => {
       if (!response.ok) throw new Error("Razorpay could not process this request. Please retry verification before paying again.");
       return response.json();
     };
+    const notifyPaid = async (row: { offer_title?: string; amount_paise: number; order_id: string }, paymentId: string) => {
+      const key = Deno.env.get("RESEND_API_KEY"); if (!key) return;
+      const esc = (v: string) => v.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+      const amount = `₹${(row.amount_paise / 100).toLocaleString("en-IN")}`;
+      const title = esc(row.offer_title || "Purchase");
+      const html = (heading: string) => `<div style="font-family:Arial,sans-serif;color:#000;border:2px solid #000;padding:24px;max-width:520px"><h2 style="margin:0 0 12px">${heading}</h2><p><b>${title}</b> — ${amount}</p><p>Order: ${esc(row.order_id)}<br/>Payment: ${esc(paymentId)}</p><p style="color:#555;font-size:12px">Tharanee · tharaneetharanss@gmail.com</p></div>`;
+      const send = (to: string, subject: string, body: string) => fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Tharanee <onboarding@resend.dev>", to: [to], subject, html: body }) });
+      const buyer = auth.user!.email;
+      await Promise.allSettled([
+        send("tharaneetharanss@gmail.com", `New sale: ${row.offer_title || "Purchase"} (${amount})`, html(`New confirmed payment from ${esc(buyer || "a buyer")}`)),
+        ...(buyer ? [send(buyer, `Payment confirmed: ${row.offer_title || "Purchase"}`, html("Thank you — your payment is confirmed"))] : []),
+      ]);
+    };
     const savePaid = async (row: { id: string; order_id: string; amount_paise: number; paid_at?: string | null }, payment: { id: string; order_id: string; amount: number; currency: string; status: string }) => {
       if (payment.status === "authorized" && payment.order_id === row.order_id && payment.amount === row.amount_paise && payment.currency === "INR") payment = await api(`payments/${payment.id}/capture`, { amount: row.amount_paise, currency: "INR" });
       if (!matchesPurchase(payment, row.order_id, row.amount_paise)) return false;
       const { error } = await db.from("exploration_purchases").update({ status: "paid", payment_id: payment.id, paid_at: row.paid_at || new Date().toISOString() }).eq("id", row.id);
       if (error) throw new Error("Payment received but confirmation was not saved. Retry verification; do not pay again.");
+      if ((row as { status?: string }).status !== "paid") await notifyPaid(row as { offer_title?: string; amount_paise: number; order_id: string }, payment.id).catch(() => {});
       return true;
     };
     const input = parsed.data;
