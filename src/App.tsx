@@ -21,7 +21,7 @@ import ArticlePage from "./pages/ArticlePage";
 import BlogPostPage from "./pages/BlogPostPage";
 import ExplorationPage from "./pages/ExplorationPage";
 import BuyerDashboardPage from "./pages/BuyerDashboardPage";
-import CartizionBuildGuidePage from "./pages/CartizionBuildGuidePage";
+import CartesianBuildGuidePage from "./pages/CartesianBuildGuidePage";
 import SubscribersPage from "./pages/SubscribersPage";
 import BlogCommentsPage from "./pages/BlogCommentsPage";
 import AdminModerationPage from "./pages/AdminModerationPage";
@@ -69,7 +69,8 @@ const AnimatedRoutes = () => {
         <Route path="/blog/:id" element={<BlogPostPage />} />
         <Route path="/explorations/:id" element={<ExplorationPage />} />
         <Route path="/buyer/dashboard" element={<ProtectedRoute><BuyerDashboardPage /></ProtectedRoute>} />
-        <Route path="/cartizion/build-guide" element={<CartizionBuildGuidePage />} />
+        <Route path="/cartesian/build-guide" element={<CartesianBuildGuidePage />} />
+        <Route path="/cartizion/build-guide" element={<Navigate to="/cartesian/build-guide" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />

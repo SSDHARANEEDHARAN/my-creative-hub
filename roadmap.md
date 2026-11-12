@@ -1,24 +1,24 @@
 # Roadmap
 - [x] Move Connector Downloads exclusively to New and add the responsive split notice/robot hero; verified robot rendering, desktop/mobile layouts, real file download, touch folder opening and Blog removal.
-- [x] Add preliminary 10-step CARTIZION guide with supplied BOM/photo and buyer dashboard using own purchase records and server-gated offer downloads; signed-in pending history/refresh, signed-out redirect and simulated-phone ₹59,000 checkout verified; 42 tests pass. Confirmed/download flow awaits actual captured purchase and uploads.
-- [ ] Finalize CARTIZION assembly instructions — waiting for seller-approved variant drawings, wiring/pin assignments, driver current settings and calibration instructions; preliminary guide clearly labelled.
+- [x] Add preliminary 10-step CARTESIAN guide with supplied BOM/photo and buyer dashboard using own purchase records and server-gated offer downloads; signed-in pending history/refresh, signed-out redirect and simulated-phone ₹59,000 checkout verified; 42 tests pass. Confirmed/download flow awaits actual captured purchase and uploads.
+- [ ] Finalize CARTESIAN assembly instructions — waiting for seller-approved variant drawings, wiring/pin assignments, driver current settings and calibration instructions; preliminary guide clearly labelled.
 - [x] Combine exploration purchase offers into one selector card; add LoRa product ₹6,999 and program files ₹1,999 in Cloud with existing admin controls; all eight selections verified signed in, ₹6,999 Razorpay order opened without payment, missing program files block checkout; phone-width layout checked; 41 tests pass.
-- [x] Add separate ₹59,000 full physical CARTIZION bot offer; simulated-phone touch opens Razorpay with server-created 5,900,000-paise order; 39 relevant tests pass; existing prices preserved.
+- [x] Add separate ₹59,000 full physical CARTESIAN bot offer; simulated-phone touch opens Razorpay with server-created 5,900,000-paise order; 39 relevant tests pass; existing prices preserved.
 - [ ] Real-phone purchase/download confirmation — blocked on user-operated phone, actual buyer payment and real seller uploads; no payment made during checks.
-- [x] Add CARTIZION product prices ₹89,000/₹12,500/₹29,000 and design/configuration ₹10,000/₹7,000; Cloud offer/file controls and separate authenticated purchases implemented; all three real-price Razorpay screens opened and order amounts read back; 47 tests pass; phone layout checked.
+- [x] Add CARTESIAN product prices ₹89,000/₹12,500/₹29,000 and design/configuration ₹10,000/₹7,000; Cloud offer/file controls and separate authenticated purchases implemented; all three real-price Razorpay screens opened and order amounts read back; 47 tests pass; phone layout checked.
 - [ ] Confirm completed new-price purchase and download — waiting for buyer payment and real seller files; no charge made during verification. Admin controls implemented; signed-in admin save not exercised this turn.
 - [x] Add separate INR 5 Razorpay checkout; real order and modal verified signed in, invalid signature and signed-out requests rejected, 31 tests pass; actual payment completion awaits user payment
 - [x] Replace visible platform branding and shared-link/browser identity with Tharanee; hosting badge hidden; live head changes require next publish
 - [x] Add admin purchase price and private part-file upload, description, include/exclude, admin download and removal; verified saved private file and cleaned up test
 - [x] Replace former single ₹59,000 bot price with the three supplied product variants.
-- [x] Simplify exploration cards; add detail pages, persistent likes and admin-only views, editable technical details and full preview; verify CARTIZION Read more, photos, specifications, inquiry dialog and locked downloads
-- [ ] CARTIZION paid part downloads — waiting for real seller uploads assigned to each option; secure per-offer entitlement implemented and legacy ₹5 access rejected.
+- [x] Simplify exploration cards; add detail pages, persistent likes and admin-only views, editable technical details and full preview; verify CARTESIAN Read more, photos, specifications, inquiry dialog and locked downloads
+- [ ] CARTESIAN paid part downloads — waiting for real seller uploads assigned to each option; secure per-offer entitlement implemented and legacy ₹5 access rejected.
 - [x] Verify recent industrial photos in fresh browsers using public-host URLs: all 169 photo files readable; three new cards and case-study galleries render with an authorized account; other content and access restrictions preserved
 - [x] Add AXIS GLOBAL 4-Station MMS: supplied case study, four photos, two videos and Cloud record; verified admin preview/save, Moderation listing, industrial card, article and all hosted media; existing projects preserved
 - [x] Add AMR with Cobot – End-to-End Product Development separately: 112 photos, one video, case study and Cloud record; verified admin preview/save, Moderation listing, industrial card and all 113 hosted media URLs; existing projects preserved
 - [x] Add Smart Manufacturing System – AMR with Cobot industrial project: case study, 52 photos, seven videos, Cloud content record, verified admin save and Moderation listing; all hosted media responds successfully (sandbox Chromium lacks H.264 playback support)
 - [x] Add and verify live exploration card preview in Moderation; temporary real-photo save appeared on Blog without refresh and was cleaned up
-- [x] Add supplied real explorations: CARTIZION BOT and LoRa Smart Keychain; keychain saved through Moderation with eight album photos and verified on public Blog
+- [x] Add supplied real explorations: CARTESIAN BOT and LoRa Smart Keychain; keychain saved through Moderation with eight album photos and verified on public Blog
 - [x] Admin content editor: device preview, AI copy suggestions, AI screenshot layout check
 - [x] Fix editor auto-closing
 - [x] Connector file AI description verified working

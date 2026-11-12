@@ -1,4 +1,4 @@
-export const cartizionBuildSteps = [
+export const cartesianBuildSteps = [
   { title: "Check the supplied kit", text: "Match your purchased variant and supplied drawings before assembly. Inventory the frame, carriage, motors, bearings, rods, belt and electronics against the supplied BOM. Keep the power adapter and USB cable disconnected.", check: "Correct variant identified; components accounted for." },
   { title: "Assemble the frame", text: "Assemble the aluminium or printed frame according to your variant’s drawings. Start fasteners loosely, check that the frame is square on a level surface, then tighten evenly. Do not force printed parts or invent mounting positions.", check: "Frame sits flat and does not twist." },
   { title: "Fit the X and Y guides", text: "Use the supplied X-axis and Y-axis guide rods and LM8UU bearings where shown in the drawings. Keep the guides parallel and move the carriage by hand before connecting a drive. Do not use the motors to overcome binding.", check: "Carriage travels smoothly across its available range." },

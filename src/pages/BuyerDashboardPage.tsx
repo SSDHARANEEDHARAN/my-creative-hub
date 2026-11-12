@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { CARTIZION_ID, ownConfirmedPurchases } from "@/lib/buyerPurchases";
+import { CARTESIAN_ID, ownConfirmedPurchases } from "@/lib/buyerPurchases";
 
 type Purchase = Tables<"exploration_purchases">;
 type FileLink = { name: string; url: string; description?: string };
@@ -80,7 +80,7 @@ export default function BuyerDashboardPage() {
           <p className="text-sm">Payment confirmed · {new Date(row.paid_at || row.created_at).toLocaleDateString("en-IN")}</p>
           <dl className="text-sm text-muted-foreground space-y-1 break-all"><div><dt className="inline font-medium">Order: </dt><dd className="inline">{row.order_id}</dd></div><div><dt className="inline font-medium">Payment: </dt><dd className="inline">{row.payment_id}</dd></div></dl>
           <PurchasedFiles key={row.offer_id} offerId={row.offer_id} />
-          <div className="flex flex-wrap gap-3"><Button asChild variant="ghost"><Link to={`/explorations/${row.exploration_id}`}>Product details</Link></Button>{row.exploration_id === CARTIZION_ID && <Button asChild variant="outline"><Link to="/cartizion/build-guide"><BookOpen size={16} className="mr-2" />Assembly guide</Link></Button>}</div>
+          <div className="flex flex-wrap gap-3"><Button asChild variant="ghost"><Link to={`/explorations/${row.exploration_id}`}>Product details</Link></Button>{row.exploration_id === CARTESIAN_ID && <Button asChild variant="outline"><Link to="/cartesian/build-guide"><BookOpen size={16} className="mr-2" />Assembly guide</Link></Button>}</div>
         </article>)}
       </section>
       {other.length > 0 && <section className="mt-10"><h2 className="font-display text-xl font-semibold mb-4">Other payment attempts</h2><div className="divide-y divide-border border-y border-border">{other.map(row => <div key={row.id} className="py-4 flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><p className="font-medium break-words">{row.offer_title}</p><p className="text-xs text-muted-foreground break-all">{row.order_id}</p><p className="text-sm text-muted-foreground">{row.status === "refunded" ? "Refunded · Downloads locked" : "Awaiting payment confirmation"}</p></div><span>{amount(row)}</span></div>)}</div></section>}

@@ -1,4 +1,4 @@
-export const cartizionSpecifications = {
+export const cartesianSpecifications = {
   current: "1.2 A/Phase",
   holdingTorque: "4.2 kg-cm",
   detentTorque: "2.2 N.cm (Maximum)",
@@ -24,8 +24,8 @@ export const cartizionSpecifications = {
   completeBotPriceInr: 59000,
 };
 
-const s = cartizionSpecifications;
-export const cartizionTechnicalContent = `## Product dimensions
+const s = cartesianSpecifications;
+export const cartesianTechnicalContent = `## Product dimensions
 Overall enclosure dimensions and working area are not yet specified.
 
 - X-axis rods: M8 × 450 mm

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Lock, Mail, BookOpen, LayoutDashboard, FileText, Download, ExternalLink, CheckCircle2, Film } from "lucide-react";
 import { Link } from "react-router-dom";
-import { CARTIZION_ID } from "@/lib/buyerPurchases";
+import { CARTESIAN_ID } from "@/lib/buyerPurchases";
 import { Button } from "@/components/ui/button";
 import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import ExplorationInquiryModal from "@/components/ExplorationInquiryModal";
@@ -71,7 +71,7 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
       <ExplorationOffers key={item.id} explorationId={item.id} preview={preview} />
       {!preview && <div className="flex flex-wrap gap-3 pt-3">
         <Button asChild variant="outline"><Link to="/buyer/dashboard"><LayoutDashboard size={16} className="mr-2" />My purchases</Link></Button>
-        {item.id === CARTIZION_ID && <Button asChild variant="outline"><Link to="/cartizion/build-guide"><BookOpen size={16} className="mr-2" />Assembly guide</Link></Button>}
+        {item.id === CARTESIAN_ID && <Button asChild variant="outline"><Link to="/cartesian/build-guide"><BookOpen size={16} className="mr-2" />Assembly guide</Link></Button>}
       </div>}
     </section>}
     <section className="border-t border-border pt-6"><p className="text-sm text-muted-foreground mb-3">{item.contact_note || "Interested in this exploration?"}</p><Button disabled={preview} onClick={() => setInquiryOpen(true)}><Mail size={16} className="mr-2" /> Contact about this</Button></section>

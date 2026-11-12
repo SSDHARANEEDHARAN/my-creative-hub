@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { cartizionSpecifications as s } from "../src/data/cartizionSpecifications";
+import { cartesianSpecifications as s } from "../src/data/cartesianSpecifications";
 
-describe("Supplied CARTIZION specifications", () => {
+describe("Supplied CARTESIAN specifications", () => {
   test("current", () => expect(s.current).toBe("1.2 A/Phase"));
   test("holding torque", () => expect(s.holdingTorque).toBe("4.2 kg-cm"));
   test("maximum detent torque", () => expect(s.detentTorque).toBe("2.2 N.cm (Maximum)"));
