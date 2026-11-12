@@ -1,53 +1,41 @@
-import { useState } from "react";
 import { POLICY_CARDS } from "./ui/faq-drawer";
 
 export const POLICY_UPDATED = "12 November 2026";
 
-export default function PolicyDrawer({ onNavigate }: { onNavigate?: () => void }) {
-  const [active, setActive] = useState(0);
-  const card = POLICY_CARDS[active];
-
+export default function PolicyDrawer(_props: { onNavigate?: () => void }) {
+  const jump = (id: string) => document.getElementById(`policy-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
   return (
-    <div className="space-y-5 min-w-0 pr-3">
-      <header className="border-b-2 border-foreground pb-3">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Privacy · Terms</p>
-        <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground break-words">Privacy policy & terms of use</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1">Last updated {POLICY_UPDATED}</p>
+    <div className="pr-3"><div className="min-w-0 border-2 border-foreground">
+      <header className="grid grid-cols-[1fr_auto] border-b-2 border-foreground">
+        <div className="p-4 min-w-0">
+          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Document · SS-POL-001</p>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground break-words">Privacy & Terms</h2>
+        </div>
+        <div className="border-l-2 border-foreground p-4 font-mono text-[10px] sm:text-xs text-muted-foreground flex flex-col justify-center">
+          <span>REV</span>
+          <span className="text-foreground">{POLICY_UPDATED}</span>
+        </div>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-[200px_minmax(0,1fr)] min-w-0">
-        <nav aria-label="Policy topics" role="tablist" className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-1 gap-1 md:border-r-2 md:border-border md:pr-3">
-          {POLICY_CARDS.map((c, i) => {
-            const on = i === active;
-            return (
-              <button
-                key={c.id}
-                type="button"
-                role="tab"
-                aria-selected={on}
-                onClick={() => setActive(i)}
-                className={`flex items-center gap-2 text-left px-3 py-2 text-sm border-2 transition-colors min-w-0 ${on ? "bg-foreground text-background border-foreground" : "border-border text-foreground hover:bg-secondary"}`}
-              >
-                <span className={`font-mono text-[10px] ${on ? "opacity-70" : "text-muted-foreground"}`}>{String(i + 1).padStart(2, "0")}</span>
-                <span className="truncate font-medium">{c.tab}</span>
-              </button>
-            );
-          })}
-        </nav>
+      <nav aria-label="Clauses" className="flex flex-wrap gap-x-4 gap-y-1 px-4 py-3 border-b-2 border-border font-mono text-xs">
+        {POLICY_CARDS.map((c, i) => (
+          <button key={c.id} type="button" onClick={() => jump(c.id)} className="text-muted-foreground hover:text-foreground underline-offset-4 hover:underline">
+            {String(i + 1).padStart(2, "0")} {c.tab}
+          </button>
+        ))}
+      </nav>
 
-        <section role="tabpanel" className="min-w-0 border-2 border-border p-4 sm:p-5">
-          <p className="font-mono text-[11px] text-muted-foreground mb-2">
-            {String(active + 1).padStart(2, "0")} / {String(POLICY_CARDS.length).padStart(2, "0")} · {card.tab}
-          </p>
-          <h3 className="font-display text-lg font-semibold text-foreground mb-3 break-words">{card.q}</h3>
-          <p className="text-sm leading-relaxed text-muted-foreground break-words">{card.a}</p>
-          <div className="flex justify-between gap-2 mt-5">
-            <button type="button" disabled={active === 0} onClick={() => setActive(active - 1)} className="text-xs border-2 border-border px-3 py-1.5 disabled:opacity-40 hover:bg-secondary">← Previous</button>
-            <button type="button" disabled={active === POLICY_CARDS.length - 1} onClick={() => setActive(active + 1)} className="text-xs border-2 border-border px-3 py-1.5 disabled:opacity-40 hover:bg-secondary">Next →</button>
-          </div>
-        </section>
-      </div>
-
-    </div>
+      <ol className="divide-y-2 divide-border">
+        {POLICY_CARDS.map((c, i) => (
+          <li key={c.id} id={`policy-${c.id}`} className="grid grid-cols-[2.5rem_minmax(0,1fr)] sm:grid-cols-[4rem_minmax(0,1fr)] scroll-mt-2">
+            <span className="border-r-2 border-border p-3 font-mono text-sm font-bold text-foreground">{String(i + 1).padStart(2, "0")}</span>
+            <div className="p-3 sm:p-4 min-w-0">
+              <h3 className="font-display text-base sm:text-lg font-semibold text-foreground break-words">{c.q}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground break-words">{c.a}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div></div>
   );
 }
