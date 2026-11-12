@@ -43,14 +43,15 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
           )}
         </div>
       )}
-      {!timedOut && (
-        <Spline
-          scene={scene}
-          className="h-full w-full"
-          onLoad={() => setLoaded(true)}
-          htmlContentMode="none"
-        />
-      )}
+      <Spline
+        scene={scene}
+        className="h-full w-full"
+        onLoad={() => {
+          setLoaded(true);
+          setTimedOut(false);
+        }}
+        htmlContentMode="none"
+      />
     </div>
   );
 }
