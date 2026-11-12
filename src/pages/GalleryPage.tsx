@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { BUNDLED_MEDIA } from "@/lib/galleryMedia";
-import { fetchGalleryOverrides } from "@/lib/siteOverrides";
+import { fetchGalleryOverrides, fetchDriveVideos, drivePreviewUrl } from "@/lib/siteOverrides";
 import "./GalleryPage.css";
 
 /**
@@ -26,7 +26,7 @@ interface Slide {
   src: string;
   title: string;
   description?: string;
-  type: "image" | "video";
+  type: "image" | "video" | "drive";
   color: string;
 }
 
@@ -159,7 +159,15 @@ class GallerySlider {
     const div = document.createElement("div");
     div.className = "gallery-slider__slide";
 
-    if (item.type === "video") {
+    if (item.type === "drive") {
+      const frame = document.createElement("iframe");
+      frame.src = item.src;
+      frame.allow = "autoplay; fullscreen";
+      frame.allowFullscreen = true;
+      frame.title = item.title;
+      frame.setAttribute("style", "width:100%;height:100%;border:0;");
+      div.appendChild(frame);
+    } else if (item.type === "video") {
       const video = document.createElement("video");
       video.src = item.src;
       video.loop = true;
@@ -496,9 +504,16 @@ const GalleryPage = () => {
   const [slides, setSlides] = useState<Slide[]>(localSlides);
   useEffect(() => {
     let cancelled = false;
-    fetchGalleryOverrides()
-      .then((ov) => {
-        if (cancelled || Object.keys(ov).length === 0) return;
+    Promise.all([fetchGalleryOverrides(), fetchDriveVideos().catch(() => [])])
+      .then(([ov, drive]) => {
+        if (cancelled) return;
+        const driveSlides: Slide[] = drive
+          .filter((d) => !d.hidden && drivePreviewUrl(d.drive_url))
+          .map((d, i) => ({ src: drivePreviewUrl(d.drive_url)!, title: d.title, description: d.description ?? undefined, type: "drive" as const, color: COLORS[(BUNDLED_MEDIA.length + i) % COLORS.length] }));
+        if (Object.keys(ov).length === 0) {
+          if (driveSlides.length) setSlides([...localSlides, ...driveSlides]);
+          return;
+        }
         const next = BUNDLED_MEDIA.map((m, i) => ({ m, i, o: ov[m.base] }))
           .filter((x) => !x.o?.hidden)
           .sort((a, b) => (a.o?.sort_order ?? a.i) - (b.o?.sort_order ?? b.i))
@@ -509,7 +524,7 @@ const GalleryPage = () => {
             type: m.type,
             color: COLORS[i % COLORS.length],
           }));
-        if (next.length) setSlides(next);
+        if (next.length || driveSlides.length) setSlides([...next, ...driveSlides]);
       })
       .catch(() => {});
     return () => {

@@ -31,3 +31,20 @@ export async function uploadLogo(file: File): Promise<string> {
   if (error) throw error;
   return supabase.storage.from("content").getPublicUrl(path).data.publicUrl;
 }
+
+export type DriveVideo = { id: string; title: string; description: string | null; drive_url: string; hidden: boolean; sort_order: number };
+
+/** Extracts a Google Drive file id from share/view/open links. */
+export function driveFileId(url: string): string | null {
+  const m = url.match(/\/d\/([A-Za-z0-9_-]{10,})/) ?? url.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
+  return m ? m[1] : null;
+}
+export const drivePreviewUrl = (url: string) => {
+  const id = driveFileId(url);
+  return id ? `https://drive.google.com/file/d/${id}/preview` : null;
+};
+
+export async function fetchDriveVideos(): Promise<DriveVideo[]> {
+  const { data } = await supabase.from("gallery_drive_videos").select("id, title, description, drive_url, hidden, sort_order").order("sort_order");
+  return (data ?? []) as DriveVideo[];
+}

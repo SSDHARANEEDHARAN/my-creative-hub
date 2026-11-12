@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import AdminBackButton from "@/components/admin/AdminBackButton";
 import { GalleryEditor, ToolchainEditor } from "@/components/admin/SiteMediaEditors";
+import DriveVideoManager from "@/components/admin/DriveVideoManager";
 import ConnectorFilesManager from "@/components/admin/ConnectorFilesManager";
 import ConnectorDownloadAnalytics from "@/components/admin/ConnectorDownloadAnalytics";
 
@@ -21,6 +22,7 @@ const AdminGalleryPage = () => {
               <AdminBackButton />
             </div>
             <GalleryEditor />
+          <DriveVideoManager />
             <div className="border-t-2 border-border pt-10">
               <ToolchainEditor />
             </div>

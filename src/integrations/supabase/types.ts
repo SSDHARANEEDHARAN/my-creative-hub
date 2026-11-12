@@ -730,6 +730,36 @@ export type Database = {
         }
         Relationships: []
       }
+      gallery_drive_videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          drive_url: string
+          hidden: boolean
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          drive_url: string
+          hidden?: boolean
+          id?: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          drive_url?: string
+          hidden?: boolean
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: []
+      }
       gallery_overrides: {
         Row: {
           base: string
