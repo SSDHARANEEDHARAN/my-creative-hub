@@ -33,6 +33,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
 import NotFound from "./pages/NotFound";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -75,6 +76,8 @@ const AnimatedRoutes = () => {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/unsubscribe" element={<UnsubscribePage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<Navigate to="/privacy" replace />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route

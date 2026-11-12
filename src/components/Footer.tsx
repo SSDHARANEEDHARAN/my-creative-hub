@@ -1,12 +1,9 @@
-import { forwardRef, memo, useState } from "react";
+import { forwardRef, memo } from "react";
 import { Link } from "react-router-dom";
 import { Heart, Mail, ArrowUpRight, Shield } from "lucide-react";
 import SocialLinks from "./SocialLinks";
 import NewsletterSubscription from "./NewsletterSubscription";
 import { useLayoutContext } from "@/contexts/LayoutContext";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
-import { ScrollArea } from "./ui/scroll-area";
-import PolicyDrawer, { POLICY_UPDATED } from "./PolicyDrawer";
 
 const footerLinks = [
   { name: "Home", href: "/" },
@@ -22,7 +19,6 @@ interface FooterProps {
 
 const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
   const { globalLayoutEnabled } = useLayoutContext();
-  const [privacyOpen, setPrivacyOpen] = useState(false);
   if (globalLayoutEnabled && !persisted) {
     return null;
   }
@@ -30,7 +26,6 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <>
     <footer ref={ref} className="relative py-12 sm:py-20 border-t-2 border-border bg-secondary/30 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-mesh opacity-30" />
@@ -102,13 +97,13 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
             and lots of ☕
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-            <button
-              onClick={() => setPrivacyOpen(true)}
+            <Link
+              to="/privacy"
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-medium"
             >
               <Shield size={12} />
               Privacy & Terms
-            </button>
+            </Link>
             <span className="text-muted-foreground text-xs">
               Built with React, TypeScript & Tailwind CSS
             </span>
@@ -120,19 +115,6 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
         </div>
       </div>
     </footer>
-
-    <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
-      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-3xl max-h-[92vh] p-4 sm:p-6">
-        <DialogHeader className="sr-only">
-          <DialogTitle>Privacy Policy & Terms of Use</DialogTitle>
-          <DialogDescription>Last updated {POLICY_UPDATED}</DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="max-h-[84vh]">
-          <PolicyDrawer onNavigate={() => setPrivacyOpen(false)} />
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
-    </>
   );
 });
 

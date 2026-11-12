@@ -511,6 +511,105 @@
   }
 }
 
+/* Privacy page: monochrome liquid-glass atmosphere with sharp edges */
+.policy-liquid-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 12% 8%, hsl(var(--foreground) / 0.08), transparent 38%),
+    radial-gradient(ellipse at 92% 30%, hsl(var(--foreground) / 0.06), transparent 34%),
+    linear-gradient(145deg, hsl(var(--background)), hsl(var(--secondary) / 0.7) 52%, hsl(var(--background)));
+}
+
+.policy-liquid-orb {
+  position: absolute;
+  aspect-ratio: 1;
+  filter: blur(64px);
+  opacity: 0.8;
+  background: radial-gradient(circle at 35% 30%, hsl(var(--foreground) / 0.16), hsl(var(--foreground) / 0.04) 48%, transparent 72%);
+  animation: policy-liquid-drift 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.policy-liquid-orb-one {
+  top: 4%;
+  left: -10rem;
+  width: min(38rem, 70vw);
+}
+
+.policy-liquid-orb-two {
+  top: 24%;
+  right: -12rem;
+  width: min(42rem, 76vw);
+  animation-delay: -6s;
+  animation-direction: alternate-reverse;
+}
+
+.policy-liquid-orb-three {
+  top: 66%;
+  left: 28%;
+  width: min(30rem, 62vw);
+  opacity: 0.45;
+  animation-delay: -11s;
+}
+
+.policy-liquid-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.25;
+  background-image:
+    linear-gradient(hsl(var(--foreground) / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--foreground) / 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, hsl(var(--foreground)), transparent 82%);
+}
+
+.policy-liquid-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    linear-gradient(125deg, hsl(var(--card) / 0.82), hsl(var(--card) / 0.42) 52%, hsl(var(--secondary) / 0.56));
+  box-shadow: var(--shadow-card), inset 0 1px 0 hsl(var(--foreground) / 0.09);
+  backdrop-filter: blur(30px) saturate(135%);
+  -webkit-backdrop-filter: blur(30px) saturate(135%);
+}
+
+.policy-liquid-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, hsl(var(--foreground) / 0.055), transparent 24%, transparent 68%, hsl(var(--foreground) / 0.035)),
+    radial-gradient(ellipse at 70% 0%, hsl(var(--background) / 0.7), transparent 48%);
+}
+
+@keyframes policy-liquid-drift {
+  0% { transform: translate3d(-3%, -2%, 0) scale(0.94); }
+  45% { transform: translate3d(8%, 5%, 0) scale(1.08); }
+  100% { transform: translate3d(-1%, 12%, 0) scale(1); }
+}
+
+@media (max-width: 639px) {
+  .policy-liquid-orb {
+    filter: blur(42px);
+  }
+
+  .policy-liquid-grid {
+    background-size: 48px 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .policy-liquid-orb {
+    animation: none;
+  }
+}
+
 /* Global sharp edges - no rounded corners anywhere */
 *,
 *::before,
