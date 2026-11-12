@@ -6,6 +6,7 @@ import NewsletterSubscription from "./NewsletterSubscription";
 import { useLayoutContext } from "@/contexts/LayoutContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
+import PolicyDrawer, { POLICY_UPDATED } from "./PolicyDrawer";
 
 const footerLinks = [
   { name: "Home", href: "/" },
@@ -121,52 +122,13 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
     </footer>
 
     <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh]">
-        <DialogHeader>
-          <DialogTitle className="font-display text-xl flex items-center gap-2">
-            <Shield size={20} /> Privacy Policy & Terms of Use
-          </DialogTitle>
-          <DialogDescription>Last updated: {new Date().toLocaleDateString()}</DialogDescription>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh]">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Privacy Policy & Terms of Use</DialogTitle>
+          <DialogDescription>Last updated {POLICY_UPDATED}</DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-[60vh] pr-4">
-          <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">1. Information We Collect</h3>
-              <p>We collect basic account information (name, email) when you sign up, and engagement data (likes, comments, downloads) to improve the experience. IP addresses may be logged for security and abuse prevention.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">2. How We Use Your Data</h3>
-              <p>Your data is used solely to operate the portfolio platform: authentication, notifications, newsletter delivery, and analytics. We do not sell or share your personal information with third parties.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">3. Cookies & Tracking</h3>
-              <p>Essential cookies are used to keep you signed in and remember your preferences. No third-party advertising trackers are deployed.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">4. Content Protection</h3>
-              <p>All projects, blog posts, images, and downloadable assets remain the intellectual property of SS. Tharan. Reproduction, redistribution, or commercial use without written consent is prohibited.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">5. User Conduct</h3>
-              <p>Users agree not to attempt unauthorized access, scraping, reverse engineering, or any activity that disrupts the service. Violations may result in IP blocking and account termination.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">6. Industrial Projects Access</h3>
-              <p>Industrial project content is restricted and may only be accessed by authenticated, approved users. Disclaimers attached to such content (including Janatics-related materials) must be respected.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">7. Your Rights</h3>
-              <p>You may request access to, correction of, or deletion of your personal data at any time by contacting tharaneetharanss@gmail.com.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">8. Changes to This Policy</h3>
-              <p>We may update this policy periodically. Continued use of the site after changes constitutes acceptance of the updated terms.</p>
-            </section>
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">9. Contact</h3>
-              <p>For privacy questions or concerns, contact: <a href="mailto:tharaneetharanss@gmail.com" className="text-primary hover:underline">tharaneetharanss@gmail.com</a></p>
-            </section>
-          </div>
+        <ScrollArea className="max-h-[78vh] pr-3">
+          <PolicyDrawer onNavigate={() => setPrivacyOpen(false)} />
         </ScrollArea>
       </DialogContent>
     </Dialog>
