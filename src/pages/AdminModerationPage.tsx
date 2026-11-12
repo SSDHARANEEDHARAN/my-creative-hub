@@ -18,12 +18,11 @@ import StyledArticleRenderer from "@/components/StyledArticleRenderer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import ReactMarkdown from "react-markdown";
-import GalleryManager from "@/components/admin/GalleryManager";
 import ExplorationManager from "@/components/admin/ExplorationManager";
 import AdminBackButton from "@/components/admin/AdminBackButton";
 import {
   Check, X, Trash2, AlertTriangle, MessageSquare, Users, RefreshCw,
-  Plus, Edit, Eye, Upload, Image, FileText, FolderOpen, Send,
+  Plus, Edit, Eye, Upload, FileText, FolderOpen, Send,
   Award, BarChart3, GraduationCap, Info, Briefcase, Download, RotateCw, Globe, Compass,
 } from "lucide-react";
 import {
@@ -903,7 +902,6 @@ const AdminModerationPage = () => {
                 <TabsTrigger value="projects"><FolderOpen className="w-4 h-4 mr-1" />Projects</TabsTrigger>
                 <TabsTrigger value="skills"><BarChart3 className="w-4 h-4 mr-1" />Skills</TabsTrigger>
                 <TabsTrigger value="certificates"><GraduationCap className="w-4 h-4 mr-1" />Certs</TabsTrigger>
-                <TabsTrigger value="gallery"><Image className="w-4 h-4 mr-1" />Gallery</TabsTrigger>
                 <TabsTrigger value="experience"><Briefcase className="w-4 h-4 mr-1" />Experience</TabsTrigger>
                 <TabsTrigger value="audit"><AlertTriangle className="w-4 h-4 mr-1" />Audit</TabsTrigger>
 
@@ -1114,11 +1112,6 @@ const AdminModerationPage = () => {
                     ))}
                   </div>
                 )}
-              </TabsContent>
-
-              {/* ── Gallery Tab ── */}
-              <TabsContent value="gallery" className="space-y-4">
-                <GalleryManager />
               </TabsContent>
 
               {/* ── Experience Tab ── */}
