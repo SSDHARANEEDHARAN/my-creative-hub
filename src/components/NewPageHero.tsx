@@ -46,15 +46,12 @@ const NewPageHero = ({ title, message }: { title: string; message: string }) => 
   return (
     <Card
       role="status"
-      className="relative w-full overflow-hidden border-2 border-foreground bg-[hsl(var(--sky-dark))] text-[hsl(var(--soft-white))] shadow-none"
+      className="relative w-full overflow-hidden border-0 bg-[hsl(var(--sky-dark))] text-[hsl(var(--soft-white))] shadow-none"
     >
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" size={480} />
       <div className="grid lg:h-[500px] lg:grid-cols-2">
         <NewNoticeContent title={title} message={message} />
-        <div className="relative h-[320px] border-t border-[hsl(var(--soft-white)/0.18)] lg:h-full lg:border-l lg:border-t-0">
-          <div className="pointer-events-none absolute left-4 top-4 z-20 border border-[hsl(var(--soft-white)/0.24)] bg-[hsl(var(--sky-dark)/0.76)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[hsl(var(--soft-white)/0.72)] backdrop-blur-sm">
-            Interactive robot · drag to explore
-          </div>
+        <div className="relative h-[320px] lg:h-full">
           <SplineScene scene={ROBOT_SCENE} className="h-full w-full" />
         </div>
       </div>
