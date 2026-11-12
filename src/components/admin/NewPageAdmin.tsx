@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { NEW_NOTICE_KEY, useNewPageNotice } from "@/hooks/useNewPageNotice";
+import { NewNoticeContent } from "@/components/NewPageHero";
 
 type Msg = { id: string; name: string; email: string; message: string; created_at: string };
 
@@ -55,9 +56,8 @@ const NewPageAdmin = () => {
         </div>
         <div>
           <p className="text-sm font-medium mb-2">Preview</p>
-          <div className="flex gap-3 items-start border-2 border-foreground bg-secondary/40 p-4">
-            <span className="mt-1.5 h-2.5 w-2.5 shrink-0 bg-destructive animate-pulse" />
-            <div><p className="font-bold">{title || "—"}</p><p className="text-sm text-muted-foreground whitespace-pre-line">{message}</p></div>
+          <div className="overflow-hidden border-2 border-foreground bg-[hsl(var(--sky-dark))]">
+            <NewNoticeContent title={title || "—"} message={message} headingAs="p" compact />
           </div>
         </div>
       </div>

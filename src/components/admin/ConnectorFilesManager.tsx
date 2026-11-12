@@ -172,7 +172,7 @@ const ConnectorFilesManager = () => {
       <div>
         <h2 className="font-display text-xl font-bold">Connector Source Files</h2>
         <p className="text-muted-foreground text-sm mt-1">
-          Files stored in the cloud and shown in the Gallery &rarr; Connector Downloads folders. Use
+          Files stored in the cloud and shown in the New &rarr; Connector Downloads folders. Use
           the switches to control whether visitors can see a file and whether they can download it.
         </p>
       </div>

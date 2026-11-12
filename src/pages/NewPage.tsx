@@ -6,6 +6,8 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ExplorationSection from "@/components/ExplorationSection";
 import GalleryHobbyConnectors from "@/components/GalleryHobbyConnectors";
+import GalleryConnectorDownloads from "@/components/GalleryConnectorDownloads";
+import NewPageHero from "@/components/NewPageHero";
 import { AquariumPrompt } from "@/components/ui/aquarium-prompt";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -49,19 +51,13 @@ const NewPage = () => {
       <div className="min-h-screen bg-background">
         <Navigation />
         <main className="pt-20">
-          <section className="container mx-auto px-4 sm:px-6 pt-10">
-            <div role="status" className="flex gap-3 items-start border-2 border-foreground bg-secondary/40 p-4 sm:p-5">
-              <span className="mt-1.5 h-2.5 w-2.5 shrink-0 bg-destructive animate-pulse" aria-hidden />
-              <div>
-                <p className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Notice</p>
-                <h1 className="font-bold text-lg sm:text-xl text-foreground">{notice.title}</h1>
-                <p className="text-sm sm:text-base text-muted-foreground mt-1 whitespace-pre-line">{notice.message}</p>
-              </div>
-            </div>
+          <section className="container mx-auto px-4 pt-6 sm:px-6 sm:pt-10">
+            <NewPageHero title={notice.title} message={notice.message} />
           </section>
 
           <ExplorationSection />
           <GalleryHobbyConnectors />
+          <GalleryConnectorDownloads />
 
           <section className="container mx-auto px-4 sm:px-6 py-16 flex flex-col items-center gap-6">
             {user ? (
