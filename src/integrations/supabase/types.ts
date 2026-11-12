@@ -673,6 +673,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           description: string
+          drive_videos: Json
           id: string
           images: string[]
           is_visible: boolean
@@ -693,6 +694,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description: string
+          drive_videos?: Json
           id?: string
           images?: string[]
           is_visible?: boolean
@@ -713,6 +715,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           description?: string
+          drive_videos?: Json
           id?: string
           images?: string[]
           is_visible?: boolean

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, Mail, BookOpen, LayoutDashboard, FileText, Download, ExternalLink, CheckCircle2 } from "lucide-react";
+import { Lock, Mail, BookOpen, LayoutDashboard, FileText, Download, ExternalLink, CheckCircle2, Film } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CARTIZION_ID } from "@/lib/buyerPurchases";
 import { Button } from "@/components/ui/button";
@@ -8,12 +8,30 @@ import ExplorationInquiryModal from "@/components/ExplorationInquiryModal";
 import type { Exploration } from "@/components/ExplorationCard";
 import { explorationDocuments } from "@/components/ExplorationCard";
 import ExplorationOffers from "@/components/ExplorationOffers";
+import { drivePreviewUrl } from "@/lib/siteOverrides";
 
 const ExplorationDetails = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const videos = (Array.isArray(item.drive_videos) ? item.drive_videos : [])
+    .filter((video) => video?.url && drivePreviewUrl(video.url))
+    .map((video) => ({ ...video, previewUrl: drivePreviewUrl(video.url)! }));
   return <div className="min-w-0 space-y-8">
     <div className="flex flex-wrap gap-2 text-xs text-muted-foreground"><span className="border border-border px-2 py-1">{item.status}</span>{item.tags?.map(tag => <span key={tag} className="px-2 py-1">#{tag}</span>)}</div>
     <section><h2 className="font-display text-2xl font-semibold mb-4">About this exploration</h2><p className="whitespace-pre-line text-muted-foreground leading-relaxed">{item.description}</p></section>
+    {videos.length > 0 && <section aria-labelledby="exploration-videos-title" className="space-y-4">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Media</p>
+        <h2 id="exploration-videos-title" className="mt-2 font-display text-2xl font-semibold flex items-center gap-2"><Film size={20} /> Exploration videos</h2>
+      </div>
+      <div className={videos.length > 1 ? "grid gap-5 md:grid-cols-2" : ""}>
+        {videos.map((video) => <article key={video.url} className="min-w-0 border border-border p-3 sm:p-4">
+          <div className="aspect-video bg-muted">
+            <iframe src={video.previewUrl} title={video.name} className="h-full w-full border-0" allow="autoplay; fullscreen" allowFullScreen />
+          </div>
+          <h3 className="mt-3 font-medium break-words">{video.name}</h3>
+        </article>)}
+      </div>
+    </section>}
     {explorationDocuments(item).length > 0 && <section aria-labelledby="technical-documents-title" className="border border-border p-5 sm:p-8">
       <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>

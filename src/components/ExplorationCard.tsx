@@ -22,6 +22,7 @@ export interface Exploration {
   technical_document_url?: string | null;
   technical_document_name?: string | null;
   technical_documents?: { name: string; url: string }[] | null;
+  drive_videos?: { name: string; url: string }[] | null;
 }
 
 export const explorationDocuments = (item: Exploration): { name: string; url: string }[] => {

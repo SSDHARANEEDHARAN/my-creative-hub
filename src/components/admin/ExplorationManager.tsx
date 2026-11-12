@@ -9,6 +9,7 @@ import ExplorationDetails from "@/components/ExplorationDetails";
 import ExplorationPartsManager from "@/components/admin/ExplorationPartsManager";
 import ExplorationOffersManager from "@/components/admin/ExplorationOffersManager";
 import { parseExplorationPrice } from "@/lib/explorationPrice";
+import { drivePreviewUrl } from "@/lib/siteOverrides";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, Eye, EyeOff, Loader2 } from "lucide-react";
 
@@ -29,10 +30,12 @@ interface Exploration {
   technical_document_url: string | null;
   technical_document_name: string | null;
   technical_documents: { name: string; url: string }[] | null;
+  drive_videos: { name: string; url: string }[] | null;
 }
 
 const empty = {
   technical_documents: [] as { name: string; url: string }[],
+  drive_videos: [] as { name: string; url: string }[],
   technical_content: "",
   product_price_inr: "",
   paid_parts: false,
@@ -53,6 +56,7 @@ const ExplorationManager = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...empty });
   const [uploading, setUploading] = useState(false);
+  const [videoForm, setVideoForm] = useState({ title: "", url: "" });
   const previewItem = {
     ...form,
     product_price_inr: form.product_price_inr ? Number(form.product_price_inr) : null,
@@ -93,6 +97,21 @@ const ExplorationManager = () => {
     toast({ title: "Document uploaded", description: "Click Update to publish it." });
   };
 
+  const addDriveVideo = () => {
+    const title = videoForm.title.trim();
+    const url = videoForm.url.trim();
+    if (!title || !drivePreviewUrl(url)) {
+      toast({ title: "Add a title and a valid Google Drive video link", variant: "destructive" });
+      return;
+    }
+    if (form.drive_videos.some((video) => video.url === url)) {
+      toast({ title: "This video is already attached", variant: "destructive" });
+      return;
+    }
+    setForm((f) => ({ ...f, drive_videos: [...f.drive_videos, { name: title, url }] }));
+    setVideoForm({ title: "", url: "" });
+  };
+
   const load = async () => {
     const { data, error } = await supabase
       .from("explorations")
@@ -113,7 +132,7 @@ const ExplorationManager = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const reset = () => { setForm({ ...empty }); setEditingId(null); };
+  const reset = () => { setForm({ ...empty }); setVideoForm({ title: "", url: "" }); setEditingId(null); };
 
   const save = async () => {
     if (!form.title.trim() || !form.description.trim()) {
@@ -137,6 +156,7 @@ const ExplorationManager = () => {
       paid_parts: form.paid_parts,
       product_price_inr: price,
       technical_documents: form.technical_documents.filter((d) => d.url.trim()),
+      drive_videos: form.drive_videos.filter((video) => video.name.trim() && drivePreviewUrl(video.url)),
       technical_document_url: null,
       technical_document_name: null,
     };
@@ -178,6 +198,7 @@ const ExplorationManager = () => {
       is_visible: item.is_visible,
       images: item.images || [],
       technical_content: item.technical_content || "",
+      drive_videos: item.drive_videos || [],
       paid_parts: item.paid_parts || false,
       product_price_inr: item.product_price_inr != null ? String(item.product_price_inr) : "",
       technical_documents: item.technical_documents?.length
@@ -221,6 +242,26 @@ const ExplorationManager = () => {
             {docUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />} Add document
             <input type="file" aria-label="Upload technical document" accept="application/pdf,.pdf" disabled={docUploading || saving} className="hidden" onChange={(e) => { uploadDocument(e.target.files?.[0]); e.target.value = ""; }} />
           </label>
+        </div>
+        <div className="border border-border p-3 space-y-3">
+          <div>
+            <label className="block text-sm font-medium">Google Drive videos</label>
+            <p className="text-xs text-muted-foreground">Add a title and public Drive link, preview it here, then click Update to publish.</p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+            <Input aria-label="Drive video title" placeholder="Video title" value={videoForm.title} onChange={(e) => setVideoForm((f) => ({ ...f, title: e.target.value }))} />
+            <Input aria-label="Exploration Drive video link" placeholder="https://drive.google.com/file/d/…/view" value={videoForm.url} onChange={(e) => setVideoForm((f) => ({ ...f, url: e.target.value }))} />
+            <Button type="button" variant="outline" disabled={saving} onClick={addDriveVideo}><Plus className="w-4 h-4 mr-1" />Add Drive video</Button>
+          </div>
+          {form.drive_videos.length > 0 ? <div className="grid gap-3 md:grid-cols-2">
+            {form.drive_videos.map((video, index) => <div key={video.url} className="border border-border p-3 space-y-2">
+              {drivePreviewUrl(video.url) && <iframe src={drivePreviewUrl(video.url)!} title={video.name} className="w-full aspect-video border-0 bg-muted" allow="autoplay; fullscreen" />}
+              <div className="flex flex-wrap items-center gap-2">
+                <Input aria-label={`Video ${index + 1} title`} value={video.name} onChange={(e) => setForm((f) => ({ ...f, drive_videos: f.drive_videos.map((v, i) => i === index ? { ...v, name: e.target.value } : v) }))} />
+                <Button type="button" size="sm" variant="outline" className="text-destructive" aria-label={`Delete video ${video.name}`} onClick={() => setForm((f) => ({ ...f, drive_videos: f.drive_videos.filter((_, i) => i !== index) }))}><Trash2 className="w-3 h-3 mr-1" />Delete</Button>
+              </div>
+            </div>)}
+          </div> : <p className="text-xs text-muted-foreground">No Drive videos attached.</p>}
         </div>
         <label className="block text-sm font-medium">Bot price including purchased part files (INR)</label>
         <Input aria-label="Complete bot price in INR" type="number" min="0" step="0.01" placeholder="Complete bot price (INR)" value={form.product_price_inr} onChange={e => setForm({ ...form, product_price_inr: e.target.value })} />

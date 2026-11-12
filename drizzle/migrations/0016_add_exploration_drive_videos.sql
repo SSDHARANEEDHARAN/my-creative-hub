@@ -1,0 +1,1 @@
+ALTER TABLE public.explorations ADD COLUMN IF NOT EXISTS drive_videos jsonb NOT NULL DEFAULT '[]'::jsonb;
