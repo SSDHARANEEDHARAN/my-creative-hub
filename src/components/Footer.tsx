@@ -122,12 +122,12 @@ const Footer = forwardRef<HTMLElement, FooterProps>(({ persisted }, ref) => {
     </footer>
 
     <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh]">
+      <DialogContent className="sm:max-w-4xl max-h-[92vh] p-0 sm:p-2">
         <DialogHeader className="sr-only">
           <DialogTitle>Privacy Policy & Terms of Use</DialogTitle>
           <DialogDescription>Last updated {POLICY_UPDATED}</DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-[78vh] pr-3">
+        <ScrollArea className="max-h-[88vh] pr-2">
           <PolicyDrawer onNavigate={() => setPrivacyOpen(false)} />
         </ScrollArea>
       </DialogContent>
