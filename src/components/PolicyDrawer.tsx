@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Home, Mail } from "lucide-react";
 import { POLICY_CARDS } from "./ui/faq-drawer";
 
 export const POLICY_UPDATED = "12 November 2026";
@@ -50,14 +48,6 @@ export default function PolicyDrawer({ onNavigate }: { onNavigate?: () => void }
         </section>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2 justify-center border-t-2 border-border pt-4">
-        <Link to="/" onClick={onNavigate} className="inline-flex items-center justify-center gap-2 border-2 border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
-          <Home size={16} /> Back to Home
-        </Link>
-        <a href="mailto:tharaneetharanss@gmail.com" className="inline-flex items-center justify-center gap-2 bg-foreground text-background px-4 py-2 text-sm font-medium hover:opacity-90 transition-opacity break-all">
-          <Mail size={16} className="shrink-0" /> tharaneetharanss@gmail.com
-        </a>
-      </div>
     </div>
   );
 }
