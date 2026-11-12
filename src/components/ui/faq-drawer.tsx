@@ -58,7 +58,7 @@ const isDark = (host: Element, mq: MediaQueryList | null): boolean => {
  */
 
 /** The questions, written for this block. The product, its prices and its limits are invented. */
-const CARDS = Object.freeze([
+export const POLICY_CARDS = Object.freeze([
   Object.freeze({ id: 'data', tab: 'Data', q: 'What information do we collect?', a: 'Account details (name, email) when you sign up; likes, comments, views and downloads; messages sent through Contact, New page and exploration inquiries; and IP addresses for security, visit analytics and abuse prevention.' }),
   Object.freeze({ id: 'use', tab: 'Use', q: 'How is your data used?', a: 'Only to run this portfolio: sign-in, notifications, newsletter emails to subscribers, purchase confirmations, download access and admin analytics. We never sell or rent your personal information.' }),
   Object.freeze({ id: 'pay', tab: 'Payments', q: 'How are purchases handled?', a: 'Payments for CARTESIAN, LoRa Smart Keychain and their files are processed securely by Razorpay. Card and UPI details are never stored here. A purchase is confirmed only after Razorpay verifies a captured payment, and files unlock only for the option you bought.' }),
@@ -67,6 +67,7 @@ const CARDS = Object.freeze([
   Object.freeze({ id: 'conduct', tab: 'Conduct', q: 'What is not allowed?', a: 'Unauthorised access, scraping, reverse engineering, spam or abusive messages, and sharing paid files. Industrial projects are visible only to signed-in, approved users and their Janatics disclaimers apply. Violations may lead to IP blocking and account removal.' }),
   Object.freeze({ id: 'rights', tab: 'Rights', q: 'Your rights and cookies', a: 'Only essential cookies and storage keep you signed in, with no advertising trackers. You may request access, correction or deletion of your data at any time by email. Continued use after an update means you accept the revised terms. Last updated 12 November 2026.' }),
 ]);
+const CARDS = POLICY_CARDS;
 
 const FINISHES: readonly string[] = Object.freeze(['auto', 'aluminium', 'graphite']);
 const OPEN_AT = Object.freeze(['none', '1', '2', '3', '4', '5', '6', '7']);
