@@ -515,7 +515,7 @@ const GalleryPage = () => {
           return;
         }
         const next = BUNDLED_MEDIA.map((m, i) => ({ m, i, o: ov[m.base] }))
-          .filter((x) => !x.o?.hidden)
+          .filter((x) => !x.o?.hidden && !x.o?.deleted)
           .sort((a, b) => (a.o?.sort_order ?? a.i) - (b.o?.sort_order ?? b.i))
           .map(({ m, i, o }) => ({
             src: m.src,

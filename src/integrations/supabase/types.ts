@@ -763,6 +763,7 @@ export type Database = {
       gallery_overrides: {
         Row: {
           base: string
+          deleted: boolean
           description: string | null
           hidden: boolean
           sort_order: number | null
@@ -771,6 +772,7 @@ export type Database = {
         }
         Insert: {
           base: string
+          deleted?: boolean
           description?: string | null
           hidden?: boolean
           sort_order?: number | null
@@ -779,6 +781,7 @@ export type Database = {
         }
         Update: {
           base?: string
+          deleted?: boolean
           description?: string | null
           hidden?: boolean
           sort_order?: number | null
@@ -1331,6 +1334,8 @@ export type Database = {
       }
       toolchain_overrides: {
         Row: {
+          custom: boolean
+          deleted: boolean
           description: string | null
           hidden: boolean
           logo_url: string | null
@@ -1339,6 +1344,8 @@ export type Database = {
           url: string | null
         }
         Insert: {
+          custom?: boolean
+          deleted?: boolean
           description?: string | null
           hidden?: boolean
           logo_url?: string | null
@@ -1347,6 +1354,8 @@ export type Database = {
           url?: string | null
         }
         Update: {
+          custom?: boolean
+          deleted?: boolean
           description?: string | null
           hidden?: boolean
           logo_url?: string | null

@@ -1,10 +1,10 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type GalleryOverride = { base: string; title: string | null; description: string | null; hidden: boolean; sort_order: number | null };
-export type ToolchainOverride = { name: string; logo_url: string | null; description: string | null; url: string | null; hidden: boolean };
+export type GalleryOverride = { base: string; title: string | null; description: string | null; hidden: boolean; sort_order: number | null; deleted?: boolean };
+export type ToolchainOverride = { name: string; logo_url: string | null; description: string | null; url: string | null; hidden: boolean; deleted?: boolean; custom?: boolean };
 
 export async function fetchGalleryOverrides(): Promise<Record<string, GalleryOverride>> {
-  const { data } = await supabase.from("gallery_overrides").select("base, title, description, hidden, sort_order");
+  const { data } = await supabase.from("gallery_overrides").select("base, title, description, hidden, sort_order, deleted");
   return Object.fromEntries((data ?? []).map((r) => [r.base, r as GalleryOverride]));
 }
 
@@ -14,7 +14,7 @@ export async function saveGalleryOverride(o: GalleryOverride) {
 }
 
 export async function fetchToolchainOverrides(): Promise<Record<string, ToolchainOverride>> {
-  const { data } = await supabase.from("toolchain_overrides").select("name, logo_url, description, url, hidden");
+  const { data } = await supabase.from("toolchain_overrides").select("name, logo_url, description, url, hidden, deleted, custom");
   return Object.fromEntries((data ?? []).map((r) => [r.name, r as ToolchainOverride]));
 }
 
@@ -47,4 +47,9 @@ export const drivePreviewUrl = (url: string) => {
 export async function fetchDriveVideos(): Promise<DriveVideo[]> {
   const { data } = await supabase.from("gallery_drive_videos").select("id, title, description, drive_url, hidden, sort_order").order("sort_order");
   return (data ?? []) as DriveVideo[];
+}
+
+export async function deleteToolchainRow(name: string) {
+  const { error } = await supabase.from("toolchain_overrides").delete().eq("name", name);
+  return error;
 }

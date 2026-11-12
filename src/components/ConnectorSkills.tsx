@@ -159,8 +159,11 @@ const ConnectorSkills = () => {
   useEffect(() => {
     fetchToolchainOverrides().then(setOv).catch(() => {});
   }, []);
-  const list = connectors
-    .filter((c) => !ov[c.name]?.hidden)
+  const custom: Connector[] = Object.values(ov)
+    .filter((o) => o.custom && !connectors.some((c) => c.name.toLowerCase() === o.name.toLowerCase()))
+    .map((o) => ({ name: o.name, description: o.description ?? "", url: o.url ?? "#" }));
+  const list = [...connectors, ...custom]
+    .filter((c) => !ov[c.name]?.hidden && !ov[c.name]?.deleted)
     .map((c) => {
       const o = ov[c.name];
       return o ? { ...c, logo: o.logo_url || undefined, description: o.description || c.description, url: o.url || c.url } : c;
