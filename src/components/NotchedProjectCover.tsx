@@ -35,7 +35,7 @@ const NotchedProjectCover = ({
         rel="noopener noreferrer"
         onClick={handleOpen}
         aria-label={label}
-        className="absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="project-arrow-shape absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/project-card:-translate-y-0.5 group-hover/project-card:translate-x-0.5" />
       </a>
@@ -44,7 +44,7 @@ const NotchedProjectCover = ({
         to={href}
         onClick={handleOpen}
         aria-label={label}
-        className="absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="project-arrow-shape absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/project-card:-translate-y-0.5 group-hover/project-card:translate-x-0.5" />
       </Link>
@@ -52,12 +52,12 @@ const NotchedProjectCover = ({
   ) : null;
 
   return (
-    <div className="relative aspect-[4/3] bg-muted">
-      <div className="absolute inset-0 overflow-hidden">{children}</div>
+    <div className="project-cover-shape relative aspect-[4/3] bg-muted">
+      <div className="project-cover-shape absolute inset-0 overflow-hidden">{children}</div>
 
       {badge && (
         <div className="pointer-events-none absolute left-4 top-4 z-20">
-          <span className="border border-background/30 bg-foreground/85 px-3 py-1 text-xs font-semibold text-background backdrop-blur-sm">
+          <span className="project-badge-shape border border-background/30 bg-foreground/85 px-3 py-1 text-xs font-semibold text-background backdrop-blur-sm">
             {badge}
           </span>
         </div>
@@ -67,7 +67,7 @@ const NotchedProjectCover = ({
         <>
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-0 right-0 z-20 bg-background"
+            className="project-notch-shape pointer-events-none absolute bottom-0 right-0 z-20 bg-background"
             style={{ width: notchSize, height: notchSize }}
           />
           {[

@@ -617,6 +617,20 @@
   border-radius: 0 !important;
 }
 
+/* Project-card exception: rounded notched covers requested for this design */
+.project-cover-shape {
+  border-radius: 28px !important;
+}
+
+.project-notch-shape {
+  border-top-left-radius: 48px !important;
+}
+
+.project-arrow-shape,
+.project-badge-shape {
+  border-radius: 999px !important;
+}
+
 /* Floating favorite animation (double-tap to like) */
 @keyframes floating-heart-pop {
   0%   { transform: translate(-50%, -50%) scale(0);   opacity: 0; }
