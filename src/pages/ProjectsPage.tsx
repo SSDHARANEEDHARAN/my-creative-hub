@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, FileText, Code2, Cog, Eye, Sparkles, MessageSquare, Factory } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import NotchedProjectCover from "@/components/NotchedProjectCover";
 import ImageLightbox from "@/components/ImageLightbox";
 import FloatingHeart, { FloatingHeartHandle } from "@/components/FloatingHeart";
 import { useProjectListCounts } from "@/hooks/useProjectData";
@@ -597,9 +598,14 @@ const ProjectsPage = () => {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: index * 0.1 }}
                           onClick={(e) => handleCardActivate(project.id, e)}
-                          className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
+                          className="group/project-card relative bg-background transition-all duration-300 select-none"
                         >
-                          <div className="relative aspect-video overflow-hidden">
+                          <NotchedProjectCover
+                            href={project.articleUrl || project.liveUrl}
+                            external={!project.articleUrl && Boolean(project.liveUrl)}
+                            badge="Featured"
+                            label={`Open ${project.title}`}
+                          >
                             {project.images && project.images.length > 0 ? (
                               <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
                             ) : (
@@ -607,12 +613,7 @@ const ProjectsPage = () => {
                                 <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
                               </div>
                             )}
-                            <div className="absolute top-4 left-4 z-10">
-                              <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-semibold">
-                                Featured
-                              </span>
-                            </div>
-                          </div>
+                          </NotchedProjectCover>
                           <div className="p-6">
                             <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
                               {project.title}
@@ -685,17 +686,21 @@ const ProjectsPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
                         onClick={(e) => handleCardActivate(project.id, e)}
-                        className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300 select-none"
+                        className="group/project-card relative bg-background transition-all duration-300 select-none"
                       >
-                        <div className="relative aspect-video overflow-hidden">
+                        <NotchedProjectCover
+                          href={project.articleUrl || project.liveUrl}
+                          external={!project.articleUrl && Boolean(project.liveUrl)}
+                          label={`Open ${project.title}`}
+                        >
                           {project.images && project.images.length > 0 ? (
                             <ProjectImageCarousel images={project.images} title={project.title} onImageClick={(i) => openLightbox(project.images, project.title, i)} />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-4 text-center rounded-t-xl">
+                            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-4 text-center">
                               <span className="font-display font-bold text-lg text-primary animate-pulse">Update in Progress</span>
                             </div>
                           )}
-                        </div>
+                        </NotchedProjectCover>
                         <div className="p-4">
                           <h3 className="font-bold mb-2 group-hover:text-primary transition-colors line-clamp-1">
                             {project.title}

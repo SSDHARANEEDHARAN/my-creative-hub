@@ -35,7 +35,7 @@ const ProjectImageCarousel = memo(({ images, title, onImageClick }: ProjectImage
       <img
         src={images[currentIndex]}
         alt={`${title} - Image ${currentIndex + 1}`}
-        className={`w-full h-full object-cover transition-opacity duration-500 ease-out ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${onImageClick ? 'cursor-pointer' : ''}`}
+        className={`w-full h-full object-cover transition-[opacity,transform] duration-500 ease-out group-hover/project-card:scale-[1.03] ${imageLoaded ? 'opacity-100' : 'opacity-0'} ${onImageClick ? 'cursor-pointer' : ''}`}
         loading={currentIndex === 0 ? "lazy" : "eager"}
         decoding="async"
         onLoad={() => setImageLoaded(true)}

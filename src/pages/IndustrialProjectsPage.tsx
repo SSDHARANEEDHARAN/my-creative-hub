@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { industrialProjects } from "@/data/projectsData";
 import { useProjectListCounts } from "@/hooks/useProjectData";
 import ProjectImageCarousel from "@/components/ProjectImageCarousel";
+import NotchedProjectCover from "@/components/NotchedProjectCover";
 import ImageLightbox from "@/components/ImageLightbox";
 import ProjectComments from "@/components/ProjectComments";
 import Navigation from "@/components/Navigation";
@@ -348,30 +349,37 @@ const IndustrialProjectsPage = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="group sharp-card overflow-hidden hover:border-primary/50 transition-all duration-300"
+                    className="group/project-card relative bg-background transition-all duration-300"
                   >
 
                     {isApproved && (
-                      <div
-                        className="relative aspect-video overflow-hidden cursor-pointer"
-                        onClick={() => {
-                          handleReadProject(project.id);
-                          if (project.images && project.images.length > 0) {
-                            setLightbox({
-                              images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
-                              index: 0,
-                            });
-                          }
-                        }}
+                      <NotchedProjectCover
+                        href={project.articleUrl}
+                        onOpen={() => handleReadProject(project.id)}
+                        badge="Industrial"
+                        label={`Open ${project.title}`}
                       >
-                        {project.images && project.images.length > 0 ? (
-                          <ProjectImageCarousel images={project.images} title={project.title} />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-6 text-center">
-                            <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
-                          </div>
-                        )}
-                      </div>
+                        <div
+                          className="h-full w-full cursor-pointer"
+                          onClick={() => {
+                            handleReadProject(project.id);
+                            if (project.images && project.images.length > 0) {
+                              setLightbox({
+                                images: project.images.map((img, i) => ({ src: img, alt: `${project.title} - Image ${i + 1}` })),
+                                index: 0,
+                              });
+                            }
+                          }}
+                        >
+                          {project.images && project.images.length > 0 ? (
+                            <ProjectImageCarousel images={project.images} title={project.title} />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex flex-col items-center justify-center p-6 text-center">
+                              <span className="font-display font-bold text-2xl text-primary animate-pulse">Update in Progress</span>
+                            </div>
+                          )}
+                        </div>
+                      </NotchedProjectCover>
                     )}
 
                     <div className={isApproved ? "p-4" : "p-6"}>
