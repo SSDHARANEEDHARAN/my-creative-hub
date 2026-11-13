@@ -7,10 +7,11 @@ import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, MessageCircle, Clock, ArrowRight, BookOpen, TrendingUp, Eye, Download } from "lucide-react";
+import { Sparkles, MessageCircle, Clock, ArrowRight, BookOpen, Eye, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGuest } from "@/contexts/GuestContext";
 import GuestAccessModal from "@/components/GuestAccessModal";
+import NotchedProjectCover from "@/components/NotchedProjectCover";
 import { useBlogListCounts } from "@/hooks/useBlogData";
 import { useDownloadCounts } from "@/hooks/useDownloadCount";
 
@@ -182,63 +183,60 @@ const BlogPage = () => {
               {featuredPost && (
                 <ScrollReveal delay={100}>
                   <div
-                    className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 mb-8 sm:mb-12 cursor-pointer group select-none"
+                    className="group/project-card relative bg-background transition-all duration-300 mb-8 sm:mb-12 cursor-pointer select-none"
                     onClick={(e) => handleCardActivate(featuredPost.id, e)}
                   >
-                    <div className="grid lg:grid-cols-2 gap-0">
-                      <div className="relative overflow-hidden aspect-[4/3] md:aspect-auto">
-                        <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0" />
-                        <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex gap-2">
-                          <span className="px-2 sm:px-3 py-1 bg-foreground text-background text-xs font-semibold flex items-center gap-1">
-                            <TrendingUp size={10} /> Trending
-                          </span>
-                          <span className="px-2 sm:px-3 py-1 bg-card/90 backdrop-blur-sm text-foreground text-xs font-medium">{featuredPost.category}</span>
+                    <NotchedProjectCover
+                      href={`/blog/${featuredPost.id}`}
+                      badge="Trending"
+                      label={`Open ${featuredPost.title}`}
+                    >
+                      <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover transition-transform duration-700 group-hover/project-card:scale-110 grayscale group-hover/project-card:grayscale-0" />
+                    </NotchedProjectCover>
+                    <div className="p-6 sm:p-8 lg:p-12">
+                      <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center">
+                          <span className="text-background font-bold text-xs sm:text-sm">DS</span>
                         </div>
+                        <div>
+                          <p className="font-medium text-xs sm:text-sm">{featuredPost.author.name}</p>
+                          <p className="text-muted-foreground text-xs">{featuredPost.date}</p>
+                        </div>
+                        <span className="ml-auto px-2 sm:px-3 py-1 bg-secondary text-foreground text-xs font-medium">{featuredPost.category}</span>
                       </div>
-                      <div className="p-6 sm:p-8 lg:p-12 flex flex-col justify-center">
-                        <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-foreground flex items-center justify-center">
-                            <span className="text-background font-bold text-xs sm:text-sm">DS</span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-xs sm:text-sm">{featuredPost.author.name}</p>
-                            <p className="text-muted-foreground text-xs">{featuredPost.date}</p>
-                          </div>
-                        </div>
-                        <h3 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 group-hover:text-muted-foreground transition-colors">
-                          {featuredPost.title}
-                        </h3>
-                        <p className="text-muted-foreground mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">{featuredPost.excerpt}</p>
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                          <div className="flex items-center gap-3 sm:gap-4">
-                            {isAdmin && (
-                              <>
-                                <button
-                                  onClick={(e) => handleLike(featuredPost.id, e)}
-                                  className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
-                                >
-                                  <Sparkles size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
-                                  {likeCounts[featuredPost.id] || 0}
-                                </button>
-                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                                  <MessageCircle size={16} /> {commentCounts[featuredPost.id] || 0}
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                                  <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
-                                </span>
-                                <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                                  <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
-                                </span>
-                              </>
-                            )}
-                            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                              <Clock size={16} /> {featuredPost.readTime}
-                            </span>
-                          </div>
-                          <span className="text-foreground font-medium flex items-center gap-1 group-hover:gap-2 transition-all text-xs sm:text-sm">
-                            Read Article <ArrowRight size={14} />
+                      <h3 className="font-display text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 group-hover/project-card:text-muted-foreground transition-colors">
+                        {featuredPost.title}
+                      </h3>
+                      <p className="text-muted-foreground mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">{featuredPost.excerpt}</p>
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          {isAdmin && (
+                            <>
+                              <button
+                                onClick={(e) => handleLike(featuredPost.id, e)}
+                                className={`flex items-center gap-1.5 text-xs sm:text-sm transition-colors ${userLikes.has(featuredPost.id) ? "text-red-500" : "text-muted-foreground hover:text-foreground"}`}
+                              >
+                                <Sparkles size={16} fill={userLikes.has(featuredPost.id) ? "currentColor" : "none"} />
+                              {likeCounts[featuredPost.id] || 0}
+                              </button>
+                              <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                <MessageCircle size={16} /> {commentCounts[featuredPost.id] || 0}
+                              </span>
+                              <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                <Eye size={16} /> {viewCounts[featuredPost.id] || 0}
+                              </span>
+                              <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                                <Download size={16} /> {downloadCounts[featuredPost.id] || 0}
+                              </span>
+                            </>
+                          )}
+                          <span className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
+                            <Clock size={16} /> {featuredPost.readTime}
                           </span>
                         </div>
+                        <span className="text-foreground font-medium flex items-center gap-1 group-hover/project-card:gap-2 transition-all text-xs sm:text-sm">
+                          Read Article <ArrowRight size={14} />
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -250,15 +248,16 @@ const BlogPage = () => {
                 {otherPosts.map((post, index) => (
                   <ScrollReveal key={post.id} delay={index * 50} className="h-full">
                     <article
-                      className="bg-card overflow-hidden hover:shadow-lg transition-all duration-300 group cursor-pointer h-full flex flex-col select-none"
+                      className="group/project-card relative bg-background transition-all duration-300 cursor-pointer h-full flex flex-col select-none"
                       onClick={(e) => handleCardActivate(post.id, e)}
                     >
-                      <div className="relative overflow-hidden aspect-[16/10]">
-                        <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0" />
-                        <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-                          <span className="px-2 sm:px-3 py-1 bg-card/90 backdrop-blur-sm text-foreground text-xs font-medium">{post.category}</span>
-                        </div>
-                      </div>
+                      <NotchedProjectCover
+                        href={`/blog/${post.id}`}
+                        badge={post.category}
+                        label={`Open ${post.title}`}
+                      >
+                        <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover/project-card:scale-110 grayscale group-hover/project-card:grayscale-0" />
+                      </NotchedProjectCover>
                       <div className="p-4 sm:p-6 flex flex-col flex-1">
                         <div className="flex items-center gap-3 sm:gap-4 text-xs text-muted-foreground mb-3 sm:mb-4">
                           <span>{post.date}</span>
