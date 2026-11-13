@@ -99,7 +99,7 @@ const ProjectImageCarousel = memo(({ images, title, onImageClick }: ProjectImage
       )}
 
       {/* Image Counter */}
-      <div className="absolute top-2 right-2 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm text-xs font-medium text-foreground z-10">
+      <div className="project-image-counter absolute top-2 right-2 z-10 px-2 py-1 text-sm font-semibold tabular-nums">
         {currentIndex + 1}/{images.length}
       </div>
     </div>
