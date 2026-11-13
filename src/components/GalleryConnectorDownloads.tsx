@@ -1,6 +1,8 @@
 import { toast } from "@/hooks/use-toast";
 import { useEffect, useMemo, useState } from "react";
 import { Download, ExternalLink, Play } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import NotchedProjectCover from "@/components/NotchedProjectCover";
 import {
   Dialog,
   DialogContent,
@@ -167,50 +169,50 @@ const GalleryConnectorDownloads = () => {
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {availableGroups.map((group, index) => {
             const extensions = Array.from(new Set(group.files.map((f) => f.extension)));
             const unit = `U-${String(index + 1).padStart(2, "0")}`;
             return (
-              <button
+              <article
                 key={group.name}
-                type="button"
-                onClick={() => setSelected(group)}
-                className="group flex flex-col border-2 border-border bg-card text-left transition-colors hover:border-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="group/project-card relative bg-background transition-all duration-300 select-none flex flex-col h-full min-w-0 break-words"
               >
-                <div className="flex items-center justify-between border-b-2 border-border bg-muted px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <span className="flex items-center gap-2">
-                    <span className="h-2 w-2 animate-pulse bg-primary" aria-hidden />
-                    Online
-                  </span>
-                  <span>{unit}</span>
-                </div>
-                <div className="flex flex-1 flex-col gap-3 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="font-display text-lg font-bold text-foreground break-words">{group.name}</h3>
-                    <span className="shrink-0 border border-border px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                      {group.files.length} {group.files.length === 1 ? "FILE" : "FILES"}
+                <NotchedProjectCover
+                  onOpen={() => setSelected(group)}
+                  badge={unit}
+                  label={`Open ${group.name} files`}
+                >
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-primary/15 to-accent/15 p-6">
+                    <span className="font-display text-5xl font-bold text-foreground">{group.files.length}</span>
+                    <span className="text-xs uppercase tracking-widest text-muted-foreground">
+                      {group.files.length === 1 ? "file" : "files"}
                     </span>
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {extensions.map((ext) => (
+                        <span key={ext} className="border border-border bg-background px-2 py-0.5 font-mono text-[10px] font-bold text-foreground">
+                          .{ext}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{group.description}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {extensions.map((ext) => (
-                      <span key={ext} className="border border-border bg-background px-2 py-0.5 font-mono text-[10px] font-bold text-foreground">
-                        .{ext}
-                      </span>
-                    ))}
+                </NotchedProjectCover>
+
+                <div className="p-6 flex flex-col flex-1 min-w-0">
+                  <h3 className="text-xl font-bold mb-3 group-hover/project-card:text-primary transition-colors break-words">
+                    {group.name}
+                  </h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-3">{group.description}</p>
+                  <div className="mb-3 text-xs md:text-sm text-muted-foreground">
+                    {extensions.map((ext) => `.${ext.toLowerCase()}`).join(" · ")}
                   </div>
-                  <div className="mt-auto grid grid-cols-6 gap-1 pt-2" aria-hidden>
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <span key={i} className="h-1 bg-border transition-colors group-hover:bg-foreground" style={{ transitionDelay: `${i * 40}ms` }} />
-                    ))}
+                  <div className="mt-auto flex flex-wrap items-center gap-2">
+                    <Button variant="ghost" size="sm" className="ml-auto" onClick={() => setSelected(group)}>
+                      Open module <Download size={16} className="ml-2" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex items-center justify-between border-t-2 border-border px-4 py-3 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors group-hover:bg-foreground group-hover:text-background">
-                  <span>Open module</span>
-                  <Download className="h-4 w-4" />
-                </div>
-              </button>
+              </article>
             );
           })}
         </div>

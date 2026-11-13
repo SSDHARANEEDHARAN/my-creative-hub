@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, FolderOpen, Play, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Play, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import NotchedProjectCover from "@/components/NotchedProjectCover";
 
 interface HobbyMedia {
   name: string;
@@ -67,34 +69,57 @@ const GalleryHobbyConnectors = () => {
                 Open a card to explore the latest product and hobby media.
               </p>
             </div>
-            <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
+            <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
               {cards.map((card) => {
                 const cover = card.media[0];
                 return (
-                  <button
+                  <article
                     key={card.name}
-                    type="button"
-                    onClick={() => setSelected(card)}
-                    className="gallery-hobby-card group text-left"
-                    aria-label={`Open ${card.name}`}
+                    className="group/project-card relative bg-background transition-all duration-300 select-none flex flex-col h-full min-w-0 break-words"
                   >
-                    <div className="gallery-hobby-card__media">
+                    <NotchedProjectCover
+                      onOpen={() => setSelected(card)}
+                      badge={card.status === "updating" ? "We are updating" : "Ready"}
+                      label={`Open ${card.name}`}
+                    >
                       {cover && isVideo(cover.name) ? (
-                        <video src={cover.src} autoPlay muted loop playsInline preload="metadata" />
+                        <video
+                          src={cover.src}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                          className="h-full w-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover/project-card:scale-[1.03]"
+                        />
                       ) : cover ? (
-                        <img src={cover.src} alt="" />
+                        <img
+                          src={cover.src}
+                          alt=""
+                          className="h-full w-full object-cover transition-transform duration-500 motion-reduce:transition-none group-hover/project-card:scale-[1.03]"
+                        />
                       ) : (
-                        <div className="gallery-hobby-card__placeholder"><Sparkles aria-hidden="true" /></div>
+                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 to-accent/15">
+                          <Sparkles size={32} className="text-muted-foreground" />
+                        </div>
                       )}
-                      <span className="gallery-hobby-card__scrim" />
-                      <span className="gallery-hobby-card__label">{card.name}</span>
-                      {card.status === "updating" && <span className="gallery-hobby-card__status">We are updating</span>}
+                    </NotchedProjectCover>
+
+                    <div className="p-6 flex flex-col flex-1 min-w-0">
+                      <h3 className="text-xl font-bold mb-3 group-hover/project-card:text-primary transition-colors">
+                        {card.name}
+                      </h3>
+                      <p className="text-muted-foreground mb-4 line-clamp-3">{card.description}</p>
+                      <div className="mb-3 text-xs md:text-sm text-muted-foreground">
+                        {card.status === "ready" ? `${card.media.length} media files` : "Coming soon"}
+                      </div>
+                      <div className="mt-auto flex items-center">
+                        <Button variant="ghost" size="sm" className="ml-auto" onClick={() => setSelected(card)}>
+                          Open <ArrowRight size={16} className="ml-2" />
+                        </Button>
+                      </div>
                     </div>
-                    <span className="flex items-center gap-2 p-4 text-sm text-muted-foreground">
-                      <FolderOpen className="h-4 w-4 text-primary" />
-                      {card.status === "ready" ? `${card.media.length} media files` : "Coming soon"}
-                    </span>
-                  </button>
+                  </article>
                 );
               })}
             </div>

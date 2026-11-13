@@ -57,6 +57,10 @@ const NotchedProjectCover = ({
         {arrowIcon}
       </Link>
     )
+  ) : onOpen ? (
+    <button type="button" onClick={handleOpen} aria-label={label} className={arrowClasses}>
+      {arrowIcon}
+    </button>
   ) : null;
 
   return (
@@ -71,7 +75,7 @@ const NotchedProjectCover = ({
         </div>
       )}
 
-      {href && (
+      {(href || onOpen) && (
         <>
           <div
             aria-hidden="true"
