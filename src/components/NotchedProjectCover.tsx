@@ -9,6 +9,8 @@ interface NotchedProjectCoverProps {
   onOpen?: () => void;
   badge?: string;
   label: string;
+  /** Renders the arrow as a non-navigating control (used by admin previews). */
+  disabled?: boolean;
 }
 
 const notchSize = 80;
@@ -21,32 +23,38 @@ const NotchedProjectCover = ({
   onOpen,
   badge,
   label,
+  disabled = false,
 }: NotchedProjectCoverProps) => {
-  const handleOpen = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleOpen = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     onOpen?.();
   };
 
+  const arrowClasses =
+    "project-arrow-shape absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+  const arrowIcon = (
+    <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/project-card:-translate-y-0.5 group-hover/project-card:translate-x-0.5" />
+  );
+
   const arrow = href ? (
-    external ? (
+    disabled ? (
+      <button type="button" aria-label={label} aria-disabled tabIndex={-1} onClick={handleOpen} className={`${arrowClasses} cursor-default`}>
+        {arrowIcon}
+      </button>
+    ) : external ? (
       <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleOpen}
         aria-label={label}
-        className="project-arrow-shape absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className={arrowClasses}
       >
-        <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/project-card:-translate-y-0.5 group-hover/project-card:translate-x-0.5" />
+        {arrowIcon}
       </a>
     ) : (
-      <Link
-        to={href}
-        onClick={handleOpen}
-        aria-label={label}
-        className="project-arrow-shape absolute bottom-2 right-2 z-30 flex h-[60px] w-[60px] items-center justify-center border border-border bg-secondary text-secondary-foreground transition-all duration-300 hover:scale-105 hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover/project-card:-translate-y-0.5 group-hover/project-card:translate-x-0.5" />
+      <Link to={href} onClick={handleOpen} aria-label={label} className={arrowClasses}>
+        {arrowIcon}
       </Link>
     )
   ) : null;
