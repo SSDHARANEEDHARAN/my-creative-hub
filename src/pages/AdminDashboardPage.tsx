@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Factory, Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download, FileText } from "lucide-react";
+import { Factory, Users, CheckCircle, XCircle, Ban, Unlock, Loader2, Shield, Clock, Eye, Trash2, History, Heart, MessageSquare, Download, FileText, CreditCard } from "lucide-react";
 import AboutResumeManager from "@/components/admin/AboutResumeManager";
 
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,7 @@ interface UserProfile {
   activityCount: number;
   last_ip: string | null;
   industrial_access?: boolean;
+  purchase_access?: boolean;
 }
 
 const AdminDashboardPage = () => {
@@ -139,6 +140,27 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const togglePurchaseAccess = async (u: UserProfile) => {
+    setActionLoading(`purchase-${u.user_id}`);
+    try {
+      const next = !u.purchase_access;
+      const { error } = await supabase
+        .from("profiles")
+        .update({ purchase_access: next })
+        .eq("user_id", u.user_id);
+      if (error) throw error;
+      setUsers((prev) => prev.map((p) => (p.user_id === u.user_id ? { ...p, purchase_access: next } : p)));
+      toast({
+        title: next ? "Payment & purchase access approved" : "Payment & purchase access removed",
+        description: u.email || u.user_id,
+      });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || "Could not update payment access.", variant: "destructive" });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const fetchUserHistory = async (u: UserProfile) => {
     setHistoryUser(u);
     setHistoryLoading(true);
@@ -196,6 +218,7 @@ const AdminDashboardPage = () => {
             <TableHead>Verification Status</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Industrial Access</TableHead>
+            <TableHead>Payment &amp; Purchase Access</TableHead>
             <TableHead>Last Login</TableHead>
             <TableHead>Joined</TableHead>
             <TableHead className="text-right">Actions</TableHead>
@@ -204,7 +227,7 @@ const AdminDashboardPage = () => {
         <TableBody>
           {userList.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={10} className="text-center text-muted-foreground py-8">
+              <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                 No users found
               </TableCell>
             </TableRow>
@@ -236,6 +259,24 @@ const AdminDashboardPage = () => {
                       <><Factory className="w-3 h-3 mr-1" />Approved</>
                     ) : (
                       <><Factory className="w-3 h-3 mr-1" />Not allowed</>
+                    )}
+                  </Button>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    aria-label={`Payment and purchase access for ${u.email || "user"}`}
+                    className={`h-7 text-xs ${u.purchase_access ? "text-green-600 hover:text-green-700" : "text-muted-foreground"}`}
+                    onClick={() => togglePurchaseAccess(u)}
+                    disabled={actionLoading === `purchase-${u.user_id}`}
+                  >
+                    {actionLoading === `purchase-${u.user_id}` ? (
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                    ) : u.purchase_access ? (
+                      <><CreditCard className="w-3 h-3 mr-1" />Allowed</>
+                    ) : (
+                      <><CreditCard className="w-3 h-3 mr-1" />Not allowed</>
                     )}
                   </Button>
                 </TableCell>
