@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Fixed Payment & Purchase Access so the explicit per-email grant, without an admin bypass, controls the complete payment UI on CARTESIAN and Smart Keychain; verified live grant/revoke for both with regular and admin accounts and removed the temporary test account.
 - [x] Add an immediate Payment & Purchase Access switch beside Industrial Access in every Dashboard user table, using the existing per-user purchase permission.
 - [x] Move Connector Downloads exclusively to New and add the responsive split notice/robot hero; verified robot rendering, desktop/mobile layouts, real file download, touch folder opening and Blog removal.
 - [x] Add preliminary 10-step CARTESIAN guide with supplied BOM/photo and buyer dashboard using own purchase records and server-gated offer downloads; signed-in pending history/refresh, signed-out redirect and simulated-phone ₹59,000 checkout verified; 42 tests pass. Confirmed/download flow awaits actual captured purchase and uploads.

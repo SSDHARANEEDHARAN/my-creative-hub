@@ -4,12 +4,13 @@ import type { Tables } from "@/integrations/supabase/types";
 import RazorpayTestCheckout from "@/components/RazorpayTestCheckout";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
+import { canShowPurchaseUi } from "@/lib/purchaseVisibility";
 
 const formatPrice = (price: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(price);
 
 export default function ExplorationOffers({ explorationId, preview = false }: { explorationId: string; preview?: boolean }) {
-  const { purchaseAccess, isAdmin, isLoading: accessLoading } = useAuth();
-  const allowed = purchaseAccess || isAdmin || preview;
+  const { purchaseAccess, isLoading: accessLoading } = useAuth();
+  const allowed = canShowPurchaseUi(purchaseAccess, preview);
   const [offers, setOffers] = useState<Tables<"exploration_offers">[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);

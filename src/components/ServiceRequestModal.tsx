@@ -38,8 +38,8 @@ const timelineOptions = [
 ];
 
 const ServiceRequestModal = ({ isOpen, onClose, service, category }: ServiceRequestModalProps) => {
-  const { purchaseAccess, isAdmin } = useAuth();
-  const showPaymentDetails = purchaseAccess || isAdmin;
+  const { purchaseAccess } = useAuth();
+  const showPaymentDetails = purchaseAccess;
   const [formData, setFormData] = useState({
     name: "",
     email: "",

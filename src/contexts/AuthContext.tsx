@@ -155,7 +155,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAdmin(adminStatus || isOwnerAdmin);
     setUserStatus(adminStatus || isOwnerAdmin ? "approved" : status.status);
     setIndustrialAccess(adminStatus || isOwnerAdmin ? true : status.industrialAccess);
-    setPurchaseAccess(adminStatus || isOwnerAdmin ? true : status.purchaseAccess);
+    // Public payment UI follows the explicit per-email grant, including for admins.
+    // Admin content previews use their own preview flag instead of bypassing this grant.
+    setPurchaseAccess(status.purchaseAccess);
   }, [checkAdminRole, checkUserStatus, syncUserRole]);
 
   useEffect(() => {
@@ -194,7 +196,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const isOwnerAdmin = nextSession.user.email?.toLowerCase() === OWNER_ADMIN_EMAIL;
           setIsAdmin(isOwnerAdmin);
           setUserStatus(isOwnerAdmin ? "approved" : "pending");
-          setPurchaseAccess(isOwnerAdmin);
+          setPurchaseAccess(false);
         }),
       ])
         .finally(() => {
@@ -238,7 +240,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .channel(`profile-purchase-access-${user.id}`)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `user_id=eq.${user.id}` }, (payload) => {
         const profile = payload.new as { purchase_access?: boolean; industrial_access?: boolean; status?: string };
-        setPurchaseAccess(isAdmin || profile.purchase_access === true);
+        setPurchaseAccess(profile.purchase_access === true);
         setIndustrialAccess(isAdmin || profile.industrial_access === true);
         setUserStatus(isAdmin ? "approved" : profile.status || "pending");
       })

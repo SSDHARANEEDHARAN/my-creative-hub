@@ -53,8 +53,8 @@ const services = [
 ];
 
 const Services = () => {
-  const { purchaseAccess, isAdmin } = useAuth();
-  const showPaymentDetails = purchaseAccess || isAdmin;
+  const { purchaseAccess } = useAuth();
+  const showPaymentDetails = purchaseAccess;
   return (
     <section id="services" className="py-16 sm:py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6">

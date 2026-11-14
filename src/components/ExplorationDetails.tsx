@@ -10,11 +10,12 @@ import { explorationDocuments } from "@/components/ExplorationCard";
 import ExplorationOffers from "@/components/ExplorationOffers";
 import { drivePreviewUrl } from "@/lib/siteOverrides";
 import { useAuth } from "@/contexts/AuthContext";
+import { canShowPurchaseUi } from "@/lib/purchaseVisibility";
 
 const ExplorationDetails = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
-  const { purchaseAccess, isAdmin } = useAuth();
+  const { purchaseAccess } = useAuth();
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const showPurchaseDetails = purchaseAccess || isAdmin || preview;
+  const showPurchaseDetails = canShowPurchaseUi(purchaseAccess, preview);
   const videos = (Array.isArray(item.drive_videos) ? item.drive_videos : [])
     .filter((video) => video?.url && drivePreviewUrl(video.url))
     .map((video) => ({ ...video, previewUrl: drivePreviewUrl(video.url)! }));

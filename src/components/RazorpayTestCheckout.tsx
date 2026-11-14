@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import LoginPopupModal from "@/components/LoginPopupModal";
 import type { Tables } from "@/integrations/supabase/types";
+import { canShowPurchaseUi } from "@/lib/purchaseVisibility";
 
 type PaymentResult = { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string };
 type Checkout = { open: () => void; on: (event: string, handler: () => void) => void };
@@ -25,28 +26,29 @@ function loadCheckout() {
 export default function RazorpayTestCheckout({ explorationId, offer, preview = false }: { explorationId: string; offer?: Tables<"exploration_offers">; preview?: boolean }) {
   const target = offer ? { offerId: offer.id } : { explorationId };
   const priceLabel = offer ? new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(offer.price_inr) : "₹5";
-  const { user } = useAuth();
+  const { user, purchaseAccess } = useAuth();
+  const allowed = canShowPurchaseUi(purchaseAccess, preview);
   const [busy, setBusy] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState<PaymentResult | null>(null);
   const [paid, setPaid] = useState(false);
   // Preload checkout so phones open it immediately after the tap (slow mobile networks otherwise feel unresponsive).
-  useEffect(() => { if (!preview) void loadCheckout().catch(() => undefined); }, [preview]);
+  useEffect(() => { if (allowed) void loadCheckout().catch(() => undefined); }, [allowed]);
   const [files, setFiles] = useState<{ name: string; url: string; description?: string | null }[] | null>(null);
   const sync = async () => {
     try { const data = await invoke({ action: "sync", ...target }); setPaid(Boolean(data?.paid)); if (data?.paid) { setPending(null); setBusy(false); setMessage("Payment confirmed."); } } catch (error) { setMessage(error instanceof Error ? error.message : "Could not check payment status"); }
   };
   useEffect(() => {
     setPaid(false); setMessage(""); setPending(null); setFiles(null);
-    if (!user || preview) return;
+    if (!user || !allowed) return;
     void sync();
     // Returning from a UPI app on a phone: re-check with Razorpay.
     const onVisible = () => { if (document.visibilityState === "visible") void sync(); };
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", onVisible);
     return () => { document.removeEventListener("visibilitychange", onVisible); window.removeEventListener("focus", onVisible); };
-  }, [user?.id, explorationId, offer?.id, preview]);
+  }, [user?.id, explorationId, offer?.id, allowed]);
   const loadFiles = async () => {
     setBusy(true);
     try { const data = await invoke({ action: "files", ...target }); setFiles(data.files || []); if (!data.files?.length) setMessage("Payment confirmed. Files will appear here once the seller uploads them."); }
@@ -69,6 +71,7 @@ export default function RazorpayTestCheckout({ explorationId, offer, preview = f
     finally { setBusy(false); }
   };
   const start = async () => {
+    if (!allowed) return;
     if (!user) { setLoginOpen(true); return; }
     setBusy(true); setMessage("");
     try {
@@ -81,6 +84,7 @@ export default function RazorpayTestCheckout({ explorationId, offer, preview = f
       checkout.open();
     } catch (error) { setBusy(false); setMessage(error instanceof Error ? error.message : "Could not open checkout"); }
   };
+  if (!allowed) return null;
   return <div className="space-y-3 pt-3">
     {pending ? <Button variant="outline" className="h-auto min-h-10 whitespace-normal" disabled={busy || preview} onClick={() => void verify(pending)}><RefreshCw size={16} className="mr-2 shrink-0" />Retry verification</Button> : paid ? <Button className="h-auto min-h-10 whitespace-normal" disabled={busy || preview} onClick={() => void loadFiles()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin shrink-0" /> : <Download size={16} className="mr-2 shrink-0" />}Get purchased files</Button> : <Button className="h-auto min-h-10 whitespace-normal" disabled={busy || preview || offer?.enabled === false} onClick={() => void start()}>{busy ? <Loader2 size={16} className="mr-2 animate-spin shrink-0" /> : <CreditCard size={16} className="mr-2 shrink-0" />}{offer?.enabled === false ? "Unavailable" : `Buy · ${priceLabel}`}</Button>}
     {paid && <p className="text-sm font-medium">Purchase confirmed</p>}

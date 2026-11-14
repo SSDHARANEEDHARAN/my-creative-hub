@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function CartesianBuildGuidePage() {
-  const { purchaseAccess, isAdmin } = useAuth();
+  const { purchaseAccess } = useAuth();
   const [photo, setPhoto] = useState<string>();
   useEffect(() => {
     let active = true;
@@ -20,7 +20,7 @@ export default function CartesianBuildGuidePage() {
   return <main className="container mx-auto px-4 sm:px-6 pt-28 pb-16 min-h-screen max-w-5xl">
     <Helmet><title>CARTESIAN Build Guide | Tharanee</title><meta name="description" content="CARTESIAN assembly sequence, component checklist and first-motion checks." /></Helmet>
     <div className="flex flex-wrap gap-3 mb-6">
-      {(purchaseAccess || isAdmin) && <Button asChild variant="outline"><Link to="/buyer/dashboard"><ArrowLeft size={16} className="mr-2" />My purchases</Link></Button>}
+      {purchaseAccess && <Button asChild variant="outline"><Link to="/buyer/dashboard"><ArrowLeft size={16} className="mr-2" />My purchases</Link></Button>}
       <Button asChild variant="ghost"><Link to={`/explorations/${CARTESIAN_ID}`}>CARTESIAN details</Link></Button>
     </div>
     <h1 className="font-display text-3xl sm:text-4xl font-semibold mb-4">CARTESIAN Build Guide</h1>

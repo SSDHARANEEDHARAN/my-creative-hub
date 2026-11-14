@@ -39,8 +39,8 @@ function PurchasedFiles({ offerId }: { offerId: string }) {
   </div>;
 }
 export default function BuyerDashboardPage() {
-  const { user, purchaseAccess, isAdmin } = useAuth();
-  const canViewPurchases = purchaseAccess || isAdmin;
+  const { user, purchaseAccess } = useAuth();
+  const canViewPurchases = purchaseAccess;
   const [rows, setRows] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
