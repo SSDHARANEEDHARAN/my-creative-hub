@@ -30,7 +30,7 @@ Deno.serve(async (req) => {
 
     const requestIp = getRequestIp(req);
     const body = await req.json();
-    const { action, targetUserId, targetEmail, status, ip: targetIpParam, hours } = body;
+    const { action, targetUserId, targetEmail, status, ip: targetIpParam, hours, email, displayName } = body;
 
     const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey);
 
@@ -191,6 +191,8 @@ Deno.serve(async (req) => {
       if (error) throw error;
 
       const { data: roles } = await adminClient.from("user_roles").select("*");
+      const { data: authUsers, error: authUsersError } = await adminClient.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      if (authUsersError) throw authUsersError;
       const { data: activities } = await adminClient
         .from("user_activity")
         .select("*")
@@ -201,6 +203,7 @@ Deno.serve(async (req) => {
         const userActivity = (activities || []).filter((a: Record<string, unknown>) => a.user_id === p.user_id);
         const lastLogin = userActivity.find((a: Record<string, unknown>) => a.action === "login");
         const lastLogout = userActivity.find((a: Record<string, unknown>) => a.action === "logout");
+        const authUser = (authUsers?.users || []).find((candidate) => candidate.id === p.user_id);
 
         return {
           ...p,
@@ -208,6 +211,9 @@ Deno.serve(async (req) => {
           lastLogin: lastLogin?.created_at || null,
           lastLogout: lastLogout?.created_at || null,
           activityCount: userActivity.length,
+          emailConfirmedAt: authUser?.email_confirmed_at || null,
+          invitedAt: authUser?.invited_at || null,
+          lastSignInAt: authUser?.last_sign_in_at || null,
         };
       });
 
@@ -225,6 +231,43 @@ Deno.serve(async (req) => {
       }
       throw new Error("Missing targetUserId or targetEmail");
     };
+
+    // ── invite: create a pending account and send an Auth email confirmation ──
+    if (action === "invite") {
+      const normalizedEmail = String(email || "").trim().toLowerCase();
+      const safeDisplayName = String(displayName || "").trim().slice(0, 100);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+        return jsonResponse({ error: "Enter a valid email address" }, 400);
+      }
+
+      const { data: existingProfile } = await adminClient
+        .from("profiles")
+        .select("user_id")
+        .eq("email", normalizedEmail)
+        .maybeSingle();
+      if (existingProfile) return jsonResponse({ error: "An account already uses this email" }, 409);
+
+      const requestOrigin = req.headers.get("origin");
+      const { data: invited, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(normalizedEmail, {
+        data: { display_name: safeDisplayName },
+        redirectTo: requestOrigin ? `${requestOrigin}/accept-invite` : undefined,
+      });
+      if (inviteError) return jsonResponse({ error: inviteError.message }, 400);
+
+      const invitedId = invited.user?.id;
+      if (!invitedId) return jsonResponse({ error: "The invitation could not be created" }, 500);
+
+      const { error: profileError } = await adminClient.from("profiles").upsert({
+        user_id: invitedId,
+        email: normalizedEmail,
+        display_name: safeDisplayName || null,
+        status: "pending",
+      }, { onConflict: "user_id" });
+      if (profileError) throw profileError;
+
+      await adminClient.from("user_roles").upsert({ user_id: invitedId, role: "user" }, { onConflict: "user_id,role" });
+      return jsonResponse({ success: true, userId: invitedId, email: normalizedEmail, invitation: "sent" });
+    }
 
     // ── update-status ──
     if (action === "update-status") {

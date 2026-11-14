@@ -26,6 +26,7 @@ import SubscribersPage from "./pages/SubscribersPage";
 import BlogCommentsPage from "./pages/BlogCommentsPage";
 import AdminModerationPage from "./pages/AdminModerationPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminAccountApprovalsPage from "./pages/AdminAccountApprovalsPage";
 import AdminContentPage from "./pages/AdminContentPage";
 import AdminGalleryPage from "./pages/AdminGalleryPage";
 import IndustrialProjectsPage from "./pages/IndustrialProjectsPage";
@@ -35,6 +36,7 @@ import OnboardingPage from "./pages/OnboardingPage";
 import UnsubscribePage from "./pages/UnsubscribePage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import AuthCallbackPage from "./pages/AuthCallbackPage";
+import AcceptInvitePage from "./pages/AcceptInvitePage";
 import NotFound from "./pages/NotFound";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { GuestProvider } from "./contexts/GuestContext";
@@ -79,6 +81,7 @@ const AnimatedRoutes = () => {
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<Navigate to="/privacy" replace />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/accept-invite" element={<AcceptInvitePage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route
           path="/subscribers"
@@ -109,6 +112,14 @@ const AnimatedRoutes = () => {
           element={
             <ProtectedRoute requireAdmin>
               <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/accounts"
+          element={
+            <ProtectedRoute requireAdmin>
+              <AdminAccountApprovalsPage />
             </ProtectedRoute>
           }
         />

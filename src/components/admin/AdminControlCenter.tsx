@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Shield, FileText, Images, Eye, Monitor, Tablet, Smartphone, RefreshCw, ExternalLink, Pencil } from "lucide-react";
+import { Shield, FileText, Images, Eye, Monitor, Tablet, Smartphone, RefreshCw, ExternalLink, Pencil, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DraftApprovals from "./DraftApprovals";
 
 const SECTIONS = [
+  { to: "/admin/accounts", icon: UserCheck, title: "User approvals", desc: "Invite users, track email confirmation and approve account access." },
   { to: "/admin/moderation", icon: Shield, title: "Moderation & approvals", desc: "Blog, projects, skills, certificates, experience, comments, guests, visits, notifications, audit." },
   { to: "/admin/content", icon: FileText, title: "Content editor", desc: "Edit every project and blog post with a live preview, AI suggestions and layout checks." },
   { to: "/admin/gallery", icon: Images, title: "Gallery & toolchain", desc: "Photos/videos, toolchain logos, connector files, downloads analytics." },
@@ -29,7 +30,7 @@ const AdminControlCenter = () => {
 
   return (
     <div className="space-y-6 mb-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {SECTIONS.map((s) => (
           <Link key={s.to} to={s.to} className="bg-card border border-border p-5 hover:border-primary transition-colors group">
             <s.icon className="w-5 h-5 text-primary mb-2" />

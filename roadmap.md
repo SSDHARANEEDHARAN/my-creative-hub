@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Add a real admin account approval page with Auth email invitations, account creation, confirmation tracking, approval controls and invitation acceptance; real invitation/approval tested with a Gmail alias and temporary accounts removed.
+- [ ] Send automatic app emails when Industrial or Payment & Purchase Access is enabled, from every admin access control, without duplicates — blocked until the user completes sender-domain setup.
 - [x] Fixed Payment & Purchase Access so the explicit per-email grant, without an admin bypass, controls the complete payment UI on CARTESIAN and Smart Keychain; verified live grant/revoke for both with regular and admin accounts and removed the temporary test account.
 - [x] Add an immediate Payment & Purchase Access switch beside Industrial Access in every Dashboard user table, using the existing per-user purchase permission.
 - [x] Move Connector Downloads exclusively to New and add the responsive split notice/robot hero; verified robot rendering, desktop/mobile layouts, real file download, touch folder opening and Blog removal.
