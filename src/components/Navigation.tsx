@@ -32,10 +32,11 @@ const Navigation = ({ persisted }: NavigationProps) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut, isAdmin } = useAuth();
+  const { user, signOut, isAdmin, purchaseAccess } = useAuth();
 
   const displayUser = isLoggingOut ? null : user;
   const displayIsAdmin = !isLoggingOut && isAdmin;
+  const showPurchases = !displayIsAdmin && purchaseAccess;
 
   const handleLogout = async () => {
     try {
@@ -156,7 +157,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {!displayIsAdmin && <DropdownMenuItem asChild>
+                  {showPurchases && <DropdownMenuItem asChild>
                     <Link to="/buyer/dashboard" className="cursor-pointer"><LayoutDashboard className="mr-2 h-4 w-4" /><span>My purchases</span></Link>
                   </DropdownMenuItem>}
                   {displayIsAdmin && (
@@ -252,7 +253,7 @@ const Navigation = ({ persisted }: NavigationProps) => {
                           </Link>
                         </div>
                       )}
-                      {!displayIsAdmin && <Button asChild variant="outline" className="w-full justify-start"><Link to="/buyer/dashboard" onClick={() => setIsOpen(false)}><LayoutDashboard className="w-4 h-4 mr-2" />My purchases</Link></Button>}
+                      {showPurchases && <Button asChild variant="outline" className="w-full justify-start"><Link to="/buyer/dashboard" onClick={() => setIsOpen(false)}><LayoutDashboard className="w-4 h-4 mr-2" />My purchases</Link></Button>}
                       <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Log out

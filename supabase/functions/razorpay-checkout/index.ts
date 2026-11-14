@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod@3";
 import { PAYMENT_TEST_AMOUNT_PAISE, isMatchingPayment } from "./rules.ts";
+import { hasPurchaseAccess } from "../_shared/purchaseAccess.ts";
 
 const schema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), explorationId: z.string().uuid() }),
@@ -30,6 +31,11 @@ Deno.serve(async req => {
     if (!token) return reply({ error: "Sign in to make a payment" }, 401);
     const { data: auth, error: authError } = await db.auth.getUser(token);
     if (authError || !auth.user) return reply({ error: "Sign in to make a payment" }, 401);
+    const [{ data: accessProfile }, { data: adminRole }] = await Promise.all([
+      db.from("profiles").select("purchase_access").eq("user_id", auth.user.id).maybeSingle(),
+      db.from("user_roles").select("role").eq("user_id", auth.user.id).eq("role", "admin").maybeSingle(),
+    ]);
+    if (!hasPurchaseAccess(accessProfile, Boolean(adminRole))) return reply({ error: "Purchase access is not enabled for this account" }, 403);
     const parsed = schema.safeParse(await req.json().catch(() => null));
     if (!parsed.success) return reply({ error: "Invalid payment request" }, 400);
     const keyId = Deno.env.get("RAZORPAY_KEY_ID");

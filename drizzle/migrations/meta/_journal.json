@@ -120,6 +120,20 @@
       "when": 1794444614887,
       "tag": "0016_add_exploration_drive_videos",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794619292693,
+      "tag": "0017_add_admin_controlled_purchase_access",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1794619436701,
+      "tag": "0018_enable_profile_access_realtime",
+      "breakpoints": true
     }
   ]
 }

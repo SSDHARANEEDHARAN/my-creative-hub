@@ -11,6 +11,7 @@ type Row = {
   email: string | null;
   display_name: string | null;
   can_download: boolean;
+  purchase_access: boolean;
   daily_download_limit: number | null;
   access_expires_at: string | null;
 };
@@ -26,7 +27,7 @@ const UserAccessLimits = () => {
   useEffect(() => {
     supabase
       .from("profiles")
-      .select("user_id, email, display_name, can_download, daily_download_limit, access_expires_at")
+      .select("user_id, email, display_name, can_download, purchase_access, daily_download_limit, access_expires_at")
       .order("created_at", { ascending: false })
       .then(({ data, error }) => {
         if (error) toast({ title: "Could not load users", description: error.message, variant: "destructive" });
@@ -41,10 +42,10 @@ const UserAccessLimits = () => {
     setSaving(r.user_id);
     const { error } = await supabase
       .from("profiles")
-      .update({ can_download: r.can_download, daily_download_limit: r.daily_download_limit, access_expires_at: r.access_expires_at })
+      .update({ can_download: r.can_download, purchase_access: r.purchase_access, daily_download_limit: r.daily_download_limit, access_expires_at: r.access_expires_at })
       .eq("user_id", r.user_id);
     setSaving(null);
-    toast(error ? { title: "Save failed", description: error.message, variant: "destructive" } : { description: `Limits saved for ${r.email ?? "user"}.` });
+    toast(error ? { title: "Save failed", description: error.message, variant: "destructive" } : { description: `Access and limits saved for ${r.email ?? "user"}.` });
   };
 
   if (loading) return <div className="py-8 flex justify-center"><Loader2 className="h-5 w-5 animate-spin" /></div>;
@@ -54,16 +55,19 @@ const UserAccessLimits = () => {
   return (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">
-        Set per-user limits: turn downloads off, cap downloads per 24 hours (empty = no limit), or set a date when access ends (account becomes restricted).
+        Enable Prices & payments only for approved email accounts. Those users see service budgets, exploration prices, checkout and their purchases. You can also cap downloads or set an access end date.
       </p>
       <Input placeholder="Search by email…" value={search} onChange={(e) => setSearch(e.target.value)} className="w-full sm:max-w-xs" />
       <div className="border-2 border-border divide-y-2 divide-border">
         {list.map((r) => (
-          <div key={r.user_id} className="p-3 grid gap-3 md:grid-cols-[1fr_auto_8rem_14rem_auto] md:items-center">
+          <div key={r.user_id} className="p-3 grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto_auto_8rem_14rem_auto] xl:items-center">
             <div className="min-w-0">
               <div className="font-medium truncate">{r.email ?? "—"}</div>
               {r.display_name && <div className="text-xs text-muted-foreground truncate">{r.display_name}</div>}
             </div>
+            <label className="flex items-center gap-2 text-xs uppercase">
+              <Switch aria-label={`Prices and payments for ${r.email ?? "user"}`} checked={r.purchase_access} onCheckedChange={(v) => patch(r.user_id, { purchase_access: v })} /> Prices & payments
+            </label>
             <label className="flex items-center gap-2 text-xs uppercase">
               <Switch checked={r.can_download} onCheckedChange={(v) => patch(r.user_id, { can_download: v })} /> Downloads
             </label>

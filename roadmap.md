@@ -26,3 +26,4 @@
 - [x] Layout check on Home/Projects/Blog + fixes applied
 - [ ] Leo AI videos — blocked: waiting for user upload
 - [ ] CNC Plotter live demo link — blocked: waiting for URL from user
+- [x] Add backend per-email purchase access protected from self-editing, an admin Prices & payments switch, and consistent UI/RLS/checkout enforcement; service budgets, exploration offers, purchase history and paid downloads hide without notices when access is off. Admin save/restore and signed-out pages verified; 66 tests pass.

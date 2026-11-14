@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { BookOpen, Download, RefreshCw, ArrowLeft } from "lucide-react";
 import { FunctionsHttpError } from "@supabase/supabase-js";
@@ -39,25 +39,26 @@ function PurchasedFiles({ offerId }: { offerId: string }) {
   </div>;
 }
 export default function BuyerDashboardPage() {
-  const { user } = useAuth();
+  const { user, purchaseAccess, isAdmin } = useAuth();
+  const canViewPurchases = purchaseAccess || isAdmin;
   const [rows, setRows] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState("");
   const load = useCallback(async () => {
-    if (!user) return;
+    if (!user || !canViewPurchases) { setLoading(false); return; }
     const result = await supabase.from("exploration_purchases").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
     if (result.error) { setError("Unable to load your purchases. Please try again."); setLoading(false); return; }
     setRows(result.data || []); setLoading(false);
-  }, [user?.id]);
+  }, [user?.id, canViewPurchases]);
   useEffect(() => {
     void load();
-    if (!user) return;
+    if (!user || !canViewPurchases) return;
     const channel = supabase.channel(`buyer-purchases-${user.id}`).on("postgres_changes", { event: "*", schema: "public", table: "exploration_purchases", filter: `user_id=eq.${user.id}` }, () => void load()).subscribe();
     const onFocus = () => void load();
     window.addEventListener("focus", onFocus);
     return () => { void supabase.removeChannel(channel); window.removeEventListener("focus", onFocus); };
-  }, [load, user?.id]);
+  }, [load, user?.id, canViewPurchases]);
   const refresh = async () => {
     setRefreshing(true); setError("");
     try { for (const offerId of new Set(rows.filter(row => row.status !== "refunded").map(row => row.offer_id))) await request({ action: "sync", offerId }); }
@@ -67,6 +68,7 @@ export default function BuyerDashboardPage() {
   const confirmed = ownConfirmedPurchases(rows, user?.id || "");
   const other = rows.filter(row => row.status !== "paid");
   const amount = (row: Purchase) => new Intl.NumberFormat("en-IN", { style: "currency", currency: row.currency }).format(row.amount_paise / 100);
+  if (!canViewPurchases) return <Navigate to="/new" replace />;
   return <main className="container mx-auto max-w-5xl px-4 sm:px-6 pt-28 pb-16 min-h-screen">
     <Helmet><title>My Purchases | Tharanee</title><meta name="description" content="Your confirmed payments and purchased exploration downloads." /></Helmet>
     <Button asChild variant="ghost" className="mb-6"><Link to="/blog"><ArrowLeft size={16} className="mr-2" />Back to explorations</Link></Button>

@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ServiceRequestModalProps {
   isOpen: boolean;
@@ -37,6 +38,8 @@ const timelineOptions = [
 ];
 
 const ServiceRequestModal = ({ isOpen, onClose, service, category }: ServiceRequestModalProps) => {
+  const { purchaseAccess, isAdmin } = useAuth();
+  const showPaymentDetails = purchaseAccess || isAdmin;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -146,7 +149,7 @@ const ServiceRequestModal = ({ isOpen, onClose, service, category }: ServiceRequ
             </div>
           </div>
 
-          <div>
+          {showPaymentDetails && <div>
             <label className="text-sm font-medium mb-2 block">
               Budget Range <span className="text-foreground">*</span>
             </label>
@@ -166,7 +169,7 @@ const ServiceRequestModal = ({ isOpen, onClose, service, category }: ServiceRequ
                 </button>
               ))}
             </div>
-          </div>
+          </div>}
 
           <div>
             <label className="text-sm font-medium mb-2 block">
@@ -208,7 +211,7 @@ const ServiceRequestModal = ({ isOpen, onClose, service, category }: ServiceRequ
             variant="hero" 
             size="lg" 
             className="w-full"
-            disabled={isSubmitting || !formData.budget || !formData.timeline}
+            disabled={isSubmitting || (showPaymentDetails && !formData.budget) || !formData.timeline}
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">

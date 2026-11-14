@@ -9,9 +9,12 @@ import type { Exploration } from "@/components/ExplorationCard";
 import { explorationDocuments } from "@/components/ExplorationCard";
 import ExplorationOffers from "@/components/ExplorationOffers";
 import { drivePreviewUrl } from "@/lib/siteOverrides";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ExplorationDetails = ({ item, preview = false }: { item: Exploration; preview?: boolean }) => {
+  const { purchaseAccess, isAdmin } = useAuth();
   const [inquiryOpen, setInquiryOpen] = useState(false);
+  const showPurchaseDetails = purchaseAccess || isAdmin || preview;
   const videos = (Array.isArray(item.drive_videos) ? item.drive_videos : [])
     .filter((video) => video?.url && drivePreviewUrl(video.url))
     .map((video) => ({ ...video, previewUrl: drivePreviewUrl(video.url)! }));
@@ -64,7 +67,7 @@ const ExplorationDetails = ({ item, preview = false }: { item: Exploration; prev
       </div>
     </section>}
     {item.technical_content && <StyledArticleRenderer content={item.technical_content} />}
-    {item.paid_parts && <section className="border-y border-border py-6 space-y-3">
+    {item.paid_parts && showPurchaseDetails && <section className="border-y border-border py-6 space-y-3">
       <h2 className="font-display text-2xl font-semibold">Products & purchased files</h2>
       <p className="text-muted-foreground flex items-center gap-2"><Lock size={16} /> Paid access only</p>
       {item.product_price_inr != null && <p className="font-medium">Complete bot: {new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(item.product_price_inr)}</p>}

@@ -9,6 +9,7 @@ interface AuthContextType {
   isAdmin: boolean;
   userStatus: string | null;
   industrialAccess: boolean;
+  purchaseAccess: boolean;
   blockedIp: string | null;
   tempLockedIp: string | null;
   lockedAt: string | null;
@@ -35,6 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStatus, setUserStatus] = useState<string | null>(null);
   const [industrialAccess, setIndustrialAccess] = useState(false);
+  const [purchaseAccess, setPurchaseAccess] = useState(false);
   const [blockedIp, setBlockedIp] = useState<string | null>(null);
   const [tempLockedIp, setTempLockedIp] = useState<string | null>(null);
   const [lockedAt, setLockedAt] = useState<string | null>(null);
@@ -59,20 +61,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const checkUserStatus = useCallback(async (userId: string): Promise<{ status: string; industrialAccess: boolean }> => {
+  const checkUserStatus = useCallback(async (userId: string): Promise<{ status: string; industrialAccess: boolean; purchaseAccess: boolean }> => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("status, industrial_access, access_expires_at")
+        .select("status, industrial_access, purchase_access, access_expires_at")
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (error || !data) return { status: "pending", industrialAccess: false };
+      if (error || !data) return { status: "pending", industrialAccess: false, purchaseAccess: false };
       const expired = !!(data as any).access_expires_at && new Date((data as any).access_expires_at) < new Date();
-      if (expired) return { status: "restricted", industrialAccess: false };
-      return { status: data.status || "pending", industrialAccess: !!(data as any).industrial_access };
+      if (expired) return { status: "restricted", industrialAccess: false, purchaseAccess: false };
+      return { status: data.status || "pending", industrialAccess: !!(data as any).industrial_access, purchaseAccess: !!(data as any).purchase_access };
     } catch {
-      return { status: "pending", industrialAccess: false };
+      return { status: "pending", industrialAccess: false, purchaseAccess: false };
     }
   }, []);
 
@@ -153,6 +155,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAdmin(adminStatus || isOwnerAdmin);
     setUserStatus(adminStatus || isOwnerAdmin ? "approved" : status.status);
     setIndustrialAccess(adminStatus || isOwnerAdmin ? true : status.industrialAccess);
+    setPurchaseAccess(adminStatus || isOwnerAdmin ? true : status.purchaseAccess);
   }, [checkAdminRole, checkUserStatus, syncUserRole]);
 
   useEffect(() => {
@@ -169,6 +172,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAdmin(false);
         setUserStatus(null);
         setIndustrialAccess(false);
+        setPurchaseAccess(false);
         setIsLoading(false);
         loadedUserId = null;
         return;
@@ -190,6 +194,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const isOwnerAdmin = nextSession.user.email?.toLowerCase() === OWNER_ADMIN_EMAIL;
           setIsAdmin(isOwnerAdmin);
           setUserStatus(isOwnerAdmin ? "approved" : "pending");
+          setPurchaseAccess(isOwnerAdmin);
         }),
       ])
         .finally(() => {
@@ -217,6 +222,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAdmin(false);
         setUserStatus(null);
         setIndustrialAccess(false);
+        setPurchaseAccess(false);
         setIsLoading(false);
       });
 
@@ -225,6 +231,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       subscription.unsubscribe();
     };
   }, [loadUserAccess, trackUserIp]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    const channel = supabase
+      .channel(`profile-purchase-access-${user.id}`)
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "profiles", filter: `user_id=eq.${user.id}` }, (payload) => {
+        const profile = payload.new as { purchase_access?: boolean; industrial_access?: boolean; status?: string };
+        setPurchaseAccess(isAdmin || profile.purchase_access === true);
+        setIndustrialAccess(isAdmin || profile.industrial_access === true);
+        setUserStatus(isAdmin ? "approved" : profile.status || "pending");
+      })
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [user?.id, isAdmin]);
 
   useEffect(() => {
     void checkIpBlockStatus();
@@ -272,6 +292,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setIsAdmin(false);
     setUserStatus(null);
+    setIndustrialAccess(false);
+    setPurchaseAccess(false);
     setIsLoading(false);
 
     try {
@@ -299,6 +321,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin,
         userStatus,
         industrialAccess,
+        purchaseAccess,
         blockedIp,
         tempLockedIp,
         lockedAt,

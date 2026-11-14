@@ -1,5 +1,6 @@
 import { Code, Palette, Rocket, Zap, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const services = [
   {
@@ -52,6 +53,8 @@ const services = [
 ];
 
 const Services = () => {
+  const { purchaseAccess, isAdmin } = useAuth();
+  const showPaymentDetails = purchaseAccess || isAdmin;
   return (
     <section id="services" className="py-16 sm:py-20 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6">
@@ -98,10 +101,10 @@ const Services = () => {
                 {service.description}
               </p>
 
-              <div className="mb-4 sm:mb-6">
+              {showPaymentDetails && <div className="mb-4 sm:mb-6">
                 <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">{service.price}</span>
                 <span className="text-muted-foreground ml-2 text-xs sm:text-sm">{service.period}</span>
-              </div>
+              </div>}
 
               <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                 {service.features.map((feature, i) => (

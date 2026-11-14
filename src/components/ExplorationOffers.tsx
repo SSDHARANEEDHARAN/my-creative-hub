@@ -3,16 +3,26 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import RazorpayTestCheckout from "@/components/RazorpayTestCheckout";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formatPrice = (price: number) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(price);
 
 export default function ExplorationOffers({ explorationId, preview = false }: { explorationId: string; preview?: boolean }) {
+  const { purchaseAccess, isAdmin, isLoading: accessLoading } = useAuth();
+  const allowed = purchaseAccess || isAdmin || preview;
   const [offers, setOffers] = useState<Tables<"exploration_offers">[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   useEffect(() => {
     let active = true;
+    if (!allowed) {
+      setOffers([]);
+      setFailed(false);
+      setLoading(false);
+      return () => { active = false; };
+    }
+    setLoading(true);
     const load = async () => {
       const { data, error } = await supabase.from("exploration_offers").select("*").eq("exploration_id", explorationId).order("sort_order");
       if (active) { setOffers(data || []); setFailed(Boolean(error)); setLoading(false); }
@@ -20,7 +30,8 @@ export default function ExplorationOffers({ explorationId, preview = false }: { 
     void load();
     const channel = supabase.channel(`offers-${explorationId}-${preview}`).on("postgres_changes", { event: "*", schema: "public", table: "exploration_offers", filter: `exploration_id=eq.${explorationId}` }, () => void load()).subscribe();
     return () => { active = false; void supabase.removeChannel(channel); };
-  }, [explorationId, preview]);
+  }, [explorationId, preview, allowed]);
+  if (accessLoading || !allowed) return null;
   if (loading) return <p role="status">Loading purchase options…</p>;
   if (failed) return <p role="alert">Unable to load prices. Please refresh before purchasing.</p>;
   if (!offers.length) return <RazorpayTestCheckout explorationId={explorationId} preview={preview} />;

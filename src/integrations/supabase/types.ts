@@ -976,6 +976,7 @@ export type Database = {
           industrial_access: boolean
           last_ip: string | null
           locked_at: string | null
+          purchase_access: boolean
           status: string
           updated_at: string
           user_id: string
@@ -991,6 +992,7 @@ export type Database = {
           industrial_access?: boolean
           last_ip?: string | null
           locked_at?: string | null
+          purchase_access?: boolean
           status?: string
           updated_at?: string
           user_id: string
@@ -1006,6 +1008,7 @@ export type Database = {
           industrial_access?: boolean
           last_ip?: string | null
           locked_at?: string | null
+          purchase_access?: boolean
           status?: string
           updated_at?: string
           user_id?: string
