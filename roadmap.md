@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Fix the New page robot on other computers: site-hosted engine files, longer slow-connection allowance, no third-party engine requests, continuous desktop/phone animation and retry recovery verified; build and 69 tests pass.
 - [x] Fix only the 19 selected security findings: leaked-password protection, 17 database rules and connector-file storage tightened; valid/invalid submissions, private fields, public/admin pages and a real connector download verified; fresh scan cleared all selected findings and 69 tests passed; other findings untouched.
 - [x] Fix the New page robot: continuous rendering, site-hosted scene, isolated load failure and working retry; desktop/mobile animation and failure recovery verified, 69 tests pass.
 - [x] Verify cross-computer media in the current version: CARTESIAN and Gallery on desktop/mobile plus all nine signed-in industrial articles; every photo loads and all ten imported videos reach playable readiness; 69 tests pass.

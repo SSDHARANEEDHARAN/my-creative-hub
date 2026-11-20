@@ -37,7 +37,7 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
     setLoaded(false);
     setTimedOut(false);
     setFailed(false);
-    const timeout = window.setTimeout(() => setTimedOut(true), 20000);
+    const timeout = window.setTimeout(() => setTimedOut(true), 45000);
     return () => window.clearTimeout(timeout);
   }, [scene, attempt]);
 
@@ -86,6 +86,7 @@ export function SplineScene({ scene, className }: SplineSceneProps) {
             setFailed(false);
           }}
           renderOnDemand={false}
+          wasmPath="/spline-runtime"
           htmlContentMode="none"
         />
       </SplineErrorBoundary>
