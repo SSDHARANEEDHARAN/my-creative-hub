@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Fix the New page robot: continuous rendering, site-hosted scene, isolated load failure and working retry; desktop/mobile animation and failure recovery verified, 69 tests pass.
 - [x] Verify cross-computer media in the current version: CARTESIAN and Gallery on desktop/mobile plus all nine signed-in industrial articles; every photo loads and all ten imported videos reach playable readiness; 69 tests pass.
 - [x] Fix New and CARTESIAN opening the old live site's error page; published the verified version and re-tested both routes plus Gallery and signed-in industrial media on the public URL with no browser errors.
 - [x] Add a real admin account approval page with Auth email invitations, account creation, confirmation tracking, approval controls and invitation acceptance; real invitation/approval tested with a Gmail alias and temporary accounts removed.

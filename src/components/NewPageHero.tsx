@@ -2,8 +2,9 @@ import { Card } from "@/components/ui/card";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { cn } from "@/lib/utils";
+import robotScene from "@/assets/new-page-robot.splinecode.asset.json";
 
-const ROBOT_SCENE = "https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode";
+const ROBOT_SCENE = robotScene.url;
 
 type NewNoticeContentProps = {
   title: string;
