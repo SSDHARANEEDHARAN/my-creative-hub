@@ -1,4 +1,6 @@
 # Roadmap
+- [ ] Fix cross-computer photo/video loading and verify public, CARTESIAN, Gallery and all signed-in industrial media.
+- [ ] Fix New and CARTESIAN opening the old live site's error page; publish and re-test both routes in a fresh browser.
 - [x] Add a real admin account approval page with Auth email invitations, account creation, confirmation tracking, approval controls and invitation acceptance; real invitation/approval tested with a Gmail alias and temporary accounts removed.
 - [ ] Send automatic app emails when Industrial or Payment & Purchase Access is enabled, from every admin access control, without duplicates — blocked until the user completes sender-domain setup.
 - [x] Fixed Payment & Purchase Access so the explicit per-email grant, without an admin bypass, controls the complete payment UI on CARTESIAN and Smart Keychain; verified live grant/revoke for both with regular and admin accounts and removed the temporary test account.
