@@ -59,6 +59,8 @@ const applyRow = (kind: ContentKind, id: string, data: Record<string, any> | nul
       // Empty string means the admin cleared the field on purpose — keep it cleared.
       if (f === "images" && Array.isArray(v)) v = v.map((u: string) => resolveImageUrl(orig, "images", u));
       else if (f === "image" && typeof v === "string" && v) v = resolveImageUrl(orig, "image", v);
+      else if (f === "videoUrls" && Array.isArray(v)) v = v.map((u: unknown) => (typeof u === "string" ? resolveProjectPhotoUrl(u) : u));
+      else if (f === "videoUrl" && typeof v === "string" && v) v = resolveProjectPhotoUrl(v);
       target[f] = v;
     } else if (orig) target[f] = orig[f];
   }

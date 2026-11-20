@@ -12,3 +12,4 @@
 - Industrial case studies use unique numeric catalog IDs and shared project/article data; imported media uses asset pointers and editable video arrays persist through content_overrides to keep admin and frontend aligned.
 - Imported industrial photo pointers resolve through the shared public-host URL helper, including saved image overrides, so photos do not depend on a preview origin or computer-local cache.
 - The New page Spline robot scene and runtime are served from public/ (not CDN asset pointers) because the site is also hosted on Vercel, where Lovable asset URLs do not exist.
+- Media from .asset.json pointers must be wrapped with resolveProjectPhotoUrl (absolute public host) because the site is also hosted on Vercel, where relative /__l5e URLs do not exist.

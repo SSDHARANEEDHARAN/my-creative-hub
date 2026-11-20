@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
 import dispensingStepAsset from "@/assets/compact-dispensing-module.step.asset.json";
 import { Helmet } from "react-helmet-async";
 import { memo, useEffect, useState, useRef } from "react";
@@ -700,7 +701,7 @@ const ArticlePage = memo(() => {
                     images={project?.images}
                     downloadCount={projectDownloadCount}
                     stepComingSoon={[126, 127].includes(Number(project?.id || article.id))}
-                    stepFileUrl={Number(project?.id || article.id) === 128 ? dispensingStepAsset.url : undefined}
+                    stepFileUrl={Number(project?.id || article.id) === 128 ? resolveProjectPhotoUrl(dispensingStepAsset.url) : undefined}
                     onDownloaded={refreshProjectDownloads}
                   />
                   {projectModel && (

@@ -11,6 +11,7 @@ import {
 } from "./ui/dialog";
 import jsPDF from "jspdf";
 import profilePhoto from "@/assets/profile-photo.png";
+import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
 import resumePdf from "@/assets/Dharanee_Dharan_Resume.pdf.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -41,7 +42,7 @@ const ResumeButton = ({ variant = "hero", size = "lg", className = "" }: ResumeB
   const downloadMechanicalPdf = () => {
     setShowDialog(false);
     const link = document.createElement("a");
-    link.href = savedResume?.url || resumePdf.url;
+    link.href = resolveProjectPhotoUrl(savedResume?.url || resumePdf.url);
     link.download = savedResume?.filename || "Dharanee_Dharan_Mechanical_Resume.pdf";
     link.rel = "noopener";
     link.target = "_self";

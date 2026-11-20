@@ -2,6 +2,7 @@
 // titles/descriptions. Shared by the public Gallery page (fallback) and the admin
 // "import into database" action.
 
+import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
 import driveVideoAsset from "../assets/gallery-drive-video.mp4.asset.json";
 
 const mediaModules = import.meta.glob(
@@ -96,7 +97,7 @@ export const BUNDLED_MEDIA: BundledMedia[] = (() => {
     })),
     // CDN-hosted video (too large for the repo)
     {
-      src: driveVideoAsset.url,
+      src: resolveProjectPhotoUrl(driveVideoAsset.url),
       base: "gallery-drive-video",
       ext: "mp4",
       type: "video" as const,

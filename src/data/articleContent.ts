@@ -1,3 +1,4 @@
+import { resolveProjectPhotoUrl } from "@/lib/projectPhotoUrl";
 import kinematicsDemoVideo from "@/assets/kinematics-lab-demo.mp4.asset.json";
 import { smartManufacturingArticle } from "@/data/smartManufacturingProject";
 import { amrCobotDevelopmentArticle } from "@/data/amrCobotDevelopmentProject";
@@ -1218,7 +1219,7 @@ export const articleContents: ArticleContent[] = [
       "DH parameters become more intuitive when coordinate frames and 3D robot transformations are visible",
       "Combining simulation, validation, quizzes, and guided learning can turn a technical calculator into a complete engineering self-learning platform"
     ],
-    conclusionVideoUrl: kinematicsDemoVideo.url
+    conclusionVideoUrl: resolveProjectPhotoUrl(kinematicsDemoVideo.url)
   },
   {
     id: 129,

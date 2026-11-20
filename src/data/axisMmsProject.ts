@@ -13,7 +13,7 @@ export const axisMmsProject: Project = {
   "title": "AXIS GLOBAL – 4-Station MMS Combination System",
   "description": "An integrated four-station Modular Manufacturing System combining HMI-controlled feeding and buffering, drilling verification with an external vision camera, and three-path sorting for aluminium, Delrin and inspection rejects.",
   images: [photo1.url, photo2.url, photo3.url, photo4.url].map(resolveProjectPhotoUrl),
-  videoUrls: [video1.url, video2.url],
+  videoUrls: [video1.url, video2.url].map(resolveProjectPhotoUrl),
   "tags": [
     "Modular Manufacturing",
     "HMI",
