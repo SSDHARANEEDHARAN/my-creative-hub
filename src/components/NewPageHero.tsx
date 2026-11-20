@@ -2,9 +2,8 @@ import { Card } from "@/components/ui/card";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 import { cn } from "@/lib/utils";
-import robotScene from "@/assets/new-page-robot.splinecode.asset.json";
-
-const ROBOT_SCENE = robotScene.url;
+// Served from the site itself so the robot works on any host (Lovable, Vercel, etc.).
+const ROBOT_SCENE = "/models/new-page-robot.splinecode";
 
 type NewNoticeContentProps = {
   title: string;
