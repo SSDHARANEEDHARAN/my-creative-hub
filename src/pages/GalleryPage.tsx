@@ -167,6 +167,24 @@ class GallerySlider {
       frame.title = item.title;
       frame.setAttribute("style", "width:100%;height:100%;border:0;");
       div.appendChild(frame);
+
+      // Cross-origin iframes swallow their mouse boundary events. This invisible
+      // layer keeps hover previews reliable without changing the card's design.
+      const hoverArea = document.createElement("div");
+      hoverArea.setAttribute("style", "position:absolute;inset:0;z-index:2;");
+      hoverArea.setAttribute("aria-hidden", "true");
+      div.appendChild(hoverArea);
+
+      // Drive's embedded player accepts an autoplay query parameter. Reloading
+      // the original preview URL on mouse leave stops it and restores its poster.
+      hoverArea.addEventListener("mouseenter", () => {
+        const autoplayUrl = new URL(item.src);
+        autoplayUrl.searchParams.set("autoplay", "1");
+        if (frame.src !== autoplayUrl.toString()) frame.src = autoplayUrl.toString();
+      });
+      hoverArea.addEventListener("mouseleave", () => {
+        if (frame.src !== item.src) frame.src = item.src;
+      });
     } else if (item.type === "video") {
       const video = document.createElement("video");
       video.src = item.src;
@@ -197,11 +215,28 @@ class GallerySlider {
       div.appendChild(download);
 
       div.style.cursor = "pointer";
-      const playWithSound = () => {
+      let playAttempt = 0;
+      const playWithSound = async () => {
+        const attempt = ++playAttempt;
         video.muted = false;
-        video.play().catch(() => undefined);
+        try {
+          await video.play();
+        } catch {
+          // Browsers can reject unmuted hover playback without a prior click.
+          // Keep the existing hover interaction working by retrying muted.
+          if (attempt !== playAttempt) return;
+          video.muted = true;
+          try {
+            await video.play();
+          } catch {
+            /* A genuine media/network failure remains paused. */
+          }
+        }
       };
-      const pauseVideo = () => video.pause();
+      const pauseVideo = () => {
+        playAttempt++;
+        video.pause();
+      };
       div.addEventListener("mouseenter", playWithSound);
       div.addEventListener("mouseleave", pauseVideo);
       div.addEventListener("click", (e) => {
